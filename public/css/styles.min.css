@@ -1,0 +1,1 @@
+.products{display:flex}.product{margin:10px;box-shadow:var(--box-shadow);padding:10px;border-radius:10px}.product h2{margin-top:0}.product form{width:auto}.price{text-align:center;font-weight:700;font-size:2em;margin:0 auto;font-family:var(--font-family-body)}.product .img-thumbnail{width:150px;height:150px;object-fit:cover}

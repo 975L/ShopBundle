@@ -20,9 +20,12 @@
     "require": {
         "php": ">=8.0",
         "c975l/config-bundle": "*",
+        "c975l/site-bundle": "*",
+        "c975l/sharebuttons-bundle": "*",
         "cocur/slugify": "*",
-        "easycorp/easyadmin-bundle": "*",
         "doctrine/orm": "*",
+        "easycorp/easyadmin-bundle": "*",
+        "knplabs/knp-paginator-bundle": "*",
         "symfony/routing": "*",
         "symfony/security-bundle": "*",
         "symfony/translation": "*"

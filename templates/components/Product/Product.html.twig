@@ -1,0 +1,7 @@
+{% set class = class | default('') %}
+<div class="product {{ class }}" id="product-{{ product.id }}">
+    <h2>{{ product.title }}</h2>
+    <twig:c975LSite:Image:Link src="{{ asset('shop/' ~ product.medias[0].name) }}" url="{{ path('product_display', {'slug': product.slug}) }}" class="img-thumbnail" width="150" height="auto"/>
+    <twig:c975LShop:Product:Price product="{{ product }}"/>
+    <twig:c975LShop:Cart:Add product="{{ product }}"/>
+</div>

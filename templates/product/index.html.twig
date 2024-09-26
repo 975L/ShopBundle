@@ -1,0 +1,11 @@
+{% extends 'layout.html.twig' %}
+
+{# Defines specific variables #}
+{% set title = 'Magasin' %}
+{% set description = 'Liste des produits de Papa Câlin' %}
+
+{% block content %}
+    <p class="text text-center lead">Retrouvez tous nos produits disponibles à l'achat</p>
+    <twig:c975LSite:Button:Button type="secondary" label="Voir le Panier" url="{{ path('cart_display') }}" icon="bundles/c975lshop/images/basket-shopping.svg"/>
+    <twig:c975LShop:Product:Products products="{{ products }}"/>
+{% endblock %}

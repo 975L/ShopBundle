@@ -1,0 +1,16 @@
+{% extends 'layout.html.twig' %}
+
+{# Defines specific variables #}
+{% set title = product.title %}
+{% set ogImage = absolute_url(asset('products/' ~ product.medias[0].name)) %}
+{% set pageDescription = product.description %}
+
+{% block content %}
+    <section class="text-center">
+        <twig:c975LSite:Slider:Slider slides="{{ product.getMediasNames() }}" id="slider"/>
+        <p class="text-center lead">{{ product.description }}</p>
+        <twig:c975LShop:Product:Price product="{{ product }}"/>
+        <twig:c975LShop:Cart:Add product="{{ product }}"/>
+        <twig:c975LSite:Button:Button type="secondary" label="Tous les produits" url="{{ path('product_index') }}"/>
+    </section>
+{% endblock %}

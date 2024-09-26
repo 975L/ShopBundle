@@ -1,0 +1,11 @@
+{% extends 'layout.html.twig' %}
+
+{# Defines specific variables #}
+{% set title = 'Panier' %}
+{% set description = 'Panier d\'achats' %}
+
+{% block content %}
+    <twig:c975LShop:Cart:Products cart="{{ cart }}"/>
+    <twig:c975LSite:Button:Button type="secondary" label="Poursuivre les achats" url="{{ path('product_index') }}"/>
+    <twig:c975LSite:Button:Button label="Valider le panier" url="{{ path('cart_validate') }}"/>
+{% endblock %}

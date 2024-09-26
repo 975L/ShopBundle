@@ -2,9 +2,19 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
+        public: true
 
-    c975L\ServicesBundle\Service\:
+    c975L\ShopBundle\Controller\:
+        resource: '../src/Controller/*'
+
+#    c975L\ShopBundle\Form\:
+#        resource: '../src/Form/*'
+
+#    c975L\ShopBundle\Security\:
+#        resource: '../src/Security/*'
+
+    c975L\ShopBundle\Repository\:
+        resource: '../src/Repository/*'
+
+    c975L\ShopBundle\Service\:
         resource: '../src/Service/*'
-
-    c975L\ServicesBundle\Twig\:
-        resource: '../src/Twig/*'

@@ -1,0 +1,23 @@
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th>Titre</th>
+            <th>Prix</th>
+            <th>Quantité</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    {% for product in cart.products %}
+        <twig:c975LShop:Cart:Product product="{{ product }}"/>
+    {% endfor %}
+    <tfoot>
+        <tr>
+            <td>Total</td>
+            <td></td>
+            <td></td>
+            <td>{{ cart.quantity }}</td>
+            <td>{{ cart.price / 100 }} {{ cart.currency }}</td>
+        </tr>
+    </tfoot>
+</table>
