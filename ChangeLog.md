@@ -3,6 +3,9 @@
 ## v0.2
 
 - Revival of Bundle (26/09/2024)
+- Added main Product (26/09/2024)
+- Added Cart (26/09/2024)
+- Added Media (26/09/2024)
 
 ## v0.1.2
 

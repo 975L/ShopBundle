@@ -1,0 +1,5 @@
+<form action="{{ path('cart_add') }}" method="post">
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    <input type="hidden" name="quantity" value="1" min="1">
+    <twig:c975LSite:Button:Button label="Panier" url="{{ path('product_display', {'slug': product.slug}) }}" icon="bundles/c975lshop/images/plus.svg"/>
+</form>
