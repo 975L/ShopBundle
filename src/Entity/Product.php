@@ -32,6 +32,12 @@ class Product
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[ORM\Column]
+    private ?bool $isNumeric = null;
+
+    #[ORM\Column]
+    private ?float $vat = null;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation = null;
 
@@ -55,8 +61,15 @@ class Product
         $product = get_object_vars($this);
         unset($product['medias']);
         $product['image'] = $this->getMediasNames()[0];
+        $product['vatAmount'] = $this->getVatAmount();
 
         return $product;
+    }
+
+    // Returns the VAT amount
+    public function getVatAmount(): float
+    {
+        return $this->getVat() > 0 ? round($this->getPrice() / 100 - ($this->getPrice() / (100 + $this->getVat())), 2) : 0;
     }
 
     public function getId(): ?int
@@ -120,6 +133,30 @@ class Product
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function isNumeric(): ?bool
+    {
+        return $this->isNumeric;
+    }
+
+    public function setNumeric(bool $isNumeric): static
+    {
+        $this->isNumeric = $isNumeric;
+
+        return $this;
+    }
+
+    public function getVat(): ?float
+    {
+        return $this->vat;
+    }
+
+    public function setVat(float $vat): static
+    {
+        $this->vat = $vat;
 
         return $this;
     }

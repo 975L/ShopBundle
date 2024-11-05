@@ -1,23 +1,25 @@
-<table>
-    <thead>
-        <tr>
-            <th></th>
-            <th>Titre</th>
-            <th>Prix</th>
-            <th>Quantité</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    {% for product in cart.products %}
-        <twig:c975LShop:Cart:Product product="{{ product }}"/>
-    {% endfor %}
-    <tfoot>
-        <tr>
-            <td>Total</td>
-            <td></td>
-            <td></td>
-            <td>{{ cart.quantity }}</td>
-            <td>{{ cart.price / 100 }} {{ cart.currency }}</td>
-        </tr>
-    </tfoot>
-</table>
+{% if cart.total > 0 %}
+    <table>
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Prix</th>
+                <th>Quantité</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        {% for product in cart.products %}
+            <twig:c975LShop:Cart:Product product="{{ product }}" type="{{ type }}"/>
+        {% endfor %}
+        <tfoot>
+            <tr>
+                <td>Total</td>
+                <td></td>
+                <td>{{ cart.quantity }}</td>
+                <td>{{ (cart.total / 100)|number_format(2) }} {{ cart.currency }}</td>
+            </tr>
+        </tfoot>
+    </table>
+{% else %}
+    <p class="text text-center lead">Votre panier est vide.</p>
+{% endif %}

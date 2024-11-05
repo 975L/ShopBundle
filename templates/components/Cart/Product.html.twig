@@ -1,7 +1,6 @@
 <tr>
     <td><twig:c975LSite:Image:Link src="{{ product.product.image }}" url="{{ path('product_display', {'slug' : product.product.slug }) }}" class="img-thumbnail img-square" width="50" height="50"/></td>
-    <td><a href="{{ path('product_display', {'slug' : product.product.slug }) }}">{{ product.product.title }}</a></td>
-    <td>{{ product.product.price / 100 }} {{ product.product.currency }}</td>
+    <td class="text-right"><twig:c975LShop:Cart:ProductPrice product="{{ product }}" type="{{ type }}"/></td>
     <td>{{ product.quantity }}</td>
-    <td>{{ product.total / 100 }} {{ product.product.currency }}</td>
+    <td class="text-right"><twig:c975LShop:Cart:ProductsTotal product="{{ product }}" type="{{ type }}"/></td>
 </tr>

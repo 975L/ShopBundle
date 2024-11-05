@@ -20,20 +20,6 @@ class ProductController extends AbstractController
     {
     }
 
-    // INDEX
-    #[Route(
-        '/products',
-        name: 'product_index',
-        methods: ['GET']
-    )]
-    public function index(Request $request): Response
-    {
-        return $this->render(
-            '@c975LShop/product/index.html.twig',
-            ['products' => $this->productService->findAllPaginated($request->query)]
-        )->setMaxAge(3600);
-    }
-
     // DISPLAY
     #[Route(
         '/products/{slug:product}',

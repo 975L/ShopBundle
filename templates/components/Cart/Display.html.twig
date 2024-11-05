@@ -1,0 +1,3 @@
+{# <twig:c975LShop:Cart:Display cart="{{ cart }}" [type="simple|complex"]/> #}
+{% set type = type | default('simple') %}
+<twig:c975LShop:Cart:Products cart="{{ cart }}" type="{{ type }}"/>

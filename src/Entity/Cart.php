@@ -1,4 +1,11 @@
 <?php
+/*
+ * (c) 2024: 975L <contact@975l.com>
+ * (c) 2024: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace c975L\ShopBundle\Entity;
 
@@ -7,6 +14,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
+#[ORM\Table(name: 'shop_cart')]
 class Cart
 {
     #[ORM\Id]
@@ -23,14 +31,23 @@ class Cart
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 
+    #[ORM\Column(length: 100)]
+    private ?string $email = null;
+
+    #[ORM\Column(length: 50)]
+    private ?array $address = null;
+
     #[ORM\Column]
-    private ?int $price = null;
+    private ?int $total = null;
 
     #[ORM\Column]
     private ?int $quantity = null;
 
     #[ORM\Column(length: 5)]
     private ?string $currency = null;
+
+    #[ORM\Column]
+    private ?bool $isNumeric = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation = null;
@@ -79,14 +96,38 @@ class Cart
         return $this;
     }
 
-    public function getPrice(): ?int
+    public function getEmail(): ?string
     {
-        return $this->price;
+        return $this->email;
     }
 
-    public function setPrice(int $price): static
+    public function setEmail(?string $email): static
     {
-        $this->price = $price;
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getAddress(): ?array
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?array $address): static
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getTotal(): ?int
+    {
+        return $this->total;
+    }
+
+    public function setTotal(int $total): static
+    {
+        $this->total = $total;
 
         return $this;
     }
@@ -111,6 +152,18 @@ class Cart
     public function setCurrency(string $currency): static
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    public function isNumeric(): ?bool
+    {
+        return $this->isNumeric;
+    }
+
+    public function setNumeric(bool $isNumeric): static
+    {
+        $this->isNumeric = $isNumeric;
 
         return $this;
     }

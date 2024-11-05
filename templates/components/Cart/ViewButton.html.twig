@@ -1,0 +1,18 @@
+{# <twig:c975LShop:Cart:ViewButton [type="primary"] label="Label" url="{{ path('cart_display') }}" [icon="path-to-icon.ext"] [inline="false"]/> #}
+{% set type = type | default('primary') %}
+{% set inline = inline | default(false) %}
+{% set icon = icon | default('') %}
+{% if inline == false %}
+    <p class="text-center">
+{% endif %}
+    <a href="{{ url }}" role="button">
+        <button class="btn btn-{{ type }}">
+            {% if icon != "" %}
+                <twig:c975LSite:Image:Icon src="{{ icon }}" width="16" height="16" class="white"/>
+            {% endif %}
+            {{ label }} <span data-cart-target="total">0</span> € (<span data-cart-target="quantity">0</span>)
+        </button>
+    </a>
+{% if inline == false %}
+    </p>
+{% endif %}

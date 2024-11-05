@@ -1,0 +1,9 @@
+{% extends 'layout.html.twig' %}
+
+{# Defines specific variables #}
+{% set title = 'Magasin' %}
+{% set description = 'Liste des produits' %}
+
+{% block content %}
+    <twig:c975LShop:Cart:Cart products="{{ products }}"/>
+{% endblock %}

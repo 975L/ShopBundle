@@ -1,0 +1,7 @@
+{# <twig:c975LShop:Cart:Cart products="{{ products }}"/> #}
+<div data-controller="cart">
+    <p class="text text-center lead">Retrouvez tous nos produits</p>
+    <twig:c975LShop:Cart:Message/>
+    <twig:c975LShop:Product:Products products="{{ products }}"/>
+    <twig:c975LShop:Cart:ViewButton label="Panier :" url="{{ path('cart_display') }}" icon="bundles/c975lshop/images/basket-shopping.svg"/>
+</div>

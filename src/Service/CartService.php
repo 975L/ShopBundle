@@ -25,42 +25,42 @@ class CartService implements CartServiceInterface
         $this->session = $this->requestStack->getSession();
     }
 
-    // Adds product to cart
-    public function add(Request $request): void
+    // Adds product to cart and returns total and quantity
+    public function add(Request $request): array
     {
         $this->define();
 
+        $data = $request->toArray();
         $products = $this->cart->getProducts();
-        $productId = $request->request->get('product_id');
-        $quantity = $request->request->get('quantity', 1);
+        $productId = $data["id"];
+        $quantity = $data["quantity"];
         $product = $this->productService->findOneById($productId);
 
         // Adds product to cart
         if (isset($products[$productId])) {
             $products[$productId]['quantity'] += $quantity;
+            $products[$productId]['totalVat'] = $products[$productId]['quantity'] * $product->getVatAmount();
             $products[$productId]['total'] = $products[$productId]['quantity'] * $product->getPrice();
         } else {
             $products[$productId] = [
                 'product' => $product->toArray(),
                 'quantity' => $quantity,
+                'totalVat' => $quantity * $product->getVatAmount(),
                 'total' => $quantity * $product->getPrice(),
             ];
         }
+
         $this->cart->setProducts($products);
         $this->cart->setModification(new dateTime());
 
         $this->updateTotals();
         $this->saveDatabase();
-    }
 
-    // Gets cart from session
-    public function define(): void
-    {
-//$this->session->remove('cart');
-        $this->cart = $this->session->get('cart');
-        if (null === $this->cart) {
-            $this->create();
-        }
+        return [
+            'total' => $this->cart->getTotal(),
+            'quantity' => $this->cart->getQuantity(),
+            'productQuantity' => $products[$productId]['quantity'],
+        ];
     }
 
     // Creates cart
@@ -68,17 +68,60 @@ class CartService implements CartServiceInterface
     {
         $this->cart = new Cart();
         $this->cart->setIdentifiant(hash('sha1', uniqid()));
-        $this->cart->setPrice(0);
+        $this->cart->setTotal(0);
         $this->cart->setQuantity(0);
         $this->cart->setCurrency('€');
         $this->cart->setCreation(new DateTime());
         $this->cart->setModification(new DateTime());
         $this->cart->setStatus('new');
+        $this->cart->setNumeric(true);
 
         $this->saveSession();
         $this->saveDatabase();
     }
 
+    // Defines cart from session
+    public function define(): void
+    {
+        $identifiant = $this->session->get('cart');
+        if (null === $identifiant) {
+            $this->create();
+        } else {
+            $this->cart = $this->cartRepository->findOneByIdentifiant($identifiant);
+        }
+
+        if (null === $this->cart) {
+            $this->session->remove('cart');
+            $this->create();
+        }
+    }
+
+    // Deletes cart
+    public function delete(): array
+    {
+        $identifiant = $this->session->get('cart');
+        if (null !== $identifiant) {
+            $this->cart = $this->cartRepository->findOneByIdentifiant($identifiant);
+
+            $this->em->remove($this->cart);
+            $this->em->flush();
+
+            $this->deleteSession();
+        }
+
+        return [
+            'total' => 0,
+            'quantity' => 0,
+        ];
+    }
+
+    // Deletes cart in session
+    public function deleteSession(): void
+    {
+        $this->session->remove('cart');
+    }
+
+    // Returns current cart
     public function get(): Cart
     {
         $this->define();
@@ -86,22 +129,15 @@ class CartService implements CartServiceInterface
         return $this->cart;
     }
 
-    // Updates total price
-    public function updateTotals(): void
+    // Gets total and quantity
+    public function getTotal(): array
     {
-        $products = $this->cart->getProducts();
+        $this->define();
 
-        $total = 0;
-        $quantity = 0;
-        foreach ($products as $product) {
-            $total += $product['total'];
-            $quantity += $product['quantity'];
-        }
-
-        $this->cart->setPrice($total);
-        $this->cart->setQuantity($quantity);
-
-        $this->saveSession();
+        return [
+            'total' => $this->cart->getTotal(),
+            'quantity' => $this->cart->getQuantity(),
+        ];
     }
 
     // Saves in database
@@ -110,7 +146,7 @@ class CartService implements CartServiceInterface
         $existingCart = $this->cartRepository->findOneByIdentifiant($this->cart->getIdentifiant());
         if ($existingCart) {
             $existingCart->setProducts($this->cart->getProducts());
-            $existingCart->setPrice($this->cart->getPrice());
+            $existingCart->setTotal($this->cart->getTotal());
             $existingCart->setModification($this->cart->getModification());
             $this->em->persist($existingCart);
         } else {
@@ -123,12 +159,57 @@ class CartService implements CartServiceInterface
     // Saves cart in session
     public function saveSession(): void
     {
-        $this->session->set('cart', $this->cart);
+        $this->session->set('cart', $this->cart->getIdentifiant());
     }
 
-    // Deletes cart in session
-    public function deleteInSession(): void
+    // Updates total
+    public function updateTotals(): void
     {
-        $this->session->remove('cart');
+        $products = $this->cart->getProducts();
+
+        $total = 0;
+        $quantity = 0;
+        $isNumeric = true;
+        foreach ($products as $product) {
+            $total += $product['total'];
+            $quantity += $product['quantity'];
+            if (false === is_numeric($product['product']['isNumeric'])) {
+                $isNumeric = false;
+            }
+        }
+
+        $this->cart->setNumeric($isNumeric);
+        $this->cart->setTotal($total);
+        $this->cart->setQuantity($quantity);
+    }
+
+    // Validates cart
+    public function validate(Request $request): array
+    {
+        $this->define();
+
+        $data = $request->request->all();
+        $this->cart->setEmail($data['email']);
+        if (isset($data['address'])) {
+            $this->cart->setAddress(
+                [
+                    "address" => $data['address'],
+                    "city" => $data['city'],
+                    "zip" => $data['zip'],
+                    "country" => $data['country'],
+                    ]
+                );
+        }
+        $this->cart->setStatus('validated');
+
+        $this->saveSession();
+        $this->saveDatabase();
+
+        return [
+            'identifiant' => $this->cart->getIdentifiant(),
+            'email' => $this->cart->getEmail(),
+            'total' => $this->cart->getTotal(),
+            'currency' => $this->cart->getCurrency(),
+        ];
     }
 }
