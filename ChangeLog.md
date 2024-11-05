@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.1
+
+- Corrected Cart entity (05/11/2024)
+
 ## v0.3
 
 - Added Cart actions (05/11/2024)
