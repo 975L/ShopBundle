@@ -31,10 +31,10 @@ class Cart
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, nullable: true)]
     private ?array $address = null;
 
     #[ORM\Column]
