@@ -1,0 +1,8 @@
+{% if cart.total > 0 %}
+    <section>
+        <h2 id="validate">Valider le panier</h2>
+        <p class="text-center">Moyens de paiement</p>
+        <twig:c975LSite:Image:Image src="{{ asset('bundles/c975lshop/images/cb_visa_mastercard.png') }}" width="auto" height="auto"/>
+        <twig:c975LShop:Cart:Coordinates cart="{{ cart }}"/>
+    </section>
+{% endif %}

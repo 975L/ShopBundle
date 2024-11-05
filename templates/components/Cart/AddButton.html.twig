@@ -1,0 +1,6 @@
+{# <twig:c975LShop:Cart:AddButton product="{{ product }}" [type="primary"] [quantity="1"]/> #}
+{% set type = type | default('primary') %}
+{% set quantity = quantity | default(1) %}
+<button data-action="click->cart#add" data-quantity="{{ quantity }}" data-productId="{{ product.id }}" class="btn btn-{{ type }}">
+    -> Panier
+</button>

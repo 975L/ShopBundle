@@ -6,7 +6,14 @@
  * with this source code in the file LICENSE.
  */
 
+ /* TYPOGRAPHY */
+.delete-link {
+    color: rgb(86, 86, 86);
+    text-decoration: underline;
+    cursor:pointer;
+}
 
+/* PRODUCTS */
 .products {
     display: flex;
 }
@@ -16,6 +23,7 @@
     box-shadow: var(--box-shadow);
     padding: 10px;
     border-radius: 10px;
+    text-align: center;
 }
 
 .product h2 {
@@ -29,8 +37,8 @@
 .price {
     text-align: center;
     font-weight: bold;
-    font-size: 2em;
-    margin: 0 auto;
+    font-size: 1em;
+    margin: 0 auto 0.5em auto;
     font-family: var(--font-family-body);
 }
 
@@ -38,4 +46,24 @@
     width: 150px;
     height: 150px;
     object-fit: cover;
+}
+
+/* CART */
+button span {
+    font-family: var(--font-family-title);
+    color: white;
+}
+
+th {
+    padding: 0 auto 0.5em auto;
+    font-size: 1em;
+}
+
+/* ANIMATIONS */
+@keyframes zoom {
+    from { transform: scale(1); }
+    to { transform: scale(0.5); }
+}
+.zoom-animation {
+    animation: zoom 2s linear;
 }

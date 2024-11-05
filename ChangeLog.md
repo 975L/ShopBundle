@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3
+
+- Added Cart actions (05/11/2024)
+
 ## v0.2
 
 - Revival of Bundle (26/09/2024)

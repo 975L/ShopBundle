@@ -11,6 +11,7 @@
         <p class="text-center lead">{{ product.description }}</p>
         <twig:c975LShop:Product:Price product="{{ product }}"/>
         <twig:c975LShop:Cart:Add product="{{ product }}"/>
-        <twig:c975LSite:Button:Button type="secondary" label="Tous les produits" url="{{ path('product_index') }}"/>
+        <twig:c975LShop:Cart:ViewButton/>
+        <twig:c975LShop:Shop:ViewButton/>
     </section>
 {% endblock %}

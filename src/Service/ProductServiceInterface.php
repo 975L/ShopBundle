@@ -10,7 +10,5 @@ interface ProductServiceInterface
 
     public function findAllPaginated($query);
 
-    public function findOneRandom(): Product;
-
     public function findOneById(int $id): Product;
 }
