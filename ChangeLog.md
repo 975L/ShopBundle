@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.4
+
+- Added FormType (06/11/2024)
+- Added address fields as independant fields (06/11/2024)
+- Added removal of a product (06/11/2024)
+- Added translations (06/11/2024)
+- Renamed Cart to Basket (06/11/2024)
+
 ## v0.3.1
 
 - Corrected Cart entity (05/11/2024)

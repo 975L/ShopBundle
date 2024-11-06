@@ -1,9 +1,10 @@
 {% extends 'layout.html.twig' %}
+{% trans_default_domain 'shop' %}
 
 {# Defines specific variables #}
-{% set title = 'Magasin' %}
-{% set description = 'Liste des produits' %}
+{% set title = 'label.shop'|trans %}
+{% set description = 'label.all_our_products'|trans %}
 
 {% block content %}
-    <twig:c975LShop:Cart:Cart products="{{ products }}"/>
+    <twig:c975LShop:Shop:Products products="{{ products }}"/>
 {% endblock %}

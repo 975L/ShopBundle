@@ -1,0 +1,15 @@
+{# <twig:c975LShop:Basket:Validation basket="{{ basket }}" form="{{ form }}"/> #}
+{% if basket.total > 0 %}
+    <section>
+        <h2 id="validate">{{ 'label.validate_basket'|trans({}, 'shop') }}</h2>
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <div>
+                <input type="submit" class="btn btn-primary" value="{{ 'label.proceed_payment'|trans({}, 'shop') }} {{ (basket.total / 100)|number_format(2) }} {{ basket.currency }}"/>
+            </div>
+            <p class="text-muted">
+                {{ 'label.mandatory_field'|trans({}, 'services') }}
+            </p>
+        {{ form_end(form) }}
+    </section>
+{% endif %}
