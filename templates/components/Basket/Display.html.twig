@@ -1,0 +1,3 @@
+{# <twig:c975LShop:Basket:Display basket="{{ basket }}" [type="simple|complex"]/> #}
+{% set type = type | default('simple') %}
+<twig:c975LShop:Basket:Products basket="{{ basket }}" type="{{ type }}"/>

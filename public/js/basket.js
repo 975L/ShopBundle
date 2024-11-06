@@ -5,17 +5,20 @@ export default class extends Controller {
 
     // Gets data from Symfony controller
     connect() {
-        fetch(`/cart/total`, {
-            method: "GET",
-        })
-        .then(response => response.json())
-        .then(data => {
-//            this.totalTarget.textContent = (data.total / 100).toFixed(2);
-//            this.quantityTarget.textContent = data.quantity;
-        })
+        // check if total Target exist
+        if (this.hasTotalTarget && this.hasQuantityTarget) {
+            fetch("/basket/total", {
+                method: "GET",
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                this.totalTarget.textContent = (data.total / 100).toFixed(2);
+                this.quantityTarget.textContent = data.quantity;
+            });
+        }
     }
 
-    // Adds a product to the cart
+    // Adds a product to the basket
     add(event) {
         // Deletes the info message but keeps the space
         this.messageTarget.innerHTML = "&nbsp;";
@@ -40,17 +43,35 @@ export default class extends Controller {
         }, 500);
     }
 
-    // Deletes the cart
+    // Deletes the basket
     delete() {
-        fetch('/cart', { method: 'DELETE' })
+        fetch("/basket", { method: "DELETE" })
         .then(() => {
+            window.location.reload();
+        });
+    }
+
+    // Deletes the product
+    deleteProduct(event) {
+        fetch("/basket/delete", {
+            method: "DELETE",
+            body: JSON.stringify({
+                id: event.currentTarget.dataset.productid,
+                quantity: 0,
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
             window.location.reload();
         });
     }
 
     // Fetches data to Symfony controller
     fetchData(target) {
-        fetch(`/cart`, {
+        fetch("/basket", {
             method: "POST",
             body: JSON.stringify({
                 id: target.dataset.productid,
@@ -67,7 +88,7 @@ export default class extends Controller {
             } else {
                 this.messageTarget.classList.add("alert");
                 this.messageTarget.classList.add("alert-info");
-                this.messageTarget.textContent = "Produit ajouté au panier !";
+                this.messageTarget.textContent = "Produit ajouté !";
                 this.update(data);
                 setTimeout(() => {
                     target.textContent = "-> Panier (" + data.productQuantity + ")";

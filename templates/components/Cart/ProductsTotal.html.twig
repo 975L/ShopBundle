@@ -1,8 +1,0 @@
-{% if type == "complex" and product.product.vat > 0 %}
-    Prix HT : {{ (product.total / 100 - product.totalVat)|number_format(2) }} {{ product.product.currency }}<br>
-    Taux TVA : {{ product.product.vat|number_format(2) }} %<br>
-    TVA : {{ product.totalVat|number_format(2) }} {{ product.product.currency }}<br>
-    <strong>Prix TTC : {{ (product.total / 100)|number_format(2) }} {{ product.product.currency }}</strong>
-{% else %}
-    <strong>{{ (product.total / 100)|number_format(2) }} {{ product.product.currency }}</strong>
-{% endif %}

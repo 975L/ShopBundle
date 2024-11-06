@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="en" datatype="plaintext" original="contactForm.en.xlf">
+        <body>
+            <trans-unit id="1">
+                <source>label.email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>placeholder.email</source>
+                <target>My email</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>label.address</source>
+                <target>Address</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>placeholder.address</source>
+                <target>My address</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>label.city</source>
+                <target>City</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>placeholder.city</source>
+                <target>My city</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>label.zip</source>
+                <target>Zip code</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>placeholder.zip</source>
+                <target>My zip code</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>label.country</source>
+                <target>Country</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>placeholder.country</source>
+                <target>My country</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>label.product_added</source>
+                <target>Message sent</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>label.all_our_products</source>
+                <target>Find all our products</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>label.shop</source>
+                <target>Shop</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>label.delete</source>
+                <target>Delete</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>label.empty_basket</source>
+                <target>Empty the basket</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>label.validate_basket</source>
+                <target>Validate the basket</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>label.basket</source>
+                <target>Basket</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>label.proceed_payment</source>
+                <target>Proceed to payment of</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>label.total</source>
+                <target>Total</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>label.product</source>
+                <target>Product</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>label.price</source>
+                <target>Price</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>label.quantity</source>
+                <target>Quantity</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>label.basket_empty</source>
+                <target>Your basket is empty</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>label.continue_shopping</source>
+                <target>Continue shopping</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

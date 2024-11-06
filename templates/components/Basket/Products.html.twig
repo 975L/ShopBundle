@@ -1,0 +1,26 @@
+{# <twig:c975LShop:Basket:Products basket="{{ basket }}" [type="simple|complex"]"/> #}
+{% if basket.total > 0 %}
+    <table>
+        <thead>
+            <tr>
+                <th>{{ 'label.product'|trans({}, 'shop') }}</th>
+                <th>{{ 'label.price'|trans({}, 'shop') }}</th>
+                <th>{{ 'label.quantity'|trans({}, 'shop') }}</th>
+                <th>{{ 'label.total'|trans({}, 'shop') }}</th>
+            </tr>
+        </thead>
+        {% for product in basket.products %}
+            <twig:c975LShop:Basket:Product product="{{ product.product }}" quantity="{{ product.quantity }}" total="{{ product.total }}" totalVat="{{ product.totalVat }}" type="{{ type }}"/>
+        {% endfor %}
+        <tfoot>
+            <tr>
+                <td>{{ 'label.total'|trans({}, 'shop') }}</td>
+                <td></td>
+                <td>{{ basket.quantity }}</td>
+                <td>{{ (basket.total / 100)|number_format(2) }} {{ basket.currency }}</td>
+            </tr>
+        </tfoot>
+    </table>
+{% else %}
+    <p class="text text-center lead">{{ 'label.basket_empty'|trans({}, 'shop') }}   </p>
+{% endif %}

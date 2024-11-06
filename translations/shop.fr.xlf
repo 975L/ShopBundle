@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="fr" datatype="plaintext" original="contactForm.en.xlf">
+        <body>
+            <trans-unit id="1">
+                <source>label.email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>placeholder.email</source>
+                <target>Mon email</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>label.address</source>
+                <target>Adresse</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>placeholder.address</source>
+                <target>Mon adresse</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>label.city</source>
+                <target>Ville</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>placeholder.city</source>
+                <target>Ma ville</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>label.zip</source>
+                <target>Code postal</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>placeholder.zip</source>
+                <target>Mon code postal</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>label.country</source>
+                <target>Ville</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>placeholder.country</source>
+                <target>Ma ville</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>label.product_added</source>
+                <target>Produit ajouté</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>label.all_our_products</source>
+                <target>Retrouvez tous nos produits</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>label.shop</source>
+                <target>Magasin</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>label.delete</source>
+                <target>Supprimer</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>label.empty_basket</source>
+                <target>Vider le panier</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>label.validate_basket</source>
+                <target>Valider le panier</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>label.basket</source>
+                <target>Panier</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>label.proceed_payment</source>
+                <target>Procéder au paiement de</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>label.total</source>
+                <target>Total</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>label.product</source>
+                <target>Produit</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>label.price</source>
+                <target>Prix</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>label.quantity</source>
+                <target>Quantité</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>label.basket_empty</source>
+                <target>Votre panier est vide</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>label.continue_shopping</source>
+                <target>Poursuivre les achats</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

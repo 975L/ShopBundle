@@ -48,7 +48,7 @@
     object-fit: cover;
 }
 
-/* CART */
+/* BASKET */
 button span {
     font-family: var(--font-family-title);
     color: white;
@@ -59,11 +59,16 @@ th {
     font-size: 1em;
 }
 
+td {
+    padding: 0;
+}
+
 /* ANIMATIONS */
 @keyframes zoom {
     from { transform: scale(1); }
     to { transform: scale(0.5); }
 }
+
 .zoom-animation {
     animation: zoom 2s linear;
 }

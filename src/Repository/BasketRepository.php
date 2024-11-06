@@ -2,22 +2,22 @@
 
 namespace c975L\ShopBundle\Repository;
 
-use c975L\ShopBundle\Entity\Cart;
+use c975L\ShopBundle\Entity\Basket;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Cart>
+ * @extends ServiceEntityRepository<Basket>
  */
-class CartRepository extends ServiceEntityRepository
+class BasketRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Cart::class);
+        parent::__construct($registry, Basket::class);
     }
 
     //    /**
-    //     * @return Cart[] Returns an array of Cart objects
+    //     * @return Basket[] Returns an array of Basket objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class CartRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Cart
+    //    public function findOneBySomeField($value): ?Basket
     //    {
     //        return $this->createQueryBuilder('c')
     //            ->andWhere('c.exampleField = :val')
