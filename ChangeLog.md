@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5
+
+- Finalized payment process (07/11/2024)
+- Added empty and validated baskets (07/11/2024)
+
 ## v0.4
 
 - Added FormType (06/11/2024)

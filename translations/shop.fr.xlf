@@ -98,6 +98,22 @@
                 <source>label.continue_shopping</source>
                 <target>Poursuivre les achats</target>
             </trans-unit>
+            <trans-unit id="25">
+                <source>label.basket_validated</source>
+                <target>Panier validé</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>label.thanks_shopping</source>
+                <target>Merci pour vos achats !</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>label.follow_up</source>
+                <target>Nous allons y donner suite très rapidement.</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>label.confirmation_email_sent</source>
+                <target>Un email de confirmation vous a été envoyé.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

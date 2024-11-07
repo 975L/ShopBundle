@@ -1,4 +1,4 @@
-{# <twig:c975LShop:Basket:Products basket="{{ basket }}" [type="simple|complex"]"/> #}
+{# <twig:c975LShop:Basket:Products basket="{{ basket }}" [type="simple|complex"]" readonly="true"/> #}
 {% if basket.total > 0 %}
     <table>
         <thead>
@@ -10,7 +10,7 @@
             </tr>
         </thead>
         {% for product in basket.products %}
-            <twig:c975LShop:Basket:Product product="{{ product.product }}" quantity="{{ product.quantity }}" total="{{ product.total }}" totalVat="{{ product.totalVat }}" type="{{ type }}"/>
+            <twig:c975LShop:Basket:Product product="{{ product.product }}" quantity="{{ product.quantity }}" total="{{ product.total }}" totalVat="{{ product.totalVat }}" type="{{ type }}" readonly="{{ readonly }}"/>
         {% endfor %}
         <tfoot>
             <tr>

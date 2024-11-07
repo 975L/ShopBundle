@@ -46,27 +46,31 @@ class BasketController extends AbstractController
 
     // DISPLAY
     #[Route(
-        '/basket',
+        '/basket/display',
         name: 'basket_display',
         methods: ['GET', 'POST']
     )]
-    public function display(Request $request): Response
+    public function display(Request $request)
     {
         $basket = $this->basketService->get();
 
+        // Empty basket
+        if (null === $basket) {
+            return $this->render('@c975LShop/basket/empty.html.twig');
+        }
+
         //Defines form
         $form = $this->basketService->createForm('coordinates', $basket);
-        $form->handleRequest($request);
 
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            dd($form->getData());
-            $redirectUrl = $this->contactFormService->sendEmail($form);
-            if (null !== $redirectUrl) {
-                return $this->redirect($redirectUrl);
+            $url = $this->basketService->validate($request);
+            if (null !== $url) {
+                return $this->redirect($url, Response::HTTP_SEE_OTHER);
             }
         }
 
-        //Renders the form
+        //Renders the page
         return $this->render('@c975LShop/basket/display.html.twig', [
             'form' => $form->createView(),
             'basket' => $basket,
@@ -84,25 +88,29 @@ class BasketController extends AbstractController
         return new JsonResponse($this->basketService->delete());
     }
 
-        // DELETE PRODUCT
-        #[Route(
-            '/basket/delete',
-            name: 'basket_product_delete',
-            methods: ['DELETE']
-        )]
-        public function remove(Request $request): JsonResponse
-        {
-            return new JsonResponse($this->basketService->deleteProduct($request));
-        }
-
-    // VALIDATE
+    // DELETE PRODUCT
     #[Route(
-        '/basket/validate',
-        name: 'basket_validate',
-        methods: ['POST']
+        '/basket/delete',
+        name: 'basket_product_delete',
+        methods: ['DELETE']
     )]
-    public function validate(Request $request): JsonResponse
+    public function remove(Request $request): JsonResponse
     {
-        return new JsonResponse($this->basketService->validate($request));
+        return new JsonResponse($this->basketService->deleteProduct($request));
+    }
+
+    // VALIDATED
+    #[Route(
+        '/basket/validated',
+        name: 'basket_validated',
+        methods: ['GET']
+    )]
+    public function validated(Request $request): Response
+    {
+        $basket = $this->basketService->validated();
+
+        return $this->render('@c975LShop/basket/validated.html.twig', [
+            'basket' => $basket,
+        ]);
     }
 }

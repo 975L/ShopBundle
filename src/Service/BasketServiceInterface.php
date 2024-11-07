@@ -10,27 +10,25 @@ interface BasketServiceInterface
 {
     public function add(Request $request): array;
 
-    public function create(): void;
+    public function create(): Basket;
 
     public function createForm(string $name, Basket $basket): Form;
+
+    public function createPayment(bool $live): void;
+
+    public function createStripeSession(): array;
 
     public function delete(): array;
 
     public function deleteProduct(Request $request): array;
 
-    public function deleteSession(): void;
-
-    public function define(): void;
-
-    public function get(): Basket;
+    public function get(): ?Basket;
 
     public function getTotal(): array;
 
     public function updateTotals(): void;
 
-    public function saveDatabase(): void;
+    public function validate(Request $request): string;
 
-    public function saveSession(): void;
-
-    public function validate(Request $request): array;
+    public function validated(): ?Basket;
 }
