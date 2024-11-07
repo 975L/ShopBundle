@@ -260,8 +260,7 @@ class BasketService implements BasketServiceInterface
             $this->em->flush();
 
             // TODO send email
-
-
+            // TODO listen to Stripe webhook
 
             $this->session->remove('basket');
         }

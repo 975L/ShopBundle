@@ -105,12 +105,10 @@ class BasketController extends AbstractController
         name: 'basket_validated',
         methods: ['GET']
     )]
-    public function validated(Request $request): Response
+    public function validated(): Response
     {
-        $basket = $this->basketService->validated();
-
         return $this->render('@c975LShop/basket/validated.html.twig', [
-            'basket' => $basket,
+            'basket' => $this->basketService->validated(),
         ]);
     }
 }

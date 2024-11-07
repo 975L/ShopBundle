@@ -1,4 +1,4 @@
-{# <twig:c975LShop:Basket:Display basket="{{ basket }}" [type="simple|complex"] [readonly="true"]/> #}
+{# <twig:c975LShop:Basket:Display basket="{{ basket }}" [type="simple|complex"]/> #}
 {% set type = type | default('simple') %}
 {% set readonly = readonly | default(false) %}
-<twig:c975LShop:Basket:Products basket="{{ basket }}" type="{{ type }}" readonly="{{ readonly }}"/>
+<twig:c975LShop:Basket:Products basket="{{ basket }}" type="{{ type }}"/>
