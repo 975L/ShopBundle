@@ -26,7 +26,7 @@ class Basket
     #[ORM\Column(length: 40)]
     #[Assert\NotBlank]
     #[Assert\Length(min:40, max: 40)]
-    private ?string $identifiant = null;
+    private ?string $identifier = null;
 
     #[ORM\Column]
     private array $products = [];
@@ -34,6 +34,9 @@ class Basket
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank]
     private ?string $status = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $paymentIdentifier = null;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $email = null;
@@ -66,6 +69,9 @@ class Basket
     #[ORM\Column]
     private ?bool $isNumeric = null;
 
+    #[ORM\OneToOne(inversedBy: 'basket', cascade: ['persist', 'remove'])]
+    private ?Payment $payment = null;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation = null;
 
@@ -77,14 +83,14 @@ class Basket
         return $this->id;
     }
 
-    public function getIdentifiant(): string
+    public function getIdentifier(): string
     {
-        return $this->identifiant;
+        return $this->identifier;
     }
 
-    public function setIdentifiant(string $identifiant): static
+    public function setIdentifier(string $identifier): static
     {
-        $this->identifiant = $identifiant;
+        $this->identifier = $identifier;
 
         return $this;
     }
@@ -106,9 +112,21 @@ class Basket
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(?string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getPaymentIdentifier(): ?string
+    {
+        return $this->paymentIdentifier;
+    }
+
+    public function setPaymentIdentifier(?string $paymentIdentifier): static
+    {
+        $this->paymentIdentifier = $paymentIdentifier;
 
         return $this;
     }
@@ -241,6 +259,18 @@ class Basket
     public function setModification(\DateTimeInterface $modification): static
     {
         $this->modification = $modification;
+
+        return $this;
+    }
+
+    public function getPayment(): ?Payment
+    {
+        return $this->payment;
+    }
+
+    public function setPayment(?Payment $payment): static
+    {
+        $this->payment = $payment;
 
         return $this;
     }

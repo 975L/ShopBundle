@@ -81,8 +81,8 @@ export default class extends Controller {
                 "Content-Type": "application/json",
             }
         })
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
             if (data.error) {
                 this.messageTarget.textContent = data.error;
             } else {

@@ -98,6 +98,22 @@
                 <source>label.continue_shopping</source>
                 <target>Continue shopping</target>
             </trans-unit>
+            <trans-unit id="25">
+                <source>label.basket_validated</source>
+                <target>Basket validated</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>label.thanks_shopping</source>
+                <target>Thank you for your shopping!</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>label.follow_up</source>
+                <target>We will follow up on this very quickly.</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>label.confirmation_email_sent</source>
+                <target>A confirmation email has been sent to you.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

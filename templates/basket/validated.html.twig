@@ -1,0 +1,19 @@
+{% extends 'layout.html.twig' %}
+{% trans_default_domain 'shop' %}
+
+{# Defines specific variables #}
+{% set title = 'label.basket_validated'|trans %}
+{% set description = 'label.basket_validated'|trans %}
+
+{% block content %}
+    {% if null != basket %}
+        <twig:c975LShop:Basket:ValidatedInfos basket="{{ basket }}"/>
+        <twig:c975LShop:Basket:Display basket="{{ basket }}" readonly="true"/>
+    {% else %}
+        <p class="text text-center lead">{{ 'label.basket_empty'|trans({}, 'shop') }}   </p>
+    {% endif %}
+    <twig:c975LShop:Shop:ViewButton/>
+{% endblock %}
+
+{% block share %}
+{% endblock %}

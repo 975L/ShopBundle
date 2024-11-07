@@ -26,6 +26,7 @@
         "doctrine/orm": "*",
         "easycorp/easyadmin-bundle": "*",
         "knplabs/knp-paginator-bundle": "*",
+        "stripe/stripe-php": "*",
         "symfony/routing": "*",
         "symfony/security-bundle": "*",
         "symfony/translation": "*"
