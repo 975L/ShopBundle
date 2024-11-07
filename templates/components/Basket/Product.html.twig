@@ -1,4 +1,4 @@
-{# <twig:c975LShop:Basket:Product product="{{ product }}" quantity="{{ product.quantity }}" total="{{ product.total }}" type="simple|complex"/readonly="true"> #}
+{# <twig:c975LShop:Basket:Product product="{{ product }}" quantity="{{ product.quantity }}" total="{{ product.total }}" type="simple|complex"  status="{{ basket.status }}"/> #}
 <tr>
     <td>
         <twig:c975LSite:Image:Link src="{{ product.image }}" url="{{ path('product_display', {'slug' : product.slug }) }}" class="img-thumbnail img-square" width="50" height="50"/>
@@ -8,7 +8,7 @@
     <td>{{ quantity }}</td>
     <td>
         <twig:c975LShop:Basket:ProductsTotal product="{{ product }}" total="{{ total }}" totalVat="{{ totalVat }}" type="{{ type }}"/>
-        {% if false == readonly %}
+        {% if "paid" != status %}
             <twig:c975LShop:Basket:DeleteProductLink product="{{ product }}"/>
         {% endif %}
     </td>

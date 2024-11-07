@@ -8,7 +8,7 @@
 {% block content %}
     {% if null != basket %}
         <twig:c975LShop:Basket:ValidatedInfos basket="{{ basket }}"/>
-        <twig:c975LShop:Basket:Display basket="{{ basket }}" readonly="true"/>
+        <twig:c975LShop:Basket:Display basket="{{ basket }}"/>
     {% else %}
         <p class="text text-center lead">{{ 'label.basket_empty'|trans({}, 'shop') }}   </p>
     {% endif %}

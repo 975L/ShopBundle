@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.1
+
+- Added translation domain by default (07/11/2024)
+- Change "readonly" for product and based on basket.status, more accurate (07/11/2024)
+
 ## v0.5
 
 - Finalized payment process (07/11/2024)
