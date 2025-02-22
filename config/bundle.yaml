@@ -24,6 +24,11 @@ c975LShop:
         required: true
         default: ''
         info: "Name for the Email address"
+    currency:
+        type: string
+        required: true
+        default: ''
+        info: "ISO on 3 letters for currency, i.e. eur"
     shipping:
         type: int
         required: true

@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.6.1
+
+- Added shipping by default for basket creation (22/02/2025)
+- Added currency in config (22/02/2025)
+
 ## v0.6
 
 - Added basket number (13/12/2024)

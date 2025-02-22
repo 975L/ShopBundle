@@ -88,7 +88,8 @@ class BasketService implements BasketServiceInterface
         $basket->setIdentifier(hash('sha1', uniqid()));
         $basket->setTotal(0);
         $basket->setQuantity(0);
-        $basket->setCurrency('eur');
+        $basket->setCurrency($this->configService->getParameter('c975LShop.currency'));
+        $basket->setShipping($this->configService->getParameter('c975LShop.shipping'));
         $basket->setCreation(new DateTime());
         $basket->setModification(new DateTime());
         $basket->setStatus('new');
@@ -118,7 +119,7 @@ class BasketService implements BasketServiceInterface
         $payment->setOrderId($now->format('Ymd-His-u'));
         $payment->setBasket($this->basket);
         $payment->setFinished(false);
-        $payment->setAmount($this->basket->getTotal());
+        $payment->setAmount($this->basket->getTotal() + $this->basket->getShipping());
         $payment->setCurrency($this->basket->getCurrency());
         $payment->setDescription($description);
         $payment->setCreation($now);
