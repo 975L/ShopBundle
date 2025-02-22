@@ -1,7 +1,7 @@
 {# <twig:c975LShop:Basket:Product product="{{ product }}" quantity="{{ product.quantity }}" total="{{ product.total }}" type="simple|complex"  status="{{ basket.status }}"/> #}
 <tr class="text-center">
     <td>
-        <twig:c975LSite:Image:Link src="{{ product.image }}" url="{{ absolute_url(path('product_display', {'slug' : product.slug })) }}" class="img-thumbnail img-square" width="50" height="50"/>
+        <twig:c975LSite:Image:Link src="{{ product.image }}" url="{{ url('product_display', {'slug' : product.slug }) }}" class="img-thumbnail img-square" width="50" height="50"/>
         <p>{{ product.title }}</p>
     </td>
     <td>
