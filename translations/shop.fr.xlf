@@ -44,7 +44,7 @@
             </trans-unit>
             <trans-unit id="11">
                 <source>label.product_added</source>
-                <target>Produit ajouté</target>
+                <target>Produit ajouté au panier</target>
             </trans-unit>
             <trans-unit id="12">
                 <source>label.all_our_products</source>
@@ -71,8 +71,8 @@
                 <target>Panier</target>
             </trans-unit>
             <trans-unit id="18">
-                <source>label.proceed_payment</source>
-                <target>Procéder au paiement de</target>
+                <source>label.pay</source>
+                <target>Payer</target>
             </trans-unit>
             <trans-unit id="19">
                 <source>label.total</source>
@@ -113,6 +113,54 @@
             <trans-unit id="28">
                 <source>label.confirmation_email_sent</source>
                 <target>Un email de confirmation vous a été envoyé.</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>label.basket_thanks</source>
+                <target>Nous vous remercions pour votre commande et votre confiance ! Nous allons la traiter dans les meilleurs délais.</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>label.basket_number</source>
+                <target>Votre numéro de commande est le :</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>label.basket_products_reminder</source>
+                <target>Rappel des produits commandés :</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>label.basket_deliver</source>
+                <target>Votre commande sera livrée à l'adresse :</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>label.order_confirmation</source>
+                <target>Confirmation de votre commande</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>label.add</source>
+                <target>Ajouter</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>label.added</source>
+                <target>ajouté !</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>label.secure_payments</source>
+                <target>Paiements sécurisés par Stripe</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>label.back_to_shop</source>
+                <target>Retour au magasin</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>label.shipping</source>
+                <target>Frais de port</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>label.offered</source>
+                <target>Offerts</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>label.shipping_free</source>
+                <target>Offerts pour achats > </target>
             </trans-unit>
         </body>
     </file>

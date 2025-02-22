@@ -28,6 +28,9 @@ class Basket
     #[Assert\Length(min:40, max: 40)]
     private ?string $identifier = null;
 
+    #[ORM\Column(length: 11, nullable: true)]
+    private ?string $number = null;
+
     #[ORM\Column]
     private array $products = [];
 
@@ -56,6 +59,10 @@ class Basket
     #[ORM\Column]
     #[Assert\PositiveOrZero]
     private ?int $total = null;
+
+    #[ORM\Column]
+    #[Assert\PositiveOrZero]
+    private ?int $shipping = null;
 
     #[ORM\Column]
     #[Assert\PositiveOrZero]
@@ -91,6 +98,18 @@ class Basket
     public function setIdentifier(string $identifier): static
     {
         $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getNumber(): ?string
+    {
+        return $this->number;
+    }
+
+    public function setNumber(?string $number): static
+    {
+        $this->number = $number;
 
         return $this;
     }
@@ -199,6 +218,18 @@ class Basket
     public function setTotal(int $total): static
     {
         $this->total = $total;
+
+        return $this;
+    }
+
+    public function getShipping(): ?int
+    {
+        return $this->shipping;
+    }
+
+    public function setShipping(int $shipping): static
+    {
+        $this->shipping = $shipping;
 
         return $this;
     }

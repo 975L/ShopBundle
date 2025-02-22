@@ -10,8 +10,12 @@
         <twig:c975LSite:Slider:Slider slides="{{ product.getMediasNames() }}" id="slider"/>
         <p class="text-center lead">{{ product.description }}</p>
         <twig:c975LShop:Product:Price product="{{ product }}"/>
-        <twig:c975LShop:Basket:AddButton product="{{ product }}"/>
-        <twig:c975LShop:Basket:ViewButton icon="true"/>
-        <twig:c975LShop:Shop:ViewButton/>
+
+        <div data-controller="basket">
+            <twig:c975LShop:Basket:Message/>
+            <twig:c975LShop:Basket:AddButton product="{{ product }}"/>
+            <twig:c975LShop:Basket:ViewButton icon="true" type="secondary" class="black"/>
+        </div>
+        <twig:c975LShop:Basket:ContinueShoppingButton/>
     </section>
 {% endblock %}

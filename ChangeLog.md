@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.6
+
+- Added basket number (13/12/2024)
+- Added email sent to customer (13/12/2024)
+- Added shipping (22/02/2025)
+- Modified styles for products and basket (22/02/2025)
+
 ## v0.5.1
 
 - Added translation domain by default (07/11/2024)

@@ -13,21 +13,32 @@
     cursor:pointer;
 }
 
+.delete-link img {
+    filter: invert(33%) sepia(0%) saturate(0%) hue-rotate(198deg) brightness(90%) contrast(79%);
+}
+
 /* PRODUCTS */
 .products {
     display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+    margin: 0 auto;
 }
 
 .product {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     margin: 10px;
-    box-shadow: var(--box-shadow);
-    padding: 10px;
-    border-radius: 10px;
+    width: 150px;
+    max-width: 42%;
     text-align: center;
 }
 
 .product h2 {
     margin-top: 0;
+    font-size: 1em;
 }
 
 .product form {
@@ -37,7 +48,7 @@
 .price {
     text-align: center;
     font-weight: bold;
-    font-size: 1em;
+    font-size: 0.9em;
     margin: 0 auto 0.5em auto;
     font-family: var(--font-family-body);
 }
@@ -51,7 +62,6 @@
 /* BASKET */
 button span {
     font-family: var(--font-family-title);
-    color: white;
 }
 
 th {
@@ -61,7 +71,13 @@ th {
 
 td {
     padding: 0;
+    width: 50%;
 }
+
+tfoot th {
+    border-bottom: none;
+}
+
 
 /* ANIMATIONS */
 @keyframes zoom {

@@ -13,7 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 use c975L\ShopBundle\Repository\BasketRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use c975L\ShopBundle\Form\ShopFormFactoryInterface;
+use c975L\ShopBundle\Service\EmailServiceInterface;
 use c975L\ShopBundle\Service\ProductServiceInterface;
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BasketService implements BasketServiceInterface
@@ -24,8 +26,10 @@ class BasketService implements BasketServiceInterface
 
     public function __construct(
         private readonly BasketRepository $basketRepository,
-        private readonly ProductServiceInterface $productService,
+        private readonly ConfigServiceInterface $configService,
         private readonly EntityManagerInterface $em,
+        private readonly EmailServiceInterface $emailService,
+        private readonly ProductServiceInterface $productService,
         private readonly RequestStack $requestStack,
         private readonly ShopFormFactoryInterface $shopFormFactory,
         private readonly UrlGeneratorInterface $urlGenerator
@@ -44,6 +48,10 @@ class BasketService implements BasketServiceInterface
         $productId = $data["id"];
         $quantity = $data["quantity"];
         $product = $this->productService->findOneById($productId);
+
+        if (null === $product) {
+            throw new \Exception('Product not found');
+        }
 
         // Adds product to basket
         if (isset($products[$productId])) {
@@ -137,7 +145,9 @@ class BasketService implements BasketServiceInterface
             ];
         }
 
+        // Creates Stripe Session
         Stripe::setApiKey($_ENV["STRIPE_SECRET"]);
+        Stripe::setApiVersion('2025-01-27.acacia');
         $checkoutSession = StripeSession::create([
             'line_items' => $lineItems,
             'mode' => 'payment',
@@ -170,7 +180,7 @@ class BasketService implements BasketServiceInterface
         ];
     }
 
-    // Deletes prodcut from basket
+    // Deletes product from basket
     public function deleteProduct(Request $request): array
     {
         $this->basket = $this->get();
@@ -208,6 +218,7 @@ class BasketService implements BasketServiceInterface
 
         return [
             'total' => null === $this->basket ? 0 : $this->basket->getTotal(),
+            'currency' => null === $this->basket ? '' : $this->basket->getCurrency(),
             'quantity' => null === $this->basket ? 0 : $this->basket->getQuantity(),
         ];
     }
@@ -215,6 +226,9 @@ class BasketService implements BasketServiceInterface
     // Updates total
     public function updateTotals(): void
     {
+        $shipping = $this->configService->getParameter('c975LShop.shipping');
+        $shippingFree = $this->configService->getParameter('c975LShop.shippingFree');
+
         $products = $this->basket->getProducts();
 
         $total = 0;
@@ -230,6 +244,7 @@ class BasketService implements BasketServiceInterface
 
         $this->basket->setNumeric($isNumeric);
         $this->basket->setTotal($total);
+        $this->basket->setShipping(false === $isNumeric && $total < $shippingFree ? $shipping : 0);
         $this->basket->setQuantity($quantity);
     }
 
@@ -241,6 +256,9 @@ class BasketService implements BasketServiceInterface
         $data = $this->createStripeSession();
         $this->basket->setStatus('validated');
         $this->basket->setPaymentIdentifier($data['id']);
+        $this->basket->setNumber(sprintf('%s%s%05d', date('Y'), date('m'), $this->basket->getId()));
+
+        // Creates payment
         $this->createPayment();
 
         $this->em->persist($this->basket);
@@ -259,8 +277,8 @@ class BasketService implements BasketServiceInterface
             $this->em->persist($this->basket);
             $this->em->flush();
 
-            // TODO send email
-            // TODO listen to Stripe webhook
+            // Sends email
+            $this->emailService->send($this->basket);
 
             $this->session->remove('basket');
         }

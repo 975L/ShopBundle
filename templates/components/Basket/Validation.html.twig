@@ -6,11 +6,15 @@
         {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
             {{ form_widget(form) }}
             <div>
-                <input type="submit" name="submit" class="btn btn-primary" value="{{ 'label.proceed_payment'|trans }} {{ (basket.total / 100)|number_format(2) }} {{ basket.currency }}">
+                <input type="submit" name="submit" class="btn btn-primary" value="{{ 'label.pay'|trans }} {{ ((basket.total + basket.shipping) / 100)|format_currency(basket.currency) }}">
             </div>
+            {# Champ obligatoire #}
             <p class="text-muted">
                 {{ 'label.mandatory_field'|trans({}, 'services') }}
             </p>
         {{ form_end(form) }}
+        {# Paiement sécurisé #}
+        <twig:c975LSite:Image:Image src="bundles/c975lshop/images/powered_by_stripe.png" width="149" height="41"/>
+        <p class="text-center">{{ 'label.secure_payments'|trans({}, 'shop') }}</p>
     </section>
 {% endif %}

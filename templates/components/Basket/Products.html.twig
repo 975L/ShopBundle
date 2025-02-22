@@ -2,26 +2,29 @@
 {% trans_default_domain 'shop' %}
 {% if basket.total > 0 %}
     <table>
-        <thead>
-            <tr>
-                <th>{{ 'label.product'|trans }}</th>
-                <th>{{ 'label.price'|trans }}</th>
-                <th>{{ 'label.quantity'|trans }}</th>
-                <th>{{ 'label.total'|trans }}</th>
-            </tr>
-        </thead>
+        {# Products #}
         {% for product in basket.products %}
             <twig:c975LShop:Basket:Product product="{{ product.product }}" quantity="{{ product.quantity }}" total="{{ product.total }}" totalVat="{{ product.totalVat }}" type="{{ type }}" status="{{ basket.status }}"/>
         {% endfor %}
+        {# Frais de port #}
+        {% if basket.isNumeric == false %}
+            <tr>
+                <td>
+                    {{ 'label.shipping'|trans }}
+                    <br>
+                    {{ 'label.shipping_free'|trans ~ (config('c975LShop.shippingFree') / 100)|format_currency(basket.currency) }}
+                </td>
+                <td>{{ basket.shipping > 0 ? (basket.shipping / 100)|format_currency(basket.currency) : 'label.offered'|trans }}</td>
+            </tr>
+        {% endif %}
+        {# Total #}
         <tfoot>
             <tr>
-                <td>{{ 'label.total'|trans }}</td>
-                <td></td>
-                <td>{{ basket.quantity }}</td>
-                <td>{{ (basket.total / 100)|number_format(2) }} {{ basket.currency }}</td>
+                <th>{{ 'label.total'|trans }}</th>
+                <th>{{ ((basket.total + basket.shipping) / 100)|format_currency(basket.currency) }}<br>(x {{ basket.quantity }})</th>
             </tr>
         </tfoot>
     </table>
 {% else %}
-    <p class="text text-center lead">{{ 'label.basket_empty'|trans }}   </p>
+    <p class="text text-center lead">{{ 'label.basket_empty'|trans }}</p>
 {% endif %}

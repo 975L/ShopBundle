@@ -10,9 +10,6 @@ services:
     c975L\ShopBundle\Form\:
         resource: '../src/Form/*'
 
-#    c975L\ShopBundle\Security\:
-#        resource: '../src/Security/*'
-
     c975L\ShopBundle\Repository\:
         resource: '../src/Repository/*'
 

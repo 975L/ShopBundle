@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<xliff version="1.2"
+    xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" target-language="en" datatype="plaintext" original="contactForm.en.xlf">
         <body>
             <trans-unit id="1">
@@ -44,7 +45,7 @@
             </trans-unit>
             <trans-unit id="11">
                 <source>label.product_added</source>
-                <target>Message sent</target>
+                <target>Product added to basket</target>
             </trans-unit>
             <trans-unit id="12">
                 <source>label.all_our_products</source>
@@ -71,8 +72,8 @@
                 <target>Basket</target>
             </trans-unit>
             <trans-unit id="18">
-                <source>label.proceed_payment</source>
-                <target>Proceed to payment of</target>
+                <source>label.pay</source>
+                <target>Pay</target>
             </trans-unit>
             <trans-unit id="19">
                 <source>label.total</source>
@@ -113,6 +114,54 @@
             <trans-unit id="28">
                 <source>label.confirmation_email_sent</source>
                 <target>A confirmation email has been sent to you.</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>label.basket_thanks</source>
+                <target>Thank you for your order and your trust! We will process it as soon as possible.</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>label.basket_number</source>
+                <target>Your order number is:</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>label.basket_products_reminder</source>
+                <target>Recall of ordered products:</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>label.basket_deliver</source>
+                <target>Your order will be delivered to the address:</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>label.order_confirmation</source>
+                <target>Confirmation of your order</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>label.add</source>
+                <target>Add</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>label.added</source>
+                <target>added!</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>label.secure_payments</source>
+                <target>Secure payments by Stripe</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>label.back_to_shop</source>
+                <target>Back to shop</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>label.shipping</source>
+                <target>Shipping costs</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>label.offered</source>
+                <target>Offered</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>label.shipping_free</source>
+                <target>Offered for purchases > </target>
             </trans-unit>
         </body>
     </file>
