@@ -2,15 +2,16 @@
 {% set type = type | default('primary') %}
 {% set inline = inline | default(false) %}
 {% set icon = icon | default('') %}
+{% set class = class | default('white') %}
 {% if inline == false %}
-    <p class="text-center">
+    <p class="text-center" id="basket-button">
 {% endif %}
     <a href="{{ path('basket_display') }}" role="button">
         <button class="btn btn-{{ type }}">
             {% if icon == "true" %}
-                <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="16" height="16" class="white"/>
+                <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="16" height="16" class="{{ class }}"/>
             {% endif %}
-            {{ 'label.basket'|trans({}, 'shop') }} : <span data-basket-target="total">0</span> € (<span data-basket-target="quantity">0</span>)
+            {{ 'label.basket'|trans({}, 'shop') }} : <span data-basket-target="total"></span> <span data-basket-target="currency"></span> (x <span data-basket-target="quantity"></span>)
         </button>
     </a>
 {% if inline == false %}

@@ -1,7 +1,7 @@
  import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-    static targets = [ "quantity", "total", "message" ]
+    static targets = [ "quantity", "total", "message", "currency" ]
 
     // Gets data from Symfony controller
     connect() {
@@ -12,16 +12,15 @@ export default class extends Controller {
             })
             .then((response) => response.json())
             .then((data) => {
-                this.totalTarget.textContent = (data.total / 100).toFixed(2);
-                this.quantityTarget.textContent = data.quantity;
+                this.update(data);
             });
         }
     }
 
     // Adds a product to the basket
     add(event) {
-        // Deletes the info message but keeps the space
-        this.messageTarget.innerHTML = "&nbsp;";
+        // Removes message
+        this.removeMessage();
 
         //Adds an animation to clicked button
         this.animation(event.currentTarget);
@@ -32,7 +31,6 @@ export default class extends Controller {
 
     // Adds an animation to the clicked button
     animation(clickedButton) {
-        clickedButton.textContent = "Ajout";
         clickedButton.classList.remove("btn-primary");
         clickedButton.classList.add("btn-secondary");
         clickedButton.classList.add("zoom-animation");
@@ -84,22 +82,50 @@ export default class extends Controller {
         .then((response) => response.json())
         .then((data) => {
             if (data.error) {
-                this.messageTarget.textContent = data.error;
+                this.displayMessage(data.error, "alert-danger");
             } else {
-                this.messageTarget.classList.add("alert");
-                this.messageTarget.classList.add("alert-info");
-                this.messageTarget.textContent = "Produit ajouté !";
+                this.displayMessage(target.dataset.title + " " + target.dataset.added, "alert-info");
                 this.update(data);
-                setTimeout(() => {
-                    target.textContent = "-> Panier (" + data.productQuantity + ")";
-                }, 500);
             }
         })
     }
 
+    // Removes the alert this.messageTarget if exist
+    removeMessage() {
+        if (this.hasMessageTarget) {
+            this.messageTarget.classList.remove("alert");
+            this.messageTarget.classList.remove("alert-info");
+            this.messageTarget.classList.remove("alert-danger");
+            this.messageTarget.textContent = "";
+        }
+    }
+
+    // Displays a message
+    displayMessage(message, alertClass) {
+        this.messageTarget.classList.add("alert");
+        this.messageTarget.classList.add(alertClass);
+        this.messageTarget.textContent = message;
+    }
+
     // Updates total and quantity
     update(data) {
+        const basketButton = document.getElementById("basket-button");
+        basketButton.style.display = "block";
+
+        // Hides the element basket-button if total = 0
+        if (data.total === 0) {
+            basketButton.style.display = "none";
+
+            return;
+        }
+
         this.totalTarget.textContent = (data.total / 100).toFixed(2);
+        const currencies = {
+            "eur": "€",
+            "usd": "$",
+            "gbp": "£",
+        }
+        this.currencyTarget.textContent = currencies[data.currency ? data.currency : "EUR"];
         this.quantityTarget.textContent = data.quantity;
     }
 }

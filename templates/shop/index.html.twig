@@ -6,5 +6,10 @@
 {% set description = 'label.all_our_products'|trans %}
 
 {% block content %}
-    <twig:c975LShop:Shop:Products products="{{ products }}"/>
+    <div data-controller="basket">
+        <p class="text text-center lead">{{ 'label.all_our_products'|trans({}, 'shop') }}</p>
+        <twig:c975LShop:Basket:Message/>
+        <twig:c975LShop:Product:Products products="{{ products }}"/>
+        <twig:c975LShop:Basket:ViewButton icon="true" type="secondary" class="black"/>
+    </div>
 {% endblock %}

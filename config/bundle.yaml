@@ -1,0 +1,36 @@
+c975LShop:
+    roleNeeded:
+        type: string
+        required: true
+        default: ROLE_ADMIN
+        info: "User's role needed to enable access to data linked to SiteBundle: i.e. ROLE_ADMIN (default)"
+    from:
+        type: string
+        required: true
+        default: ''
+        info: "Email address from which the emails are sent"
+    fromName:
+        type: string
+        required: true
+        default: ''
+        info: "Name for the Email address From"
+    replyTo:
+        type: string
+        required: true
+        default: ''
+        info: "Email address for replies"
+    replyToName:
+        type: string
+        required: true
+        default: ''
+        info: "Name for the Email address"
+    shipping:
+        type: int
+        required: true
+        default: 0
+        info: "Amount in cents for shipping"
+    shippingFree:
+        type: int
+        required: true
+        default: 0
+        info: "Amount in cents at which shipping is offered"

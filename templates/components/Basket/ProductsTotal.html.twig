@@ -1,11 +1,11 @@
 {# <twig:c975LShop:Basket:ProductsTotal product="{{ product }}" type="simple|complex"/> #}
-<div class="text-right">
+<div>
     {% if type == "complex" %}
-        Prix HT : {{ (total / 100 - totalVat)|number_format(2) }} {{ product.currency }}<br>
+        Prix HT : {{ (total / 100 - totalVat)|format_currency(product.currency) }}<br>
         Taux TVA : {{ product.vat|number_format(2) }} %<br>
-        TVA : {{ totalVat|number_format(2) }} {{ product.currency }}<br>
-        <strong>Prix TTC : {{ (total / 100)|number_format(2) }} {{ product.currency }}</strong>
+        TVA : {{ totalVat|format_currency(product.currency) }}<br>
+        <strong>Prix TTC : {{ (total / 100)|format_currency(product.currency) }}</strong>
     {% else %}
-        <strong>{{ (total / 100)|number_format(2) }} {{ product.currency }}</strong>
+        <strong>{{ (total / 100)|format_currency(product.currency) }}</strong>
     {% endif %}
 </div>
