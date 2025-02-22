@@ -124,7 +124,7 @@ export default class extends Controller {
             "eur": "€",
             "usd": "$",
             "gbp": "£",
-        }
+        };
         this.currencyTarget.textContent = currencies[data.currency ? data.currency : "EUR"];
         this.quantityTarget.textContent = data.quantity;
     }
