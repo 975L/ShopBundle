@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.7
+
+- Added "shop/" to product url  (01/03/2025)
+- Corrected translation for country (01/03/2025)
+- Changed Product field isNumeric to file (01/03/2025)
+- Renamed table stripe_payment to shop_stripe_payment (01/03/2025)
+- Suppressed description from Payment as not useful (01/03/2025)
+- Renamed Payment->orderId to number as in basket (01/03/2025)
+- Added management of shop (made use of word management instaed of admin as less used) (01/03/2025)
+
 ## v0.6.2
 
 - Added link to product from its title (22/02/2025)

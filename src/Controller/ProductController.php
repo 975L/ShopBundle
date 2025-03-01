@@ -22,7 +22,7 @@ class ProductController extends AbstractController
 
     // DISPLAY
     #[Route(
-        '/products/{slug:product}',
+        '/shop/products/{slug:product}',
         name: 'product_display',
         requirements: ['slug' => '^([a-zA-Z0-9\-]*)'],
         methods: ['GET']
