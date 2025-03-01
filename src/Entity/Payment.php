@@ -10,11 +10,11 @@
 namespace c975L\ShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use c975L\PaymentBundle\Repository\PaymentRepository;
+use c975L\ShopBundle\Repository\PaymentRepository;
 use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: PaymentRepository::class)]
-#[ORM\Table(name: 'stripe_payment')]
+#[ORM\Table(name: 'shop_stripe_payment')]
 class Payment
 {
     #[ORM\Id]
@@ -26,13 +26,10 @@ class Payment
     private ?bool $isFinished = false;
 
     #[ORM\Column(length: 48)]
-    private ?string $orderId = null;
+    private ?string $number = null;
 
     #[ORM\Column]
     private ?int $amount = null;
-
-    #[ORM\Column(length: 512)]
-    private ?string $description = null;
 
     #[ORM\Column(length: 3)]
     private ?string $currency = null;
@@ -75,16 +72,16 @@ class Payment
         return $this;
     }
 
-    public function setOrderId(?string $orderId)
+    public function setNumber(?string $number)
     {
-        $this->orderId = $orderId;
+        $this->number = $number;
 
         return $this;
     }
 
-    public function getOrderId(): ?string
+    public function getNumber(): ?string
     {
-        return $this->orderId;
+        return $this->number;
     }
 
     public function setAmount(?int $amount)
@@ -97,18 +94,6 @@ class Payment
     public function getAmount(): ?int
     {
         return $this->amount;
-    }
-
-    public function setDescription(?string $description)
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
     }
 
     public function setCurrency(?string $currency)

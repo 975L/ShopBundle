@@ -14,7 +14,7 @@ interface BasketServiceInterface
 
     public function createForm(string $name, Basket $basket): Form;
 
-    public function createPayment(bool $live): void;
+    public function createPayment(): void;
 
     public function createStripeSession(): array;
 

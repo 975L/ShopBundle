@@ -32,8 +32,8 @@ class Product
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\Column]
-    private ?bool $isNumeric = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $file = null;
 
     #[ORM\Column]
     private ?float $vat = null;
@@ -137,14 +137,14 @@ class Product
         return $this;
     }
 
-    public function isNumeric(): ?bool
+    public function getFile(): ?string
     {
-        return $this->isNumeric;
+        return $this->file;
     }
 
-    public function setNumeric(bool $isNumeric): static
+    public function setFile(string $file): static
     {
-        $this->isNumeric = $isNumeric;
+        $this->file = $file;
 
         return $this;
     }

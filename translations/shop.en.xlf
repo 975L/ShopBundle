@@ -121,7 +121,7 @@
             </trans-unit>
             <trans-unit id="30">
                 <source>label.basket_number</source>
-                <target>Your order number is:</target>
+                <target>Your basket number is:</target>
             </trans-unit>
             <trans-unit id="31">
                 <source>label.basket_products_reminder</source>
@@ -162,6 +162,130 @@
             <trans-unit id="40">
                 <source>label.shipping_free</source>
                 <target>Offered for purchases > </target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>label.dashboard</source>
+                <target>Dashboard</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>label.products</source>
+                <target>Products</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>label.baskets</source>
+                <target>Baskets</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>label.payments</source>
+                <target>Payments</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>label.signout</source>
+                <target>Sign out</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>label.title</source>
+                <target>Title</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>label.price</source>
+                <target>Price in cents</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>label.currency</source>
+                <target>Currency</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>label.vat</source>
+                <target>Vat rate</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>label.file</source>
+                <target>File</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>label.description</source>
+                <target>Description</target>
+            </trans-unit>
+            <trans-unit id="52">
+                <source>label.creation</source>
+                <target>Creation</target>
+            </trans-unit>
+            <trans-unit id="53">
+                <source>label.modification</source>
+                <target>Modification</target>
+            </trans-unit>
+            <trans-unit id="54">
+                <source>label.number</source>
+                <target>Number</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>label.amount</source>
+                <target>Amount</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>label.stripe_fee</source>
+                <target>Stripe fee</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>label.stripe_token</source>
+                <target>Stripe Token</target>
+            </trans-unit>
+            <trans-unit id="58">
+                <source>label.stripe_token_type</source>
+                <target>Stripe Token type</target>
+            </trans-unit>
+            <trans-unit id="59">
+                <source>label.stripe_email</source>
+                <target>Stripe Email</target>
+            </trans-unit>
+            <trans-unit id="60">
+                <source>label.is_finished</source>
+                <target>Finished?</target>
+            </trans-unit>
+            <trans-unit id="61">
+                <source>label.payment</source>
+                <target>Payment</target>
+            </trans-unit>
+            <trans-unit id="62">
+                <source>Payment</source>
+                <target>Payment</target>
+            </trans-unit>
+            <trans-unit id="63">
+                <source>Product</source>
+                <target>Product</target>
+            </trans-unit>
+            <trans-unit id="64">
+                <source>Slug</source>
+                <target>Slug</target>
+            </trans-unit>
+            <trans-unit id="65">
+                <source>Basket</source>
+                <target>Basket</target>
+            </trans-unit>
+            <trans-unit id="66">
+                <source>label.status</source>
+                <target>Status</target>
+            </trans-unit>
+            <trans-unit id="67">
+                <source>label.is_numeric</source>
+                <target>Numeric?</target>
+            </trans-unit>
+            <trans-unit id="68">
+                <source>label.identifier</source>
+                <target>Identifier</target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>label.payment_identifier</source>
+                <target>Payment identifier</target>
+            </trans-unit>
+            <trans-unit id="70">
+                <source>label.management</source>
+                <target>Management</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>label.management_interface</source>
+                <target>Shop management interface</target>
             </trans-unit>
         </body>
     </file>

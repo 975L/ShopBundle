@@ -16,13 +16,14 @@ use c975L\ShopBundle\Form\ShopFormFactoryInterface;
 use c975L\ShopBundle\Service\EmailServiceInterface;
 use c975L\ShopBundle\Service\ProductServiceInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BasketService implements BasketServiceInterface
 {
     private $basket;
-
     private $session;
+    private $stripeSecret;
 
     public function __construct(
         private readonly BasketRepository $basketRepository,
@@ -32,9 +33,11 @@ class BasketService implements BasketServiceInterface
         private readonly ProductServiceInterface $productService,
         private readonly RequestStack $requestStack,
         private readonly ShopFormFactoryInterface $shopFormFactory,
+        private readonly TranslatorInterface $translator,
         private readonly UrlGeneratorInterface $urlGenerator
     ) {
         $this->session = $this->requestStack->getSession();
+        $this->stripeSecret = $_ENV["STRIPE_SECRET"];
     }
 
     // Adds product to basket and returns total and quantity
@@ -85,7 +88,7 @@ class BasketService implements BasketServiceInterface
     public function create(): Basket
     {
         $basket = new Basket();
-        $basket->setIdentifier(hash('sha1', uniqid()));
+        $basket->setIdentifier(strpos($this->stripeSecret, 'test') !== false ? 'TEST_' . substr(hash('sha1', uniqid()), 5) : hash('sha1', uniqid()));
         $basket->setTotal(0);
         $basket->setQuantity(0);
         $basket->setCurrency($this->configService->getParameter('c975LShop.currency'));
@@ -109,20 +112,15 @@ class BasketService implements BasketServiceInterface
     }
 
     // Creates payment
-    public function createPayment(bool $live = false): void
+    public function createPayment(): void
     {
-        $now = DateTime::createFromFormat('U.u', microtime(true));
-        $description = 'Basket (' . $this->basket->getId() . ')';
-        $description = $live ? $description : '(TEST) ' . $description;
-
         $payment = new Payment();
-        $payment->setOrderId($now->format('Ymd-His-u'));
+        $payment->setNumber($this->basket->getNumber());
         $payment->setBasket($this->basket);
         $payment->setFinished(false);
         $payment->setAmount($this->basket->getTotal() + $this->basket->getShipping());
         $payment->setCurrency($this->basket->getCurrency());
-        $payment->setDescription($description);
-        $payment->setCreation($now);
+        $payment->setCreation(new \DateTime());
         $payment->setModification(new \DateTime());
 
         $this->em->persist($payment);
@@ -146,8 +144,23 @@ class BasketService implements BasketServiceInterface
             ];
         }
 
+        // Adds shipping
+        if ($this->basket->getShipping() > 0) {
+            $lineItems[] = [
+                'price_data' => [
+                    'currency' => $this->basket->getCurrency(),
+                    'product_data' => [
+                        'name' => 'Shipping',
+                        'name' => $this->translator->trans('label.shipping', [], 'shop'),
+                    ],
+                    'unit_amount' => $this->basket->getShipping(),
+                ],
+                'quantity' => 1,
+            ];
+        }
+
         // Creates Stripe Session
-        Stripe::setApiKey($_ENV["STRIPE_SECRET"]);
+        Stripe::setApiKey($this->stripeSecret);
         Stripe::setApiVersion('2025-01-27.acacia');
         $checkoutSession = StripeSession::create([
             'line_items' => $lineItems,
@@ -238,7 +251,7 @@ class BasketService implements BasketServiceInterface
         foreach ($products as $product) {
             $total += $product['total'];
             $quantity += $product['quantity'];
-            if (false === $product['product']['isNumeric']) {
+            if (null === $product['product']['file']) {
                 $isNumeric = false;
             }
         }
