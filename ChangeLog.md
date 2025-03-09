@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.3
+
+- Added a check to see if entity has already been processed for resizeImage() (09/03/2025)
+
 ## v0.8.2
 
 - Added raw for product description (09/03/2025)
