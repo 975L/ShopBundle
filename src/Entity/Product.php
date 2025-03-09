@@ -57,7 +57,7 @@ class Product
     {
         $product = get_object_vars($this);
         unset($product['medias']);
-        $product['image'] = $this->getProductMediasNames()[0];
+        $product['image'] = $this->getMediasNames()[0];
         $product['vatAmount'] = $this->getVatAmount();
 
         return $product;
