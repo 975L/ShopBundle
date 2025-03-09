@@ -51,7 +51,6 @@ class ProductMedia
 
     public function setName(?string $name): static
     {
-        $this->name = 'medias/shop/products/' . $name;
         $this->name = $name;
 
         return $this;
