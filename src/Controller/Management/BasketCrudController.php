@@ -14,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+#[IsGranted('ROLE_ADMIN')]
 class BasketCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -91,7 +92,7 @@ class BasketCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
-            ->setEntityPermission('ROLE_EDITOR')
+            ->setEntityPermission('ROLE_ADMIN')
         ;
     }
 }

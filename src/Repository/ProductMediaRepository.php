@@ -2,22 +2,22 @@
 
 namespace c975L\ShopBundle\Repository;
 
-use c975L\ShopBundle\Entity\Media;
+use c975L\ShopBundle\Entity\ProductMedia;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Media>
+ * @extends ServiceEntityRepository<ProductMedia>
  */
-class MediaRepository extends ServiceEntityRepository
+class ProductMediaRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Media::class);
+        parent::__construct($registry, ProductMedia::class);
     }
 
     //    /**
-    //     * @return Media[] Returns an array of Media objects
+    //     * @return ProductMedia[] Returns an array of ProductMedia objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class MediaRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Media
+    //    public function findOneBySomeField($value): ?ProductMedia
     //    {
     //        return $this->createQueryBuilder('m')
     //            ->andWhere('m.exampleField = :val')

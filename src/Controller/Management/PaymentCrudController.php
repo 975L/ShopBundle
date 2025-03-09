@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+#[IsGranted('ROLE_ADMIN')]
 class PaymentCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -64,7 +65,7 @@ class PaymentCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
-            ->setEntityPermission('ROLE_EDITOR')
+            ->setEntityPermission('ROLE_ADMIN')
         ;
     }
 }

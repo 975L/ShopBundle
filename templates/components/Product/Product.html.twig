@@ -1,6 +1,7 @@
 {% set class = class | default('') %}
 <div class="product {{ class }}" id="product-{{ product.id }}">
-    <twig:c975LSite:Image:Link src="{{ absolute_url(asset('shop/' ~ product.medias[0].name)) }}" url="{{ url('product_display', {'slug': product.slug}) }}" class="img-thumbnail" width="150" height="auto"/>
+    {% set imageSrc = product.medias|first != false ? product.medias|first : "bundles/c975lshop/images/no-product-image.webp" %}
+    <twig:c975LSite:Image:Link src="{{ absolute_url(asset(imageSrc)) }}" url="{{ path('product_display', {'slug': product.slug}) }}" class="img-thumbnail img-square" width="150" height="150"/>
     <a href="{{ url('product_display', {'slug': product.slug}) }}"><h2>{{ product.title }}</h2></a>
     <twig:c975LShop:Product:Price product="{{ product }}"/>
     <twig:c975LShop:Basket:AddButton product="{{ product }}"/>

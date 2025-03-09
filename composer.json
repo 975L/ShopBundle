@@ -26,10 +26,12 @@
         "doctrine/orm": "*",
         "easycorp/easyadmin-bundle": "*",
         "knplabs/knp-paginator-bundle": "*",
+        "liip/imagine-bundle": "*",
         "stripe/stripe-php": "*",
         "symfony/routing": "*",
         "symfony/security-bundle": "*",
-        "symfony/translation": "*"
+        "symfony/translation": "*",
+        "vich/uploader-bundle": "*"
     },
     "require-dev": {
     },

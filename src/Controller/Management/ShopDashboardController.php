@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 #[AdminDashboard(routePath: '/shop/management', routeName: 'shop_management')]
+#[IsGranted('ROLE_ADMIN')]
 class ShopDashboardController extends AbstractDashboardController
 {
     public function index(): Response
@@ -47,10 +48,11 @@ class ShopDashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard('label.dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('label.products', 'fas fa-shop', Product::class);
-        yield MenuItem::linkToCrud('label.baskets', 'fas fa-basket-shopping', Basket::class);
-        yield MenuItem::linkToCrud('label.payments', 'fas fa-money-bill-wave', Payment::class);
+        yield MenuItem::linkToDashboard('label.dashboard', 'fa fa-home')->setPermission('ROLE_ADMIN');
+        yield MenuItem::linkToCrud('label.products', 'fas fa-shop', Product::class)->setPermission('ROLE_ADMIN');
+        yield MenuItem::linkToCrud('label.baskets', 'fas fa-basket-shopping', Basket::class)->setPermission('ROLE_ADMIN');
+        yield MenuItem::linkToCrud('label.payments', 'fas fa-money-bill-wave', Payment::class)->setPermission('ROLE_ADMIN');
+        yield MenuItem::linkToUrl('label.shop', 'fas fa-home', $this->generateUrl('shop_index'));
         yield MenuItem::linkToLogout('label.signout', 'fa fa-exit');
     }
 }
