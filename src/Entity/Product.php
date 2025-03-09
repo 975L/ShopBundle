@@ -2,11 +2,11 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use c975L\ShopBundle\Repository\ProductRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use c975L\ShopBundle\Repository\ProductRepository;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\Table(name: 'shop_product')]
@@ -44,10 +44,7 @@ class Product
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $modification = null;
 
-    /**
-     * @var Collection<int, Media>
-     */
-    #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'products')]
+    #[ORM\OneToMany(targetEntity: ProductMedia::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist'])]
     private Collection $medias;
 
     public function __construct()
@@ -60,7 +57,7 @@ class Product
     {
         $product = get_object_vars($this);
         unset($product['medias']);
-        $product['image'] = $this->getMediasNames()[0];
+        $product['image'] = $this->getProductMediasNames()[0];
         $product['vatAmount'] = $this->getVatAmount();
 
         return $product;
@@ -162,7 +159,7 @@ class Product
     }
 
     /**
-     * @return Collection<int, Media>
+     * @return Collection<int, ProductMedia>
      */
     public function getMedias(): Collection
     {
@@ -174,28 +171,28 @@ class Product
     {
         $mediaNames = [];
         foreach ($this->medias as $media) {
-            $mediaNames[] = '/shop/' . $media->getName();
+            $mediaNames[] = $media->getName();
         }
 
         return $mediaNames;
     }
 
-    public function addMedia(Media $media): static
+    public function addMedia(ProductMedia $media): static
     {
         if (!$this->medias->contains($media)) {
             $this->medias->add($media);
-            $media->setProducts($this);
+            $media->setProduct($this);
         }
 
         return $this;
     }
 
-    public function removeMedia(Media $media): static
+    public function removeMedia(ProductMedia $media): static
     {
         if ($this->medias->removeElement($media)) {
             // set the owning side to null (unless already changed)
-            if ($media->getProducts() === $this) {
-                $media->setProducts(null);
+            if ($media->getProduct() === $this) {
+                $media->setProduct(null);
             }
         }
 

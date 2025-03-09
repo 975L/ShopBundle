@@ -2,18 +2,21 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
+use c975L\ShopBundle\Form\ProductMediaType;
 use c975L\ShopBundle\Entity\Product;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+#[IsGranted('ROLE_ADMIN')]
 class ProductCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -29,6 +32,9 @@ class ProductCrudController extends AbstractCrudController
             SlugField::new('slug')
                 ->setTargetFieldName('title')
                 ->hideOnIndex(),
+            CollectionField::new('medias')
+                ->hideOnIndex()
+                ->setEntryType(ProductMediaType::class),
             IntegerField::new('price')
                 ->setLabel('label.price'),
             TextField::new('currency')
@@ -67,7 +73,7 @@ class ProductCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
-            ->setEntityPermission('ROLE_EDITOR')
+            ->setEntityPermission('ROLE_ADMIN')
         ;
     }
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.8
+
+- Added require of vich uploader to composer.json (03/03/2025)
+- Renamed Media to PrductMedia (03/03/2025)
+- Added ROLE_ADMIN requirement for shop management (03/03/2025)
+- Added link to shop from dashboard (09/03/2025)
+- Corrected component to display no product image in case of no image (09/03/2025)
+- Added resize of photo for ProductMedia (09/03/2025)
+- Added default image for ProductMedia (09/03/2025)
+
 ## v0.7
 
 - Added "shop/" to product url  (01/03/2025)
@@ -8,7 +18,7 @@
 - Renamed table stripe_payment to shop_stripe_payment (01/03/2025)
 - Suppressed description from Payment as not useful (01/03/2025)
 - Renamed Payment->orderId to number as in basket (01/03/2025)
-- Added management of shop (made use of word management instaed of admin as less used) (01/03/2025)
+- Added management of shop via EasyAdmin (made use of word management instaed of admin as less used) (01/03/2025)
 
 ## v0.6.2
 
