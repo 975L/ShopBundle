@@ -10,6 +10,8 @@ use Doctrine\ORM\EntityManagerInterface;
 // Defines methods related to image
 trait ImageTrait
 {
+    private array $processedEntities = [];
+
     public function __construct(
         private EntityManagerInterface $entityManager
     ) {
@@ -35,6 +37,12 @@ trait ImageTrait
     // Resizes image
     public function resizeImage(ProductMedia $entity): void
     {
+        // Checks if entity has already been processed
+        $entityId = $entity->getId();
+        if ($entityId && in_array($entityId, $this->processedEntities)) {
+            return;
+        }
+
         $filePath = $entity->getFile()->getPathname();
         if (file_exists($filePath)) {
             $height = 600;
