@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.2
+
+- Added raw for product description (09/03/2025)
+
 ## v0.8.1
 
 - Corrected call of getProductMediasNames() (09/03/2025)
