@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.1
+
+- Corrections due to Codacy analysis (22/03/2025)
+
 ## v0.9
 
 - Added relation to user in entities (22/03/2025)

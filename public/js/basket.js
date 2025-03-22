@@ -5,7 +5,7 @@ import translationsFr from "./translations.fr.js";
 export default class extends Controller {
     static targets = [ "quantity", "total", "message", "currency", "shipping", "submitButton", "productTotal", "productQuantity" ];
 
-    // Gets data from the Symfony controller
+    // Fetches data from the Symfony controller when the controller is connected
     connect() {
         // Initialize translations
         this.language = "fr"; // Default language
@@ -152,18 +152,28 @@ export default class extends Controller {
 
     // Updates the basket button
     updateBasketButton(data) {
+        // Vérification rapide des conditions d'arrêt
         const basketButton = document.getElementById("basket-button");
         if (!basketButton) {
             return;
         }
-        basketButton.style.display = "block";
 
-        // Hides the basket button if total = 0
-        if (!data.basket || data.basket.total === 0) {
-            basketButton.style.display = "none";
+        // Updates the visibility of the basket button
+        this.updateBasketButtonDisplay(basketButton, data);
 
-            return;
-        }
+        // Updates the counters if the targets exist
+        this.updateBasketCounters(data);
+    }
+
+    // Updates the visibility of the basket button
+    updateBasketButtonDisplay(basketButton, data) {
+        const isEmpty = !data.basket || data.basket.total === 0;
+        basketButton.style.display = isEmpty ? "none" : "block";
+    }
+
+    // Updates the counters
+    updateBasketCounters(data) {
+        if (!data.basket) return;
 
         if (this.hasTotalTarget) {
             this.totalTarget.textContent = (data.basket.total / 100).toFixed(2);
@@ -177,38 +187,56 @@ export default class extends Controller {
     // Updates the basket page
     updateBasketPage(data) {
         const basketPage = document.getElementById("basket-page");
-        if (!basketPage) {
+        if (!basketPage || !data.basket) {
             return;
         }
 
-        const currentProductIds = data.basket && data.basket.products ? Object.keys(data.basket.products) : [];
-        const productRows = document.querySelectorAll('tr[id^="product-"]');
+        this.removeDeletedProducts(data);
+        this.updateExistingProducts(data);
+        this.updateBasketTotals(data);
+        this.updateSubmitButton(data);
 
-        // Removes products that are no longer in the basket
-        productRows.forEach(row => {
-            const productId = row.id.replace('product-', '');
-            if (!currentProductIds.includes(productId)) {
-                row.classList.add('fade-out');
-                setTimeout(() => row.remove(), 100);
-            }
-        });
+        // Reloads the page if the basket is empty
+        if (data.basket.total === 0) {
+            window.location.reload();
+        }
+    }
 
-        // Checks if basket data is valid before continuing
+    // Removes products that are no longer in the basket
+    removeDeletedProducts(data) {
         if (!data.basket || !data.basket.products) {
             return;
         }
 
-        // Updates products still in the basket
+        const currentProductIds = Object.keys(data.basket.products);
+        const productRows = document.querySelectorAll('tr[id^="product-"]');
+
+        productRows.forEach((row) => {
+            const productId = row.id.replace("product-", "");
+            if (!currentProductIds.includes(productId)) {
+                row.classList.add("fade-out");
+                setTimeout(() => row.remove(), 100);
+            }
+        });
+    }
+
+    // Updates existing products
+    updateExistingProducts(data) {
+        if (!data.basket || !data.basket.products) {
+            return;
+        }
+
         Object.entries(data.basket.products).forEach(([productId, productData]) => {
             this.updateProductRow(productId, productData);
         });
+    }
 
-        // Reloads the page if total = 0
-        if (data.basket.total === 0) {
-            window.location.reload();
+    // Updates the basket totals
+    updateBasketTotals(data) {
+        if (!data.basket) {
+            return;
         }
 
-        // Updates totals
         if (this.hasTotalTarget) {
             this.totalTarget.textContent = ((data.basket.total + data.basket.shipping) / 100).toFixed(2);
         }
@@ -217,26 +245,37 @@ export default class extends Controller {
             this.quantityTarget.textContent = data.basket.quantity;
         }
 
-        if (this.hasShippingTarget) {
-            this.shippingTarget.textContent = data.basket.shipping > 0
-                ? (data.basket.shipping / 100).toFixed(2) + data.basket.currency
-                : this.translate("basket.offered");
+        this.updateShippingDisplay(data);
+    }
+
+    // Updates the shipping display
+    updateShippingDisplay(data) {
+        if (!this.hasShippingTarget || !data.basket) {
+            return;
         }
 
-        // Updates the submit button text
-        if (this.hasSubmitButtonTarget) {
-            const label = this.translate("label.pay");
-            const total = ((data.basket.total + data.basket.shipping) / 100).toFixed(2);
-            const currency = data.basket.currency;
+        this.shippingTarget.textContent = data.basket.shipping > 0
+            ? (data.basket.shipping / 100).toFixed(2) + data.basket.currency
+            : this.translate("basket.offered");
+    }
 
-            this.submitButtonTarget.value = `${label} ${total} ${currency}`;
+    // Updates the submit button
+    updateSubmitButton(data) {
+        if (!this.hasSubmitButtonTarget || !data.basket) {
+            return;
         }
+
+        const label = this.translate("label.pay");
+        const total = ((data.basket.total + data.basket.shipping) / 100).toFixed(2);
+        const currency = data.basket.currency;
+
+        this.submitButtonTarget.value = `${label} ${total} ${currency}`;
     }
 
     // Updates a single product row
     updateProductRow(productId, productData) {
         const productTotalElement = this.productTotalTargets.find(
-            target => target.dataset.productId === productId
+            (target) => target.dataset.productId === productId
         );
         if (productTotalElement) {
             productTotalElement.textContent = (productData.total / 100).toFixed(2);
@@ -252,9 +291,18 @@ export default class extends Controller {
 
     // Translates messages
     translate(key) {
-        if (!this.translations || !this.language || !this.translations[this.language]) {
+        // Vérification simple pour language
+        if (!this.language) {
             return key;
         }
-        return this.translations[this.language][key] || key;
+
+        // Accès aux traductions
+        const translations = this.translations?.[this.language];
+        if (!translations) {
+            return key;
+        }
+
+        // Retourne la traduction ou la clé par défaut
+        return translations[key] || key;
     }
 }
