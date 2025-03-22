@@ -6,8 +6,9 @@
 {% set description = 'label.basket'|trans %}
 
 {% block content %}
-    <div data-controller="basket">
+    <div data-controller="basket" id="basket-page">
         <twig:c975LShop:Basket:Display basket="{{ basket }}"/>
+        <twig:c975LShop:Basket:Message/>
         <twig:c975LShop:Basket:Buttons basket="{{ basket }}"/>
         <twig:c975LShop:Basket:Validation basket="{{ basket }}" form="{{ form }}"/>
     </div>

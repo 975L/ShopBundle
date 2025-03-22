@@ -271,20 +271,20 @@
                 <target>Numérique ?</target>
             </trans-unit>
             <trans-unit id="68">
-                <source>label.identifier</source>
-                <target>Identifiant</target>
-            </trans-unit>
-            <trans-unit id="69">
                 <source>label.payment_identifier</source>
                 <target>Identifiant de paiement</target>
             </trans-unit>
-            <trans-unit id="70">
+            <trans-unit id="69">
                 <source>label.management</source>
                 <target>Gestion</target>
             </trans-unit>
-            <trans-unit id="71">
+            <trans-unit id="70">
                 <source>label.management_interface</source>
                 <target>Interface de gestion de la boutique</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>label.removed</source>
+                <target>supprimé !</target>
             </trans-unit>
         </body>
     </file>

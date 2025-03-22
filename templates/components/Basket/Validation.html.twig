@@ -6,11 +6,11 @@
         {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
             {{ form_widget(form) }}
             <div>
-                <input type="submit" name="submit" class="btn btn-primary" value="{{ 'label.pay'|trans }} {{ ((basket.total + basket.shipping) / 100)|format_currency(basket.currency) }}">
+                <input type="submit" name="submit" class="btn btn-primary" data-basket-target="submitButton" value="{{ 'label.pay'|trans }} {{ ((basket.total + basket.shipping) / 100)|number_format(2) ~ basket.currency }}">
             </div>
             {# Champ obligatoire #}
             <p class="text-muted">
-                {{ 'label.mandatory_field'|trans({}, 'services') }}
+                {{ 'label.mandatory_field'|trans({}, 'site') }}
             </p>
         {{ form_end(form) }}
         {# Paiement sécurisé #}

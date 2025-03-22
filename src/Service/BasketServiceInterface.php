@@ -24,7 +24,7 @@ interface BasketServiceInterface
 
     public function get(): ?Basket;
 
-    public function getTotal(): array;
+    public function getJson(): array;
 
     public function updateTotals(): void;
 

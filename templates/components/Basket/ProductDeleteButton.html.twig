@@ -1,0 +1,5 @@
+{# <twig:c975LShop:Basket:ProductDeleteButton product="{{ product }}" [type="disabled"]/> #}
+{% set type = type | default('disabled') %}
+<button data-action="click->basket#deleteProduct" data-productId="{{ product.id }}" data-title="{{ product.title }}" data-alert="danger" data-text="{{ 'label.removed'|trans({}, 'shop') }}" class="btn btn-{{ type }} btn-small">
+    <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/trash-can.svg" width="12" height="12"/>
+</button>

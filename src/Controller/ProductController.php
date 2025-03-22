@@ -33,7 +33,6 @@ class ProductController extends AbstractController
             '@c975LShop/product/display.html.twig',
             [
                 'product' => $product,
-                'slides' => $product->getMediasNames(),
             ]
         )->setMaxAge(3600);
     }

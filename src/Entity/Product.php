@@ -2,14 +2,17 @@
 
 namespace c975L\ShopBundle\Entity;
 
+use App\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use c975L\ShopBundle\Repository\ProductRepository;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\Table(name: 'shop_product')]
+#[UniqueEntity('slug')]
 class Product
 {
     #[ORM\Id]
@@ -20,7 +23,7 @@ class Product
     #[ORM\Column(length: 100)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, unique: true)]
     private ?string $slug = null;
 
     #[ORM\Column]
@@ -47,6 +50,9 @@ class Product
     #[ORM\OneToMany(targetEntity: ProductMedia::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist'])]
     private Collection $medias;
 
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->medias = new ArrayCollection();
@@ -56,8 +62,7 @@ class Product
     public function toArray()
     {
         $product = get_object_vars($this);
-        unset($product['medias']);
-        $product['image'] = $this->getMediasNames()[0];
+        $product['medias'] = $this->getMediasNames();
         $product['vatAmount'] = $this->getVatAmount();
 
         return $product;
@@ -219,6 +224,18 @@ class Product
     public function setModification(\DateTimeInterface $modification): static
     {
         $this->modification = $modification;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

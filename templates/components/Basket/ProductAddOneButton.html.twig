@@ -1,0 +1,5 @@
+{# <twig:c975LShop:Basket:AddOneButton product="{{ product }}" [type="primary"]/> #}
+{% set type = type | default('primary') %}
+<button data-action="click->basket#add" data-quantity="1" data-productId="{{ product.id }}" data-title="{{ product.title }}" data-alert="success" data-text="{{ 'label.added'|trans({}, 'shop') }}" class="btn btn-{{ type }} btn-small">
+    +
+</button>

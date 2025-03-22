@@ -1,42 +1,59 @@
- import { Controller } from "@hotwired/stimulus";
+import { Controller } from "@hotwired/stimulus";
+import translationsEn from "./translations.en.js";
+import translationsFr from "./translations.fr.js";
 
 export default class extends Controller {
-    static targets = [ "quantity", "total", "message", "currency" ]
+    static targets = [ "quantity", "total", "message", "currency", "shipping", "submitButton", "productTotal", "productQuantity" ];
 
-    // Gets data from Symfony controller
+    // Gets data from the Symfony controller
     connect() {
-        // check if total Target exist
+        // Initialize translations
+        this.language = "fr"; // Default language
+        this.translations = {
+            en: translationsEn,
+            fr: translationsFr
+        };
+
+        // Check if totalTarget exists
         if (this.hasTotalTarget && this.hasQuantityTarget) {
-            fetch("/basket/total", {
+            fetch("/basket/json", {
                 method: "GET",
             })
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(this.translate("basket.load.error"));
+                }
+                return response.json();
+            })
             .then((data) => {
-                this.update(data);
+                if (data) {
+                    this.update(data);
+                }
+            })
+            .catch((error) => {
+                this.displayMessage(this.translate("basket.load.error"), "alert-danger");
             });
         }
     }
 
     // Adds a product to the basket
     add(event) {
-        // Removes message
-        this.removeMessage();
-
-        //Adds an animation to clicked button
+        // Adds an animation to the clicked button
         this.animation(event.currentTarget);
 
-        // Fetches data to Symfony controller
+        // Fetches data from the Symfony controller
         this.fetchData(event.currentTarget);
     }
 
     // Adds an animation to the clicked button
     animation(clickedButton) {
+        if (!clickedButton.classList.contains("btn-primary")) {
+            return;
+        }
         clickedButton.classList.remove("btn-primary");
-        clickedButton.classList.add("btn-secondary");
-        clickedButton.classList.add("zoom-animation");
+        clickedButton.classList.add("btn-secondary", "zoom-animation");
         setTimeout(() => {
-            clickedButton.classList.remove("zoom-animation");
-            clickedButton.classList.remove("btn-secondary");
+            clickedButton.classList.remove("zoom-animation", "btn-secondary");
             clickedButton.classList.add("btn-primary");
         }, 500);
     }
@@ -44,13 +61,22 @@ export default class extends Controller {
     // Deletes the basket
     delete() {
         fetch("/basket", { method: "DELETE" })
-        .then(() => {
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(this.translate("basket.delete.error"));
+            }
             window.location.reload();
+        })
+        .catch((error) => {
+            this.displayMessage(this.translate("basket.delete.error"), "alert-danger");
         });
     }
 
-    // Deletes the product
+    // Deletes a product
     deleteProduct(event) {
+        // Store event data before the asynchronous call
+        const target = event.currentTarget;
+
         fetch("/basket/delete", {
             method: "DELETE",
             body: JSON.stringify({
@@ -61,13 +87,23 @@ export default class extends Controller {
                 "Content-Type": "application/json",
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            window.location.reload();
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(this.translate("product.delete.error"));
+            }
+            return response.json();
+        })
+        .then((data) => {
+            const message = `${target.dataset.title} ${target.dataset.text}`;
+            this.displayMessage(message, "alert-" + target.dataset.alert);
+            this.update(data);
+        })
+        .catch((error) => {
+            this.displayMessage(this.translate("product.delete.error"), "alert-danger");
         });
     }
 
-    // Fetches data to Symfony controller
+    // Fetches data from the Symfony controller
     fetchData(target) {
         fetch("/basket", {
             method: "POST",
@@ -79,53 +115,146 @@ export default class extends Controller {
                 "Content-Type": "application/json",
             }
         })
-        .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(this.translate("basket.add.error"));
+            }
+            return response.json();
+        })
         .then((data) => {
             if (data.error) {
                 this.displayMessage(data.error, "alert-danger");
             } else {
-                this.displayMessage(target.dataset.title + " " + target.dataset.added, "alert-info");
+                const message = `${target.dataset.title} ${target.dataset.text}`;
+                this.displayMessage(message, "alert-" + target.dataset.alert);
                 this.update(data);
             }
         })
-    }
-
-    // Removes the alert this.messageTarget if exist
-    removeMessage() {
-        if (this.hasMessageTarget) {
-            this.messageTarget.classList.remove("alert");
-            this.messageTarget.classList.remove("alert-info");
-            this.messageTarget.classList.remove("alert-danger");
-            this.messageTarget.textContent = "";
-        }
+        .catch((error) => {
+            this.displayMessage(this.translate("basket.add.error"), "alert-danger");
+        });
     }
 
     // Displays a message
     displayMessage(message, alertClass) {
-        this.messageTarget.classList.add("alert");
-        this.messageTarget.classList.add(alertClass);
+        this.messageTarget.className = `alert ${alertClass}`;
         this.messageTarget.textContent = message;
     }
 
     // Updates total and quantity
     update(data) {
+        if (!data) {
+            return;
+        }
+        this.updateBasketButton(data);
+        this.updateBasketPage(data);
+    }
+
+    // Updates the basket button
+    updateBasketButton(data) {
         const basketButton = document.getElementById("basket-button");
+        if (!basketButton) {
+            return;
+        }
         basketButton.style.display = "block";
 
-        // Hides the element basket-button if total = 0
-        if (data.total === 0) {
+        // Hides the basket button if total = 0
+        if (!data.basket || data.basket.total === 0) {
             basketButton.style.display = "none";
 
             return;
         }
 
-        this.totalTarget.textContent = (data.total / 100).toFixed(2);
-        const currencies = {
-            "eur": "€",
-            "usd": "$",
-            "gbp": "£",
-        };
-        this.currencyTarget.textContent = currencies[data.currency ? data.currency : "EUR"];
-        this.quantityTarget.textContent = data.quantity;
+        if (this.hasTotalTarget) {
+            this.totalTarget.textContent = (data.basket.total / 100).toFixed(2);
+        }
+
+        if (this.hasQuantityTarget) {
+            this.quantityTarget.textContent = data.basket.quantity;
+        }
+    }
+
+    // Updates the basket page
+    updateBasketPage(data) {
+        const basketPage = document.getElementById("basket-page");
+        if (!basketPage) {
+            return;
+        }
+
+        const currentProductIds = data.basket && data.basket.products ? Object.keys(data.basket.products) : [];
+        const productRows = document.querySelectorAll('tr[id^="product-"]');
+
+        // Removes products that are no longer in the basket
+        productRows.forEach(row => {
+            const productId = row.id.replace('product-', '');
+            if (!currentProductIds.includes(productId)) {
+                row.classList.add('fade-out');
+                setTimeout(() => row.remove(), 100);
+            }
+        });
+
+        // Checks if basket data is valid before continuing
+        if (!data.basket || !data.basket.products) {
+            return;
+        }
+
+        // Updates products still in the basket
+        Object.entries(data.basket.products).forEach(([productId, productData]) => {
+            this.updateProductRow(productId, productData);
+        });
+
+        // Reloads the page if total = 0
+        if (data.basket.total === 0) {
+            window.location.reload();
+        }
+
+        // Updates totals
+        if (this.hasTotalTarget) {
+            this.totalTarget.textContent = ((data.basket.total + data.basket.shipping) / 100).toFixed(2);
+        }
+
+        if (this.hasQuantityTarget) {
+            this.quantityTarget.textContent = data.basket.quantity;
+        }
+
+        if (this.hasShippingTarget) {
+            this.shippingTarget.textContent = data.basket.shipping > 0
+                ? (data.basket.shipping / 100).toFixed(2) + data.basket.currency
+                : this.translate("basket.offered");
+        }
+
+        // Updates the submit button text
+        if (this.hasSubmitButtonTarget) {
+            const label = this.translate("label.pay");
+            const total = ((data.basket.total + data.basket.shipping) / 100).toFixed(2);
+            const currency = data.basket.currency;
+
+            this.submitButtonTarget.value = `${label} ${total} ${currency}`;
+        }
+    }
+
+    // Updates a single product row
+    updateProductRow(productId, productData) {
+        const productTotalElement = this.productTotalTargets.find(
+            target => target.dataset.productId === productId
+        );
+        if (productTotalElement) {
+            productTotalElement.textContent = (productData.total / 100).toFixed(2);
+        }
+
+        const productQuantityElement = this.productQuantityTargets.find(
+            target => target.dataset.productId === productId
+        );
+        if (productQuantityElement) {
+            productQuantityElement.textContent = productData.quantity;
+        }
+    }
+
+    // Translates messages
+    translate(key) {
+        if (!this.translations || !this.language || !this.translations[this.language]) {
+            return key;
+        }
+        return this.translations[this.language][key] || key;
     }
 }

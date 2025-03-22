@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.9
+
+- Added relation to user in entities (22/03/2025)
+- Suppressed payment->number as redundant (22/03/2025)
+- Suppressed basket->identifier as not used because of number (22/03/2025)
+- Changed format of basket number to be abale to have it in url but not predictable (22/03/2025)
+- Move product added message below Basket (22/03/2025)
+- Added +/- buttons (22/03/2025)
+
 ## v0.8.3
 
 - Added a check to see if entity has already been processed for resizeImage() (09/03/2025)
