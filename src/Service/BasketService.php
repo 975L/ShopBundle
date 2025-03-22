@@ -58,9 +58,13 @@ class BasketService implements BasketServiceInterface
 
         // Adds product to basket
         if (isset($products[$productId])) {
-            $products[$productId]['quantity'] += $quantity;
-            $products[$productId]['totalVat'] = $products[$productId]['quantity'] * $product->getVatAmount();
-            $products[$productId]['total'] = $products[$productId]['quantity'] * $product->getPrice();
+            if ($products[$productId]['quantity'] + $quantity <= 0) {
+                unset($products[$productId]);
+            } else {
+                $products[$productId]['quantity'] += $quantity;
+                $products[$productId]['totalVat'] = $products[$productId]['quantity'] * $product->getVatAmount();
+                $products[$productId]['total'] = $products[$productId]['quantity'] * $product->getPrice();
+            }
         } else {
             $products[$productId] = [
                 'product' => $product->toArray(),
@@ -78,9 +82,7 @@ class BasketService implements BasketServiceInterface
         $this->em->flush();
 
         return [
-            'total' => $this->basket->getTotal(),
-            'quantity' => $this->basket->getQuantity(),
-            'productQuantity' => $products[$productId]['quantity'],
+            'basket' => $this->basket->toArray(),
         ];
     }
 
@@ -88,7 +90,6 @@ class BasketService implements BasketServiceInterface
     public function create(): Basket
     {
         $basket = new Basket();
-        $basket->setIdentifier(strpos($this->stripeSecret, 'test') !== false ? 'TEST_' . substr(hash('sha1', uniqid()), 5) : hash('sha1', uniqid()));
         $basket->setTotal(0);
         $basket->setQuantity(0);
         $basket->setCurrency($this->configService->getParameter('c975LShop.currency'));
@@ -97,10 +98,11 @@ class BasketService implements BasketServiceInterface
         $basket->setModification(new DateTime());
         $basket->setStatus('new');
         $basket->setNumeric(true);
+        $basket->setUser($this->session->get('user'));
 
         $this->em->persist($basket);
         $this->em->flush();
-        $this->session->set('basket', $basket->getIdentifier());
+        $this->session->set('basket', $basket->getId());
 
         return $basket;
     }
@@ -115,13 +117,13 @@ class BasketService implements BasketServiceInterface
     public function createPayment(): void
     {
         $payment = new Payment();
-        $payment->setNumber($this->basket->getNumber());
         $payment->setBasket($this->basket);
         $payment->setFinished(false);
         $payment->setAmount($this->basket->getTotal() + $this->basket->getShipping());
         $payment->setCurrency($this->basket->getCurrency());
         $payment->setCreation(new \DateTime());
         $payment->setModification(new \DateTime());
+        $payment->setUser($this->session->get('user'));
 
         $this->em->persist($payment);
     }
@@ -213,28 +215,21 @@ class BasketService implements BasketServiceInterface
         $this->em->persist($this->basket);
         $this->em->flush();
 
-        return [
-            'total' => $this->basket->getTotal(),
-            'quantity' => $this->basket->getQuantity(),
-        ];
+        return $this->getJson();
     }
 
     // Returns current basket
     public function get(): ?Basket
     {
-        return $this->basketRepository->findOneByIdentifier($this->session->get('basket'));
+        return $this->basketRepository->findOneById($this->session->get('basket'));
     }
 
     // Gets total and quantity
-    public function getTotal(): array
+    public function getJson(): array
     {
         $this->basket = $this->get();
 
-        return [
-            'total' => null === $this->basket ? 0 : $this->basket->getTotal(),
-            'currency' => null === $this->basket ? '' : $this->basket->getCurrency(),
-            'quantity' => null === $this->basket ? 0 : $this->basket->getQuantity(),
-        ];
+        return null === $this->basket ? [] : ['basket' => $this->basket->toArray()];
     }
 
     // Updates total
@@ -269,8 +264,9 @@ class BasketService implements BasketServiceInterface
 
         $data = $this->createStripeSession();
         $this->basket->setStatus('validated');
-        $this->basket->setPaymentIdentifier($data['id']);
-        $this->basket->setNumber(sprintf('%s%s%05d', date('Y'), date('m'), $this->basket->getId()));
+        $number = substr(hash('sha1', uniqid()), 10, 10);
+        $number = strpos($this->stripeSecret, 'test') !== false ? substr_replace($number, "T_", 0, 2) : $number;
+        $this->basket->setNumber($number);
 
         // Creates payment
         $this->createPayment();
@@ -281,7 +277,7 @@ class BasketService implements BasketServiceInterface
         return $data['url'];
     }
 
-    // Validated basket
+    // Validates basket
     public function validated(): ?Basket
     {
         $this->basket = $this->get();

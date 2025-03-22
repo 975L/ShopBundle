@@ -2,20 +2,15 @@
 
 namespace c975L\ShopBundle\Listener\Traits;
 
-use c975L\ShopBundle\Entity\ProductMedia;
 use Imagine\Image\Box;
 use Imagine\Gd\Imagine;
-use Doctrine\ORM\EntityManagerInterface;
+use c975L\ShopBundle\Entity\ProductMedia;
+
 
 // Defines methods related to image
 trait ImageTrait
 {
     private array $processedEntities = [];
-
-    public function __construct(
-        private EntityManagerInterface $entityManager
-    ) {
-    }
 
     // Deletes all images
     public function deleteImages($entity): void

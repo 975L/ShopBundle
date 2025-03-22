@@ -24,8 +24,6 @@ class PaymentCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            TextField::new('number')
-                ->setLabel('label.number'),
             BooleanField::new('isFinished')
                 ->setLabel('label.is_finished'),
             IntegerField::new('amount')

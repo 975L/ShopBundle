@@ -9,9 +9,10 @@
 
 namespace c975L\ShopBundle\Entity;
 
+use App\Entity\User;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use c975L\ShopBundle\Repository\PaymentRepository;
-use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: PaymentRepository::class)]
 #[ORM\Table(name: 'shop_stripe_payment')]
@@ -24,9 +25,6 @@ class Payment
 
     #[ORM\Column]
     private ?bool $isFinished = false;
-
-    #[ORM\Column(length: 48)]
-    private ?string $number = null;
 
     #[ORM\Column]
     private ?int $amount = null;
@@ -55,6 +53,9 @@ class Payment
     #[ORM\OneToOne(mappedBy: 'payment', cascade: ['persist', 'remove'])]
     private ?Basket $basket = null;
 
+    #[ORM\ManyToOne(inversedBy: 'payments')]
+    private ?User $user = null;
+
     public function getId(): int
     {
         return $this->id;
@@ -70,18 +71,6 @@ class Payment
         $this->isFinished = $isFinished;
 
         return $this;
-    }
-
-    public function setNumber(?string $number)
-    {
-        $this->number = $number;
-
-        return $this;
-    }
-
-    public function getNumber(): ?string
-    {
-        return $this->number;
     }
 
     public function setAmount(?int $amount)
@@ -198,6 +187,18 @@ class Payment
         }
 
         $this->basket = $basket;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -2,12 +2,12 @@
 
 namespace c975L\ShopBundle\Controller;
 
+use c975L\ShopBundle\Entity\Basket;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use c975L\ShopBundle\Service\BasketServiceInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -33,15 +33,15 @@ class BasketController extends AbstractController
         return new JsonResponse($this->basketService->add($request));
     }
 
-    // GETS TOTAL AND QUANTITY
+    // GETS BASKET
     #[Route(
-        '/basket/total',
-        name: 'basket_total',
+        '/basket/json',
+        name: 'basket_json',
         methods: ['GET']
     )]
-    public function total(): JsonResponse
+    public function getJson(): JsonResponse
     {
-        return new JsonResponse($this->basketService->getTotal());
+        return new JsonResponse($this->basketService->getJson());
     }
 
     // DISPLAY
@@ -101,14 +101,24 @@ class BasketController extends AbstractController
 
     // VALIDATED
     #[Route(
-        '/basket/validated',
+        '/basket/validated/{number:basket}',
         name: 'basket_validated',
+        requirements: ['number' => '.{10}'],
+        defaults: ['number' => ''],
         methods: ['GET']
     )]
-    public function validated(): Response
+    public function validated(?Basket $basket): Response
     {
+        if (null === $basket) {
+            $basket = $this->basketService->validated();
+
+            if (null !== $basket) {
+                return $this->redirectToRoute('basket_validated', ['number' => $basket->getNumber()]);
+            }
+        }
+
         return $this->render('@c975LShop/basket/validated.html.twig', [
-            'basket' => $this->basketService->validated(),
+            'basket' => $basket,
         ]);
     }
 }

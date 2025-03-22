@@ -9,13 +9,17 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use c975L\ShopBundle\Repository\BasketRepository;
+use App\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use c975L\ShopBundle\Repository\BasketRepository;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: BasketRepository::class)]
 #[ORM\Table(name: 'shop_basket')]
+#[UniqueEntity('number')]
+
 class Basket
 {
     #[ORM\Id]
@@ -23,12 +27,7 @@ class Basket
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 40)]
-    #[Assert\NotBlank]
-    #[Assert\Length(min:40, max: 40)]
-    private ?string $identifier = null;
-
-    #[ORM\Column(length: 11, nullable: true)]
+    #[ORM\Column(length: 20, nullable: true, unique: true)]
     private ?string $number = null;
 
     #[ORM\Column]
@@ -85,21 +84,17 @@ class Basket
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $modification = null;
 
+    #[ORM\ManyToOne(inversedBy: 'baskets')]
+    private ?User $user = null;
+
+    public function toArray(): array
+    {
+        return get_object_vars($this);
+    }
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIdentifier(): string
-    {
-        return $this->identifier;
-    }
-
-    public function setIdentifier(string $identifier): static
-    {
-        $this->identifier = $identifier;
-
-        return $this;
     }
 
     public function getNumber(): ?string
@@ -302,6 +297,18 @@ class Basket
     public function setPayment(?Payment $payment): static
     {
         $this->payment = $payment;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

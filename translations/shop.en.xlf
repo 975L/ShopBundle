@@ -272,20 +272,20 @@
                 <target>Numeric?</target>
             </trans-unit>
             <trans-unit id="68">
-                <source>label.identifier</source>
-                <target>Identifier</target>
-            </trans-unit>
-            <trans-unit id="69">
                 <source>label.payment_identifier</source>
                 <target>Payment identifier</target>
             </trans-unit>
-            <trans-unit id="70">
+            <trans-unit id="69">
                 <source>label.management</source>
                 <target>Management</target>
             </trans-unit>
-            <trans-unit id="71">
+            <trans-unit id="70">
                 <source>label.management_interface</source>
                 <target>Shop management interface</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>label.removed</source>
+                <target>removed!</target>
             </trans-unit>
         </body>
     </file>

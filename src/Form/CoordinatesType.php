@@ -71,7 +71,7 @@ class CoordinatesType extends AbstractType
         $builder
             ->add('gdpr', CheckboxType::class, [
                 'label' => 'text.gdpr',
-                'translation_domain' => 'services',
+                'translation_domain' => 'site',
                 'required' => true,
                 'mapped' => false
             ]);

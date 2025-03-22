@@ -39,3 +39,8 @@ c975LShop:
         required: true
         default: 0
         info: "Amount in cents at which shipping is offered"
+    userClass:
+        type: string
+        required: true
+        default: null
+        info: "Class for the User entity, i.e. App\\Entity\\User"

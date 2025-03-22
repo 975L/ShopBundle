@@ -33,11 +33,8 @@ class BasketCrudController extends AbstractCrudController
                 ->setFormTypeOption('disabled','disabled')
                 ->onlyOnDetail()
                 ->formatValue(function ($value, $entity) {
-                    return $entity->getPayment()->getNumber();
+                    return $entity->getPayment()->getId();
                 }),
-            TextField::new('identifier')
-                ->setLabel('label.identifier')
-                ->hideOnIndex(),
             TextField::new('status')
                 ->setLabel('label.status'),
             BooleanField::new('isNumeric')

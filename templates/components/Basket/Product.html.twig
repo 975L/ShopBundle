@@ -1,17 +1,20 @@
 {# <twig:c975LShop:Basket:Product product="{{ product }}" quantity="{{ product.quantity }}" total="{{ product.total }}" type="simple|complex"  status="{{ basket.status }}"/> #}
-<tr class="text-center">
+<tr class="text-center" id="product-{{ product.id }}">
+    {# Image and Title #}
     <td>
-        <twig:c975LSite:Image:Link src="{{ product.image }}" url="{{ url('product_display', {'slug' : product.slug }) }}" class="img-thumbnail img-square" width="50" height="50"/>
+        {% set imageSrc = product.medias|first != false ? product.medias|first : "bundles/c975lshop/images/no-product-image.webp" %}
+        <twig:c975LSite:Image:Link src="{{ asset(imageSrc) }}" url="{{ url('product_display', {'slug': product.slug}) }}" class="img-square img-shadow img-product" width="150" height="150"/>
         <p>{{ product.title }}</p>
     </td>
+    {# Price and Quantity #}
     <td>
         <twig:c975LShop:Basket:ProductPrice product="{{ product }}" type="{{ type }}"/>
-        (x {{ quantity }})
+        (x <span data-basket-target="productQuantity" data-product-id="{{ product.id }}">{{ quantity }}</span>)
         <br>
+        <twig:c975LShop:Basket:ProductTotal product="{{ product }}" total="{{ total }}" totalVat="{{ totalVat }}" type="{{ type }}"/>
         <br>
-        <twig:c975LShop:Basket:ProductsTotal product="{{ product }}" total="{{ total }}" totalVat="{{ totalVat }}" type="{{ type }}"/>
         {% if "paid" != status %}
-            <twig:c975LShop:Basket:DeleteProductLink product="{{ product }}"/>
+            <twig:c975LShop:Basket:ProductAddRemoveButtons product="{{ product }}" quantity="{{ quantity }}"/>
         {% endif %}
     </td>
 </tr>

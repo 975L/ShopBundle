@@ -6,7 +6,12 @@
  * with this source code in the file LICENSE.
  */
 
- /* TYPOGRAPHY */
+/* GENERAL */
+:root {
+    --product-background-color:#fff;
+}
+
+/* TYPOGRAPHY */
 .delete-link {
     color: rgb(86, 86, 86);
     text-decoration: underline;
@@ -30,15 +35,31 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    margin: 10px;
+    margin: 5px;
+    padding: 10px;
     width: 150px;
-    max-width: 42%;
     text-align: center;
+    border-radius: 5px;
+    background-color: var(--product-background-color);
+    box-shadow: var(--box-shadow);
+}
+
+.product:hover {
+    transform: scale(1.05);
+    transition: all 0.3s;
 }
 
 .product h2 {
     margin-top: 0;
     font-size: 1em;
+}
+
+.product a {
+    text-decoration: none;
+}
+
+.product a:hover {
+    text-decoration: underline;
 }
 
 .product form {
@@ -53,12 +74,6 @@
     font-family: var(--font-family-body);
 }
 
-.product .img-thumbnail {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-}
-
 /* BASKET */
 button span {
     font-family: var(--font-family-title);
@@ -69,15 +84,24 @@ th {
     font-size: 1em;
 }
 
+tr.shipping td {
+    padding: 10px;
+}
+
 td {
     padding: 0;
     width: 50%;
+    max-width: 200px;
 }
 
 tfoot th {
     border-bottom: none;
 }
 
+/* ALERTS */
+.alert {
+    text-align: center;
+}
 
 /* ANIMATIONS */
 @keyframes zoom {
@@ -87,4 +111,14 @@ tfoot th {
 
 .zoom-animation {
     animation: zoom 2s linear;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.fade-out {
+    animation: fadeOut 0.5s;
+    opacity: 0;
 }
