@@ -2,6 +2,7 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
+use c975L\ShopBundle\Form\ProductItemType;
 use c975L\ShopBundle\Form\ProductMediaType;
 use c975L\ShopBundle\Entity\Product;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -35,16 +36,9 @@ class ProductCrudController extends AbstractCrudController
             CollectionField::new('medias')
                 ->hideOnIndex()
                 ->setEntryType(ProductMediaType::class),
-            IntegerField::new('price')
-                ->setLabel('label.price'),
-            TextField::new('currency')
-                ->setLabel('label.currency'),
-            NumberField::new('vat')
-                ->setLabel('label.vat')
-                ->hideOnIndex(),
-            TextField::new('file')
-                ->setLabel('label.file')
-                ->hideOnIndex(),
+            CollectionField::new('items')
+                ->hideOnIndex()
+                ->setEntryType(ProductItemType::class),
             TextEditorField::new('description')
                 ->setLabel('label.description')
                 ->hideOnIndex(),

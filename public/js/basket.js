@@ -3,10 +3,14 @@ import translationsEn from "./translations.en.js";
 import translationsFr from "./translations.fr.js";
 
 export default class extends Controller {
-    static targets = [ "quantity", "total", "message", "currency", "shipping", "submitButton", "productTotal", "productQuantity" ];
+    static targets = [ "quantity", "total", "message", "currency", "shipping", "submitButton", "productItemTotal", "productItemQuantity" ];
 
     // Fetches data from the Symfony controller when the controller is connected
     connect() {
+        // Event listeners as some controller are outside the basket controller
+        document.addEventListener('basket:message', this.handleGlobalMessage.bind(this));
+        document.addEventListener('basket:update', this.handleGlobalUpdate.bind(this));
+
         // Initialize translations
         this.language = "fr"; // Default language
         this.translations = {
@@ -14,7 +18,12 @@ export default class extends Controller {
             fr: translationsFr
         };
 
-        // Check if totalTarget exists
+        // Updates data
+        this.updateData();
+    }
+
+    // Updates data
+    updateData() {
         if (this.hasTotalTarget && this.hasQuantityTarget) {
             fetch("/basket/json", {
                 method: "GET",
@@ -36,28 +45,6 @@ export default class extends Controller {
         }
     }
 
-    // Adds a product to the basket
-    add(event) {
-        // Adds an animation to the clicked button
-        this.animation(event.currentTarget);
-
-        // Fetches data from the Symfony controller
-        this.fetchData(event.currentTarget);
-    }
-
-    // Adds an animation to the clicked button
-    animation(clickedButton) {
-        if (!clickedButton.classList.contains("btn-primary")) {
-            return;
-        }
-        clickedButton.classList.remove("btn-primary");
-        clickedButton.classList.add("btn-secondary", "zoom-animation");
-        setTimeout(() => {
-            clickedButton.classList.remove("zoom-animation", "btn-secondary");
-            clickedButton.classList.add("btn-primary");
-        }, 500);
-    }
-
     // Deletes the basket
     delete() {
         fetch("/basket", { method: "DELETE" })
@@ -72,15 +59,33 @@ export default class extends Controller {
         });
     }
 
-    // Deletes a product
-    deleteProduct(event) {
+    // Adds a quantity of productItem to the basket
+    addProductItem(event) {
+        // Adds an animation to the clicked button
+        this.animation(event.currentTarget);
+
+        // Fetches data from the Symfony controller
+        this.fetchData(event.currentTarget);
+    }
+
+    // Removes a quantity of productItem to the basket
+    removeProductItem(event) {
+        // Adds an animation to the clicked button
+        this.animation(event.currentTarget);
+
+        // Fetches data from the Symfony controller
+        this.fetchData(event.currentTarget);
+    }
+
+    // Deletes completely a productItem
+    deleteProductItem(event) {
         // Store event data before the asynchronous call
         const target = event.currentTarget;
 
         fetch("/basket/delete", {
             method: "DELETE",
             body: JSON.stringify({
-                id: event.currentTarget.dataset.productid,
+                id: event.currentTarget.dataset.productItemId,
                 quantity: 0,
             }),
             headers: {
@@ -108,7 +113,7 @@ export default class extends Controller {
         fetch("/basket", {
             method: "POST",
             body: JSON.stringify({
-                id: target.dataset.productid,
+                id: target.dataset.productItemId,
                 quantity: target.dataset.quantity,
             }),
             headers: {
@@ -135,12 +140,6 @@ export default class extends Controller {
         });
     }
 
-    // Displays a message
-    displayMessage(message, alertClass) {
-        this.messageTarget.className = `alert ${alertClass}`;
-        this.messageTarget.textContent = message;
-    }
-
     // Updates total and quantity
     update(data) {
         if (!data) {
@@ -148,6 +147,13 @@ export default class extends Controller {
         }
         this.updateBasketButton(data);
         this.updateBasketPage(data);
+
+        // Dispatches a global event
+        const event = new CustomEvent('basket:update', {
+            bubbles: true,
+            detail: { data }
+        });
+        document.dispatchEvent(event);
     }
 
     // Updates the basket button
@@ -173,7 +179,7 @@ export default class extends Controller {
 
     // Updates the counters
     updateBasketCounters(data) {
-        if (!data.basket) return;
+        if (!data.basket) {return;}
 
         if (this.hasTotalTarget) {
             this.totalTarget.textContent = (data.basket.total / 100).toFixed(2);
@@ -191,8 +197,8 @@ export default class extends Controller {
             return;
         }
 
-        this.removeDeletedProducts(data);
-        this.updateExistingProducts(data);
+        this.removeDeletedProductItems(data);
+        this.updateExistingProductItems(data);
         this.updateBasketTotals(data);
         this.updateSubmitButton(data);
 
@@ -202,32 +208,32 @@ export default class extends Controller {
         }
     }
 
-    // Removes products that are no longer in the basket
-    removeDeletedProducts(data) {
-        if (!data.basket || !data.basket.products) {
+    // Removes productItems that are no longer in the basket
+    removeDeletedProductItems(data) {
+        if (!data.basket || !data.basket.productItems) {
             return;
         }
 
-        const currentProductIds = Object.keys(data.basket.products);
-        const productRows = document.querySelectorAll('tr[id^="product-"]');
+        const currentProductItemIds = Object.keys(data.basket.productItems);
+        const productItemRows = document.querySelectorAll('tr[id^="productItem-"]');
 
-        productRows.forEach((row) => {
-            const productId = row.id.replace("product-", "");
-            if (!currentProductIds.includes(productId)) {
+        productItemRows.forEach((row) => {
+            const productItemId = row.id.replace("productItem-", "");
+            if (!currentProductItemIds.includes(productItemId)) {
                 row.classList.add("fade-out");
                 setTimeout(() => row.remove(), 100);
             }
         });
     }
 
-    // Updates existing products
-    updateExistingProducts(data) {
-        if (!data.basket || !data.basket.products) {
+    // Updates existing productItems
+    updateExistingProductItems(data) {
+        if (!data.basket || !data.basket.productItems) {
             return;
         }
 
-        Object.entries(data.basket.products).forEach(([productId, productData]) => {
-            this.updateProductRow(productId, productData);
+        Object.entries(data.basket.productItems).forEach(([productItemId, productItemData]) => {
+            this.updateProductItemRow(productItemId, productItemData);
         });
     }
 
@@ -272,37 +278,78 @@ export default class extends Controller {
         this.submitButtonTarget.value = `${label} ${total} ${currency}`;
     }
 
-    // Updates a single product row
-    updateProductRow(productId, productData) {
-        const productTotalElement = this.productTotalTargets.find(
-            (target) => target.dataset.productId === productId
+    // Updates a single productItem row
+    updateProductItemRow(productItemId, productItemData) {
+        const productItemTotalElement = this.productItemTotalTargets.find(
+            (target) => target.dataset.productItemId === productItemId
         );
-        if (productTotalElement) {
-            productTotalElement.textContent = (productData.total / 100).toFixed(2);
+        if (productItemTotalElement) {
+            productItemTotalElement.textContent = (productItemData.total / 100).toFixed(2) + productItemData.productItem.currency;
         }
 
-        const productQuantityElement = this.productQuantityTargets.find(
-            target => target.dataset.productId === productId
+        const productItemQuantityElement = this.productItemQuantityTargets.find(
+            target => target.dataset.productItemId === productItemId
         );
-        if (productQuantityElement) {
-            productQuantityElement.textContent = productData.quantity;
+        if (productItemQuantityElement) {
+            productItemQuantityElement.textContent = productItemData.quantity;
         }
+    }
+
+    // Displays a message
+    displayMessage(message, alertClass) {
+        if (this.hasMessageTarget) {
+            this.messageTarget.className = `alert ${alertClass}`;
+            this.messageTarget.textContent = message;
+        // Dispatch event if no message target
+        } else {
+            const event = new CustomEvent('basket:message', {
+                bubbles: true,
+                detail: { message, alertClass }
+            });
+            this.element.dispatchEvent(event);
+        }
+    }
+
+    // Handles global messages
+    handleGlobalMessage(event) {
+        if (this.hasMessageTarget) {
+            const { message, alertClass } = event.detail;
+            this.messageTarget.className = `alert ${alertClass}`;
+            this.messageTarget.textContent = message;
+        }
+    }
+
+    // Handles global basket updates
+    handleGlobalUpdate(event) {
+        const { data } = event.detail;
+        // Updates the basket button if the event target is not the basket controller
+        if (data && event.target !== this.element) {
+            this.updateBasketButton(data);
+        }
+    }
+
+    // Adds an animation to the clicked button
+    animation(clickedButton) {
+        if (!clickedButton.classList.contains("btn-primary")) {
+            return;
+        }
+        clickedButton.classList.remove("btn-primary");
+        clickedButton.classList.add("btn-secondary", "zoom-animation");
+        setTimeout(() => {
+            clickedButton.classList.remove("zoom-animation", "btn-secondary");
+            clickedButton.classList.add("btn-primary");
+        }, 500);
     }
 
     // Translates messages
     translate(key) {
-        // Vérification simple pour language
-        if (!this.language) {
-            return key;
-        }
+        if (typeof key !== 'string') {return '';}
 
-        // Accès aux traductions
         const translations = this.translations?.[this.language];
-        if (!translations) {
-            return key;
-        }
+        if (!translations) {return key;}
 
-        // Retourne la traduction ou la clé par défaut
-        return translations[key] || key;
+        const translationsMap = new Map(Object.entries(translations));
+
+        return translationsMap.get(key) || key;
     }
 }

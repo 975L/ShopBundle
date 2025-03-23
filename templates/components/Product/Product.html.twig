@@ -1,8 +1,8 @@
 {% set class = class | default('') %}
-<div class="product {{ class }}" id="product-{{ product.id }}">
-    {% set imageSrc = product.medias|first != false ? product.medias|first : "bundles/c975lshop/images/no-product-image.webp" %}
-    <twig:c975LSite:Image:Link src="{{ absolute_url(asset(imageSrc)) }}" url="{{ path('product_display', {'slug': product.slug}) }}" class="img-square img-shadow img-product" width="150" height="150"/>
-    <a href="{{ url('product_display', {'slug': product.slug}) }}"><h2>{{ product.title }}</h2></a>
-    <twig:c975LShop:Product:Price product="{{ product }}"/>
-    <twig:c975LShop:Basket:AddButton product="{{ product }}"/>
-</div>
+<a href="{{ url('product_display', {'slug': product.slug}) }}" class="product-link">
+    <article class="product {{ class }}" id="product-{{ product.id }}">
+        {% set imageSrc = product.medias|first != false ? product.medias|first : "bundles/c975lshop/images/no-product-image.webp" %}
+        <twig:c975LSite:Image:Image src="{{ absolute_url(asset(imageSrc)) }}" class="img-shadow img-product" width="150" height="auto"/>
+        <h2>{{ product.title }}</h2>
+    </article>
+</a>

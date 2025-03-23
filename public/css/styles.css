@@ -8,14 +8,14 @@
 
 /* GENERAL */
 :root {
-    --product-background-color:#fff;
+    --product-background-color: #fff;
 }
 
 /* TYPOGRAPHY */
 .delete-link {
     color: rgb(86, 86, 86);
     text-decoration: underline;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .delete-link img {
@@ -28,7 +28,10 @@
     flex-wrap: wrap;
     width: 100%;
     justify-content: center;
-    margin: 0 auto;
+}
+
+.products a {
+    margin: 5px 0;
 }
 
 .product {
@@ -44,6 +47,12 @@
     box-shadow: var(--box-shadow);
 }
 
+article.product {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 .product:hover {
     transform: scale(1.05);
     transition: all 0.3s;
@@ -54,12 +63,12 @@
     font-size: 1em;
 }
 
-.product a {
+a.product-link {
     text-decoration: none;
 }
 
-.product a:hover {
-    text-decoration: underline;
+a.product-link:hover {
+    text-decoration: none;
 }
 
 .product form {
@@ -72,6 +81,20 @@
     font-size: 0.9em;
     margin: 0 auto 0.5em auto;
     font-family: var(--font-family-body);
+}
+
+.items .card {
+    margin: 0;
+}
+
+.items .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.items .card-body img {
+    width: 16px;
 }
 
 /* BASKET */
@@ -104,21 +127,29 @@ tfoot th {
 }
 
 /* ANIMATIONS */
-@keyframes zoom {
-    from { transform: scale(1); }
-    to { transform: scale(0.5); }
-}
-
 .zoom-animation {
     animation: zoom 2s linear;
-}
-
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
 }
 
 .fade-out {
     animation: fadeOut 0.5s;
     opacity: 0;
+}
+
+@keyframes zoom {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(0.5);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }

@@ -287,6 +287,10 @@
                 <source>label.removed</source>
                 <target>removed!</target>
             </trans-unit>
+            <trans-unit id="72">
+                <source>label.view</source>
+                <target>View</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

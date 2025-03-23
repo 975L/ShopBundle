@@ -31,7 +31,7 @@ class Basket
     private ?string $number = null;
 
     #[ORM\Column]
-    private array $products = [];
+    private array $productItems = [];
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank]
@@ -109,14 +109,14 @@ class Basket
         return $this;
     }
 
-    public function getProducts(): array
+    public function getProductItems(): array
     {
-        return $this->products;
+        return $this->productItems;
     }
 
-    public function setProducts(array $products): static
+    public function setProductItems(array $productItems): static
     {
-        $this->products = $products;
+        $this->productItems = $productItems;
 
         return $this;
     }

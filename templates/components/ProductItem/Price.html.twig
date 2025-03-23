@@ -1,0 +1,11 @@
+{# <twig:c975LShop:Basket:ProductPrice productItem="{{ productItem }}" type="simple|complex"/> #}
+<div>
+    {% if type == "complex" %}
+        Prix HT : {{ ((productItem.price /100) - productItem.vatAmount)|number_format(2) ~ productItem.currency }}<br>
+        Taux TVA : {{ productItem.vat|number_format(2) }} %<br>
+        TVA : {{ productItem.vatAmount|number_format(2) ~ productItem.currency }}<br>
+        Prix TTC : {{ (productItem.price / 100)|number_format(2) ~ productItem.currency }}
+    {% else %}
+        {{ (productItem.price / 100)|number_format(2) ~ productItem.currency }}
+    {% endif %}
+</div>

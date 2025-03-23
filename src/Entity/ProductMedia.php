@@ -9,7 +9,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use c975L\ShopBundle\Repository\ProductMediaRepository;
 
 #[ORM\Entity(repositoryClass: ProductMediaRepository::class)]
-#[ORM\Table(name: 'shop_media')]
+#[ORM\Table(name: 'shop_product_media')]
 #[Vich\Uploadable]
 class ProductMedia
 {

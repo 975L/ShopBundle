@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.10
+
+- Renamed table shop_media to shop_product_media (23/03/2025)
+- Added ProductItem to manage the different versions of a product (23/03/2025)
+- Renamed basket->products to productItems (23/03/2025)
+- Added search bar component (23/03/2025)
+
 ## v0.9.1
 
 - Corrections due to Codacy analysis (22/03/2025)

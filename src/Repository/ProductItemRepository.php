@@ -2,38 +2,22 @@
 
 namespace c975L\ShopBundle\Repository;
 
-use c975L\ShopBundle\Entity\Product;
+use c975L\ShopBundle\Entity\ProductItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Product>
+ * @extends ServiceEntityRepository<ProductItem>
  */
-class ProductRepository extends ServiceEntityRepository
+class ProductItemRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Product::class);
-    }
-
-    // Finds products based on search
-    public function search(string $query): array
-    {
-        if (empty($query)) {
-            return [];
-        }
-
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.title LIKE :query')
-            ->setParameter('query', '%' . $query . '%')
-            ->orderBy('p.title', 'DESC')
-            ->getQuery()
-            ->getResult()
-        ;
+        parent::__construct($registry, ProductItem::class);
     }
 
     //    /**
-    //     * @return Product[] Returns an array of Product objects
+    //     * @return ProductItem[] Returns an array of ProductItem objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -47,7 +31,7 @@ class ProductRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Product
+    //    public function findOneBySomeField($value): ?ProductItem
     //    {
     //        return $this->createQueryBuilder('p')
     //            ->andWhere('p.exampleField = :val')

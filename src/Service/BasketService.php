@@ -7,6 +7,7 @@ use Stripe\Stripe;
 use Symfony\Component\Form\Form;
 use c975L\ShopBundle\Entity\Basket;
 use c975L\ShopBundle\Entity\Payment;
+use c975L\ShopBundle\Entity\ProductItem;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session as StripeSession;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,9 +15,9 @@ use c975L\ShopBundle\Repository\BasketRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use c975L\ShopBundle\Form\ShopFormFactoryInterface;
 use c975L\ShopBundle\Service\EmailServiceInterface;
-use c975L\ShopBundle\Service\ProductServiceInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BasketService implements BasketServiceInterface
@@ -30,7 +31,7 @@ class BasketService implements BasketServiceInterface
         private readonly ConfigServiceInterface $configService,
         private readonly EntityManagerInterface $em,
         private readonly EmailServiceInterface $emailService,
-        private readonly ProductServiceInterface $productService,
+        private readonly ProductItemServiceInterface $productItemService,
         private readonly RequestStack $requestStack,
         private readonly ShopFormFactoryInterface $shopFormFactory,
         private readonly TranslatorInterface $translator,
@@ -38,52 +39,6 @@ class BasketService implements BasketServiceInterface
     ) {
         $this->session = $this->requestStack->getSession();
         $this->stripeSecret = $_ENV["STRIPE_SECRET"];
-    }
-
-    // Adds product to basket and returns total and quantity
-    public function add(Request $request): array
-    {
-        $basket = $this->get();
-        $this->basket = null === $basket ? $this->create() : $basket;
-
-        $data = $request->toArray();
-        $products = $this->basket->getProducts();
-        $productId = $data["id"];
-        $quantity = $data["quantity"];
-        $product = $this->productService->findOneById($productId);
-
-        if (null === $product) {
-            throw new \Exception('Product not found');
-        }
-
-        // Adds product to basket
-        if (isset($products[$productId])) {
-            if ($products[$productId]['quantity'] + $quantity <= 0) {
-                unset($products[$productId]);
-            } else {
-                $products[$productId]['quantity'] += $quantity;
-                $products[$productId]['totalVat'] = $products[$productId]['quantity'] * $product->getVatAmount();
-                $products[$productId]['total'] = $products[$productId]['quantity'] * $product->getPrice();
-            }
-        } else {
-            $products[$productId] = [
-                'product' => $product->toArray(),
-                'quantity' => $quantity,
-                'totalVat' => $quantity * $product->getVatAmount(),
-                'total' => $quantity * $product->getPrice(),
-            ];
-        }
-
-        $this->basket->setProducts($products);
-        $this->basket->setModification(new dateTime());
-
-        $this->updateTotals();
-        $this->em->persist($this->basket);
-        $this->em->flush();
-
-        return [
-            'basket' => $this->basket->toArray(),
-        ];
     }
 
     // Creates basket
@@ -105,6 +60,216 @@ class BasketService implements BasketServiceInterface
         $this->session->set('basket', $basket->getId());
 
         return $basket;
+    }
+
+    // Deletes basket
+    public function delete(): array
+    {
+        $identifiant = $this->session->get('basket');
+        if (null !== $identifiant) {
+            $this->basket = $this->get();
+
+            $this->em->remove($this->basket);
+            $this->em->flush();
+
+            $this->session->remove('basket');
+        }
+
+        return [
+            'total' => 0,
+            'quantity' => 0,
+        ];
+    }
+
+    // Returns current basket
+    public function get(): ?Basket
+    {
+        return $this->basketRepository->findOneById($this->session->get('basket'));
+    }
+
+    // Gets total and quantity
+    public function getJson(): array
+    {
+        $this->basket = $this->get();
+
+        return null === $this->basket ? [] : ['basket' => $this->basket->toArray()];
+    }
+
+    // Updates total
+    public function updateTotals(): void
+    {
+        $shipping = $this->configService->getParameter('c975LShop.shipping');
+        $shippingFree = $this->configService->getParameter('c975LShop.shippingFree');
+
+        $productItems = $this->basket->getProductItems();
+
+        $total = 0;
+        $quantity = 0;
+        $isNumeric = true;
+        foreach ($productItems as $productItem) {
+            $total += $productItem['total'];
+            $quantity += $productItem['quantity'];
+            if (null === $productItem['productItem']['file']) {
+                $isNumeric = false;
+            }
+        }
+
+        $this->basket->setNumeric($isNumeric);
+        $this->basket->setTotal($total);
+        $this->basket->setShipping(false === $isNumeric && $total < $shippingFree ? $shipping : 0);
+        $this->basket->setQuantity($quantity);
+    }
+
+    // Validates basket
+    public function validate(Request $request): string
+    {
+        $this->basket = $this->get();
+
+        $data = $this->createStripeSession();
+        $this->basket->setStatus('validated');
+        $this->basket->setNumber($this->generateOrderNumber());
+
+        // Creates payment
+        $this->createPayment();
+
+        $this->em->persist($this->basket);
+        $this->em->flush();
+
+        return $data['url'];
+    }
+
+    // Sets basket as validated after successful payment
+    public function validated(): ?Basket
+    {
+        $this->basket = $this->get();
+        if (null !== $this->basket) {
+            $this->basket->setStatus('paid');
+
+            $this->em->persist($this->basket);
+            $this->em->flush();
+
+            // Sends email
+            $this->emailService->send($this->basket);
+
+            $this->session->remove('basket');
+        }
+
+        return $this->basket;
+    }
+
+    // Adds product to basket and returns total and quantity
+    public function addProductItem(Request $request): array
+    {
+        $basket = $this->get();
+        $this->basket = null === $basket ? $this->create() : $basket;
+
+        // Here the products are in fact the productItems
+        $data = $request->toArray();
+        $productItems = $this->basket->getProductItems();
+        $productItemId = $data["id"];
+        $quantity = $data["quantity"];
+        $productItem = $this->productItemService->findOneById($productItemId);
+
+        if (null === $productItem) {
+            throw new \Exception('Product not found');
+        }
+
+        // Adds productItem to basket
+        if (isset($productItems[$productItemId])) {
+            // Deletes productItem if quantity is 0
+            if ($productItems[$productItemId]['quantity'] + $quantity <= 0) {
+                unset($productItems[$productItemId]);
+            // Otherwise updates quantity
+            } else {
+                $productItems[$productItemId]['quantity'] += $quantity;
+                $productItems[$productItemId]['totalVat'] = $productItems[$productItemId]['quantity'] * $productItem->getVat();
+                $productItems[$productItemId]['total'] = $productItems[$productItemId]['quantity'] * $productItem->getPrice();
+            }
+        // New productItem
+        } else {
+            $productItems = $this->defineProductItem($productItems, $productItem, $quantity);
+        }
+
+        $this->basket->setProductItems($productItems);
+        $this->basket->setModification(new dateTime());
+
+        $this->updateTotals();
+        $this->em->persist($this->basket);
+        $this->em->flush();
+
+        return [
+            'basket' => $this->basket->toArray(),
+        ];
+    }
+
+    // Deletes product item from basket
+    public function deleteProductItem(Request $request): array
+    {
+        $this->basket = $this->get();
+        $data = $request->toArray();
+
+        // Deletes productItem from basket
+        $productItems = $this->basket->getProductItems();
+        if (isset($productItems[$data["id"]])) {
+            unset($productItems[$data["id"]]);
+        }
+
+        $this->basket->setProductItems($productItems);
+        $this->basket->setModification(new dateTime());
+
+        $this->updateTotals();
+        $this->em->persist($this->basket);
+        $this->em->flush();
+
+        return $this->getJson();
+    }
+
+    // Defines productItem
+    private function defineProductItem(array $productItems, ProductItem $productItem, int $quantity): array
+    {
+        // Removes values not needed in basket
+        $productItemData = $productItem->toArray();
+        unset($productItemData['description']);
+        unset($productItemData['product']);
+        unset($productItemData['creation']);
+        unset($productItemData['modification']);
+        unset($productItemData['user']);
+
+        // Adds values related to product itself
+        $product = $productItem->getProduct();
+        $productData = [];
+        $productData['title'] = $product->getTitle();
+        $productData['slug'] = $product->getSlug();
+        $productData['image'] = $product->getMedias()[0]->getName() ?? null;
+
+        // Adds productItem to basket
+        $productItems[$productItem->getId()] = [
+            'productItem' => $productItemData,
+            'product' => $productData,
+            'quantity' => $quantity,
+            'totalVat' => $quantity * $productItem->getVat(),
+            'total' => $quantity * $productItem->getPrice(),
+        ];
+
+        return $productItems;
+    }
+
+    // Generates order number with format YY-AAAAMM-XXXXX
+    private function generateOrderNumber(): string
+    {
+        // Generates a prefix on two random upper letters
+        $prefix = chr(rand(65, 90)) . chr(rand(65, 90));
+        $datePart = date('Ym');
+
+        // Random number
+        $randomBytes = random_bytes(4);
+        $randomPart = strtoupper(bin2hex($randomBytes));
+        $randomPart = substr($randomPart, 0, 5);
+
+        // Test part
+        $testPart = strpos($this->stripeSecret, 'test') !== false ? 'TEST-' : '';
+
+        return $testPart . $prefix . '-' . $datePart . '-' . $randomPart;
     }
 
     // Creates form
@@ -133,16 +298,16 @@ class BasketService implements BasketServiceInterface
     {
         // Defines line items
         $lineItems = [];
-        foreach ($this->basket->getProducts() as $product) {
+        foreach ($this->basket->getProductItems() as $productItem) {
             $lineItems[] = [
                 'price_data' => [
                     'currency' => $this->basket->getCurrency(),
                     'product_data' => [
-                        'name' => $product['product']['title'],
+                        'name' => $productItem['product']['title'] . ' ('. $productItem['productItem']['title'] . ')',
                     ],
-                    'unit_amount' => $product['product']['price'],
+                    'unit_amount' => $productItem['productItem']['price'],
                 ],
-                'quantity' => $product['quantity'],
+                'quantity' => $productItem['quantity'],
             ];
         }
 
@@ -175,124 +340,5 @@ class BasketService implements BasketServiceInterface
             'id' => $checkoutSession->id,
             'url' => $checkoutSession->url,
         ];
-    }
-
-    // Deletes basket
-    public function delete(): array
-    {
-        $identifiant = $this->session->get('basket');
-        if (null !== $identifiant) {
-            $this->basket = $this->get();
-
-            $this->em->remove($this->basket);
-            $this->em->flush();
-
-            $this->session->remove('basket');
-        }
-
-        return [
-            'total' => 0,
-            'quantity' => 0,
-        ];
-    }
-
-    // Deletes product from basket
-    public function deleteProduct(Request $request): array
-    {
-        $this->basket = $this->get();
-        $data = $request->toArray();
-
-        // Deletes product from basket
-        $products = $this->basket->getProducts();
-        if (isset($products[$data["id"]])) {
-            unset($products[$data["id"]]);
-        }
-
-        $this->basket->setProducts($products);
-        $this->basket->setModification(new dateTime());
-
-        $this->updateTotals();
-        $this->em->persist($this->basket);
-        $this->em->flush();
-
-        return $this->getJson();
-    }
-
-    // Returns current basket
-    public function get(): ?Basket
-    {
-        return $this->basketRepository->findOneById($this->session->get('basket'));
-    }
-
-    // Gets total and quantity
-    public function getJson(): array
-    {
-        $this->basket = $this->get();
-
-        return null === $this->basket ? [] : ['basket' => $this->basket->toArray()];
-    }
-
-    // Updates total
-    public function updateTotals(): void
-    {
-        $shipping = $this->configService->getParameter('c975LShop.shipping');
-        $shippingFree = $this->configService->getParameter('c975LShop.shippingFree');
-
-        $products = $this->basket->getProducts();
-
-        $total = 0;
-        $quantity = 0;
-        $isNumeric = true;
-        foreach ($products as $product) {
-            $total += $product['total'];
-            $quantity += $product['quantity'];
-            if (null === $product['product']['file']) {
-                $isNumeric = false;
-            }
-        }
-
-        $this->basket->setNumeric($isNumeric);
-        $this->basket->setTotal($total);
-        $this->basket->setShipping(false === $isNumeric && $total < $shippingFree ? $shipping : 0);
-        $this->basket->setQuantity($quantity);
-    }
-
-    // Validates basket
-    public function validate(Request $request): string
-    {
-        $this->basket = $this->get();
-
-        $data = $this->createStripeSession();
-        $this->basket->setStatus('validated');
-        $number = substr(hash('sha1', uniqid()), 10, 10);
-        $number = strpos($this->stripeSecret, 'test') !== false ? substr_replace($number, "T_", 0, 2) : $number;
-        $this->basket->setNumber($number);
-
-        // Creates payment
-        $this->createPayment();
-
-        $this->em->persist($this->basket);
-        $this->em->flush();
-
-        return $data['url'];
-    }
-
-    // Validates basket
-    public function validated(): ?Basket
-    {
-        $this->basket = $this->get();
-        if (null !== $this->basket) {
-            $this->basket->setStatus('paid');
-
-            $this->em->persist($this->basket);
-            $this->em->flush();
-
-            // Sends email
-            $this->emailService->send($this->basket);
-
-            $this->session->remove('basket');
-        }
-
-        return $this->basket;
     }
 }

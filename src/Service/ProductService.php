@@ -6,7 +6,6 @@ use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Repository\ProductRepository;
 use Knp\Component\Pager\PaginatorInterface;
 
-
 class ProductService implements ProductServiceInterface
 {
     public function __construct(
@@ -35,5 +34,11 @@ class ProductService implements ProductServiceInterface
     public function findOneById(int $id): Product
     {
         return $this->productRepository->findOneById($id);
+    }
+
+    // Searches for product
+    public function search(string $query)
+    {
+        return $this->productRepository->search($query);
     }
 }
