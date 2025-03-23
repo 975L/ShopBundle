@@ -1,6 +1,0 @@
-{# <twig:c975LShop:Basket:AddButton product="{{ product }}" [type="primary"] [quantity="1"]/> #}
-{% set type = type | default('primary') %}
-{% set quantity = quantity | default(1) %}
-<button data-action="click->basket#add" data-quantity="{{ quantity }}" data-productId="{{ product.id }}" data-title="{{ product.title }}" data-alert="success" data-text="{{ 'label.added'|trans({}, 'shop') }}" class="btn btn-{{ type }}">
-    <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="16" height="16" class="white"/> {{ 'label.add'|trans({}, 'shop') }}
-</button>

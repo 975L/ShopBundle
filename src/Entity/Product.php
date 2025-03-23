@@ -26,20 +26,8 @@ class Product
     #[ORM\Column(length: 100, unique: true)]
     private ?string $slug = null;
 
-    #[ORM\Column]
-    private ?int $price = null;
-
-    #[ORM\Column(length: 5)]
-    private ?string $currency = null;
-
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $file = null;
-
-    #[ORM\Column]
-    private ?float $vat = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation = null;
@@ -50,28 +38,16 @@ class Product
     #[ORM\OneToMany(targetEntity: ProductMedia::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist'])]
     private Collection $medias;
 
+    #[ORM\OneToMany(targetEntity: ProductItem::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist'])]
+    private Collection $items;
+
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?User $user = null;
 
     public function __construct()
     {
+        $this->items = new ArrayCollection();
         $this->medias = new ArrayCollection();
-    }
-
-    // Converts the entity in an array
-    public function toArray()
-    {
-        $product = get_object_vars($this);
-        $product['medias'] = $this->getMediasNames();
-        $product['vatAmount'] = $this->getVatAmount();
-
-        return $product;
-    }
-
-    // Returns the VAT amount
-    public function getVatAmount(): float
-    {
-        return $this->getVat() > 0 ? round($this->getPrice() / 100 - ($this->getPrice() / (100 + $this->getVat())), 2) : 0;
     }
 
     public function getId(): ?int
@@ -103,30 +79,6 @@ class Product
         return $this;
     }
 
-    public function getPrice(): ?int
-    {
-        return $this->price;
-    }
-
-    public function setPrice(int $price): static
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    public function getCurrency(): ?string
-    {
-        return $this->currency;
-    }
-
-    public function setCurrency(string $currency): static
-    {
-        $this->currency = $currency;
-
-        return $this;
-    }
-
     public function getDescription(): ?string
     {
         return $this->description;
@@ -139,47 +91,12 @@ class Product
         return $this;
     }
 
-    public function getFile(): ?string
-    {
-        return $this->file;
-    }
-
-    public function setFile(string $file): static
-    {
-        $this->file = $file;
-
-        return $this;
-    }
-
-    public function getVat(): ?float
-    {
-        return $this->vat;
-    }
-
-    public function setVat(float $vat): static
-    {
-        $this->vat = $vat;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, ProductMedia>
      */
     public function getMedias(): Collection
     {
         return $this->medias;
-    }
-
-    // Returns array of medias names, including path
-    public function getMediasNames(): array
-    {
-        $mediaNames = [];
-        foreach ($this->medias as $media) {
-            $mediaNames[] = $media->getName();
-        }
-
-        return $mediaNames;
     }
 
     public function addMedia(ProductMedia $media): static
@@ -236,6 +153,36 @@ class Product
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProductItem>
+     */
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    public function addItem(ProductItem $item): static
+    {
+        if (!$this->items->contains($item)) {
+            $this->items->add($item);
+            $item->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeItem(ProductItem $item): static
+    {
+        if ($this->items->removeElement($item)) {
+            // set the owning side to null (unless already changed)
+            if ($item->getProduct() === $this) {
+                $item->setProduct(null);
+            }
+        }
 
         return $this;
     }

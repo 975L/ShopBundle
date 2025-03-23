@@ -1,0 +1,5 @@
+{# <twig:c975LShop:Basket:ProductRemoveOneButton productItem="{{ productItem }}" [type="primary"]/> #}
+{% set type = type | default('primary') %}
+<button data-action="click->basket#removeProductItem" data-quantity="-1" data-product-item-id="{{ productItem.productItem.id }}" data-title="{{ productItem.product.title ~ ' (' ~ productItem.productItem.title ~')' }}" data-alert="warning" data-text="{{ 'label.removed'|trans({}, 'shop') }}" class="btn btn-{{ type }} btn-small">
+    -
+</button>

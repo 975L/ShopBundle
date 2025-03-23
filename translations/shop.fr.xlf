@@ -286,6 +286,10 @@
                 <source>label.removed</source>
                 <target>supprimé !</target>
             </trans-unit>
+            <trans-unit id="72">
+                <source>label.view</source>
+                <target>Voir</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

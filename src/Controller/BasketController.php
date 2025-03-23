@@ -22,17 +22,6 @@ class BasketController extends AbstractController
     ) {
     }
 
-    // ADD
-    #[Route(
-        '/basket',
-        name: 'basket_add',
-        methods: ['POST']
-    )]
-    public function add(Request $request): JsonResponse
-    {
-        return new JsonResponse($this->basketService->add($request));
-    }
-
     // GETS BASKET
     #[Route(
         '/basket/json',
@@ -88,22 +77,11 @@ class BasketController extends AbstractController
         return new JsonResponse($this->basketService->delete());
     }
 
-    // DELETE PRODUCT
-    #[Route(
-        '/basket/delete',
-        name: 'basket_product_delete',
-        methods: ['DELETE']
-    )]
-    public function remove(Request $request): JsonResponse
-    {
-        return new JsonResponse($this->basketService->deleteProduct($request));
-    }
-
     // VALIDATED
     #[Route(
         '/basket/validated/{number:basket}',
         name: 'basket_validated',
-        requirements: ['number' => '.{10}'],
+        requirements: ['number' => '.{10,20}'],
         defaults: ['number' => ''],
         methods: ['GET']
     )]
@@ -120,5 +98,27 @@ class BasketController extends AbstractController
         return $this->render('@c975LShop/basket/validated.html.twig', [
             'basket' => $basket,
         ]);
+    }
+
+    // ADD PRODUCT ITEM
+    #[Route(
+        '/basket',
+        name: 'basket_add',
+        methods: ['POST']
+    )]
+    public function add(Request $request): JsonResponse
+    {
+        return new JsonResponse($this->basketService->addProductItem($request));
+    }
+
+    // DELETE PRODUCT ITEM
+    #[Route(
+        '/basket/delete',
+        name: 'basket_product_delete',
+        methods: ['DELETE']
+    )]
+    public function remove(Request $request): JsonResponse
+    {
+        return new JsonResponse($this->basketService->deleteProductItem($request));
     }
 }

@@ -1,0 +1,7 @@
+<twig:c975LSite:Card:Card id="id" title="{{ item.title }}">
+    <p>{{ item.description }}</p>
+    <p class="price">{{ (item.price / 100)|number_format(2) ~ item.currency }}</p>
+    <div data-controller="basket">
+        <twig:c975LShop:ProductItem:AddButton productItem="{{ item }}"/>
+    </div>
+</twig:c975LSite:Card:Card>

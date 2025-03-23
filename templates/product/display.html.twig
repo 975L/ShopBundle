@@ -7,12 +7,11 @@
 
 {% block content %}
     <section class="text-center">
-        <twig:c975LSite:Slider:Slider slides="{{ product.getMediasNames() }}" id="slider"/>
+        <twig:c975LSite:Slider:Slider slides="{{ product.medias }}" id="slider"/>
         <twig:c975LShop:Product:Description description="{{ product.description }}"/>
-        <twig:c975LShop:Product:Price product="{{ product }}"/>
+        <twig:c975LShop:Product:Items items="{{ product.items }}"/>
         <div data-controller="basket">
             <twig:c975LShop:Basket:Message/>
-            <twig:c975LShop:Basket:AddButton product="{{ product }}"/>
             <twig:c975LShop:Basket:ViewButton icon="true" type="secondary" class="black"/>
         </div>
         <twig:c975LShop:Basket:ContinueShoppingButton/>

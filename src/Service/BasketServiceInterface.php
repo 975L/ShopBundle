@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 interface BasketServiceInterface
 {
-    public function add(Request $request): array;
+    public function addProductItem(Request $request): array;
 
     public function create(): Basket;
 
@@ -20,7 +20,7 @@ interface BasketServiceInterface
 
     public function delete(): array;
 
-    public function deleteProduct(Request $request): array;
+    public function deleteProductItem(Request $request): array;
 
     public function get(): ?Basket;
 
