@@ -47,8 +47,8 @@
                 <target>Produit ajouté au panier</target>
             </trans-unit>
             <trans-unit id="12">
-                <source>label.all_our_products</source>
-                <target>Retrouvez tous nos produits</target>
+                <source>label.all_our_items</source>
+                <target>Retrouvez tous nos articles</target>
             </trans-unit>
             <trans-unit id="13">
                 <source>label.shop</source>

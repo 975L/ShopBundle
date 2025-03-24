@@ -254,12 +254,13 @@ class BasketService implements BasketServiceInterface
         return $productItems;
     }
 
-    // Generates order number with format YY-AAAAMM-XXXXX
+    // Generates order number with format AAAAMM-YY-XXXXX
     private function generateOrderNumber(): string
     {
         // Generates a prefix on two random upper letters
-        $prefix = chr(rand(65, 90)) . chr(rand(65, 90));
         $datePart = date('Ym');
+        $letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+        $prefix = $letters[random_int(0, strlen($letters) - 1)] . $letters[random_int(0, strlen($letters) - 1)];
 
         // Random number
         $randomBytes = random_bytes(4);
@@ -269,7 +270,7 @@ class BasketService implements BasketServiceInterface
         // Test part
         $testPart = strpos($this->stripeSecret, 'test') !== false ? 'TEST-' : '';
 
-        return $testPart . $prefix . '-' . $datePart . '-' . $randomPart;
+        return $testPart . $datePart . '-' . $prefix . '-' . $randomPart;
     }
 
     // Creates form

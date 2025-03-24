@@ -8,8 +8,8 @@ export default class extends Controller {
     // Fetches data from the Symfony controller when the controller is connected
     connect() {
         // Event listeners as some controller are outside the basket controller
-        document.addEventListener('basket:message', this.handleGlobalMessage.bind(this));
-        document.addEventListener('basket:update', this.handleGlobalUpdate.bind(this));
+        document.addEventListener("basket:message", this.handleGlobalMessage.bind(this));
+        document.addEventListener("basket:update", this.handleGlobalUpdate.bind(this));
 
         // Initialize translations
         this.language = "fr"; // Default language
@@ -25,7 +25,7 @@ export default class extends Controller {
     // Updates data
     updateData() {
         if (this.hasTotalTarget && this.hasQuantityTarget) {
-            fetch("/basket/json", {
+            fetch("/shop/basket/json", {
                 method: "GET",
             })
             .then((response) => {
@@ -47,7 +47,7 @@ export default class extends Controller {
 
     // Deletes the basket
     delete() {
-        fetch("/basket", { method: "DELETE" })
+        fetch("/shop/basket", { method: "DELETE" })
         .then((response) => {
             if (!response.ok) {
                 throw new Error(this.translate("basket.delete.error"));
@@ -82,7 +82,7 @@ export default class extends Controller {
         // Store event data before the asynchronous call
         const target = event.currentTarget;
 
-        fetch("/basket/delete", {
+        fetch("/shop/basket/delete", {
             method: "DELETE",
             body: JSON.stringify({
                 id: event.currentTarget.dataset.productItemId,
@@ -110,7 +110,7 @@ export default class extends Controller {
 
     // Fetches data from the Symfony controller
     fetchData(target) {
-        fetch("/basket", {
+        fetch("/shop/basket", {
             method: "POST",
             body: JSON.stringify({
                 id: target.dataset.productItemId,
@@ -149,7 +149,7 @@ export default class extends Controller {
         this.updateBasketPage(data);
 
         // Dispatches a global event
-        const event = new CustomEvent('basket:update', {
+        const event = new CustomEvent("basket:update", {
             bubbles: true,
             detail: { data }
         });
@@ -158,7 +158,7 @@ export default class extends Controller {
 
     // Updates the basket button
     updateBasketButton(data) {
-        // Vérification rapide des conditions d'arrêt
+        // Updates the basket button if it exists
         const basketButton = document.getElementById("basket-button");
         if (!basketButton) {
             return;
@@ -215,7 +215,7 @@ export default class extends Controller {
         }
 
         const currentProductItemIds = Object.keys(data.basket.productItems);
-        const productItemRows = document.querySelectorAll('tr[id^="productItem-"]');
+        const productItemRows = document.querySelectorAll("tr[id^=\"productItem-\"]");
 
         productItemRows.forEach((row) => {
             const productItemId = row.id.replace("productItem-", "");
@@ -288,21 +288,21 @@ export default class extends Controller {
         }
 
         const productItemQuantityElement = this.productItemQuantityTargets.find(
-            target => target.dataset.productItemId === productItemId
+            (target) => target.dataset.productItemId === productItemId
         );
         if (productItemQuantityElement) {
             productItemQuantityElement.textContent = productItemData.quantity;
         }
     }
 
-    // Displays a message
+    // Displays a message locally or globally
     displayMessage(message, alertClass) {
         if (this.hasMessageTarget) {
             this.messageTarget.className = `alert ${alertClass}`;
             this.messageTarget.textContent = message;
-        // Dispatch event if no message target
         } else {
-            const event = new CustomEvent('basket:message', {
+            // Dispatch event if no message target
+            const event = new CustomEvent("basket:message", {
                 bubbles: true,
                 detail: { message, alertClass }
             });
@@ -310,9 +310,9 @@ export default class extends Controller {
         }
     }
 
-    // Handles global messages
+    // Handles global messages - simplifiée pour éviter la duplication
     handleGlobalMessage(event) {
-        if (this.hasMessageTarget) {
+        if (this.hasMessageTarget && event.target !== this.element) {
             const { message, alertClass } = event.detail;
             this.messageTarget.className = `alert ${alertClass}`;
             this.messageTarget.textContent = message;
@@ -321,10 +321,8 @@ export default class extends Controller {
 
     // Handles global basket updates
     handleGlobalUpdate(event) {
-        const { data } = event.detail;
-        // Updates the basket button if the event target is not the basket controller
-        if (data && event.target !== this.element) {
-            this.updateBasketButton(data);
+        if (event.detail?.data && event.target !== this.element) {
+            this.updateBasketButton(event.detail.data);
         }
     }
 
@@ -343,7 +341,7 @@ export default class extends Controller {
 
     // Translates messages
     translate(key) {
-        if (typeof key !== 'string') {return '';}
+        if (typeof key !== "string") {return "";}
 
         const translations = this.translations?.[this.language];
         if (!translations) {return key;}

@@ -48,8 +48,8 @@
                 <target>Product added to basket</target>
             </trans-unit>
             <trans-unit id="12">
-                <source>label.all_our_products</source>
-                <target>Find all our products</target>
+                <source>label.all_our_items</source>
+                <target>Find all our items</target>
             </trans-unit>
             <trans-unit id="13">
                 <source>label.shop</source>

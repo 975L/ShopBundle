@@ -3,13 +3,15 @@
 
 {# Defines specific variables #}
 {% set title = 'label.shop'|trans %}
-{% set description = 'label.all_our_products'|trans %}
+{% set description = 'label.all_our_items'|trans %}
 
 {% block content %}
     <div data-controller="basket">
-        <p class="text text-center lead">{{ 'label.all_our_products'|trans({}, 'shop') }}</p>
+        <twig:c975LShop:Shop:Shipping/>
+        <twig:c975LShop:Shop:Information/>
         <twig:c975LShop:Product:Products products="{{ products }}"/>
         <twig:c975LShop:Basket:ViewButton icon="true" type="secondary" class="black"/>
         <twig:c975LShop:Basket:Message/>
+        <twig:c975LShop:Shop:Footer/>
     </div>
 {% endblock %}
