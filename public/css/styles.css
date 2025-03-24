@@ -121,6 +121,23 @@ tfoot th {
     border-bottom: none;
 }
 
+/* COMPONENTS */
+.shop-shipping,
+.shop-information,
+.shop-footer {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.shop-shipping {
+    background-color: var(--primary);
+}
+
+.shop-footer {
+    background-color: var(--secondary);
+}
+
 /* ALERTS */
 .alert {
     text-align: center;
@@ -140,6 +157,7 @@ tfoot th {
     from {
         transform: scale(1);
     }
+
     to {
         transform: scale(0.5);
     }
@@ -149,6 +167,7 @@ tfoot th {
     from {
         opacity: 1;
     }
+
     to {
         opacity: 0;
     }

@@ -24,7 +24,7 @@ class BasketController extends AbstractController
 
     // GETS BASKET
     #[Route(
-        '/basket/json',
+        '/shop/basket/json',
         name: 'basket_json',
         methods: ['GET']
     )]
@@ -35,7 +35,7 @@ class BasketController extends AbstractController
 
     // DISPLAY
     #[Route(
-        '/basket/display',
+        '/shop/basket/display',
         name: 'basket_display',
         methods: ['GET', 'POST']
     )]
@@ -68,7 +68,7 @@ class BasketController extends AbstractController
 
     // DELETE
     #[Route(
-        '/basket',
+        '/shop/basket',
         name: 'basket_delete',
         methods: ['DELETE']
     )]
@@ -79,7 +79,7 @@ class BasketController extends AbstractController
 
     // VALIDATED
     #[Route(
-        '/basket/validated/{number:basket}',
+        '/shop/basket/validated/{number:basket}',
         name: 'basket_validated',
         requirements: ['number' => '.{10,20}'],
         defaults: ['number' => ''],
@@ -102,7 +102,7 @@ class BasketController extends AbstractController
 
     // ADD PRODUCT ITEM
     #[Route(
-        '/basket',
+        '/shop/basket',
         name: 'basket_add',
         methods: ['POST']
     )]
@@ -113,7 +113,7 @@ class BasketController extends AbstractController
 
     // DELETE PRODUCT ITEM
     #[Route(
-        '/basket/delete',
+        '/shop/basket/delete',
         name: 'basket_product_delete',
         methods: ['DELETE']
     )]

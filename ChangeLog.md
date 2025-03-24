@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.11
+
+- Changed basket number format  (24/03/2025)
+- Added Codacy corrections (24/03/2025)
+- Added /shop to Basket Routes (24/03/2025)
+- Added componenets to be overrided to allow perosnalisation (24/03/2025)
+
 ## v0.10
 
 - Renamed table shop_media to shop_product_media (23/03/2025)
