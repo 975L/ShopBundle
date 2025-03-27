@@ -1,5 +1,19 @@
 # Changelog
 
+# v0.12
+
+- Added image for ProductItem (27/03/2025)
+- Added position for Product (27/03/2025)
+- Added position for ProductItem (27/03/2025)
+- Added position for ProductMedia (27/03/2025)
+- Added display of id in shop management (27/03/2025)
+- Added name field for basket (27/03/2025)
+- Corrected display images on basket + email (27/03/2025)
+- Added possibility to delete Basket/Payment for Admin (27/03/2025)
+- Added links Payment <-> Basket (27/03/2025)
+- Added buttons to filter Baskets (27/03/2025)
+- Renamed ImageTrait to MediaTrait, more consistent (27/03/2025)
+
 ## v0.11
 
 - Changed basket number format  (24/03/2025)

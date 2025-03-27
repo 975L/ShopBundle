@@ -6,20 +6,17 @@ use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use c975L\ShopBundle\Repository\ProductMediaRepository;
+use c975L\ShopBundle\Repository\ProductItemMediaRepository;
 
-#[ORM\Entity(repositoryClass: ProductMediaRepository::class)]
-#[ORM\Table(name: 'shop_product_media')]
+#[ORM\Entity(repositoryClass: ProductItemMediaRepository::class)]
+#[ORM\Table(name: 'shop_product_item_media')]
 #[Vich\Uploadable]
-class ProductMedia
+class ProductItemMedia
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\Column(name: "position", type: "integer")]
-    private $position;
 
     #[ORM\Column(nullable: true)]
     private ?string $name = null;
@@ -27,17 +24,16 @@ class ProductMedia
     #[ORM\Column(nullable: true)]
     private ?int $size = null;
 
-    #[ORM\ManyToOne(inversedBy: 'medias', cascade: ['persist'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Product $product = null;
+    #[ORM\OneToOne(mappedBy: 'media', cascade: ['persist'])]
+    private ?ProductItem $productItem = null;
 
-    #[Vich\UploadableField(mapping: 'products', fileNameProperty: 'name', size: 'size')]
+    #[Vich\UploadableField(mapping: 'productItems', fileNameProperty: 'name', size: 'size')]
     private ?File $file = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'productMedias')]
+    #[ORM\ManyToOne(inversedBy: 'productItemMedias')]
     private ?User $user = null;
 
     public function __toString()
@@ -48,17 +44,6 @@ class ProductMedia
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getPosition(): ?int
-    {
-        return $this->position;
-    }
-
-    public function setPosition(?int $position): self
-    {
-        $this->position = $position;
-        return $this;
     }
 
     public function getName(): ?string
@@ -115,14 +100,14 @@ class ProductMedia
         return $this;
     }
 
-    public function getProduct(): ?Product
+    public function getProductItem(): ?ProductItem
     {
-        return $this->product;
+        return $this->productItem;
     }
 
-    public function setProduct(?Product $product): static
+    public function setProductItem(?ProductItem $productItem): static
     {
-        $this->product = $product;
+        $this->productItem = $productItem;
 
         return $this;
     }

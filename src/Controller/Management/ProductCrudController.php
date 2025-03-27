@@ -2,18 +2,19 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
+use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Form\ProductItemType;
 use c975L\ShopBundle\Form\ProductMediaType;
-use c975L\ShopBundle\Entity\Product;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -28,11 +29,15 @@ class ProductCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
+            IdField::new('id')
+                ->setFormTypeOption('disabled', 'disabled'),
             TextField::new('title')
                 ->setLabel('label.title'),
             SlugField::new('slug')
                 ->setTargetFieldName('title')
                 ->hideOnIndex(),
+            IntegerField::new('position')
+                ->setLabel('label.position'),
             CollectionField::new('medias')
                 ->hideOnIndex()
                 ->setEntryType(ProductMediaType::class),
@@ -68,6 +73,14 @@ class ProductCrudController extends AbstractCrudController
         return $crud
             ->showEntityActionsInlined()
             ->setEntityPermission('ROLE_ADMIN')
+            ->setDefaultSort(['position' => 'ASC'])
+        ;
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('title')
         ;
     }
 }

@@ -3,6 +3,7 @@
 namespace c975L\ShopBundle\Form;
 
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Form\ProductItemMediaType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,13 +17,8 @@ class ProductItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('file', TextType::class, [
-                'label' => 'label.file',
-                'attr' => [
-                    'placeholder' => 'label.file',
-                ],
-            ])
             ->add('title', TextType::class, [
+                'required' => true,
                 'label' => 'label.title',
                 'attr' => [
                     'placeholder' => 'label.title',
@@ -34,23 +30,43 @@ class ProductItemType extends AbstractType
                     'placeholder' => 'label.description',
                 ],
             ])
+            ->add('position', IntegerType::class, [
+                'label' => 'label.position',
+                'attr' => [
+                    'placeholder' => 'label.position',
+                ],
+            ])
+            ->add('file', TextType::class, [
+                'label' => 'label.file',
+                'attr' => [
+                    'placeholder' => 'label.file',
+                ],
+            ])
             ->add('price', IntegerType::class, [
+                'required' => true,
                 'label' => 'label.price',
                 'attr' => [
                     'placeholder' => 'label.price',
                 ],
             ])
             ->add('currency', TextType::class, [
+                'required' => true,
                 'label' => 'label.currency',
+                'data' => 'eur',
                 'attr' => [
                     'placeholder' => 'label.currency',
                 ],
             ])
             ->add('vat', NumberType::class, [
                 'label' => 'label.vat',
+                'data' => 0,
                 'attr' => [
                     'placeholder' => 'label.vat',
                 ],
+            ])
+            ->add('media', ProductItemMediaType::class, [
+                'label' => false,
+                'required' => false,
             ])
         ;
     }

@@ -290,6 +290,22 @@
                 <source>label.view</source>
                 <target>Voir</target>
             </trans-unit>
+            <trans-unit id="73">
+                <source>label.position</source>
+                <target>Position</target>
+            </trans-unit>
+            <trans-unit id="74">
+                <source>label.name</source>
+                <target>Nom</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>placeholder.name</source>
+                <target>Nom et prénom</target>
+            </trans-unit>
+            <trans-unit id="76">
+                <source>label.no_item</source>
+                <target>Pas d'article. Vous pouvez tenter de revenir plus tard.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

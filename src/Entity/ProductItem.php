@@ -16,6 +16,9 @@ class ProductItem
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(name: "position", type: "integer")]
+    private $position;
+
     #[ORM\Column(length: 200, nullable: true)]
     private ?string $file = null;
 
@@ -33,6 +36,9 @@ class ProductItem
 
     #[ORM\Column]
     private ?float $vat = null;
+
+    #[ORM\OneToOne(inversedBy: 'productItem', cascade: ['persist', 'remove'])]
+    private ?ProductItemMedia $media = null;
 
     #[ORM\ManyToOne(inversedBy: 'items', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -61,6 +67,17 @@ class ProductItem
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): self
+    {
+        $this->position = $position;
+        return $this;
     }
 
     public function getFile(): ?string
@@ -131,6 +148,18 @@ class ProductItem
     public function setVat(float $vat): static
     {
         $this->vat = $vat;
+
+        return $this;
+    }
+
+    public function getMedia(): ?ProductItemMedia
+    {
+        return $this->media;
+    }
+
+    public function setMedia(?ProductItemMedia $media): static
+    {
+        $this->media = $media;
 
         return $this;
     }

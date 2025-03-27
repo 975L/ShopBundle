@@ -2,24 +2,17 @@
 
 namespace c975L\ShopBundle\Form;
 
+use c975L\ShopBundle\Entity\ProductItemMedia;
 use Symfony\Component\Form\AbstractType;
-use c975L\ShopBundle\Entity\ProductMedia;
 use Symfony\Component\Form\FormBuilderInterface;
-use Vich\UploaderBundle\Form\Type\VichImageType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
-class ProductMediaType extends AbstractType
+class ProductItemMediaType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('position', IntegerType::class, [
-                'label' => 'label.position',
-                'attr' => [
-                    'placeholder' => 'label.position',
-                ],
-            ])
             ->add('file', VichImageType::class)
         ;
     }
@@ -27,7 +20,7 @@ class ProductMediaType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ProductMedia::class,
+            'data_class' => ProductItemMedia::class,
         ]);
     }
 }
