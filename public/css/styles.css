@@ -84,16 +84,36 @@ a.product-link:hover {
 }
 
 .items .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     margin: 0;
 }
 
 .items .card-body {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
 }
 
-.items .card-body img {
+.items .card-body div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.items .card-body .card-img {
+    max-width: 100px;
+}
+
+.items .card-body .card-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.items .card-body button img {
     width: 16px;
 }
 

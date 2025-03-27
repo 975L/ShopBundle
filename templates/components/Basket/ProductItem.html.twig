@@ -3,7 +3,7 @@
     {# Image and Title #}
     <td>
         {% set imageSrc = productItem.product.image != false ? productItem.product.image : "bundles/c975lshop/images/no-product-image.webp" %}
-        <twig:c975LSite:Image:Link src="{{ asset(imageSrc) }}" url="{{ url('product_display', {'slug': productItem.product.slug}) }}" class="img-square img-shadow img-product" width="150" height="150"/>
+        <twig:c975LSite:Image:Link src="{{ asset(imageSrc) }}" url="{{ url('product_display', {'slug': productItem.product.slug}) }}" class="img-shadow img-product" width="150" height="150"/>
         <p>
             {{ productItem.product.title }}
             <br>

@@ -44,6 +44,9 @@ class Basket
     private ?string $email = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $address = null;
 
     #[ORM\Column(length: 100, nullable: true)]
@@ -90,6 +93,11 @@ class Basket
     public function toArray(): array
     {
         return get_object_vars($this);
+    }
+
+    public function __toString()
+    {
+        return $this->number;
     }
 
     public function getId(): ?int
@@ -153,6 +161,18 @@ class Basket
     public function setEmail(?string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): static
+    {
+        $this->name = $name;
 
         return $this;
     }

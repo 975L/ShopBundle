@@ -8,7 +8,7 @@ use c975L\ShopBundle\Entity\Product;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
-use c975L\ShopBundle\Listener\Traits\ImageTrait;
+use c975L\ShopBundle\Listener\Traits\MediaTrait;
 use c975L\ShopBundle\Listener\Traits\UserTrait;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,7 +19,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 #[AsEntityListener(event: Events::preRemove, method: 'preRemove', entity: Product::class)]
 class ProductListener
 {
-    use ImageTrait;
+    use MediaTrait;
     use UserTrait;
 
     public function __construct(
@@ -41,6 +41,6 @@ class ProductListener
 
     public function preRemove(Product $entity, PreRemoveEventArgs $event): void
     {
-        $this->deleteImages($entity);
+        $this->deleteMedias($entity);
     }
 }

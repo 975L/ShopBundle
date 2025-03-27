@@ -19,7 +19,7 @@ class ShopService implements ShopServiceInterface
     public function findAllProductsPaginated($query)
     {
         return $this->paginator->paginate(
-            $this->productRepository->findAll(),
+            $this->productRepository->findAllSorted(),
             $query->getInt('p', 1),
             9
         );

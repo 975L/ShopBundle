@@ -35,10 +35,15 @@ class Product
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $modification = null;
 
+    #[ORM\Column(name: "position", type: "integer")]
+    private $position;
+
     #[ORM\OneToMany(targetEntity: ProductMedia::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OrderBy(["position" => "ASC"])]
     private Collection $medias;
 
     #[ORM\OneToMany(targetEntity: ProductItem::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OrderBy(["position" => "ASC"])]
     private Collection $items;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
@@ -142,6 +147,17 @@ class Product
     {
         $this->modification = $modification;
 
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): self
+    {
+        $this->position = $position;
         return $this;
     }
 

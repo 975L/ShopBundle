@@ -32,6 +32,21 @@ class ProductRepository extends ServiceEntityRepository
         ;
     }
 
+    // Overrides FindAll() to get sorted
+    public function findAll(): array
+    {
+        return $this->findAllSorted();
+    }
+
+    // Finds all products sorted
+    public function findAllSorted(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.position', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */

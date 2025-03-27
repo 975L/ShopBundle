@@ -8,6 +8,8 @@ interface ProductServiceInterface
 {
     public function findAll();
 
+    public function findAllSorted();
+
     public function findAllPaginated($query);
 
     public function findOneById(int $id): Product;

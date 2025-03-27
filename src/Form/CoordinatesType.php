@@ -40,6 +40,13 @@ class CoordinatesType extends AbstractType
         // Shipping address if not full nemric
         if (false === $options['data']->isNumeric()) {
             $builder
+                ->add('name', TextType::class, [
+                    'label' => 'label.name',
+                    'required' => true,
+                    'attr' => [
+                        'placeholder' => 'placeholder.name',
+                    ],
+                ])
                 ->add('address', TextType::class, [
                     'label' => 'label.address',
                     'attr' => [

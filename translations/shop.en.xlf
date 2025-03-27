@@ -291,6 +291,22 @@
                 <source>label.view</source>
                 <target>View</target>
             </trans-unit>
+            <trans-unit id="73">
+                <source>label.position</source>
+                <target>Position</target>
+            </trans-unit>
+            <trans-unit id="74">
+                <source>label.name</source>
+                <target>Name</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>placeholder.name</source>
+                <target>First and last name</target>
+            </trans-unit>
+            <trans-unit id="76">
+                <source>label.no_item</source>
+                <target>No item. You may come back later.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
