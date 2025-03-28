@@ -1,5 +1,9 @@
 # Changelog
 
+# v0.14.1
+
+- Corrected template name (28/03/2025)
+
 # v0.14
 
 - Corrected email for download (28/03/2025)
