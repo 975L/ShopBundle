@@ -1,17 +1,9 @@
-<h1>Vos achats numériques sont disponibles</h1>
+{% extends "@c975LEmail/emails/layout.html.twig" %}
+{% trans_default_domain 'shop' %}
 
-<p>Bonjour,</p>
-
-<p>Merci pour votre achat. Vos fichiers sont maintenant disponibles au téléchargement pendant {{ expirationDays }} jours.</p>
-
-<ul>
-{% for id, link in downloadLinks %}
-    <li>
-        <a href="{{ url('shop_download', {'token': link.token}) }}">
-            Télécharger {{ link.title }}
-        </a>
-    </li>
-{% endfor %}
-</ul>
-
-<p>Cordialement,<br>L'équipe de vente</p>
+{% block email_content %}
+    <twig:c975LShop:Basket:Number number="{{ basket.number }}"/>
+    <p>{{ 'label.downloads_available'|trans }}</p>
+    <p>{{ 'label.download_instructions'|trans ~ expirationDays ~ 'label.days'|trans }} </p>
+    <twig:c975LShop:Basket:DownloadLinks downloadLinks="{{ downloadLinks }}"/>
+{% endblock %}

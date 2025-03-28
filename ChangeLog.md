@@ -1,5 +1,10 @@
 # Changelog
 
+# v0.14
+
+- Corrected email for download (28/03/2025)
+- Added Command to remove download files (28/03/2025)
+
 # v0.13
 
 - Transformed productItem->file as a VichUploadable File (28/03/2025)
