@@ -307,6 +307,30 @@
                 <source>label.no_item</source>
                 <target>No item. You may come back later.</target>
             </trans-unit>
+            <trans-unit id="77">
+                <source>label.download_information</source>
+                <target>Download information</target>
+            </trans-unit>
+            <trans-unit id="78">
+                <source>label.basket_download</source>
+                <target>If you purchased digital products, a separate email with instructions and links to download the files will be sent to you separately.</target>
+            </trans-unit>
+            <trans-unit id="79">
+                <source>label.downloads_available</source>
+                <target>Your digital purchases are available.</target>
+            </trans-unit>
+            <trans-unit id="80">
+                <source>label.download</source>
+                <target>Download</target>
+            </trans-unit>
+            <trans-unit id="81">
+                <source>label.download_instructions</source>
+                <target>Use the links below to download your files. These links expire in:</target>
+            </trans-unit>
+            <trans-unit id="82">
+                <source>label.days</source>
+                <target>days</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

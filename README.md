@@ -3,7 +3,7 @@ Shop Bundle for eCommerce with Symfony
 
 **BUNDLE UNDER DEVELOPMENT, USE AT YOUR OWN RISKS**
 
-Define a User Class in `config\config_bundles.yaml`.
+The bundle relies on the use of `App\Entity\User`.
 
 In `config/packages/security.yaml` add the following configuration:
 
@@ -49,6 +49,6 @@ TODO
 
 In `src/Listener/ProductItemListener.php` we need to create an empty `ProductItemMedia|ProductItemFile` if none is added, otherwise we can't add one afterwards. The physical ProdutItemMedia is not deleted when the ProductItem is deleted, but the link is removed. See `ProductItemListener->prePersist()`. Furthermoe, need to create ProductItem without Meida/File first.
 
-A Command has been made to remove thse files, simply run (and/or add incrontab) `php bin/console shop:media:delete`.
+A Command has been made to remove those files, simply run (and/or add incrontab) `php bin/console shop:media:delete`.
 
-The bundle relies on the use of `App\Entity\User`.
+Run this Command `php bin/console shop:downloads:delete` once a day to delete files made available at download.

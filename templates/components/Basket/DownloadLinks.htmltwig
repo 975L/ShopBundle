@@ -1,0 +1,5 @@
+{# <twig:c975LShop:Basket:Download/> #}
+{% trans_default_domain 'shop' %}
+{% for id, link in downloadLinks %}
+    <p><a href="{{ url('shop_download', {'token': link.token}) }}">{{ 'label.download'|trans }} {{ link.title }}</a></p>
+{% endfor %}
