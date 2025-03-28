@@ -1,0 +1,126 @@
+<?php
+
+namespace c975L\ShopBundle\Entity;
+
+use App\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use c975L\ShopBundle\Repository\ProductItemFileRepository;
+
+#[ORM\Entity(repositoryClass: ProductItemFileRepository::class)]
+#[ORM\Table(name: 'shop_product_item_file')]
+#[Vich\Uploadable]
+class ProductItemFile
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $name = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $size = null;
+
+    #[ORM\OneToOne(mappedBy: 'file', cascade: ['persist'])]
+    private ?ProductItem $productItem = null;
+
+    #[Vich\UploadableField(mapping: 'productItemsFiles', fileNameProperty: 'name', size: 'size')]
+    private ?File $file = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'productItemFiles')]
+    private ?User $user = null;
+
+    public function __toString()
+    {
+        return $this->name;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+
+    public function setSize(?int $size): static
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    public function setFile(?File $file = null): static
+    {
+        $this->file = $file;
+
+        if (null !== $file) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+
+        return $this;
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getProductItem(): ?ProductItem
+    {
+        return $this->productItem;
+    }
+
+    public function setProductItem(?ProductItem $productItem): static
+    {
+        $this->productItem = $productItem;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+}

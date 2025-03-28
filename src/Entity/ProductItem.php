@@ -19,8 +19,8 @@ class ProductItem
     #[ORM\Column(name: "position", type: "integer")]
     private $position;
 
-    #[ORM\Column(length: 200, nullable: true)]
-    private ?string $file = null;
+    #[ORM\OneToOne(inversedBy: 'productItem', cascade: ['persist', 'remove'])]
+    private ?ProductItemFile $file = null;
 
     #[ORM\Column(length: 50)]
     private ?string $title = null;
@@ -80,12 +80,12 @@ class ProductItem
         return $this;
     }
 
-    public function getFile(): ?string
+    public function getFile(): ?ProductItemFile
     {
         return $this->file;
     }
 
-    public function setFile(?string $file): static
+    public function setFile(?ProductItemFile $file): static
     {
         $this->file = $file;
 

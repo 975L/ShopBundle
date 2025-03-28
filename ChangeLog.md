@@ -1,5 +1,10 @@
 # Changelog
 
+# v0.13
+
+- Transformed productItem->file as a VichUploadable File (28/03/2025)
+- Added file download after purchase (28/03/2025)
+
 # v0.12
 
 - Added image for ProductItem (27/03/2025)

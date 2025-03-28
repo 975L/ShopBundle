@@ -2,7 +2,9 @@
 
 {# Defines specific variables #}
 {% set title = product.title %}
-{% set ogImage = absolute_url(asset('products/' ~ product.medias[0].name)) %}
+{% if product.medias is not empty %}
+    {% set ogImage = absolute_url(asset('products/' ~ product.medias[0].name)) %}
+{% endif %}
 {% set pageDescription = product.description %}
 
 {% block content %}

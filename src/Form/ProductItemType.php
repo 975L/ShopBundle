@@ -3,8 +3,9 @@
 namespace c975L\ShopBundle\Form;
 
 use c975L\ShopBundle\Entity\ProductItem;
-use c975L\ShopBundle\Form\ProductItemMediaType;
 use Symfony\Component\Form\AbstractType;
+use c975L\ShopBundle\Form\ProductItemFileType;
+use c975L\ShopBundle\Form\ProductItemMediaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -36,11 +37,9 @@ class ProductItemType extends AbstractType
                     'placeholder' => 'label.position',
                 ],
             ])
-            ->add('file', TextType::class, [
-                'label' => 'label.file',
-                'attr' => [
-                    'placeholder' => 'label.file',
-                ],
+            ->add('file', ProductItemFileType::class, [
+                'label' => false,
+                'required' => false,
             ])
             ->add('price', IntegerType::class, [
                 'required' => true,

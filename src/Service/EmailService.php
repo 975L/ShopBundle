@@ -18,28 +18,65 @@ class EmailService implements EmailServiceInterface
     ) {
     }
 
-    public function send(Basket $basket)
+    // Retrieves the email configuration
+    public function getEmailConfig(): array
     {
-        // Defines adresses and names
-        $from = $this->configService->getParameter('c975LShop.from');
-        $fromName = $this->configService->hasParameter('c975LShop.fromName') ? $this->configService->getParameter('c975LShop.fromName') : '';
-        $bcc = $this->configService->getParameter('c975LShop.replyTo');
-        $bccName = $this->configService->hasParameter('c975LShop.replyToName') ? $this->configService->getParameter('c975LShop.replyToName') : '';
-        $replyTo = $this->configService->getParameter('c975LShop.replyTo');
-        $replyToName = $this->configService->hasParameter('c975LShop.replyToName') ? $this->configService->getParameter('c975LShop.replyToName') : '';
+        return [
+            'from' => $this->configService->getParameter('c975LShop.from'),
+            'fromName' => $this->configService->hasParameter('c975LShop.fromName') ? $this->configService->getParameter('c975LShop.fromName') : '',
+            'replyTo' => $this->configService->getParameter('c975LShop.replyTo'),
+            'replyToName' => $this->configService->hasParameter('c975LShop.replyToName') ? $this->configService->getParameter('c975LShop.replyToName') : '',
+            'bcc' => $this->configService->getParameter('c975LShop.replyTo'),
+            'bccName' => $this->configService->hasParameter('c975LShop.replyToName') ? $this->configService->getParameter('c975LShop.replyToName') : '',
+        ];
+    }
 
-        // Creates email
+    // Creates a new email
+    public function create(): TemplatedEmail
+    {
+        $data = $this->getEmailConfig();
+
         $email = new TemplatedEmail();
-        $email->from(new Address($from, $fromName));
+        $email->from(new Address($data['from'], $data['fromName']));
+        $email->bcc(new Address($data['bcc'], $data['bccName']));
+        $email->replyTo(new Address($data['replyTo'], $data['replyToName']));
+
+        return $email;
+    }
+
+    // Sends the email
+    public function send($email)
+    {
+        $this->mailer->send($email);
+    }
+
+    // Sends the order confirmation email
+    public function sendOrderConfirmation(Basket $basket)
+    {
+        $email = $this->create();
         $email->to(new Address($basket->getEmail()));
-        $email->bcc(new Address($bcc, $bccName));
-        $email->replyTo(new Address($replyTo, $replyToName));
         $email->subject($this->translator->trans('label.order_confirmation', [], 'shop'));
-        $email->htmlTemplate('@c975LShop/emails/basket.html.twig');
+        $email->htmlTemplate('@c975LShop/emails/order_confirmation.html.twig');
         $email->context([
             'basket' => $basket,
         ]);
 
-        $this->mailer->send($email);
+        $this->send($email);
+    }
+
+    // Sends the download information email
+    public function sendDownloadInformation($basket, array $downloadLinks): void
+    {
+        $email = $this->create();
+        $email->to(new Address($basket->getEmail()));
+        $email->subject($this->translator->trans('label.download_information', [], 'shop'));
+        $email->htmlTemplate('@c975LShop/emails/download_information.html.twig');
+        $email->context([
+            'basket' => $basket,
+            'downloadLinks' => $downloadLinks,
+            'expirationDays' => 7,
+        ]);
+
+        $this->send($email);
     }
 }

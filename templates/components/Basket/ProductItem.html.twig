@@ -2,7 +2,8 @@
 <tr class="text-center" id="productItem-{{ productItem.productItem.id }}">
     {# Image and Title #}
     <td>
-        {% set imageSrc = productItem.product.image != false ? productItem.product.image : "bundles/c975lshop/images/no-product-image.webp" %}
+        {% set imageSrc = productItem.productItem.media != null ? productItem.productItem.media : "bundles/c975lshop/images/no-product-image.webp" %}
+        {% set imageSrc = productItem.product.image != false ? productItem.product.image : imageSrc %}
         <twig:c975LSite:Image:Link src="{{ asset(imageSrc) }}" url="{{ url('product_display', {'slug': productItem.product.slug}) }}" class="img-shadow img-product" width="150" height="150"/>
         <p>
             {{ productItem.product.title }}
