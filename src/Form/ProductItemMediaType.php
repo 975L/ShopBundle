@@ -13,7 +13,9 @@ class ProductItemMediaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('file', VichImageType::class)
+            ->add('file', VichImageType::class, [
+                'label' => 'Media',
+            ])
         ;
     }
 

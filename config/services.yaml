@@ -4,6 +4,9 @@ services:
         autoconfigure: true
         public: true
 
+    c975L\ShopBundle\Command\:
+        resource: '../src/Command/*'
+
     c975L\ShopBundle\Controller\:
         resource: '../src/Controller/*'
 
@@ -12,6 +15,9 @@ services:
 
     c975L\ShopBundle\Listener\:
         resource: '../src/Listener/*'
+
+    c975L\ShopBundle\MessageHandler\:
+        resource: '../src/MessageHandler/*'
 
     c975L\ShopBundle\Repository\:
         resource: '../src/Repository/*'

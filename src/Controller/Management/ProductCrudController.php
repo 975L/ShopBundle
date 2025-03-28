@@ -37,7 +37,8 @@ class ProductCrudController extends AbstractCrudController
                 ->setTargetFieldName('title')
                 ->hideOnIndex(),
             IntegerField::new('position')
-                ->setLabel('label.position'),
+                ->setLabel('label.position')
+                ->setRequired(false),
             CollectionField::new('medias')
                 ->hideOnIndex()
                 ->setEntryType(ProductMediaType::class),

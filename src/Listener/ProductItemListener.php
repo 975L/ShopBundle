@@ -5,6 +5,7 @@ namespace c975L\ShopBundle\Listener;
 use DateTime;
 use Doctrine\ORM\Events;
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Entity\ProductItemFile;
 use c975L\ShopBundle\Entity\ProductItemMedia;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
@@ -47,10 +48,16 @@ class ProductItemListener
         // Adds an empty ProductItemMedia because when adding a new ProductItem without ProductItemMedia, we can't add a ProductItemMedia afterwards.
         // Because the ProductItemMediaListener->postUpdate() doesn't have access to productItem, so ProductItemMedia is persisted but not linked to ProductItem.
         // By adding an empty record we can update it later. (27/03/2025)
+        // Same for /ProductItemFile
         if (null === $entity->getMedia()) {
             $productItemMedia = new ProductItemMedia();
             $productItemMedia->setUpdatedAt(new \DateTimeImmutable());
             $entity->setMedia($productItemMedia);
+        }
+        if (null === $entity->getFile()) {
+            $productItemFile = new ProductItemFile();
+            $productItemFile->setUpdatedAt(new \DateTimeImmutable());
+            $entity->setFile($productItemFile);
         }
         $entity->setCreation(new DateTime());
     }

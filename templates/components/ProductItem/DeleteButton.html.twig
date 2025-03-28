@@ -1,5 +1,5 @@
 {# <twig:c975LShop:Basket:ProductDeleteButton productItem="{{ productItem }}" [type="disabled"]/> #}
 {% set type = type | default('disabled') %}
-<button data-action="click->basket#deleteProductItem" data-product-item-id="{{ productItem.productItem.id }}" data-title="{{ productItem.product.title ~ ' (' ~ productItem.productItem.title ~')' }}" data-alert="danger" data-text="{{ 'label.removed'|trans({}, 'shop') }}" class="btn btn-{{ type }} btn-small">
+<button data-action="click->basket#deleteProductItem" data-product-item-id="{{ productItem.productItem.id }}" data-title="{{ productItem.product.title ~ ' (' ~ productItem.productItem.title ~')' }}" data-alert="success" data-text="{{ 'label.removed'|trans({}, 'shop') }}" class="btn btn-{{ type }} btn-small">
     <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/trash-can.svg" width="12" height="12"/>
 </button>

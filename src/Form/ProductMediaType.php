@@ -20,7 +20,9 @@ class ProductMediaType extends AbstractType
                     'placeholder' => 'label.position',
                 ],
             ])
-            ->add('file', VichImageType::class)
+            ->add('file', VichImageType::class, [
+                'label' => 'Media',
+            ])
         ;
     }
 

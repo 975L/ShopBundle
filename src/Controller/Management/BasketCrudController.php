@@ -118,7 +118,7 @@ class BasketCrudController extends AbstractCrudController
             });
 
 
-
+/*
 // if the method is not defined in a CRUD controller, link to its route
 $sendInvoice = Action::new('sendInvoice', 'Send invoice', 'fa fa-envelope')
     // if the route needs parameters, you can define them:
@@ -135,14 +135,14 @@ $sendInvoice = Action::new('sendInvoice', 'Send invoice', 'fa fa-envelope')
             'method' => $basket->getEmail(),
         ];
     });
-
+*/
 
         return $actions
             ->disable(Action::NEW, Action::EDIT)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $filterPaid)
             ->add(Crud::PAGE_INDEX, $filterNew)
-->add(Crud::PAGE_INDEX, $sendInvoice)
+//->add(Crud::PAGE_INDEX, $sendInvoice)
             ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
             ->setPermission('filterPaid', 'ROLE_ADMIN')

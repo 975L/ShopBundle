@@ -15,8 +15,10 @@ use c975L\ShopBundle\Repository\BasketRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use c975L\ShopBundle\Form\ShopFormFactoryInterface;
 use c975L\ShopBundle\Service\EmailServiceInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use c975L\ShopBundle\Message\ProductItemDownloadMessage;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -35,6 +37,7 @@ class BasketService implements BasketServiceInterface
         private readonly RequestStack $requestStack,
         private readonly ShopFormFactoryInterface $shopFormFactory,
         private readonly TranslatorInterface $translator,
+        private readonly MessageBusInterface $messageBus,
         private readonly UrlGeneratorInterface $urlGenerator
     ) {
         $this->session = $this->requestStack->getSession();
@@ -149,8 +152,12 @@ class BasketService implements BasketServiceInterface
             $this->em->flush();
 
             // Sends email
-            $this->emailService->send($this->basket);
+            $this->emailService->sendOrderConfirmation($this->basket);
 
+            // Dispatch message to send purchased files
+            $this->messageBus->dispatch(new ProductItemDownloadMessage($this->basket->getId()));
+
+            // Deletes from session
             $this->session->remove('basket');
         }
 
@@ -232,15 +239,18 @@ class BasketService implements BasketServiceInterface
         unset($productItemData['description']);
         unset($productItemData['product']);
         unset($productItemData['creation']);
+        unset($productItemData['position']);
         unset($productItemData['modification']);
         unset($productItemData['user']);
+        $productItemData['file'] = $productItem->getFile()->getName();
+        $productItemData['media'] = $productItem->getMedia()->getName();
 
         // Adds values related to product itself
         $product = $productItem->getProduct();
         $productData = [];
         $productData['title'] = $product->getTitle();
         $productData['slug'] = $product->getSlug();
-        $productData['image'] = $product->getMedias()[0]->getName() ?? null;
+        $productData['image'] = $product->getMedias()->isEmpty() ? null : $product->getMedias()[0]->getName();
 
         // Adds productItem to basket
         $productItems[$productItem->getId()] = [
