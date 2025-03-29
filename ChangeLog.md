@@ -1,5 +1,9 @@
 # Changelog
 
+# v0.15.1
+
+- Corrected display of product item file icon (29/03/2025)
+
 # v0.15
 
 - Corrected social for product (29/03/2025)
