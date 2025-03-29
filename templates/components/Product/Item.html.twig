@@ -1,6 +1,5 @@
 <twig:c975LSite:Card:Card id="item-{{ item.id }}" title="{{ item.title }}" class="product-item">
     <div>
-    {# {{ dump(item.media) }} #}
         {% if item.media != null and item.media.name != null %}
             <div class="card-img">
                 <twig:c975LSite:Image:Image src="{{ item.media.name }}" class="img-shadow" width="100" height="auto"/>

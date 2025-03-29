@@ -107,8 +107,12 @@ a.product-link:hover {
     position: relative;
 }
 
+.product-item button img {
+    width: 16px;
+}
+
 .product-item .icon-wrapper {
-    background: rgb(255, 255, 255);
+    background: #fff;
     width: 40px;
     height: 40px;
     z-index: 10;
@@ -133,10 +137,6 @@ a.product-link:hover {
     justify-content: space-around;
     width: 100%;
     margin: 10px;
-}
-
-.product-item button img {
-    width: 16px;
 }
 
 /* BASKET */
