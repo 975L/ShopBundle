@@ -17,4 +17,6 @@ interface ProductServiceInterface
     public function findOneById(int $id): Product;
 
     public function search(string $query);
+
+    public function save(Product $product): void;
 }

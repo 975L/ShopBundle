@@ -1,4 +1,4 @@
 {# <twig:c975LShop:Basket:Number number="{{ number }}"/> #}
 {% trans_default_domain 'shop' %}
-<p class="text text-center">{{ 'label.basket_number'|trans }} <strong><a href="{{ absolute_url(path('basket_validated', {'number': number})) }}">{{ number }}</a></strong></p>
+<p class="text text-center">{{ 'label.track_order'|trans }} <strong><a href="{{ absolute_url(path('basket_validated', {'number': number})) }}">{{ number }}</a></strong></p>
 <p>&nbsp;</p>

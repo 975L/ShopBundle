@@ -4,7 +4,7 @@
     <td>
         {% set imageSrc = productItem.productItem.media != null ? productItem.productItem.media : "bundles/c975lshop/images/no-product-image.webp" %}
         {% set imageSrc = productItem.product.image != false ? productItem.product.image : imageSrc %}
-        <twig:c975LSite:Image:Link src="{{ asset(imageSrc) }}" url="{{ url('product_display', {'slug': productItem.product.slug}) }}" class="img-shadow img-product" width="150" height="150"/>
+        <twig:c975LSite:Image:Link src="{{ asset(imageSrc) }}" url="{{ url('product_display', {'slug': productItem.product.slug}) }}" class="img-shadow img-product" width="100" height="auto"/>
         <p>
             {{ productItem.product.title }}
             <br>
@@ -17,8 +17,9 @@
         (x <span data-basket-target="productItemQuantity" data-product-item-id="{{ productItem.productItem.id }}">{{ quantity }}</span>)
         <br>
         <twig:c975LShop:ProductItem:Total productItem="{{ productItem.productItem }}" total="{{ total }}" totalVat="{{ totalVat }}" type="{{ type }}"/>
-        <br>
+        <twig:c975LShop:Product:Digital file="{{ productItem.productItem.file }}"/>
         {% if "paid" != status %}
+            <br>
             <twig:c975LShop:ProductItem:AddRemoveButtons productItem="{{ productItem }}" quantity="{{ quantity }}"/>
         {% endif %}
     </td>

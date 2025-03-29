@@ -1,14 +1,16 @@
-<twig:c975LSite:Card:Card id="id" title="{{ item.title }}" class="product-item">
+<twig:c975LSite:Card:Card id="item-{{ item.id }}" title="{{ item.title }}" class="product-item">
     <div>
     {# {{ dump(item.media) }} #}
         {% if item.media != null and item.media.name != null %}
             <div class="card-img">
                 <twig:c975LSite:Image:Image src="{{ item.media.name }}" class="img-shadow" width="100" height="auto"/>
+                <twig:c975LShop:Product:Icon item="{{ item }}"/>
             </div>
         {% endif %}
         <div class="card-data">
             <p>{{ item.description }}</p>
             <p class="price">{{ (item.price / 100)|number_format(2) ~ item.currency }}</p>
+            <twig:c975LShop:Product:Digital file="{{ item.file.name }}"/>
         </div>
     </div>
     <div data-controller="basket">

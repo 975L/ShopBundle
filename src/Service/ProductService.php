@@ -6,13 +6,14 @@ use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Repository\ProductMediaRepository;
 use Knp\Component\Pager\PaginatorInterface;
-
+use \Doctrine\ORM\EntityManagerInterface;
 class ProductService implements ProductServiceInterface
 {
     public function __construct(
         private readonly ProductRepository $productRepository,
         private readonly ProductMediaRepository $productMediaRepository,
-        private readonly PaginatorInterface $paginator
+        private readonly PaginatorInterface $paginator,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -54,5 +55,12 @@ class ProductService implements ProductServiceInterface
     public function search(string $query)
     {
         return $this->productRepository->search($query);
+    }
+
+    // Saves the product
+    public function save(Product $product): void
+    {
+        $this->entityManager->persist($product);
+        $this->entityManager->flush();
     }
 }

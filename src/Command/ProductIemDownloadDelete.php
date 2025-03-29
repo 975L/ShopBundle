@@ -44,6 +44,8 @@ class ProductIemDownloadDelete extends Command
             }
         }
 
+        $io->success('Unused medias deleted.');
+
         return Command::SUCCESS;
     }
 }

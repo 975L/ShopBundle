@@ -2,10 +2,11 @@
 
 namespace c975L\ShopBundle\Service;
 
+use SplFileInfo;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use c975L\ShopBundle\Entity\ProductItemDownload;
 use Symfony\Component\Filesystem\Filesystem;
+use c975L\ShopBundle\Entity\ProductItemDownload;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ProductItemDownloadService implements ProductItemDownloadServiceInterface
@@ -35,8 +36,9 @@ class ProductItemDownloadService implements ProductItemDownloadServiceInterface
         if ($filesystem->exists($sourcePath)) {
             $token = bin2hex(random_bytes(8));
 
-            $extension = pathinfo($sourceFilePath, PATHINFO_EXTENSION);
-            $filenameWithoutExt = pathinfo($sourceFilePath, PATHINFO_FILENAME);
+            $fileInfo = new SplFileInfo($sourceFilePath);
+            $extension = $fileInfo->getExtension();
+            $filenameWithoutExt = $fileInfo->getBasename('.' . $extension);
             $lastHyphenPos = strrpos($filenameWithoutExt, '-');
             if ($lastHyphenPos !== false) {
                 $baseFilename = substr($filenameWithoutExt, 0, $lastHyphenPos);

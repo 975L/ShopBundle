@@ -119,8 +119,8 @@
                 <target>Nous vous remercions pour votre commande et votre confiance ! Nous allons la traiter dans les meilleurs délais.</target>
             </trans-unit>
             <trans-unit id="30">
-                <source>label.basket_number</source>
-                <target>Votre numéro de commande est le :</target>
+                <source>label.track_order</source>
+                <target>Suivre ma commande :</target>
             </trans-unit>
             <trans-unit id="31">
                 <source>label.basket_products_reminder</source>
@@ -267,7 +267,7 @@
                 <target>Statut</target>
             </trans-unit>
             <trans-unit id="67">
-                <source>label.is_numeric</source>
+                <source>label.digital</source>
                 <target>Numérique ?</target>
             </trans-unit>
             <trans-unit id="68">
@@ -312,7 +312,7 @@
             </trans-unit>
             <trans-unit id="78">
                 <source>label.basket_download</source>
-                <target>Si vous avez acheté des produits numériques, un email séparé contenant les instructions et liens pour télécharger les fichiers vous sera envoyé séparément.</target>
+                <target>Vous avez acheté des produits numériques, un email séparé contenant les instructions et liens pour télécharger les fichiers vous sera envoyé séparément.</target>
             </trans-unit>
             <trans-unit id="79">
                 <source>label.downloads_available</source>
@@ -329,6 +329,26 @@
             <trans-unit id="82">
                 <source>label.days</source>
                 <target>jours</target>
+            </trans-unit>
+            <trans-unit id="83">
+                <source>label.items</source>
+                <target>Articles</target>
+            </trans-unit>
+            <trans-unit id="84">
+                <source>label.physical_item</source>
+                <target>Produit physique</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>label.digital_item</source>
+                <target>Produit numérique</target>
+            </trans-unit>
+            <trans-unit id="86">
+                <source>label.item_already_downloaded</source>
+                <target>Article déjà téléchargé</target>
+            </trans-unit>
+            <trans-unit id="87">
+                <source>text.item_already_downloaded</source>
+                <target>Cet article a déjà été téléchargé à la date ci-dessous. Il n'est plus disponible.</target>
             </trans-unit>
         </body>
     </file>

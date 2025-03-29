@@ -332,9 +332,9 @@ export default class extends Controller {
             return;
         }
         clickedButton.classList.remove("btn-primary");
-        clickedButton.classList.add("btn-secondary", "zoom-animation");
+        clickedButton.classList.add("btn-secondary", "zoom-out-animation");
         setTimeout(() => {
-            clickedButton.classList.remove("zoom-animation", "btn-secondary");
+            clickedButton.classList.remove("zoom-out-animation", "btn-secondary");
             clickedButton.classList.add("btn-primary");
         }, 500);
     }

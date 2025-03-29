@@ -1,5 +1,15 @@
 # Changelog
 
+# v0.15
+
+- Corrected social for product (29/03/2025)
+- Corrected differents texts + presentation (29/03/2025)
+- Added esponse for item already downloaded (29/03/2025)
+- Removed discouraged uses  (29/03/2025)
+- Changed isNumeric to isDigital and transformed it to have 3 possible states (29/03/2025)
+- Added Command to update position por Products, Items and Medias (29/03/2025)
+- Added icon on ProductItemMedia (29/03/2025)
+
 # v0.14.1
 
 - Corrected template name (28/03/2025)
