@@ -1,16 +1,19 @@
 {% extends 'layout.html.twig' %}
+{% trans_default_domain 'shop' %}
 
 {# Defines specific variables #}
 {% set title = product.title %}
 {% if product.medias is not empty %}
-    {% set ogImage = absolute_url(asset('products/' ~ product.medias[0].name)) %}
+    {% set ogImage = absolute_url(asset(product.medias[0].name)) %}
 {% endif %}
-{% set pageDescription = product.description %}
+
+{% set description = product.description %}
 
 {% block content %}
     <section class="text-center">
         <twig:c975LSite:Slider:Slider slides="{{ product.medias }}" id="slider"/>
         <twig:c975LShop:Product:Description description="{{ product.description }}"/>
+        <h2 id="items">{{ 'label.items'|trans }}</h2>
         <twig:c975LShop:Product:Items items="{{ product.items }}"/>
         <div data-controller="basket">
             <twig:c975LShop:Basket:Message/>

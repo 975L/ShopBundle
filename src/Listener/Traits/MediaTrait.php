@@ -2,9 +2,10 @@
 
 namespace c975L\ShopBundle\Listener\Traits;
 
+use SplFileInfo;
 use Imagine\Image\Box;
 use Imagine\Gd\Imagine;
-
+use Symfony\Component\Filesystem\Filesystem;
 
 // Defines methods related to media
 trait MediaTrait
@@ -41,8 +42,14 @@ trait MediaTrait
         if (method_exists($entity, 'getFile') && null !== $entity->getFile()) {
             $filePath = $entity->getFile()->getPathname();
             if (file_exists($filePath)) {
-                $filename = self::SHOP_ROOT . '/items/' . $entity->getProductItem()->getProduct()->getSlug() . '-' . $entity->getProductItem()->getId() . '-' . pathinfo($filePath, PATHINFO_FILENAME) . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
-                rename($filePath, '../private/' . $filename);
+                $fileInfo = new SplFileInfo($filePath);
+                $filename = self::SHOP_ROOT . '/items/' . $entity->getProductItem()->getProduct()->getSlug() . '-' . $entity->getProductItem()->getId() . '-';
+                $filename .= $fileInfo->getBasename('.' . $fileInfo->getExtension()) . '.' . $fileInfo->getExtension();
+
+                $filesystem = new Filesystem();
+                $filesystem->copy($filePath, '../private/' . $filename);
+                $filesystem->remove($filePath);
+
                 $entity->setName($filename);
 
                 $this->entityManager->persist($entity);
@@ -64,21 +71,19 @@ trait MediaTrait
             $filePath = $entity->getFile()->getPathname();
             if (file_exists($filePath)) {
                 $format = 'webp';
+                $fileInfo = new SplFileInfo($filePath);
+                $filenameWithoutExt = $fileInfo->getBasename('.' . $fileInfo->getExtension());
 
                 // ProductMedia
                 if (method_exists($entity, 'getProduct')) {
                     $height = 600;
                     $root = self::SHOP_ROOT . '/products';
-                    $filename = '/' . $entity->getProduct()->getSlug() . '-' . pathinfo($filePath, PATHINFO_FILENAME) . '.' . $format;
+                    $filename = '/' . $entity->getProduct()->getSlug() . '-' . $filenameWithoutExt . '.' . $format;
                 // ProductItemMedia
                 } elseif (method_exists($entity, 'getProductItem')) {
                     $height = 400;
                     $root = self::SHOP_ROOT . '/items';
-                    // if (null === $entity->getProductItem()) {
-                    //     $filename = '/' . pathinfo($filePath, PATHINFO_FILENAME) . '.' . $format;
-                    // } else {
-                        $filename = '/' . $entity->getProductItem()->getProduct()->getSlug() . '-' . $entity->getProductItem()->getId() . '-' . pathinfo($filePath, PATHINFO_FILENAME) . '.' . $format;
-                    // }
+                    $filename = '/' . $entity->getProductItem()->getProduct()->getSlug() . '-' . $entity->getProductItem()->getId() . '-' . $filenameWithoutExt . '.' . $format;
                 }
 
                 // Gets media
@@ -91,7 +96,7 @@ trait MediaTrait
                 // Saves file
                 $width = (int) (($height / $originalHeight) * $originalWidth);
                 $media->resize(new Box($width, $height))->save($filePath);
-                $filePathSave = pathinfo($filePath, PATHINFO_DIRNAME) . $filename;
+                $filePathSave = dirname($filePath) . $filename;
                 $media->save($filePathSave, ['format' => $format]);
 
                 // Updates entity and deletes original file

@@ -52,3 +52,5 @@ In `src/Listener/ProductItemListener.php` we need to create an empty `ProductIte
 A Command has been made to remove those files, simply run (and/or add incrontab) `php bin/console shop:media:delete`.
 
 Run this Command `php bin/console shop:downloads:delete` once a day to delete files made available at download.
+
+Run this Command `php bin/console shop:products:position` once a day to correct position and keep a 5 gap between them.

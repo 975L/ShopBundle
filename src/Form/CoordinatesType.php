@@ -37,8 +37,8 @@ class CoordinatesType extends AbstractType
                 ],
             ])
         ;
-        // Shipping address if not full nemric
-        if (false === $options['data']->isNumeric()) {
+        // Shipping address if not full digital
+        if (1 !== $options['data']->getDigital()) {
             $builder
                 ->add('name', TextType::class, [
                     'label' => 'label.name',

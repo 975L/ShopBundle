@@ -83,37 +83,59 @@ a.product-link:hover {
     font-family: var(--font-family-body);
 }
 
-.items .card {
+.product-item {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     margin: 0;
 }
 
-.items .card-body {
+.product-item .card-body {
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-.items .card-body div {
+.product-item .card-body div {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.items .card-body .card-img {
+.product-item .card-img {
     max-width: 100px;
+    position: relative;
 }
 
-.items .card-body .card-data {
+.product-item .icon-wrapper {
+    background: rgb(255, 255, 255);
+    width: 40px;
+    height: 40px;
+    z-index: 10;
+    border-radius: 4px;
+    position: absolute;
+    right: -10px;
+    bottom: 10px;
+    border: 3px solid var(--primary);
+    padding: 6px;
+    box-shadow: var(--box-shadow);
+}
+
+.product-item button:hover,
+.product-item .card-img img:hover {
+    transform: scale(1.05);
+    transition: all 0.3s;
+}
+
+.product-item .card-data {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     width: 100%;
+    margin: 10px;
 }
 
-.items .card-body button img {
+.product-item button img {
     width: 16px;
 }
 
@@ -164,8 +186,8 @@ tfoot th {
 }
 
 /* ANIMATIONS */
-.zoom-animation {
-    animation: zoom 2s linear;
+.zoom-out-animation {
+    animation: zoom-out 2s linear;
 }
 
 .fade-out {
@@ -173,7 +195,17 @@ tfoot th {
     opacity: 0;
 }
 
-@keyframes zoom {
+@keyframes zoom-in {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.5);
+    }
+}
+
+@keyframes zoom-out {
     from {
         transform: scale(1);
     }

@@ -35,7 +35,7 @@ class ProductItemDownloadMessageHandler
                 );
 
                 $downloadLinks[$id] = [
-                    'title' => $productItem['product']['title'],
+                    'title' => $productItem['product']['title'] . ' (' . $productItem['productItem']['title'] . ')',
                     'token' => $token
                 ];
             }

@@ -36,8 +36,8 @@ class BasketCrudController extends AbstractCrudController
             TextField::new('status')
                 ->setLabel('label.status')
                 ->setFormTypeOption('disabled', 'disabled'),
-            BooleanField::new('isNumeric')
-                ->setLabel('label.is_numeric')
+            IntegerField::new('digital')
+                ->setLabel('label.digital')
                 ->setFormTypeOption('disabled', 'disabled'),
             IntegerField::new('total')
                 ->setLabel('label.total')

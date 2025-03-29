@@ -55,7 +55,7 @@ class BasketService implements BasketServiceInterface
         $basket->setCreation(new DateTime());
         $basket->setModification(new DateTime());
         $basket->setStatus('new');
-        $basket->setNumeric(true);
+        $basket->setDigital(true);
         $basket->setUser($this->session->get('user'));
 
         $this->em->persist($basket);
@@ -108,18 +108,32 @@ class BasketService implements BasketServiceInterface
 
         $total = 0;
         $quantity = 0;
-        $isNumeric = true;
+        $hasDigital = false;
+        $hasPhysical = false;
+
         foreach ($productItems as $productItem) {
             $total += $productItem['total'];
             $quantity += $productItem['quantity'];
+
             if (null === $productItem['productItem']['file']) {
-                $isNumeric = false;
+                $hasPhysical = true;
+            } else {
+                $hasDigital = true;
             }
         }
 
-        $this->basket->setNumeric($isNumeric);
+        $digitalStatus = Basket::DIGITAL_STATUS_NONE;
+        if ($hasDigital && $hasPhysical) {
+            $digitalStatus = Basket::DIGITAL_STATUS_MIXED;
+        } elseif ($hasDigital && !$hasPhysical) {
+            $digitalStatus = Basket::DIGITAL_STATUS_FULL;
+        }
+
+        $this->basket->setDigital($digitalStatus);
         $this->basket->setTotal($total);
-        $this->basket->setShipping(false === $isNumeric && $total < $shippingFree ? $shipping : 0);
+
+        $applyShipping = ($digitalStatus !== Basket::DIGITAL_STATUS_FULL && $total < $shippingFree);
+        $this->basket->setShipping($applyShipping ? $shipping : 0);
         $this->basket->setQuantity($quantity);
     }
 

@@ -18,50 +18,72 @@ use Symfony\Component\Finder\Finder;
 )]
 class MediaDeleteCommand extends Command
 {
+    private string $publicDir;
+    private string $privateDir;
+
     public function __construct(
         private readonly ProductServiceInterface $productService,
         private readonly ProductItemServiceInterface $productItemService,
         private readonly ParameterBagInterface $parameterBag,
     ) {
         parent::__construct();
+        $this->publicDir = $this->parameterBag->get('kernel.project_dir') . '/public/';
+        $this->privateDir = $this->parameterBag->get('kernel.project_dir') . '/private/';
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $publicDir = $this->parameterBag->get('kernel.project_dir') . '/public/';
-        $privateDir = $this->parameterBag->get('kernel.project_dir') . '/private/';
+        $mediasDb = $this->collectMediasFromDatabase();
+        $mediasFiles = $this->collectMediasFromFilesystem();
 
-        // Adds medias from database
+        $this->removeUnusedFiles($mediasFiles, $mediasDb, $io);
+        $this->updateDatabaseForMissingFiles($mediasDb, $mediasFiles, $io);
+
+        $io->success('Unused medias deleted.');
+
+        return Command::SUCCESS;
+    }
+
+    // Gets the list of media files from the database
+    private function collectMediasFromDatabase(): array
+    {
+        $mediasDb = [];
+
+        // Adds the media files of products
         $productMedias = $this->productService->findAllMedias();
         $productItemMedias = $this->productItemService->findAllMedias();
-        $mediasDb = [];
+
         $medias = array_merge($productMedias, $productItemMedias);
         foreach($medias as $media) {
             if (null !== $media->getName()) {
-                $mediasDb[] = $publicDir . $media->getName();
+                $mediasDb[] = $this->publicDir . $media->getName();
             }
         }
 
-        // Adds files from database
+        // Adds the files of products
         $productItemFiles = $this->productItemService->findAllFiles();
         foreach($productItemFiles as $item) {
             if (null !== $item->getName()) {
-                $mediasDb[] = $privateDir . $item->getName();
+                $mediasDb[] = $this->privateDir . $item->getName();
             }
         }
 
-        // Gets medias from shop directory
+        return $mediasDb;
+    }
+
+    // Gets the list of media files from the filesystem
+    private function collectMediasFromFilesystem(): array
+    {
         $mediasFiles = [];
 
         $finder = new Finder();
         $finder
             ->files()
-            ->in($publicDir . 'medias/shop/')
-            ->in($privateDir . 'medias/shop/')
+            ->in($this->publicDir . 'medias/shop/')
+            ->in($this->privateDir . 'medias/shop/')
             ->depth('1');
-        ;
 
         if ($finder->hasResults()) {
             foreach ($finder as $file) {
@@ -69,8 +91,14 @@ class MediaDeleteCommand extends Command
             }
         }
 
-        // Suppress unused medias
+        return $mediasFiles;
+    }
+
+    // Suppress the files that are not referenced in the database
+    private function removeUnusedFiles(array $mediasFiles, array $mediasDb, SymfonyStyle $io): void
+    {
         $unusedFiles = array_diff($mediasFiles, $mediasDb);
+
         if (count($unusedFiles) > 0) {
             $io->title('Unused medias:');
             $io->listing($unusedFiles);
@@ -79,23 +107,23 @@ class MediaDeleteCommand extends Command
                 unlink($file);
             }
         }
+    }
 
-        // Updates db from inexisting files, only for ProductItem (which should not be the case)
+    // Updates the database for files that are not referenced in the filesystem
+    private function updateDatabaseForMissingFiles(array $mediasDb, array $mediasFiles, SymfonyStyle $io): void
+    {
         $inexistingFiles = array_diff($mediasDb, $mediasFiles);
+
         if (count($inexistingFiles) > 0) {
             $io->title('Inexisting files:');
             $io->listing($inexistingFiles);
 
             foreach ($inexistingFiles as $file) {
-                $filePath = str_replace($publicDir, '', $file);
+                $filePath = str_replace($this->publicDir, '', $file);
                 if (strpos($filePath, 'shop/items/') !== false) {
                     $this->productItemService->deleteOneMediaByName($filePath);
                 }
             }
         }
-
-        $io->success('Unused medias deleted.');
-
-        return Command::SUCCESS;
     }
 }

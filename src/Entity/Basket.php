@@ -22,6 +22,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 class Basket
 {
+    public const DIGITAL_STATUS_FULL = 1;
+    public const DIGITAL_STATUS_MIXED = 2;
+    public const DIGITAL_STATUS_NONE = 3;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -75,8 +79,8 @@ class Basket
     #[Assert\Length(min:3, max: 5)]
     private ?string $currency = null;
 
-    #[ORM\Column]
-    private ?bool $isNumeric = null;
+    #[ORM\Column(type: 'integer')]
+    private ?int $digital = self::DIGITAL_STATUS_NONE;
 
     #[ORM\OneToOne(inversedBy: 'basket', cascade: ['persist', 'remove'])]
     private ?Payment $payment = null;
@@ -273,17 +277,36 @@ class Basket
         return $this;
     }
 
-    public function isNumeric(): ?bool
+    public function getDigital(): int
     {
-        return $this->isNumeric;
+        return $this->digital;
     }
 
-    public function setNumeric(bool $isNumeric): static
+    public function setDigital(int $digital): static
     {
-        $this->isNumeric = $isNumeric;
+        $this->digital = $digital;
 
         return $this;
     }
+
+
+
+public function isFullyDigital(): bool
+{
+    return $this->digital === self::DIGITAL_STATUS_FULL;
+}
+
+public function hasNoDigital(): bool
+{
+    return $this->digital === self::DIGITAL_STATUS_NONE;
+}
+
+public function isMixed(): bool
+{
+    return $this->digital === self::DIGITAL_STATUS_MIXED;
+}
+
+
 
     public function getCreation(): ?\DateTimeInterface
     {
