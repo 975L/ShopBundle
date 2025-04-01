@@ -16,6 +16,17 @@ class BasketRepository extends ServiceEntityRepository
         parent::__construct($registry, Basket::class);
     }
 
+    public function findUnvalidated(int $days)
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.status = :status')
+            ->andWhere('b.creation < :date')
+            ->setParameter('status', 'new')
+            ->setParameter('date', new \DateTime('-' . $days . ' days'))
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Basket[] Returns an array of Basket objects
     //     */

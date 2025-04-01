@@ -40,7 +40,12 @@ class BasketService implements BasketServiceInterface
         private readonly MessageBusInterface $messageBus,
         private readonly UrlGeneratorInterface $urlGenerator
     ) {
-        $this->session = $this->requestStack->getSession();
+        try {
+            $this->session = $this->requestStack->getSession();
+        } catch (\LogicException $e) {
+            // En contexte CLI, pas de session disponible
+            $this->session = null;
+        }
         $this->stripeSecret = $_ENV["STRIPE_SECRET"];
     }
 
@@ -141,15 +146,14 @@ class BasketService implements BasketServiceInterface
     public function validate(Request $request): string
     {
         $this->basket = $this->get();
-
-        $data = $this->createStripeSession();
         $this->basket->setStatus('validated');
         $this->basket->setNumber($this->generateOrderNumber());
+        $this->em->persist($this->basket);
 
         // Creates payment
+        $data = $this->createStripeSession();
         $this->createPayment();
 
-        $this->em->persist($this->basket);
         $this->em->flush();
 
         return $data['url'];
@@ -357,13 +361,36 @@ class BasketService implements BasketServiceInterface
         $checkoutSession = StripeSession::create([
             'line_items' => $lineItems,
             'mode' => 'payment',
-            'success_url' => $this->urlGenerator->generate('basket_validated', [], $this->urlGenerator::ABSOLUTE_URL),
-            'cancel_url' => $this->urlGenerator->generate('basket_display', [], $this->urlGenerator::ABSOLUTE_URL),
+            'success_url' => $this->urlGenerator->generate('basket_validated', ['number' => $this->basket->getNumber()], $this->urlGenerator::ABSOLUTE_URL),
+            'cancel_url' => $this->urlGenerator->generate('basket_validate', [], $this->urlGenerator::ABSOLUTE_URL),
         ]);
 
         return [
             'id' => $checkoutSession->id,
             'url' => $checkoutSession->url,
         ];
+    }
+
+    // Deletes unvalidated baskets
+    public function deleteUnvalidated(): void
+    {
+        $count = 0;
+        $batchSize = 20;
+
+        $baskets = $this->basketRepository->findUnvalidated(14);
+        foreach ($baskets as $basket) {
+            $this->em->remove($basket);
+            $count++;
+
+            // Flush every $batchSize to avoid memory issues
+            if ($count % $batchSize === 0) {
+                $this->em->flush();
+                $this->em->clear();
+            }
+        }
+
+        if ($count % $batchSize !== 0) {
+            $this->em->flush();
+        }
     }
 }

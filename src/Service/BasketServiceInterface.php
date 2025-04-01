@@ -20,6 +20,8 @@ interface BasketServiceInterface
 
     public function delete(): array;
 
+    public function deleteUnvalidated(): void;
+
     public function deleteProductItem(Request $request): array;
 
     public function get(): ?Basket;
