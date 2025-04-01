@@ -4,6 +4,6 @@
 {% block email_content %}
     <twig:c975LShop:Basket:Number number="{{ basket.number }}"/>
     <p>{{ 'label.downloads_available'|trans }}</p>
-    <p>{{ 'label.download_instructions'|trans ~ ' ' ~ expirationDays ~ ' ' ~ 'label.days'|trans }} </p>
+    <p>{{ 'label.download_instructions'|trans }} <strong>{{ expirationDays ~ ' ' ~ 'label.days'|trans }}</strong></p>
     <twig:c975LShop:Basket:DownloadLinks downloadLinks="{{ downloadLinks }}"/>
 {% endblock %}

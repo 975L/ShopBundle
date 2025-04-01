@@ -6,13 +6,30 @@
 {% set description = 'label.basket'|trans %}
 
 {% block content %}
-    <div data-controller="basket" id="basket-page">
-        <twig:c975LShop:Shop:Shipping/>
-        <twig:c975LShop:Basket:Display basket="{{ basket }}"/>
-        <twig:c975LShop:Basket:Message/>
-        <twig:c975LShop:Basket:Buttons basket="{{ basket }}"/>
-        <twig:c975LShop:Basket:Validation basket="{{ basket }}" form="{{ form }}"/>
-    </div>
+    {% if null != basket %}
+        {% if "display" == action %}
+            <div data-controller="basket" id="basket-page">
+                <twig:c975LShop:Shop:Shipping/>
+                <twig:c975LShop:Basket:Display basket="{{ basket }}" readonly="false"/>
+                <twig:c975LShop:Basket:Message/>
+                <twig:c975LShop:Basket:Buttons basket="{{ basket }}"/>
+            </div>
+        {% elseif "validate" == action %}
+            <div data-controller="basket" id="basket-page">
+                <twig:c975LShop:Shop:Shipping/>
+                <twig:c975LShop:Basket:Display basket="{{ basket }}" readonly="true"/>
+                <twig:c975LShop:Basket:Validation basket="{{ basket }}" form="{{ form }}"/>
+            </div>
+        {% elseif "validated" == action %}
+            <twig:c975LShop:Basket:ValidatedInfos basket="{{ basket }}"/>
+            <twig:c975LShop:Basket:Display basket="{{ basket }}" readonly="true"/>
+            <twig:c975LShop:Shop:ViewButton/>
+        {% endif %}
+    {# Empty basket #}
+    {% else %}
+        <p class="text text-center lead">{{ 'label.basket_empty'|trans({}, 'shop') }}</p>
+        <twig:c975LShop:Shop:ViewButton/>
+    {% endif %}
 {% endblock %}
 
 {% block share %}

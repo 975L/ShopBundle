@@ -8,7 +8,19 @@ trait UserTrait
     // Sets the user
     public function setUser($entity): void
     {
-        $entity->setUser($this->security->getUser());
-        $this->entityManager->persist($entity);
+        $currentUser = $this->security->getUser();
+
+        if ($currentUser !== null) {
+            // New entity
+            if ($entity->getId() === null) {
+                $entity->setUser($currentUser);
+            }
+            // Cas 2: Entité existante en cours de modification - mettre à jour l'utilisateur
+            else if ($entity->getModification() != null && $entity->getModification() > $entity->getCreation()) {
+                $entity->setUser($currentUser);
+            }
+
+            $this->entityManager->persist($entity);
+        }
     }
 }

@@ -4,7 +4,7 @@
     <table>
         {# ProductItems #}
         {% for productItem in basket.productItems %}
-            <twig:c975LShop:Basket:ProductItem productItem="{{ productItem }}" quantity="{{ productItem.quantity }}" total="{{ productItem.total }}" totalVat="{{ productItem.totalVat }}" type="{{ type }}" status="{{ basket.status }}"/>
+            <twig:c975LShop:Basket:ProductItem productItem="{{ productItem }}" quantity="{{ productItem.quantity }}" total="{{ productItem.total }}" totalVat="{{ productItem.totalVat }}" type="{{ type }}" readonly="{{ readonly }}"/>
         {% endfor %}
         {# Frais de port #}
             <tr class="shipping">

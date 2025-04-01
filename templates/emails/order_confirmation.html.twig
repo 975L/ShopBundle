@@ -5,7 +5,7 @@
     <twig:c975LShop:Basket:Thanks/>
     <twig:c975LShop:Basket:Number number="{{ basket.number }}"/>
     <twig:c975LShop:Basket:ProductItemsReminder/>
-    <twig:c975LShop:Basket:ProductItems basket="{{ basket }}" type="simple"/>
+    <twig:c975LShop:Basket:ProductItems basket="{{ basket }}" type="simple" readonly="true"/>
     {# Contains digital items #}
     {% if basket.digital != 3 %}
         <p class="text text-center"><strong>{{ 'label.basket_download'|trans }}</strong></p>

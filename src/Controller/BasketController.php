@@ -22,7 +22,7 @@ class BasketController extends AbstractController
     ) {
     }
 
-    // GETS BASKET
+    // GETS BASKET JSON
     #[Route(
         '/shop/basket/json',
         name: 'basket_json',
@@ -37,20 +37,31 @@ class BasketController extends AbstractController
     #[Route(
         '/shop/basket/display',
         name: 'basket_display',
-        methods: ['GET', 'POST']
+        methods: ['GET']
     )]
-    public function display(Request $request)
+    public function display()
     {
         $basket = $this->basketService->get();
 
-        // Empty basket
-        if (null === $basket) {
-            return $this->render('@c975LShop/basket/empty.html.twig');
-        }
+        //Renders the page
+        return $this->render('@c975LShop/basket/display.html.twig', [
+            'action' => 'display',
+            'basket' => $basket,
+        ]);
+    }
+
+    // VALIDATE
+    #[Route(
+        '/shop/basket/validate',
+        name: 'basket_validate',
+        methods: ['GET', 'POST']
+    )]
+    public function validate(Request $request): Response
+    {
+        $basket = $this->basketService->get();
 
         //Defines form
         $form = $this->basketService->createForm('coordinates', $basket);
-
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $url = $this->basketService->validate($request);
@@ -61,7 +72,23 @@ class BasketController extends AbstractController
 
         //Renders the page
         return $this->render('@c975LShop/basket/display.html.twig', [
+            'action' => 'validate',
             'form' => $form->createView(),
+            'basket' => $basket,
+        ]);
+    }
+
+    // VALIDATED
+    #[Route(
+        '/shop/basket/validated/{number:basket}',
+        name: 'basket_validated',
+        requirements: ['number' => '.{15,20}'],
+        methods: ['GET']
+    )]
+    public function validated(?Basket $basket): Response
+    {
+        return $this->render('@c975LShop/basket/display.html.twig', [
+            'action' => 'validated',
             'basket' => $basket,
         ]);
     }
@@ -75,29 +102,6 @@ class BasketController extends AbstractController
     public function delete(): JsonResponse
     {
         return new JsonResponse($this->basketService->delete());
-    }
-
-    // VALIDATED
-    #[Route(
-        '/shop/basket/validated/{number:basket}',
-        name: 'basket_validated',
-        requirements: ['number' => '.{10,20}'],
-        defaults: ['number' => ''],
-        methods: ['GET']
-    )]
-    public function validated(?Basket $basket): Response
-    {
-        if (null === $basket) {
-            $basket = $this->basketService->validated();
-
-            if (null !== $basket) {
-                return $this->redirectToRoute('basket_validated', ['number' => $basket->getNumber()]);
-            }
-        }
-
-        return $this->render('@c975LShop/basket/validated.html.twig', [
-            'basket' => $basket,
-        ]);
     }
 
     // ADD PRODUCT ITEM

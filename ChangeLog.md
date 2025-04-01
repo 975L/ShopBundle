@@ -1,5 +1,13 @@
 # Changelog
 
+# v0.16
+
+- Added intermediate step before basket validation (01/04/2025)
+- Removed empty/validated basket templates and added functionnality in display one (01/04/2025)
+- Added crontab to delete unvalidated baskets after 14 days (01/04/2025)
+- Corrected user to null in Product (and sub entites) when adding to basket (01/04/2025)
+- Added Command for creating sitemap (01/04/2025)
+
 # v0.15.1
 
 - Corrected display of product item file icon (29/03/2025)

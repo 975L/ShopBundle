@@ -54,3 +54,17 @@ A Command has been made to remove those files, simply run (and/or add incrontab)
 Run this Command `php bin/console shop:downloads:delete` once a day to delete files made available at download.
 
 Run this Command `php bin/console shop:products:position` once a day to correct position and keep a 5 gap between them.
+
+Run this Command `php bin/console shop:baskets:delete` once a day to delete unvalidated baskets (status new and creation > 14 days).
+
+For creating the sitemap, you can run `php bin/console shop:sitemaps:create` thath will give a `public/sitemap-shop.xml` that you can add to your `sitemap-index.xml` file or run the following:
+
+```php
+    //Creates the sitemap for pages managed by Shop
+    public function createSitemapShop($output)
+    {
+        $command = $this->getApplication()->find('shop:sitemaps:create');
+        $inputArray = new ArrayInput([]);
+        $command->run($inputArray, $output);
+    }
+```
