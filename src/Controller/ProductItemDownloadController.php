@@ -42,7 +42,7 @@ class ProductItemDownloadController extends AbstractController
 
             $fileInfo = new SplFileInfo($productItemDownload->getFilename());
             $response->setContentDisposition(
-                ResponseHeaderBag::DISPOSITION_INLINE,
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
                 $fileInfo->getBasename('.' . $fileInfo->getExtension()) . '.' . $fileInfo->getExtension()
             );
 

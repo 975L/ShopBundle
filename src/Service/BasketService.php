@@ -14,10 +14,10 @@ use Symfony\Component\HttpFoundation\Request;
 use c975L\ShopBundle\Repository\BasketRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use c975L\ShopBundle\Form\ShopFormFactoryInterface;
-use c975L\ShopBundle\Service\EmailServiceInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use c975L\ShopBundle\Message\ConfirmOrderMessage;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -32,7 +32,6 @@ class BasketService implements BasketServiceInterface
         private readonly BasketRepository $basketRepository,
         private readonly ConfigServiceInterface $configService,
         private readonly EntityManagerInterface $em,
-        private readonly EmailServiceInterface $emailService,
         private readonly ProductItemServiceInterface $productItemService,
         private readonly RequestStack $requestStack,
         private readonly ShopFormFactoryInterface $shopFormFactory,
@@ -160,26 +159,21 @@ class BasketService implements BasketServiceInterface
     }
 
     // Sets basket as validated after successful payment
-    public function validated(): ?Basket
+    public function validated(Basket $basket): void
     {
-        $this->basket = $this->get();
-        if (null !== $this->basket) {
-            $this->basket->setStatus('paid');
+        if ('validated' === $basket->getStatus()) {
+            $basket->setStatus('paid');
 
-            $this->em->persist($this->basket);
+            $this->em->persist($basket);
             $this->em->flush();
 
-            // Sends email
-            $this->emailService->sendOrderConfirmation($this->basket);
-
-            // Dispatch message to send purchased files
-            $this->messageBus->dispatch(new ProductItemDownloadMessage($this->basket->getId()));
+            // Dispatch messages emails
+            $this->messageBus->dispatch(new ConfirmOrderMessage($basket->getId()));
+            $this->messageBus->dispatch(new ProductItemDownloadMessage($basket->getId()));
 
             // Deletes from session
             $this->session->remove('basket');
         }
-
-        return $this->basket;
     }
 
     // Adds product to basket and returns total and quantity
@@ -363,6 +357,7 @@ class BasketService implements BasketServiceInterface
             'mode' => 'payment',
             'success_url' => $this->urlGenerator->generate('basket_validated', ['number' => $this->basket->getNumber()], $this->urlGenerator::ABSOLUTE_URL),
             'cancel_url' => $this->urlGenerator->generate('basket_validate', [], $this->urlGenerator::ABSOLUTE_URL),
+            'customer_email' => $this->basket->getEmail(),
         ]);
 
         return [

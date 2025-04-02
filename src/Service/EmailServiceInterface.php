@@ -13,7 +13,7 @@ interface EmailServiceInterface
 
     public function send($email);
 
-    public function sendOrderConfirmation(Basket $basket);
+    public function sendConfirmOrder(Basket $basket);
 
     public function sendDownloadInformation($basket, array $downloadLinks): void;
 }

@@ -32,5 +32,5 @@ interface BasketServiceInterface
 
     public function validate(Request $request): string;
 
-    public function validated(): ?Basket;
+    public function validated(Basket $basket): void;
 }
