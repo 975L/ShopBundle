@@ -25,10 +25,10 @@ trait MediaTrait
         }
     }
 
-    // Delete media
+    // Delete media (if media is not deleted, use MediaDeleteCommand)
     public function deleteMedia($entity): void
     {
-        if (method_exists($entity, 'getFile') && null !== $entity->getFile()) {
+        if (method_exists($entity, 'getName') && method_exists($entity, 'getFile') && null !== $entity->getFile()) {
             $name = __DIR__ . self::MEDIA_ROOT . $entity->getName();
             if (file_exists($name)) {
                 unlink($name);

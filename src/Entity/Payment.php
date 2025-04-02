@@ -32,17 +32,11 @@ class Payment
     #[ORM\Column(length: 3)]
     private ?string $currency = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $stripeFee = null;
-
     #[ORM\Column(length: 128, nullable: true)]
     private ?string $stripeToken = null;
 
-    #[ORM\Column(length: 16, nullable: true)]
-    private ?string $stripeTokenType = null;
-
-    #[ORM\Column(length: 128, nullable: true)]
-    private ?string $stripeEmail = null;
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $stripeMethod = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation = null;
@@ -102,18 +96,6 @@ class Payment
         return strtoupper($this->currency);
     }
 
-    public function setStripeFee(?int $stripeFee)
-    {
-        $this->stripeFee = $stripeFee;
-
-        return $this;
-    }
-
-    public function getStripeFee(): int
-    {
-        return $this->stripeFee;
-    }
-
     public function setStripeToken(?string $stripeToken)
     {
         $this->stripeToken = $stripeToken;
@@ -126,28 +108,16 @@ class Payment
         return $this->stripeToken;
     }
 
-    public function setStripeTokenType(?string $stripeTokenType)
+    public function setStripeMethod(?string $stripeMethod)
     {
-        $this->stripeTokenType = $stripeTokenType;
+        $this->stripeMethod = $stripeMethod;
 
         return $this;
     }
 
-    public function getStripeTokenType(): ?string
+    public function getStripeMethod(): ?string
     {
-        return $this->stripeTokenType;
-    }
-
-    public function setStripeEmail(?string $stripeEmail)
-    {
-        $this->stripeEmail = $stripeEmail;
-
-        return $this;
-    }
-
-    public function getStripeEmail(): ?string
-    {
-        return $this->stripeEmail;
+        return $this->stripeMethod;
     }
 
     public function getCreation(): ?\DateTimeInterface

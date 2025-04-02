@@ -116,7 +116,7 @@
             </trans-unit>
             <trans-unit id="29">
                 <source>label.basket_thanks</source>
-                <target>Nous vous remercions pour votre commande et votre confiance ! Nous allons la traiter dans les meilleurs délais.</target>
+                <target>Nous vous remercions pour votre commande et votre confiance !</target>
             </trans-unit>
             <trans-unit id="30">
                 <source>label.track_order</source>
@@ -127,11 +127,11 @@
                 <target>Rappel des produits commandés :</target>
             </trans-unit>
             <trans-unit id="32">
-                <source>label.basket_deliver</source>
+                <source>label.basket_delivery</source>
                 <target>Votre commande sera livrée à l'adresse :</target>
             </trans-unit>
             <trans-unit id="33">
-                <source>label.order_confirmation</source>
+                <source>label.confirm_order</source>
                 <target>Confirmation de votre commande</target>
             </trans-unit>
             <trans-unit id="34">
@@ -215,24 +215,24 @@
                 <target>Modification</target>
             </trans-unit>
             <trans-unit id="54">
-                <source>label.number</source>
-                <target>Numéro</target>
+                <source>label.order_number</source>
+                <target>Numéro de commande</target>
             </trans-unit>
             <trans-unit id="55">
                 <source>label.amount</source>
                 <target>Montant</target>
             </trans-unit>
             <trans-unit id="56">
-                <source>label.stripe_fee</source>
-                <target>Frais Stripe</target>
+                <source>label.stripe_method</source>
+                <target>Méthode Stripe</target>
             </trans-unit>
             <trans-unit id="57">
-                <source>label.stripe_token</source>
-                <target>Token Stripe</target>
+                <source>label.digital_items</source>
+                <target>Produits numériques</target>
             </trans-unit>
             <trans-unit id="58">
-                <source>label.stripe_token_type</source>
-                <target>Type Token Stripe</target>
+                <source>label.delivery</source>
+                <target>Livraison</target>
             </trans-unit>
             <trans-unit id="59">
                 <source>label.stripe_email</source>
@@ -312,7 +312,7 @@
             </trans-unit>
             <trans-unit id="78">
                 <source>label.basket_download</source>
-                <target>Vous avez acheté des produits numériques, un email séparé contenant les instructions et liens pour télécharger les fichiers vous sera envoyé séparément.</target>
+                <target>Vous avez acheté des produits numériques, un email contenant les instructions et liens pour télécharger les fichiers vous est envoyé séparément.</target>
             </trans-unit>
             <trans-unit id="79">
                 <source>label.downloads_available</source>

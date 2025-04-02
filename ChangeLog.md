@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.17
+
+- Corrected missing root link for sitemap (02/04/2025)
+- Corrected Update of Product (02/04/2025)
+- Removed use of StripeVersion (02/04/2025)
+- Moved ApiKey to bundle.yaml (02/04/2025)
+- Added Webhook support (02/04/2025)
+- Removed unsued Payment fields (02/04/2025)
+- Added Payment->stripeMethod (02/04/2025)
+- Added link to Stripe payment from dashboard (02/04/2025)
+
 ## v0.16.1
 
 - Added customer_email sent to StripeCheckout (02/04/2025)

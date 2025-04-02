@@ -1,5 +1,6 @@
-{# <twig:c975LShop:Basket:ValidatedInfos/> #}
+{# <twig:c975LShop:Basket:ValidatedInfos number="{{ basket.number }}"/> #}
 {% trans_default_domain 'shop' %}
 <p class="text text-center lead">{{ 'label.thanks_shopping'|trans }}</p>
+<p class="text text-center">{{ 'label.basket_thanks'|trans }}</p>
 <p class="text text-center">{{ 'label.follow_up'|trans }}</p>
-<p class="text text-center">{{ 'label.confirmation_email_sent'|trans }}</p>
+<p class="text text-center">{{ 'label.order_number'|trans }} : <strong>{{ number }}</strong></p>

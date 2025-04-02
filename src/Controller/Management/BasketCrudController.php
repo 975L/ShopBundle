@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -28,7 +27,7 @@ class BasketCrudController extends AbstractCrudController
     {
         return [
             TextField::new('number')
-                ->setLabel('label.number')
+                ->setLabel('label.order_number')
                 ->setFormTypeOption('disabled', 'disabled'),
             AssociationField::new('payment')
                 ->setLabel('label.payment')
@@ -104,6 +103,19 @@ class BasketCrudController extends AbstractCrudController
                     ->generateUrl();
             });
 
+        // Validated baskets
+        $filterValidated = Action::new('filterValidated', 'validated', 'fa fa-filter')
+            ->createAsGlobalAction()
+            ->linkToUrl(function () {
+                $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
+                return $adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction(Action::INDEX)
+                    ->set('filters[status][value]', 'validated')
+                    ->set('filters[status][comparison]', '=')
+                    ->generateUrl();
+            });
+
         // New baskets
         $filterNew = Action::new('filterNew', 'new', 'fa fa-filter')
             ->createAsGlobalAction()
@@ -141,11 +153,13 @@ $sendInvoice = Action::new('sendInvoice', 'Send invoice', 'fa fa-envelope')
             ->disable(Action::NEW, Action::EDIT)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $filterPaid)
+            ->add(Crud::PAGE_INDEX, $filterValidated)
             ->add(Crud::PAGE_INDEX, $filterNew)
 //->add(Crud::PAGE_INDEX, $sendInvoice)
             ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
             ->setPermission('filterPaid', 'ROLE_ADMIN')
+            ->setPermission('filterValidated', 'ROLE_ADMIN')
             ->setPermission('filterNew', 'ROLE_ADMIN')
         ;
     }

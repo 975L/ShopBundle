@@ -12,11 +12,11 @@ trait UserTrait
 
         if ($currentUser !== null) {
             // New entity
-            if ($entity->getId() === null) {
+            if ($entity->getUser() === null) {
                 $entity->setUser($currentUser);
             }
-            // Cas 2: Entité existante en cours de modification - mettre à jour l'utilisateur
-            else if ($entity->getModification() != null && $entity->getModification() > $entity->getCreation()) {
+            // Updated entity
+            elseif (method_exists($entity, 'getModification') && $entity->getModification() !== null && $entity->getModification() > $entity->getCreation()) {
                 $entity->setUser($currentUser);
             }
 

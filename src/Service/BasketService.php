@@ -3,30 +3,37 @@
 namespace c975L\ShopBundle\Service;
 
 use DateTime;
+use Exception;
 use Stripe\Stripe;
+use RuntimeException;
+use Stripe\PaymentIntent;
+use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\Form;
 use c975L\ShopBundle\Entity\Basket;
 use c975L\ShopBundle\Entity\Payment;
+use Stripe\Exception\ApiErrorException;
 use c975L\ShopBundle\Entity\ProductItem;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session as StripeSession;
 use Symfony\Component\HttpFoundation\Request;
+use c975L\ShopBundle\Message\ConfirmOrderMessage;
 use c975L\ShopBundle\Repository\BasketRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use c975L\ShopBundle\Form\ShopFormFactoryInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use c975L\ShopBundle\Message\ConfirmOrderMessage;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class BasketService implements BasketServiceInterface
 {
     private $basket;
     private $session;
     private $stripeSecret;
+    private $user;
 
     public function __construct(
         private readonly BasketRepository $basketRepository,
@@ -37,7 +44,8 @@ class BasketService implements BasketServiceInterface
         private readonly ShopFormFactoryInterface $shopFormFactory,
         private readonly TranslatorInterface $translator,
         private readonly MessageBusInterface $messageBus,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly TokenStorageInterface $tokenStorage,
     ) {
         try {
             $this->session = $this->requestStack->getSession();
@@ -45,7 +53,8 @@ class BasketService implements BasketServiceInterface
             // En contexte CLI, pas de session disponible
             $this->session = null;
         }
-        $this->stripeSecret = $_ENV["STRIPE_SECRET"];
+        $this->stripeSecret = $this->configService->getParameter('c975LShop.stripeSecret');
+        $this->getUser();
     }
 
     // Creates basket
@@ -60,7 +69,7 @@ class BasketService implements BasketServiceInterface
         $basket->setModification(new DateTime());
         $basket->setStatus('new');
         $basket->setDigital(true);
-        $basket->setUser($this->session->get('user'));
+        $basket->setUser($this->user);
 
         $this->em->persist($basket);
         $this->em->flush();
@@ -158,22 +167,10 @@ class BasketService implements BasketServiceInterface
         return $data['url'];
     }
 
-    // Sets basket as validated after successful payment
+    // Removes basket from session, payment is managed in processStripePayment via StripeWebhook
     public function validated(Basket $basket): void
     {
-        if ('validated' === $basket->getStatus()) {
-            $basket->setStatus('paid');
-
-            $this->em->persist($basket);
-            $this->em->flush();
-
-            // Dispatch messages emails
-            $this->messageBus->dispatch(new ConfirmOrderMessage($basket->getId()));
-            $this->messageBus->dispatch(new ProductItemDownloadMessage($basket->getId()));
-
-            // Deletes from session
-            $this->session->remove('basket');
-        }
+        $this->session->remove('basket');
     }
 
     // Adds product to basket and returns total and quantity
@@ -311,7 +308,7 @@ class BasketService implements BasketServiceInterface
         $payment->setCurrency($this->basket->getCurrency());
         $payment->setCreation(new \DateTime());
         $payment->setModification(new \DateTime());
-        $payment->setUser($this->session->get('user'));
+        $payment->setUser($this->user);
 
         $this->em->persist($payment);
     }
@@ -351,19 +348,69 @@ class BasketService implements BasketServiceInterface
 
         // Creates Stripe Session
         Stripe::setApiKey($this->stripeSecret);
-        Stripe::setApiVersion('2025-01-27.acacia');
         $checkoutSession = StripeSession::create([
             'line_items' => $lineItems,
             'mode' => 'payment',
             'success_url' => $this->urlGenerator->generate('basket_validated', ['number' => $this->basket->getNumber()], $this->urlGenerator::ABSOLUTE_URL),
             'cancel_url' => $this->urlGenerator->generate('basket_validate', [], $this->urlGenerator::ABSOLUTE_URL),
             'customer_email' => $this->basket->getEmail(),
+            'metadata' => [
+                'basket_id' => $this->basket->getId(),
+                'order_number' => $this->basket->getNumber()
+            ]
         ]);
 
         return [
             'id' => $checkoutSession->id,
             'url' => $checkoutSession->url,
         ];
+    }
+
+    // Process Stripe payment information from webhook
+    public function processStripePayment($session): void
+    {
+        try {
+            $basketId = $session->metadata->basket_id ?? null;
+            if (!$basketId) {
+                throw new RuntimeException('Basket ID is missing from metadata');
+            }
+
+            $basket = $this->basketRepository->findOneById($basketId);
+            if ($basket === null) {
+                throw new RuntimeException('Basket not found with ID: ' . $basketId);
+            }
+
+            // Update payment information
+            $paymentIntent = PaymentIntent::retrieve($session->payment_intent);
+            $payment = $basket->getPayment();
+            if ($payment) {
+                $payment->setStripeToken($paymentIntent->id);
+                $payment->setStripeMethod($paymentIntent->payment_method_types[0] ?? null);
+                $payment->setFinished(true);
+                $payment->setModification(new DateTime());
+
+                $this->em->persist($payment);
+            } else {
+                error_log('Payment not found for basket: ' . $basketId);
+            }
+
+            $basket->setStatus('paid');
+            $this->em->persist($basket);
+            $this->em->flush();
+
+            // Dispatch messages emails
+            $this->messageBus->dispatch(new ConfirmOrderMessage($basket->getId()));
+            if ($basket->getDigital() === Basket::DIGITAL_STATUS_FULL || $basket->getDigital() === Basket::DIGITAL_STATUS_MIXED) {
+                $this->messageBus->dispatch(new ProductItemDownloadMessage($basket->getId()));
+            }
+        } catch (ApiErrorException $e) {
+            error_log('Stripe API Error: ' . $e->getMessage());
+        } catch (ORMException $e) {
+            error_log('Database Error in webhook: ' . $e->getMessage());
+        } catch (Exception $e) {
+            error_log('Error in Stripe webhook: ' . $e->getMessage());
+            error_log('Stack trace: ' . $e->getTraceAsString());
+        }
     }
 
     // Deletes unvalidated baskets
@@ -387,5 +434,12 @@ class BasketService implements BasketServiceInterface
         if ($count % $batchSize !== 0) {
             $this->em->flush();
         }
+    }
+
+    // Gets user
+    private function getUser(): void
+    {
+        $token = $this->tokenStorage->getToken();
+        $this->user = null !== $token ? $token->getUser() : null;
     }
 }

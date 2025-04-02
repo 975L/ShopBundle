@@ -289,25 +289,6 @@ class Basket
         return $this;
     }
 
-
-
-public function isFullyDigital(): bool
-{
-    return $this->digital === self::DIGITAL_STATUS_FULL;
-}
-
-public function hasNoDigital(): bool
-{
-    return $this->digital === self::DIGITAL_STATUS_NONE;
-}
-
-public function isMixed(): bool
-{
-    return $this->digital === self::DIGITAL_STATUS_MIXED;
-}
-
-
-
     public function getCreation(): ?\DateTimeInterface
     {
         return $this->creation;

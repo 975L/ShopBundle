@@ -44,3 +44,13 @@ c975LShop:
         required: true
         default: null
         info: "Base url for sitemap creation without leading slash: i.e. https://example.com"
+    stripeSecret:
+        type: string
+        required: true
+        default: null
+        info: "Your Stripe Secret Key (test|live)"
+    stripeWebhookSecret:
+        type: string
+        required: true
+        default: null
+        info: "Your Stripe Webhook Secret Key (test|live)"

@@ -6,12 +6,6 @@
     <twig:c975LShop:Basket:Number number="{{ basket.number }}"/>
     <twig:c975LShop:Basket:ProductItemsReminder/>
     <twig:c975LShop:Basket:ProductItems basket="{{ basket }}" type="simple" readonly="true"/>
-    {# Contains digital items #}
-    {% if basket.digital != 3 %}
-        <p class="text text-center"><strong>{{ 'label.basket_download'|trans }}</strong></p>
-    {% endif %}
-    {# Contains physical items #}
-    {% if basket.digital != 1 %}
-        <twig:c975LShop:Basket:Deliver basket="{{ basket }}"/>
-    {% endif %}
+    <twig:c975LShop:Basket:DigitalItems basket="{{ basket }}"/>
+    <twig:c975LShop:Basket:Delivery basket="{{ basket }}"/>
 {% endblock %}

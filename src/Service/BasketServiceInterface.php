@@ -28,9 +28,13 @@ interface BasketServiceInterface
 
     public function getJson(): array;
 
+    public function processStripePayment($session): void;
+
     public function updateTotals(): void;
 
     public function validate(Request $request): string;
 
     public function validated(Basket $basket): void;
 }
+
+

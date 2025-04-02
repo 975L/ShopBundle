@@ -55,8 +55,8 @@ class EmailService implements EmailServiceInterface
     {
         $email = $this->create();
         $email->to(new Address($basket->getEmail()));
-        $email->subject($this->translator->trans('label.order_confirmation', [], 'shop'));
-        $email->htmlTemplate('@c975LShop/emails/order_confirmation.html.twig');
+        $email->subject($this->translator->trans('label.confirm_order', [], 'shop'));
+        $email->htmlTemplate('@c975LShop/emails/confirm_order.html.twig');
         $email->context([
             'basket' => $basket,
         ]);
