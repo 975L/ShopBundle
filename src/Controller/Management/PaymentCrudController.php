@@ -37,14 +37,21 @@ class PaymentCrudController extends AbstractCrudController
                 ->setLabel('label.amount'),
             TextField::new('currency')
                 ->setLabel('label.currency'),
-            IntegerField::new('stripe_fee')
-                ->setLabel('label.stripe_fee'),
             TextField::new('stripe_token')
-                ->setLabel('label.stripe_token'),
-            TextField::new('stripe_token_type')
-                ->setLabel('label.stripe_token_type'),
-            EmailField::new('stripe_email')
-                ->setLabel('label.stripe_email'),
+                ->setLabel('label.stripe_token')
+                ->formatValue(function ($value, $payment) {
+                    if (!$value) {
+                        return null;
+                    }
+
+                    return sprintf(
+                        '<a href="%s" target="_blank">%s</a>',
+                        'https://dashboard.stripe.com/test/payments/' . $value,
+                        $payment->getStripeToken()
+                    );
+                }),
+            TextField::new('stripe_method')
+                ->setLabel('label.stripe_method'),
             DateTimeField::new('creation')
                 ->setLabel('label.creation')
                 ->hideOnIndex()
@@ -60,11 +67,19 @@ class PaymentCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+
+        $viewStripeInvoice = Action::new('viewStripeInvoice', 'Invoice', 'fa fa-file-invoice')
+            ->linkToUrl(function (Payment $payment) {
+                return 'https://dashboard.stripe.com/test/payments/' . $payment->getStripeToken();
+            });
+
         return $actions
             ->disable(Action::NEW, Action::EDIT)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $viewStripeInvoice)
             ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
+            ->setPermission('viewStripeInvoice', 'ROLE_ADMIN')
         ;
     }
 

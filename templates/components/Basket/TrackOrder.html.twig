@@ -1,0 +1,7 @@
+{# <twig:c975LShop:Basket:ValidatedInfos/> #}
+{% trans_default_domain 'shop' %}
+<br>
+<p class="text text-center lead">{{ 'label.track_order'|trans }}</p>
+<p class="text text-center">{{ 'label.confirmation_email_sent'|trans }}</p>
+<twig:c975LShop:Basket:DigitalItems basket="{{ basket }}"/>
+<twig:c975LShop:Basket:Delivery basket="{{ basket }}"/>

@@ -49,6 +49,16 @@ class SitemapCreateCommand extends Command
 
         $products = $this->productService->findAll();
         $urls = [];
+
+        // Urls for the shop
+        $urls[] = [
+            'loc' => $urlRoot . '/shop',
+            'lastmod' => date('Y-m-d'),
+            'changefreq' => 'weekly',
+            'priority' => 1.0,
+        ];
+
+        // Urls for products
         foreach ($products as $product) {
             $urls[] = [
                 'loc' => $urlRoot . '/shop/products/' . $product->getSlug(),

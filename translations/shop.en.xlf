@@ -117,7 +117,7 @@
             </trans-unit>
             <trans-unit id="29">
                 <source>label.basket_thanks</source>
-                <target>Thank you for your order and your trust! We will process it as soon as possible.</target>
+                <target>Thank you for your order and your trust!</target>
             </trans-unit>
             <trans-unit id="30">
                 <source>label.track_order</source>
@@ -128,11 +128,11 @@
                 <target>Recall of ordered products:</target>
             </trans-unit>
             <trans-unit id="32">
-                <source>label.basket_deliver</source>
+                <source>label.basket_delivery</source>
                 <target>Your order will be delivered to the address:</target>
             </trans-unit>
             <trans-unit id="33">
-                <source>label.order_confirmation</source>
+                <source>label.confirm_order</source>
                 <target>Confirmation of your order</target>
             </trans-unit>
             <trans-unit id="34">
@@ -216,24 +216,24 @@
                 <target>Modification</target>
             </trans-unit>
             <trans-unit id="54">
-                <source>label.number</source>
-                <target>Number</target>
+                <source>label.order_number</source>
+                <target>Order number</target>
             </trans-unit>
             <trans-unit id="55">
                 <source>label.amount</source>
                 <target>Amount</target>
             </trans-unit>
             <trans-unit id="56">
-                <source>label.stripe_fee</source>
-                <target>Stripe fee</target>
+                <source>label.stripe_method</source>
+                <target>Stripe Method</target>
             </trans-unit>
             <trans-unit id="57">
-                <source>label.stripe_token</source>
-                <target>Stripe Token</target>
+                <source>label.digital_items</source>
+                <target>Digital items</target>
             </trans-unit>
             <trans-unit id="58">
-                <source>label.stripe_token_type</source>
-                <target>Stripe Token type</target>
+                <source>label.delivery</source>
+                <target>Delivery</target>
             </trans-unit>
             <trans-unit id="59">
                 <source>label.stripe_email</source>
@@ -313,7 +313,7 @@
             </trans-unit>
             <trans-unit id="78">
                 <source>label.basket_download</source>
-                <target>You have purchased digital products, a separate email with instructions and links to download the files will be sent to you separately.</target>
+                <target>If you have purchased digital products, an email with instructions and links to download the files will be sent to you separately.</target>
             </trans-unit>
             <trans-unit id="79">
                 <source>label.downloads_available</source>
