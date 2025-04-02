@@ -87,6 +87,10 @@ class BasketController extends AbstractController
     )]
     public function validated(?Basket $basket): Response
     {
+        if (null !== $basket) {
+            $this->basketService->validated($basket);
+        }
+
         return $this->render('@c975LShop/basket/display.html.twig', [
             'action' => 'validated',
             'basket' => $basket,

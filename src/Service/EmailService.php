@@ -51,7 +51,7 @@ class EmailService implements EmailServiceInterface
     }
 
     // Sends the order confirmation email
-    public function sendOrderConfirmation(Basket $basket)
+    public function sendConfirmOrder(Basket $basket)
     {
         $email = $this->create();
         $email->to(new Address($basket->getEmail()));

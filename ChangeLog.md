@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.16.1
+
+- Added customer_email sent to StripeCheckout (02/04/2025)
+- Made use of Messenger for confirmation order email (02/04/2025)
+- Corrected basket not updated after payment and emails not sent (02/04/2025)
+- Added forced download for productItemDownload (02/04/2025)
+
 # v0.16
 
 - Added intermediate step before basket validation (01/04/2025)
