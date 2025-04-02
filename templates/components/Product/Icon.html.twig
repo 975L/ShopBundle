@@ -1,14 +1,14 @@
 {% set icon = 'bag-shopping.svg' %}
 {% if item.file != null and item.file.name != null %}
-    {% if item.file.name matches '/\.(jpg|jpeg|png|gif)$/i' %}
+    {% if item.file.name matches '/.(jpg|jpeg|png|gif)$/i' %}
         {% set icon = 'file-image.svg' %}
-    {% elseif item.file.name matches '/\.(mp3|wav|ogg)$/i' %}
+    {% elseif item.file.name matches '/.(mp3|wav|ogg)$/i' %}
         {% set icon = 'file-audio.svg' %}
-    {% elseif item.file.name matches '/\.(mp4|avi|mov)$/i' %}
+    {% elseif item.file.name matches '/.(mp4|avi|mov)$/i' %}
         {% set icon = 'file-video.svg' %}
-    {% elseif item.file.name matches '/\.(zip|rar)$/i' %}
+    {% elseif item.file.name matches '/.(zip|rar)$/i' %}
         {% set icon = 'file-zipper.svg' %}
-    {% elseif item.file.name matches '/\.(pdf)$/i' %}
+    {% elseif item.file.name matches '/.(pdf)$/i' %}
         {% set icon = 'file-pdf.svg' %}
     {% else %}
         {% set icon = 'file.svg' %}

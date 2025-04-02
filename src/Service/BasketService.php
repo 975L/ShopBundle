@@ -7,6 +7,7 @@ use Exception;
 use Stripe\Stripe;
 use RuntimeException;
 use Stripe\PaymentIntent;
+use Psr\Log\LoggerInterface;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\Form;
 use c975L\ShopBundle\Entity\Basket;
@@ -45,6 +46,7 @@ class BasketService implements BasketServiceInterface
         private readonly TranslatorInterface $translator,
         private readonly MessageBusInterface $messageBus,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly LoggerInterface $logger,
         private readonly TokenStorageInterface $tokenStorage,
     ) {
         try {
@@ -404,12 +406,30 @@ class BasketService implements BasketServiceInterface
                 $this->messageBus->dispatch(new ProductItemDownloadMessage($basket->getId()));
             }
         } catch (ApiErrorException $e) {
-            error_log('Stripe API Error: ' . $e->getMessage());
+            $this->logger->error('Stripe API Error', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'session_id' => $session->id ?? 'unknown',
+                'basket_id' => $session->metadata->basket_id ?? 'unknown'
+            ]);
+
+            $this->sendErrorNotification($session, $e);
         } catch (ORMException $e) {
-            error_log('Database Error in webhook: ' . $e->getMessage());
+            $this->logger->error('Database Error in webhook', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'session_id' => $session->id ?? 'unknown'
+            ]);
+
+            $this->sendErrorNotification($session, $e);
         } catch (Exception $e) {
-            error_log('Error in Stripe webhook: ' . $e->getMessage());
-            error_log('Stack trace: ' . $e->getTraceAsString());
+            $this->logger->error('Error in Stripe webhook', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'session_id' => $session->id ?? 'unknown'
+            ]);
+
+            $this->sendErrorNotification($session, $e);
         }
     }
 
@@ -441,5 +461,50 @@ class BasketService implements BasketServiceInterface
     {
         $token = $this->tokenStorage->getToken();
         $this->user = null !== $token ? $token->getUser() : null;
+    }
+
+    // Sends email notification when an error occurs during payment processing
+    private function sendErrorNotification($session, Exception $error): void
+    {
+        // Récupérer le panier si possible
+        $basket = null;
+        $basketId = $session->metadata->basket_id ?? null;
+        if ($basketId) {
+            try {
+                $basket = $this->basketRepository->findOneById($basketId);
+            } catch (\Exception $e) {
+                // Ignorer cette erreur
+            }
+        }
+
+        // Créer l'email
+        $email = $this->emailService->create();
+        $email->subject('URGENT: Erreur de paiement Stripe');
+
+        // Corps du message
+        $body = "Une erreur est survenue lors du traitement d'un paiement Stripe :\n\n";
+        $body .= "- Date: " . (new \DateTime())->format('Y-m-d H:i:s') . "\n";
+        $body .= "- Erreur: " . $error->getMessage() . "\n";
+        $body .= "- Session ID: " . ($session->id ?? 'inconnu') . "\n";
+        $body .= "- Payment Intent: " . ($session->payment_intent ?? 'inconnu') . "\n";
+        $body .= "- Basket ID: " . ($basketId ?? 'inconnu') . "\n";
+
+        // Ajouter les détails du panier si disponible
+        if ($basket) {
+            $body .= "\nDétails du panier :\n";
+            $body .= "- Numéro de commande: " . $basket->getNumber() . "\n";
+            $body .= "- Email client: " . $basket->getEmail() . "\n";
+            $body .= "- Total: " . ($basket->getTotal()/100) . " " . $basket->getCurrency() . "\n";
+            $body .= "- Statut: " . $basket->getStatus() . "\n";
+
+            $body .= "\nProduits :\n";
+            foreach ($basket->getProductItems() as $item) {
+                $body .= "- " . $item['product']['title'] . " (" . $item['productItem']['title'] . "): ";
+                $body .= $item['quantity'] . " × " . ($item['productItem']['price']/100) . " " . $basket->getCurrency() . "\n";
+            }
+        }
+
+        $email->text($body);
+        $this->emailService->send($email);
     }
 }

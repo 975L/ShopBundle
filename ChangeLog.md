@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.17.1
+
+- Removed \ in Twig component as deprecated (02/04/2025)
+- Added Email if Stripe error (02/04/2025)
+
 ## v0.17
 
 - Corrected missing root link for sitemap (02/04/2025)
