@@ -79,4 +79,19 @@ class EmailService implements EmailServiceInterface
 
         $this->send($email);
     }
+
+    // Sends the Stripe error message email
+    public function sendStripeErrorMessage(Basket $basket, array $context): void
+    {
+        $email = $this->create();
+        $email->to(new Address($this->configService->getParameter('c975LShop.replyTo')));
+        $email->subject('Stripe Error !');
+        $email->htmlTemplate('@c975LShop/emails/stripe_error.html.twig');
+        $email->context([
+            'basket' => $basket,
+            'context' => $context,
+        ]);
+
+        $this->send($email);
+    }
 }

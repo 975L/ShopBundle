@@ -1,0 +1,21 @@
+{% extends "@c975LEmail/emails/layout.html.twig" %}
+{% trans_default_domain 'shop' %}
+
+{% block email_content %}
+    <div>
+        <h2>Stripe error</h2>
+        <p>Date: {{ basket.creation|date('Y-m-d H:i:s') }}</p>
+        <p>Session Id: {{ session_id }}</p>
+        <p>Error: {{ error_message }}</p>
+        <p>Basket Id: {{ basket.id }}</p>
+        <p>Basket Number: {{ basket.number }}</p>
+        <p>Basket Status: {{ basket.status }}</p>
+        <p>Basket Total: {{ basket.total / 100 }} {{ basket.currency }}</p>
+        <p>Basket Email: {{ basket.email }}</p>
+    </div>
+
+    <div style="margin-top: 20px; padding: 12px; background-color: #f5f5f5; border-left: 4px solid #333;">
+        <h2>Technical details</h2>
+        <pre style="font-family: monospace; overflow-x: auto; white-space: pre-wrap; max-height: 300px;">{{ error_trace }}</pre>
+    </div>
+{% endblock %}

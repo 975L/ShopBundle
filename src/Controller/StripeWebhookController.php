@@ -43,7 +43,6 @@ class StripeWebhookController extends AbstractController
             }
 
             return new Response('Webhook received', 200);
-
         } catch (\UnexpectedValueException $e) {
             return new Response('Invalid payload', 400);
         } catch (\Stripe\Exception\SignatureVerificationException $e) {
