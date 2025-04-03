@@ -8,16 +8,15 @@ use Stripe\Stripe;
 use RuntimeException;
 use Stripe\PaymentIntent;
 use Psr\Log\LoggerInterface;
-use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\Form;
 use c975L\ShopBundle\Entity\Basket;
 use c975L\ShopBundle\Entity\Payment;
-use Stripe\Exception\ApiErrorException;
 use c975L\ShopBundle\Entity\ProductItem;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session as StripeSession;
 use Symfony\Component\HttpFoundation\Request;
 use c975L\ShopBundle\Message\ConfirmOrderMessage;
+use c975L\ShopBundle\Message\ItemsShippedMessage;
 use c975L\ShopBundle\Repository\BasketRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use c975L\ShopBundle\Form\ShopFormFactoryInterface;
@@ -39,7 +38,7 @@ class BasketService implements BasketServiceInterface
     public function __construct(
         private readonly BasketRepository $basketRepository,
         private readonly ConfigServiceInterface $configService,
-        private readonly EntityManagerInterface $em,
+        private readonly EntityManagerInterface $entityManager,
         private readonly ProductItemServiceInterface $productItemService,
         private readonly RequestStack $requestStack,
         private readonly ShopFormFactoryInterface $shopFormFactory,
@@ -73,8 +72,8 @@ class BasketService implements BasketServiceInterface
         $basket->setDigital(true);
         $basket->setUser($this->user);
 
-        $this->em->persist($basket);
-        $this->em->flush();
+        $this->entityManager->persist($basket);
+        $this->entityManager->flush();
         $this->session->set('basket', $basket->getId());
 
         return $basket;
@@ -87,8 +86,8 @@ class BasketService implements BasketServiceInterface
         if (null !== $identifiant) {
             $this->basket = $this->get();
 
-            $this->em->remove($this->basket);
-            $this->em->flush();
+            $this->entityManager->remove($this->basket);
+            $this->entityManager->flush();
 
             $this->session->remove('basket');
         }
@@ -158,21 +157,61 @@ class BasketService implements BasketServiceInterface
         $this->basket = $this->get();
         $this->basket->setStatus('validated');
         $this->basket->setNumber($this->generateOrderNumber());
-        $this->em->persist($this->basket);
+        $this->basket->setSecurityToken($this->generateSecurityToken());
+        $this->entityManager->persist($this->basket);
 
         // Creates payment
         $data = $this->createStripeSession();
         $this->createPayment();
 
-        $this->em->flush();
+        $this->entityManager->flush();
 
         return $data['url'];
     }
 
-    // Removes basket from session, payment is managed in processStripePayment via StripeWebhook
-    public function validated(Basket $basket): void
+    // Sets basket as paid after successful payment
+    public function paid(Basket $basket): void
     {
-        $this->session->remove('basket');
+        if ('validated' === $basket->getStatus()) {
+            $basket->setStatus('paid');
+            $basket->setModification(new DateTime());
+
+            $this->entityManager->persist($basket);
+            $this->entityManager->flush();
+
+            // Deletes from session
+            $this->session->remove('basket');
+
+            // Dispatch messages emails
+            $this->messageBus->dispatch(new ConfirmOrderMessage($basket->getId()));
+            if ($basket->getDigital() === Basket::DIGITAL_STATUS_FULL || $basket->getDigital() === Basket::DIGITAL_STATUS_MIXED) {
+                $this->messageBus->dispatch(new ProductItemDownloadMessage($basket->getId()));
+            }
+        }
+    }
+
+    // Sends email when physical items are shipped
+    public function itemsShipped(string $number): Basket
+    {
+        $basket = $this->basketRepository->findOneByNumber($number);
+
+        if (null === $basket) {
+            throw new \Exception('Basket not found');
+        }
+
+        if ('shipped' !== $basket->getStatus()) {
+            $basket->setStatus('shipped');
+            $basket->setShipped(new DateTime());
+            $basket->setModification(new DateTime());
+
+            $this->entityManager->persist($basket);
+            $this->entityManager->flush();
+
+            // Sends email
+            $this->messageBus->dispatch(new ItemsShippedMessage($basket->getId()));
+        }
+
+        return $basket;
     }
 
     // Adds product to basket and returns total and quantity
@@ -212,8 +251,8 @@ class BasketService implements BasketServiceInterface
         $this->basket->setModification(new dateTime());
 
         $this->updateTotals();
-        $this->em->persist($this->basket);
-        $this->em->flush();
+        $this->entityManager->persist($this->basket);
+        $this->entityManager->flush();
 
         return [
             'basket' => $this->basket->toArray(),
@@ -236,8 +275,8 @@ class BasketService implements BasketServiceInterface
         $this->basket->setModification(new dateTime());
 
         $this->updateTotals();
-        $this->em->persist($this->basket);
-        $this->em->flush();
+        $this->entityManager->persist($this->basket);
+        $this->entityManager->flush();
 
         return $this->getJson();
     }
@@ -253,8 +292,9 @@ class BasketService implements BasketServiceInterface
         unset($productItemData['position']);
         unset($productItemData['modification']);
         unset($productItemData['user']);
-        $productItemData['file'] = $productItem->getFile()->getName();
-        $productItemData['media'] = $productItem->getMedia()->getName();
+        $productItemData['file'] = $productItem->getFile() ? $productItem->getFile()->getName() : null;
+        $productItemData['size'] = $productItem->getFile() ? $productItem->getFile()->getSize() : null;
+        $productItemData['media'] = $productItem->getMedia() ? $productItem->getMedia()->getName() : null;
 
         // Adds values related to product itself
         $product = $productItem->getProduct();
@@ -294,6 +334,12 @@ class BasketService implements BasketServiceInterface
         return $testPart . $datePart . '-' . $prefix . '-' . $randomPart;
     }
 
+    // Generates security token
+    public function generateSecurityToken(): string
+    {
+        return bin2hex(random_bytes(8));
+    }
+
     // Creates form
     public function createForm(string $name, Basket $basket): Form
     {
@@ -312,7 +358,7 @@ class BasketService implements BasketServiceInterface
         $payment->setModification(new \DateTime());
         $payment->setUser($this->user);
 
-        $this->em->persist($payment);
+        $this->entityManager->persist($payment);
     }
 
     // Creates Stripe Session
@@ -339,7 +385,6 @@ class BasketService implements BasketServiceInterface
                 'price_data' => [
                     'currency' => $this->basket->getCurrency(),
                     'product_data' => [
-                        'name' => 'Shipping',
                         'name' => $this->translator->trans('label.shipping', [], 'shop'),
                     ],
                     'unit_amount' => $this->basket->getShipping(),
@@ -353,7 +398,14 @@ class BasketService implements BasketServiceInterface
         $checkoutSession = StripeSession::create([
             'line_items' => $lineItems,
             'mode' => 'payment',
-            'success_url' => $this->urlGenerator->generate('basket_validated', ['number' => $this->basket->getNumber()], $this->urlGenerator::ABSOLUTE_URL),
+            'success_url' => $this->urlGenerator->generate(
+                'basket_paid',
+                [
+                    'number' => $this->basket->getNumber(),
+                    'securityToken' => $this->basket->getSecurityToken()
+                ],
+                $this->urlGenerator::ABSOLUTE_URL
+            ),
             'cancel_url' => $this->urlGenerator->generate('basket_validate', [], $this->urlGenerator::ABSOLUTE_URL),
             'customer_email' => $this->basket->getEmail(),
             'metadata' => [
@@ -371,66 +423,30 @@ class BasketService implements BasketServiceInterface
     // Process Stripe payment information from webhook
     public function processStripePayment($session): void
     {
-        try {
-            $basketId = $session->metadata->basket_id ?? null;
-            if (!$basketId) {
-                throw new RuntimeException('Basket ID is missing from metadata');
-            }
-
-            $basket = $this->basketRepository->findOneById($basketId);
-            if ($basket === null) {
-                throw new RuntimeException('Basket not found with ID: ' . $basketId);
-            }
-
-            // Update payment information
-            $paymentIntent = PaymentIntent::retrieve($session->payment_intent);
-            $payment = $basket->getPayment();
-            if ($payment) {
-                $payment->setStripeToken($paymentIntent->id);
-                $payment->setStripeMethod($paymentIntent->payment_method_types[0] ?? null);
-                $payment->setFinished(true);
-                $payment->setModification(new DateTime());
-
-                $this->em->persist($payment);
-            } else {
-                error_log('Payment not found for basket: ' . $basketId);
-            }
-
-            $basket->setStatus('paid');
-            $this->em->persist($basket);
-            $this->em->flush();
-
-            // Dispatch messages emails
-            $this->messageBus->dispatch(new ConfirmOrderMessage($basket->getId()));
-            if ($basket->getDigital() === Basket::DIGITAL_STATUS_FULL || $basket->getDigital() === Basket::DIGITAL_STATUS_MIXED) {
-                $this->messageBus->dispatch(new ProductItemDownloadMessage($basket->getId()));
-            }
-        } catch (ApiErrorException $e) {
-            $this->logger->error('Stripe API Error', [
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'session_id' => $session->id ?? 'unknown',
-                'basket_id' => $session->metadata->basket_id ?? 'unknown'
-            ]);
-
-            $this->sendErrorNotification($session, $e);
-        } catch (ORMException $e) {
-            $this->logger->error('Database Error in webhook', [
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'session_id' => $session->id ?? 'unknown'
-            ]);
-
-            $this->sendErrorNotification($session, $e);
-        } catch (Exception $e) {
-            $this->logger->error('Error in Stripe webhook', [
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'session_id' => $session->id ?? 'unknown'
-            ]);
-
-            $this->sendErrorNotification($session, $e);
+        $basketId = $session->metadata->basket_id ?? null;
+        if (!$basketId) {
+            throw new RuntimeException('Basket ID is missing from metadata');
         }
+
+        $basket = $this->basketRepository->findOneById($basketId);
+        if ($basket === null) {
+            throw new RuntimeException('Basket not found with ID: ' . $basketId);
+        }
+
+        // Update payment information
+        $paymentIntent = PaymentIntent::retrieve($session->payment_intent);
+        $payment = $basket->getPayment();
+        if ($payment) {
+            $payment->setStripeToken($paymentIntent->id);
+            $payment->setStripeMethod($paymentIntent->payment_method_types[0] ?? null);
+            $payment->setFinished(true);
+            $payment->setModification(new DateTime());
+
+            $this->entityManager->persist($payment);
+        }
+
+        $this->entityManager->persist($basket);
+        $this->entityManager->flush();
     }
 
     // Deletes unvalidated baskets
@@ -441,18 +457,18 @@ class BasketService implements BasketServiceInterface
 
         $baskets = $this->basketRepository->findUnvalidated(14);
         foreach ($baskets as $basket) {
-            $this->em->remove($basket);
+            $this->entityManager->remove($basket);
             $count++;
 
             // Flush every $batchSize to avoid memory issues
             if ($count % $batchSize === 0) {
-                $this->em->flush();
-                $this->em->clear();
+                $this->entityManager->flush();
+                $this->entityManager->clear();
             }
         }
 
         if ($count % $batchSize !== 0) {
-            $this->em->flush();
+            $this->entityManager->flush();
         }
     }
 
@@ -461,50 +477,5 @@ class BasketService implements BasketServiceInterface
     {
         $token = $this->tokenStorage->getToken();
         $this->user = null !== $token ? $token->getUser() : null;
-    }
-
-    // Sends email notification when an error occurs during payment processing
-    private function sendErrorNotification($session, Exception $error): void
-    {
-        // Récupérer le panier si possible
-        $basket = null;
-        $basketId = $session->metadata->basket_id ?? null;
-        if ($basketId) {
-            try {
-                $basket = $this->basketRepository->findOneById($basketId);
-            } catch (\Exception $e) {
-                // Ignorer cette erreur
-            }
-        }
-
-        // Créer l'email
-        $email = $this->emailService->create();
-        $email->subject('URGENT: Erreur de paiement Stripe');
-
-        // Corps du message
-        $body = "Une erreur est survenue lors du traitement d'un paiement Stripe :\n\n";
-        $body .= "- Date: " . (new \DateTime())->format('Y-m-d H:i:s') . "\n";
-        $body .= "- Erreur: " . $error->getMessage() . "\n";
-        $body .= "- Session ID: " . ($session->id ?? 'inconnu') . "\n";
-        $body .= "- Payment Intent: " . ($session->payment_intent ?? 'inconnu') . "\n";
-        $body .= "- Basket ID: " . ($basketId ?? 'inconnu') . "\n";
-
-        // Ajouter les détails du panier si disponible
-        if ($basket) {
-            $body .= "\nDétails du panier :\n";
-            $body .= "- Numéro de commande: " . $basket->getNumber() . "\n";
-            $body .= "- Email client: " . $basket->getEmail() . "\n";
-            $body .= "- Total: " . ($basket->getTotal()/100) . " " . $basket->getCurrency() . "\n";
-            $body .= "- Statut: " . $basket->getStatus() . "\n";
-
-            $body .= "\nProduits :\n";
-            foreach ($basket->getProductItems() as $item) {
-                $body .= "- " . $item['product']['title'] . " (" . $item['productItem']['title'] . "): ";
-                $body .= $item['quantity'] . " × " . ($item['productItem']['price']/100) . " " . $basket->getCurrency() . "\n";
-            }
-        }
-
-        $email->text($body);
-        $this->emailService->send($email);
     }
 }

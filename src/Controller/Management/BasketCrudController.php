@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -35,9 +36,14 @@ class BasketCrudController extends AbstractCrudController
             TextField::new('status')
                 ->setLabel('label.status')
                 ->setFormTypeOption('disabled', 'disabled'),
-            IntegerField::new('digital')
+            ChoiceField::new('digital')
                 ->setLabel('label.digital')
-                ->setFormTypeOption('disabled', 'disabled'),
+                ->setFormTypeOption('disabled', 'disabled')
+                ->setChoices([
+                    'label.digital' => 1,
+                    'label.mixed' => 2,
+                    'label.physical' => 3,
+                ]),
             IntegerField::new('total')
                 ->setLabel('label.total')
                 ->setFormTypeOption('disabled', 'disabled'),
@@ -104,7 +110,7 @@ class BasketCrudController extends AbstractCrudController
             });
 
         // Validated baskets
-        $filterValidated = Action::new('filterValidated', 'validated', 'fa fa-filter')
+        $filterValidated = Action::new('filterValidated', ' (03/04/2025)', 'fa fa-filter')
             ->createAsGlobalAction()
             ->linkToUrl(function () {
                 $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
@@ -129,25 +135,19 @@ class BasketCrudController extends AbstractCrudController
                     ->generateUrl();
             });
 
-
-/*
-// if the method is not defined in a CRUD controller, link to its route
-$sendInvoice = Action::new('sendInvoice', 'Send invoice', 'fa fa-envelope')
-    // if the route needs parameters, you can define them:
-    // 1) using an array
-    ->linkToRoute('invoice_send', [
-        'send_at' => (new \DateTime('+ 10 minutes'))->format('YmdHis'),
-    ])
-
-    // 2) using a callable (useful if parameters depend on the entity instance)
-    // (the type-hint of the function argument is optional but useful)
-    ->linkToRoute('invoice_send', function (Basket $basket): array {
-        return [
-            'uuid' => $basket->getId(),
-            'method' => $basket->getEmail(),
-        ];
-    });
-*/
+        // Send items
+        $sendItems = Action::new('itemsShipped', 'label.send_items')
+            ->linkToRoute('items_shipped', function (Basket $basket): array {
+                return [
+                    'number' => $basket->getNumber(),
+                ];
+            })
+            ->setHtmlAttributes([
+                'target' => '_blank'
+            ])
+            ->displayIf(function (Basket $basket): bool {
+                return $basket->getStatus() === 'paid' && $basket->getNumber() !== null && $basket->getDigital() !== 1;
+            });
 
         return $actions
             ->disable(Action::NEW, Action::EDIT)
@@ -155,7 +155,7 @@ $sendInvoice = Action::new('sendInvoice', 'Send invoice', 'fa fa-envelope')
             ->add(Crud::PAGE_INDEX, $filterPaid)
             ->add(Crud::PAGE_INDEX, $filterValidated)
             ->add(Crud::PAGE_INDEX, $filterNew)
-//->add(Crud::PAGE_INDEX, $sendInvoice)
+            ->add(Crud::PAGE_INDEX, $sendItems)
             ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
             ->setPermission('filterPaid', 'ROLE_ADMIN')

@@ -1,5 +1,17 @@
 # Changelog
 
+# v0.18
+
+- Added checkboxes for Terms of use/Terms of sales (03/04/2025)
+- Moved back sending email to BasketService->paid() to avoid webhook not reached (03/04/2025)
+- Added file size for download items, to indicate in emails (03/04/2025)
+- Added ProductItem slug to downloaded filename to make it more clear (03/04/2025)
+- Added file size to download email (03/04/2025)
+- Added action to send email when physical products are sent (03/04/2025)
+- Removed Basket paymentIdentifier (03/04/2025)
+- Added Basket shipped/downloaded datetime (03/04/2025)
+- Added securityToken for Basket, to be used in url, to avoid basket visibility with only its number (03/04/2025)
+
 ## v0.17.1
 
 - Removed \ in Twig component as deprecated (02/04/2025)

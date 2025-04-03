@@ -6,6 +6,7 @@ use SplFileInfo;
 use Imagine\Image\Box;
 use Imagine\Gd\Imagine;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 // Defines methods related to media
 trait MediaTrait
@@ -14,6 +15,12 @@ trait MediaTrait
 
     const MEDIA_ROOT = __DIR__ . '/../../../public/';
     const SHOP_ROOT = 'medias/shop';
+
+    // Initializes the slugger
+    public function initializeMedia(SluggerInterface $slugger): void
+    {
+        $this->slugger = $slugger;
+    }
 
     // Deletes all medias
     public function deleteMedias($entity): void
@@ -43,7 +50,9 @@ trait MediaTrait
             $filePath = $entity->getFile()->getPathname();
             if (file_exists($filePath)) {
                 $fileInfo = new SplFileInfo($filePath);
-                $filename = self::SHOP_ROOT . '/items/' . $entity->getProductItem()->getProduct()->getSlug() . '-' . $entity->getProductItem()->getId() . '-';
+                $filename = self::SHOP_ROOT . '/items/' ;
+                $filename .= $entity->getProductItem()->getProduct()->getSlug() . '-';
+                $filename .= $this->slugger->slug($entity->getProductItem()->getTitle())->lower() . '-';
                 $filename .= $fileInfo->getBasename('.' . $fileInfo->getExtension()) . '.' . $fileInfo->getExtension();
 
                 $filesystem = new Filesystem();

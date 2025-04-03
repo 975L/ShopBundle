@@ -73,14 +73,29 @@ class CoordinatesType extends AbstractType
                 ])
             ;
         }
-        // GDPR
         $builder
+            // GDPR
             ->add('gdpr', CheckboxType::class, [
                 'label' => 'text.gdpr',
                 'translation_domain' => 'site',
                 'required' => true,
                 'mapped' => false
-            ]);
+                ])
+            // Terms of use
+            ->add('cgu', CheckboxType::class, [
+                'label' => $options['config']['touUrl'],
+                'label_html' => true,
+                'required' => true,
+                'mapped' => false
+                ])
+                // Terms of sales
+                ->add('cgv', CheckboxType::class, [
+                'label' => $options['config']['tosUrl'],
+                'label_html' => true,
+                'required' => true,
+                'mapped' => false
+            ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

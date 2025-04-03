@@ -33,7 +33,7 @@ class ProductItemFile
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'productItemFiles')]
+    #[ORM\ManyToOne()]
     private ?User $user = null;
 
     public function __toString()

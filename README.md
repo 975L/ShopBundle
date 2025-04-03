@@ -47,7 +47,7 @@ vich_uploader:
 
 The `basket.digital` has 3 values: 1 (digital), 2 (both) and 3 (physical).
 
-The `basket.status` are the following: new, validated, paid, downloaded, delivered, finished
+The `basket.status` are the following: new, validated, paid, downloaded, shipped, finished
 
 Run this Command `php bin/console shop:downloads:delete` once a day to delete files made available at download.
 

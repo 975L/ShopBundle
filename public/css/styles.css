@@ -163,6 +163,41 @@ tfoot th {
     border-bottom: none;
 }
 
+/* LISTS */
+.circle-numbers {
+    counter-reset: item;
+    list-style-type: none;
+    padding-left: 0;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.circle-numbers li {
+    position: relative;
+    padding-left: 45px;
+    margin-bottom: 20px;
+    counter-increment: item;
+    display: flex;
+    align-items: center;
+}
+
+.circle-numbers li::before {
+    content: counter(item);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--primary, #007bff);
+    color: white;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+
 /* COMPONENTS */
 .shop-shipping,
 .shop-information,

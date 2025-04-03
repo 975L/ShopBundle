@@ -99,8 +99,8 @@
                 <target>Poursuivre les achats</target>
             </trans-unit>
             <trans-unit id="25">
-                <source>label.basket_validated</source>
-                <target>Panier validé</target>
+                <source>label.basket_paid</source>
+                <target>Panier payé</target>
             </trans-unit>
             <trans-unit id="26">
                 <source>label.thanks_shopping</source>
@@ -120,7 +120,7 @@
             </trans-unit>
             <trans-unit id="30">
                 <source>label.track_order</source>
-                <target>Suivre ma commande :</target>
+                <target>Suivi commande</target>
             </trans-unit>
             <trans-unit id="31">
                 <source>label.basket_products_reminder</source>
@@ -268,7 +268,7 @@
             </trans-unit>
             <trans-unit id="67">
                 <source>label.digital</source>
-                <target>Numérique ?</target>
+                <target>Numérique</target>
             </trans-unit>
             <trans-unit id="68">
                 <source>label.payment_identifier</source>
@@ -312,7 +312,7 @@
             </trans-unit>
             <trans-unit id="78">
                 <source>label.basket_download</source>
-                <target>Vous avez acheté des produits numériques, un email contenant les instructions et liens pour télécharger les fichiers vous est envoyé séparément.</target>
+                <target>Vous avez acheté des produits numériques, un email contenant les instructions de téléchargement vous a été envoyé.</target>
             </trans-unit>
             <trans-unit id="79">
                 <source>label.downloads_available</source>
@@ -349,6 +349,38 @@
             <trans-unit id="87">
                 <source>text.item_already_downloaded</source>
                 <target>Cet article a déjà été téléchargé à la date ci-dessous. Il n'est plus disponible.</target>
+            </trans-unit>
+            <trans-unit id="88">
+                <source>label.send_items</source>
+                <target>Envoi articles</target>
+            </trans-unit>
+            <trans-unit id="89">
+                <source>label.items_shipped</source>
+                <target>Envoi des articles commandés</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>label.mixed</source>
+                <target>Mixte</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>label.physical</source>
+                <target>Physique</target>
+            </trans-unit>
+            <trans-unit id="92">
+                <source>text.items_shipped</source>
+                <target>Les articles ont été expédiés le </target>
+            </trans-unit>
+            <trans-unit id="93">
+                <source>text.items_downloaded</source>
+                <target>Les fichiers ont été téléchargés le </target>
+            </trans-unit>
+            <trans-unit id="94">
+                <source>text.order_registered</source>
+                <target>Commande enregistrée le </target>
+            </trans-unit>
+            <trans-unit id="95">
+                <source>label.ordered_items</source>
+                <target>Articles commandés</target>
             </trans-unit>
         </body>
     </file>

@@ -13,6 +13,9 @@ use Symfony\Component\Form\Form;
 use c975L\ShopBundle\Entity\Basket;
 use c975L\ShopBundle\Form\CoordinatesType;
 use Symfony\Component\Form\FormFactoryInterface;
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use Symfony\Component\Translation\TranslatableMessage;
+
 
 /**
  * ShopFactory class
@@ -22,10 +25,8 @@ use Symfony\Component\Form\FormFactoryInterface;
 class ShopFormFactory implements ShopFormFactoryInterface
 {
     public function __construct(
-        /**
-         * Stores FormFactoryInterface
-         */
-        private readonly FormFactoryInterface $formFactory
+        private readonly FormFactoryInterface $formFactory,
+        private readonly ConfigServiceInterface $configService,
     )
     {
     }
@@ -37,7 +38,20 @@ class ShopFormFactory implements ShopFormFactoryInterface
     {
         switch ($name) {
             case 'coordinates':
-                $config = [];
+                $touUrl = new TranslatableMessage(
+                    'label.accept_tou',
+                    ['%touUrl%' => $this->configService->getParameter('c975LShop.touUrl')],
+                    'site',
+                );
+                $tosUrl = new TranslatableMessage(
+                    'label.accept_tos',
+                    ['%tosUrl%' => $this->configService->getParameter('c975LShop.tosUrl')],
+                    'site',
+                );
+                $config = [
+                    'tosUrl' => $tosUrl,
+                    'touUrl' => $touUrl,
+                ];
                 $type = CoordinatesType::class;
                 break;
             default:

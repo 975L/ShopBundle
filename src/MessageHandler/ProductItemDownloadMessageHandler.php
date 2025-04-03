@@ -14,12 +14,13 @@ class ProductItemDownloadMessageHandler
     public function __construct(
         private BasketRepository $basketRepository,
         private readonly EmailServiceInterface $emailService,
-        private ProductItemDownloadServiceInterface $ProductItemDownloadService
+        private ProductItemDownloadServiceInterface $productItemDownloadService
     ) {}
 
     public function __invoke(ProductItemDownloadMessage $message): void
     {
         $basket = $this->basketRepository->findOneById($message->getBasketId());
+
         if (!$basket) {
             return;
         }
@@ -28,7 +29,7 @@ class ProductItemDownloadMessageHandler
         $downloadLinks = [];
         foreach ($basket->getProductItems() as $id => $productItem) {
             if (!empty($productItem['productItem']['file'])) {
-                $token = $this->ProductItemDownloadService->prepareFileForDownload(
+                $token = $this->productItemDownloadService->prepareFileForDownload(
                     $basket->getId(),
                     $id,
                     $productItem['productItem']['file']
@@ -36,7 +37,8 @@ class ProductItemDownloadMessageHandler
 
                 $downloadLinks[$id] = [
                     'title' => $productItem['product']['title'] . ' (' . $productItem['productItem']['title'] . ')',
-                    'token' => $token
+                    'token' => $token,
+                    'size' => $productItem['productItem']['size'],
                 ];
             }
         }

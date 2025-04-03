@@ -1,8 +1,12 @@
 {# <twig:c975LShop:Basket:Delivery basket="{{ basket }}"/> #}
 {% trans_default_domain 'shop' %}
 {% if basket.digital != 1 %}
-    <p class="text text-center lead">{{ 'label.delivery'|trans }}</p>
-    <p class="text text-center">{{ 'label.basket_delivery'|trans }}</p>
+    <h2 class="text-center">{{ 'label.delivery'|trans }}</h2>
+    {% if basket.status == "paid" %}
+        <p class="text text-center">{{ 'label.basket_delivery'|trans }}</p>
+    {% elseif basket.status == "shipped" %}
+        <p class="text text-center">{{ 'text.items_shipped'|trans }} {{ basket.shipped|date('d/m/Y - H:i') }}</p>
+    {% endif %}
     <p class="text text-center">{{ basket.name }}</p>
     <p class="text text-center">{{ basket.address }}</p>
     <p class="text text-center">{{ basket.zip }} {{ basket.city }}</p>

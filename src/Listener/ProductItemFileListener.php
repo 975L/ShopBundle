@@ -12,7 +12,9 @@ use c975L\ShopBundle\Entity\ProductItemFile;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use c975L\ShopBundle\Listener\Traits\UserTrait;
 use c975L\ShopBundle\Listener\Traits\MediaTrait;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+
 
 #[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: ProductItemFile::class)]
 #[AsEntityListener(event: Events::postPersist, method: 'postPersist', entity: ProductItemFile::class)]
@@ -24,9 +26,11 @@ class ProductItemFileListener
     use UserTrait;
 
     public function __construct(
-        private Security $security,
-        private EntityManagerInterface $entityManager
+        private readonly Security $security,
+        private readonly EntityManagerInterface $entityManager,
+        private SluggerInterface $slugger,
     ) {
+        $this->initializeMedia($slugger);
     }
 
     public function preFlush(ProductItemFile $entity, PreFlushEventArgs $event): void

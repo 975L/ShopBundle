@@ -22,8 +22,8 @@ class ProductMediaListener
     use UserTrait;
 
     public function __construct(
-        private Security $security,
-        private EntityManagerInterface $entityManager
+        private readonly Security $security,
+        private readonly EntityManagerInterface $entityManager
     ) {
     }
 

@@ -60,6 +60,10 @@ class BasketController extends AbstractController
     {
         $basket = $this->basketService->get();
 
+        if (null === $basket) {
+            return $this->redirectToRoute('basket_display', [], Response::HTTP_SEE_OTHER);
+        }
+
         //Defines form
         $form = $this->basketService->createForm('coordinates', $basket);
         $form->handleRequest($request);
@@ -78,23 +82,46 @@ class BasketController extends AbstractController
         ]);
     }
 
-    // VALIDATED
+    // PAID
     #[Route(
-        '/shop/basket/validated/{number:basket}',
-        name: 'basket_validated',
-        requirements: ['number' => '.{15,20}'],
+        '/shop/basket/paid/{number:basket}/{securityToken:basket}',
+        name: 'basket_paid',
+        requirements: [
+            'number' => '.{15,20}',
+            'securityToken' => '[a-f0-9]{16}'
+        ],
         methods: ['GET']
     )]
-    public function validated(?Basket $basket): Response
+    public function paid(?Basket $basket): Response
     {
         if (null !== $basket) {
-            $this->basketService->validated($basket);
+            $this->basketService->paid($basket);
         }
 
         return $this->render('@c975LShop/basket/display.html.twig', [
-            'action' => 'validated',
+            'action' => 'paid',
             'basket' => $basket,
         ]);
+    }
+
+    // ITEMS SHIPPED
+    #[Route(
+        '/shop/basket/items-shipped/{number}',
+        name: 'items_shipped',
+        requirements: ['number' => '.{15,20}'],
+        methods: ['GET']
+    )]
+    #[IsGranted('ROLE_ADMIN')]
+    public function itemsShipped(string $number): Response
+    {
+        $basket = $this->basketService->itemsShipped($number);
+
+        return $this->render(
+            '@c975LShop/basket/shipped.html.twig',
+            [
+                'basket' => $basket,
+            ]
+        )->setMaxAge(3600);
     }
 
     // DELETE

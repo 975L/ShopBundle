@@ -15,7 +15,9 @@ interface EmailServiceInterface
 
     public function sendConfirmOrder(Basket $basket);
 
-    public function sendDownloadInformation($basket, array $downloadLinks): void;
+    public function sendShippedItems(Basket $basket);
+
+    public function sendDownloadInformation(Basket $basket, array $downloadLinks): void;
 
     public function sendStripeErrorMessage(Basket $basket, array $context): void;
 }
