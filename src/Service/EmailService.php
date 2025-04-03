@@ -11,17 +11,21 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EmailService implements EmailServiceInterface
 {
+    private string $subjectPrefix;
+
     public function __construct(
         private readonly MailerInterface $mailer,
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator
     ) {
+        $this->subjectPrefix = $this->translator->trans('label.shop', [], 'shop') . ' ' . $this->configService->getParameter('c975LShop.name') . ' - ';
     }
 
     // Retrieves the email configuration
     public function getEmailConfig(): array
     {
         return [
+            'name' => $this->configService->getParameter('c975LShop.name'),
             'from' => $this->configService->getParameter('c975LShop.from'),
             'fromName' => $this->configService->hasParameter('c975LShop.fromName') ? $this->configService->getParameter('c975LShop.fromName') : '',
             'replyTo' => $this->configService->getParameter('c975LShop.replyTo'),
@@ -55,7 +59,7 @@ class EmailService implements EmailServiceInterface
     {
         $email = $this->create();
         $email->to(new Address($basket->getEmail()));
-        $email->subject($this->translator->trans('label.confirm_order', [], 'shop'));
+        $email->subject($this->subjectPrefix . $this->translator->trans('label.confirm_order', [], 'shop'));
         $email->htmlTemplate('@c975LShop/emails/confirm_order.html.twig');
         $email->context([
             'basket' => $basket,
@@ -65,11 +69,11 @@ class EmailService implements EmailServiceInterface
     }
 
     // Sends the download information email
-    public function sendDownloadInformation($basket, array $downloadLinks): void
+    public function sendDownloadInformation(Basket $basket, array $downloadLinks): void
     {
         $email = $this->create();
         $email->to(new Address($basket->getEmail()));
-        $email->subject($this->translator->trans('label.download_information', [], 'shop'));
+        $email->subject($this->subjectPrefix . $this->translator->trans('label.download_information', [], 'shop'));
         $email->htmlTemplate('@c975LShop/emails/download_information.html.twig');
         $email->context([
             'basket' => $basket,
@@ -80,12 +84,26 @@ class EmailService implements EmailServiceInterface
         $this->send($email);
     }
 
+    // Sends the items shipped email
+    public function sendShippedItems(Basket $basket): void
+    {
+        $email = $this->create();
+        $email->to(new Address($basket->getEmail()));
+        $email->subject($this->subjectPrefix . $this->translator->trans('label.items_shipped', [], 'shop'));
+        $email->htmlTemplate('@c975LShop/emails/items_shipped.html.twig');
+        $email->context([
+            'basket' => $basket,
+        ]);
+
+        $this->send($email);
+    }
+
     // Sends the Stripe error message email
     public function sendStripeErrorMessage(Basket $basket, array $context): void
     {
         $email = $this->create();
         $email->to(new Address($this->configService->getParameter('c975LShop.replyTo')));
-        $email->subject('Stripe Error !');
+        $email->subject($this->subjectPrefix . 'Stripe Error !');
         $email->htmlTemplate('@c975LShop/emails/stripe_error.html.twig');
         $email->context([
             'basket' => $basket,

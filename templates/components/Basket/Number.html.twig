@@ -1,4 +1,4 @@
-{# <twig:c975LShop:Basket:Number number="{{ number }}"/> #}
+{# <twig:c975LShop:Basket:Number number="{{ number }}" securityToken="{{ securityToken }}"/> #}
 {% trans_default_domain 'shop' %}
-<p class="text text-center">{{ 'label.track_order'|trans }} <strong><a href="{{ absolute_url(path('basket_validated', {'number': number})) }}">{{ number }}</a></strong></p>
+<p class="text text-center">{{ 'label.track_order'|trans }}: <strong><a href="{{ absolute_url(path('basket_paid', {'number': number, 'securityToken': securityToken})) }}">{{ number }}</a></strong></p>
 <p>&nbsp;</p>

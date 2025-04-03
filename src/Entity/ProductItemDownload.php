@@ -2,6 +2,7 @@
 
 namespace c975L\ShopBundle\Entity;
 
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -16,9 +17,6 @@ class ProductItemDownload
     #[ORM\Column]
     private int $basketId;
 
-    #[ORM\Column]
-    private int $productItemId;
-
     #[ORM\Column(length: 16)]
     private string $token;
 
@@ -26,13 +24,13 @@ class ProductItemDownload
     private string $filename;
 
     #[ORM\Column]
-    private \DateTimeImmutable $expiresAt;
+    private ?DateTimeImmutable $expiresAt;
 
     #[ORM\Column]
     private bool $downloaded = false;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $downloadedAt = null;
+    private ?DateTimeImmutable $downloadedAt = null;
 
     public function getId(): ?int
     {
@@ -47,17 +45,7 @@ class ProductItemDownload
     public function setBasketId(int $basketId): self
     {
         $this->basketId = $basketId;
-        return $this;
-    }
 
-    public function getProductItemId(): int
-    {
-        return $this->productItemId;
-    }
-
-    public function setProductItemId(int $productItemId): self
-    {
-        $this->productItemId = $productItemId;
         return $this;
     }
 

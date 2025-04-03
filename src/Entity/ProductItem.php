@@ -3,9 +3,9 @@
 namespace c975L\ShopBundle\Entity;
 
 use App\Entity\User;
-use c975L\ShopBundle\Repository\ProductItemRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use c975L\ShopBundle\Repository\ProductItemRepository;
 
 #[ORM\Entity(repositoryClass: ProductItemRepository::class)]
 #[ORM\Table(name: 'shop_product_item')]
@@ -58,7 +58,6 @@ class ProductItem
         return $this->title;
     }
 
-    // Converts the entity in an array
     public function toArray()
     {
         return get_object_vars($this);

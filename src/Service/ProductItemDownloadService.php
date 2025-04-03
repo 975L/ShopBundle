@@ -4,6 +4,7 @@ namespace c975L\ShopBundle\Service;
 
 use SplFileInfo;
 use DateTimeImmutable;
+use c975L\ShopBundle\Entity\Basket;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use c975L\ShopBundle\Entity\ProductItemDownload;
@@ -49,26 +50,20 @@ class ProductItemDownloadService implements ProductItemDownloadServiceInterface
             $targetPath = $this->downloadDir . $targetFilename;
             $filesystem->copy($sourcePath, $targetPath);
 
-            // Enregistrer la relation dans la base de données
-            $this->recordDownload($basketId, $productItemId, $token, $targetFilename);
+            // Records the download in the database
+            $download = new ProductItemDownload();
+            $download->setBasketId($basketId);
+            $download->setToken($token);
+            $download->setFilename($targetFilename);
+            $download->setExpiresAt(new DateTimeImmutable('+7 days'));
+            $download->setDownloaded(false);
+
+            $this->entityManager->persist($download);
+            $this->entityManager->flush();
+
         }
 
         return $token;
-    }
-
-    // Records the download in the database
-    public function recordDownload(int $basketId, int $productItemId, string $token, string $filename): void
-    {
-        $download = new ProductItemDownload();
-        $download->setBasketId($basketId);
-        $download->setProductItemId($productItemId);
-        $download->setToken($token);
-        $download->setFilename($filename);
-        $download->setExpiresAt(new \DateTimeImmutable('+7 days'));
-        $download->setDownloaded(false);
-
-        $this->entityManager->persist($download);
-        $this->entityManager->flush();
     }
 
     // Records the downloaded in the database
@@ -76,8 +71,13 @@ class ProductItemDownloadService implements ProductItemDownloadServiceInterface
     {
         $productItemDownload->setDownloaded(true);
         $productItemDownload->setDownloadedAt(new DateTimeImmutable());
-
         $this->entityManager->persist($productItemDownload);
+
+        $basket = $this->entityManager->getRepository(Basket::class)->findOneById($productItemDownload->getBasketId());
+        $basket->setDownloaded(new DateTimeImmutable());
+        $basket->setModification(new DateTimeImmutable());
+
+        $this->entityManager->persist($basket);
         $this->entityManager->flush();
     }
 }

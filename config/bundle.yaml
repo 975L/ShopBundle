@@ -4,6 +4,11 @@ c975LShop:
         required: true
         default: ROLE_ADMIN
         info: "User's role needed to enable access to data linked to SiteBundle: i.e. ROLE_ADMIN (default)"
+    name:
+        type: string
+        required: true
+        default: ''
+        info: "Name of your shop (shop word will be included)"
     from:
         type: string
         required: true
@@ -43,7 +48,7 @@ c975LShop:
         type: string
         required: true
         default: null
-        info: "Base url for sitemap creation without leading slash: i.e. https://example.com"
+        info: "Base url for sitemap creation without leading slash, i.e. https://example.com"
     stripeSecret:
         type: string
         required: true
@@ -54,3 +59,13 @@ c975LShop:
         required: true
         default: null
         info: "Your Stripe Webhook Secret Key (test|live)"
+    touUrl:
+        type: string
+        required: true
+        default: null
+        info: "Url for terms of use, i.e. https://example.com/terms-of-use"
+    tosUrl:
+        type: string
+        required: true
+        default: null
+        info: "Url for terms of sales, i.e. https://example.com/terms-of-sales"

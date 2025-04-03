@@ -2,7 +2,7 @@
 {% trans_default_domain 'shop' %}
 
 {% block email_content %}
-    <twig:c975LShop:Basket:Number number="{{ basket.number }}"/>
+    <twig:c975LShop:Basket:Number number="{{ basket.number }}" securityToken="{{ basket.securityToken }}"/>
     <p>{{ 'label.downloads_available'|trans }}</p>
     <p>{{ 'label.download_instructions'|trans }} <strong>{{ expirationDays ~ ' ' ~ 'label.days'|trans }}</strong></p>
     <twig:c975LShop:Basket:DownloadLinks downloadLinks="{{ downloadLinks }}"/>

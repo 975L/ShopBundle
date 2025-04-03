@@ -10,8 +10,11 @@
 namespace c975L\ShopBundle\Entity;
 
 use App\Entity\User;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use c975L\ShopBundle\Repository\BasketRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -34,15 +37,15 @@ class Basket
     #[ORM\Column(length: 20, nullable: true, unique: true)]
     private ?string $number = null;
 
+    #[ORM\Column(length: 16, nullable: true)]
+    private ?string $securityToken = null;
+
     #[ORM\Column]
     private array $productItems = [];
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank]
     private ?string $status = null;
-
-    #[ORM\Column(length: 100, nullable: true)]
-    private ?string $paymentIdentifier = null;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $email = null;
@@ -86,10 +89,16 @@ class Basket
     private ?Payment $payment = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $creation = null;
+    private ?DateTimeInterface $creation = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $modification = null;
+    private ?DateTimeInterface $modification = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $shipped = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $downloaded = null;
 
     #[ORM\ManyToOne(inversedBy: 'baskets')]
     private ?User $user = null;
@@ -121,6 +130,18 @@ class Basket
         return $this;
     }
 
+    public function getSecurityToken(): ?string
+    {
+        return $this->securityToken;
+    }
+
+    public function setSecurityToken(?string $securityToken): self
+    {
+        $this->securityToken = $securityToken;
+
+        return $this;
+    }
+
     public function getProductItems(): array
     {
         return $this->productItems;
@@ -141,18 +162,6 @@ class Basket
     public function setStatus(?string $status): static
     {
         $this->status = $status;
-
-        return $this;
-    }
-
-    public function getPaymentIdentifier(): ?string
-    {
-        return $this->paymentIdentifier;
-    }
-
-    public function setPaymentIdentifier(?string $paymentIdentifier): static
-    {
-        $this->paymentIdentifier = $paymentIdentifier;
 
         return $this;
     }
@@ -289,26 +298,50 @@ class Basket
         return $this;
     }
 
-    public function getCreation(): ?\DateTimeInterface
+    public function getCreation(): ?DateTimeInterface
     {
         return $this->creation;
     }
 
-    public function setCreation(\DateTimeInterface $creation): static
+    public function setCreation(DateTimeInterface $creation): static
     {
         $this->creation = $creation;
 
         return $this;
     }
 
-    public function getModification(): ?\DateTimeInterface
+    public function getModification(): ?DateTimeInterface
     {
         return $this->modification;
     }
 
-    public function setModification(\DateTimeInterface $modification): static
+    public function setModification(DateTimeInterface $modification): static
     {
         $this->modification = $modification;
+
+        return $this;
+    }
+
+    public function getShipped(): ?DateTimeInterface
+    {
+        return $this->shipped;
+    }
+
+    public function setShipped(?DateTimeInterface $shipped): static
+    {
+        $this->shipped = $shipped;
+
+        return $this;
+    }
+
+    public function getDownloaded(): ?DateTimeInterface
+    {
+        return $this->downloaded;
+    }
+
+    public function setDownloaded(?DateTimeInterface $downloaded): static
+    {
+        $this->downloaded = $downloaded;
 
         return $this;
     }

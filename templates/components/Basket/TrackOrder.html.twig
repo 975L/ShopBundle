@@ -1,7 +1,18 @@
-{# <twig:c975LShop:Basket:ValidatedInfos/> #}
+{# <twig:c975LShop:Basket:PaidInfos/> #}
 {% trans_default_domain 'shop' %}
-<br>
-<p class="text text-center lead">{{ 'label.track_order'|trans }}</p>
-<p class="text text-center">{{ 'label.confirmation_email_sent'|trans }}</p>
-<twig:c975LShop:Basket:DigitalItems basket="{{ basket }}"/>
+
+<h2>{{ 'label.track_order'|trans }}</h2>
+<ol class="circle-numbers">
+    <li>{{ 'text.order_registered'|trans }} {{ basket.creation|date('d/m/Y - H:i') }}</li>
+    <li>{{ 'label.confirmation_email_sent'|trans }}</li>
+    {% if basket.digital != 3 %}
+        <li>{{ 'label.basket_download'|trans }}</li>
+    {% endif %}
+    {% if basket.downloaded is not null and basket.downloaded.timestamp > 0 %}
+        <li>{{ 'text.items_downloaded'|trans }} {{ basket.shipped|date('d/m/Y - H:i') }}</li>
+    {% endif %}
+    {% if basket.shipped is not null and basket.shipped.timestamp > 0 %}
+        <li>{{ 'text.items_shipped'|trans }} {{ basket.shipped|date('d/m/Y - H:i') }}</li>
+    {% endif %}
+</ol>
 <twig:c975LShop:Basket:Delivery basket="{{ basket }}"/>

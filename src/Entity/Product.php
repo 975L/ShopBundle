@@ -96,9 +96,6 @@ class Product
         return $this;
     }
 
-    /**
-     * @return Collection<int, ProductMedia>
-     */
     public function getMedias(): Collection
     {
         return $this->medias;
@@ -173,9 +170,6 @@ class Product
         return $this;
     }
 
-    /**
-     * @return Collection<int, ProductItem>
-     */
     public function getItems(): Collection
     {
         return $this->items;
