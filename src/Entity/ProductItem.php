@@ -3,6 +3,7 @@
 namespace c975L\ShopBundle\Entity;
 
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use c975L\ShopBundle\Repository\ProductItemRepository;
@@ -24,6 +25,9 @@ class ProductItem
 
     #[ORM\Column(length: 50)]
     private ?string $title = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
@@ -99,6 +103,18 @@ class ProductItem
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

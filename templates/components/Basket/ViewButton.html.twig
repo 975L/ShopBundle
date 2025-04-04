@@ -9,7 +9,7 @@
     <a href="{{ path('basket_display') }}" role="button">
         <button class="btn btn-{{ type }}">
             {% if icon == "true" %}
-                <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="16" height="16" class="{{ class }}"/>
+                <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24" class="{{ class }}"/>
             {% endif %}
             {{ 'label.basket'|trans({}, 'shop') }} : <span data-basket-target="total"></span> <span data-basket-target="currency"></span> (x <span data-basket-target="quantity"></span>)
         </button>

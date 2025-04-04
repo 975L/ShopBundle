@@ -2,11 +2,12 @@
 
 namespace c975L\ShopBundle\Form;
 
-use c975L\ShopBundle\Entity\ProductItemMedia;
 use Symfony\Component\Form\AbstractType;
+use c975L\ShopBundle\Entity\ProductItemMedia;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductItemMediaType extends AbstractType
 {
@@ -15,6 +16,15 @@ class ProductItemMediaType extends AbstractType
         $builder
             ->add('file', VichImageType::class, [
                 'label' => 'Media',
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => true,
+                'asset_helper' => true,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '50M',
+                    ])
+                ],
             ])
         ;
     }

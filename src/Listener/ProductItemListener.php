@@ -15,6 +15,7 @@ use c975L\ShopBundle\Listener\Traits\UserTrait;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: ProductItem::class)]
 #[AsEntityListener(event: Events::prePersist, method: 'prePersist', entity: ProductItem::class)]
@@ -26,8 +27,10 @@ class ProductItemListener
 
     public function __construct(
         private readonly Security $security,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private SluggerInterface $slugger,
     ) {
+        $this->initializeMedia($slugger);
     }
 
     public function preFlush(ProductItem $entity, PreFlushEventArgs $event): void
@@ -39,6 +42,7 @@ class ProductItemListener
             }
             $entity->setPosition($maxPosition + 5);
         }
+        $entity->setSlug($this->slugger->slug($entity->getTitle())->lower());
         $entity->setModification(new DateTime());
         $this->setUser($entity);
     }

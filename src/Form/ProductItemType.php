@@ -25,6 +25,13 @@ class ProductItemType extends AbstractType
                     'placeholder' => 'label.title',
                 ],
             ])
+            ->add('slug', TextType::class, [
+                'required' => false,
+                'empty_data' => '',
+                'attr' => [
+                    'readonly' => true,
+                ],
+            ])
             ->add('description', TextareaType::class, [
                 'required' => true,
                 'label' => 'label.description',

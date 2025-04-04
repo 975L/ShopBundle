@@ -15,6 +15,7 @@ class ProductItemFileType extends AbstractType
     {
         $builder
             ->add('file', VichFileType::class, [
+                'label' => 'File',
                 'required' => false,
                 'allow_delete' => true,
                 'download_uri' => true,

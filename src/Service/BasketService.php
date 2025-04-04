@@ -236,8 +236,8 @@ class BasketService implements BasketServiceInterface
             // Deletes productItem if quantity is 0
             if ($productItems[$productItemId]['quantity'] + $quantity <= 0) {
                 unset($productItems[$productItemId]);
-            // Otherwise updates quantity
-            } else {
+            // Otherwise updates quantity unless it's a digital item
+            } elseif ($productItem->getFile()->getName() === null) {
                 $productItems[$productItemId]['quantity'] += $quantity;
                 $productItems[$productItemId]['totalVat'] = $productItems[$productItemId]['quantity'] * $productItem->getVat();
                 $productItems[$productItemId]['total'] = $productItems[$productItemId]['quantity'] * $productItem->getPrice();

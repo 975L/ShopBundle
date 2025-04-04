@@ -15,8 +15,8 @@
         <twig:c975LSite:Slider:Slider slides="{{ product.medias }}" id="slider"/>
         <twig:c975LShop:Product:Description description="{{ product.description }}"/>
         <h2 id="items">{{ 'label.items'|trans }}</h2>
-        <twig:c975LShop:Product:Items items="{{ product.items }}"/>
         <div data-controller="basket">
+            <twig:c975LShop:Product:Items items="{{ product.items }}"/>
             <twig:c975LShop:Basket:Message/>
             <twig:c975LShop:Basket:ViewButton icon="true" type="secondary" class="black"/>
         </div>
