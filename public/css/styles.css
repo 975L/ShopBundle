@@ -107,10 +107,6 @@ a.product-link:hover {
     position: relative;
 }
 
-.product-item button img {
-    width: 16px;
-}
-
 .product-item .icon-wrapper {
     background: #fff;
     width: 40px;
@@ -163,6 +159,33 @@ tfoot th {
     border-bottom: none;
 }
 
+.quantity-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    max-width: 200px;
+}
+
+.quantity-controls button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.quantity-controls button img {
+    width: 18px;
+    height: 18px;
+}
+
+.quantity {
+    margin: 0 6px;
+}
+
 /* LISTS */
 .circle-numbers {
     counter-reset: item;
@@ -197,7 +220,6 @@ tfoot th {
     font-size: 1.2em;
 }
 
-
 /* COMPONENTS */
 .shop-shipping,
 .shop-information,
@@ -222,7 +244,7 @@ tfoot th {
 
 /* ANIMATIONS */
 .zoom-out-animation {
-    animation: zoom-out 2s linear;
+    animation: zoom-out 0.5s linear;
 }
 
 .fade-out {

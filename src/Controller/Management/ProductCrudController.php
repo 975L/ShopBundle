@@ -2,6 +2,7 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
+use DateTimeImmutable;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Form\ProductItemType;
 use c975L\ShopBundle\Form\ProductMediaType;
@@ -10,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -42,6 +44,9 @@ class ProductCrudController extends AbstractCrudController
             CollectionField::new('medias')
                 ->hideOnIndex()
                 ->setEntryType(ProductMediaType::class),
+            FormField::addPanel('Items Management')
+                ->setHelp('Add items WITHOUT media/files, then add them afterwards.')
+                ->hideOnIndex(),
             CollectionField::new('items')
                 ->hideOnIndex()
                 ->setEntryType(ProductItemType::class),
@@ -58,7 +63,7 @@ class ProductCrudController extends AbstractCrudController
                 ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled')
                 ->onlyOnDetail(),
-            ];
+        ];
     }
 
     public function configureActions(Actions $actions): Actions

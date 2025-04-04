@@ -3,13 +3,11 @@
 namespace c975L\ShopBundle\Controller;
 
 use c975L\ShopBundle\Entity\Product;
-use c975L\ShopBundle\Service\ProductServiceInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use c975L\ShopBundle\Service\ProductServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use c975L\ShopBundle\Entity\ProductItemDownload;
 
 /**
  * Main Controller class
@@ -24,12 +22,15 @@ class ProductController extends AbstractController
 
     // DISPLAY
     #[Route(
-        '/shop/products/{slug:product}',
+        '/shop/products/{slug}',
         name: 'product_display',
         requirements: ['slug' => '^([a-zA-Z0-9\-]*)'],
         methods: ['GET']
     )]
-    public function display(Product $product): Response
+    public function display(
+        #[MapEntity(expr: 'repository.findOneBySlug(slug)')]
+        Product $product
+    ): Response
     {
         return $this->render(
             '@c975LShop/product/display.html.twig',
@@ -38,4 +39,5 @@ class ProductController extends AbstractController
             ]
         )->setMaxAge(3600);
     }
+
 }

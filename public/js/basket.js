@@ -4,6 +4,9 @@ import translationsFr from "./translations.fr.js";
 
 export default class extends Controller {
     static targets = [ "quantity", "total", "message", "currency", "shipping", "submitButton", "productItemTotal", "productItemQuantity" ];
+    static basketDataPromise = null; // Store the fetch promise for reuse
+    static lastFetchTime = 0;
+    static CACHE_DURATION = 5000; // Cache duration in ms
 
     // Fetches data from the Symfony controller when the controller is connected
     connect() {
@@ -18,29 +21,52 @@ export default class extends Controller {
             fr: translationsFr
         };
 
-        // Updates data
-        this.updateData();
+        // Load basket data once and use for everything
+        this.loadBasketData().then(data => {
+            if (data) {
+                // Update basket UI and check product buttons
+                this.update(data);
+                this.updateProductButtons(data);
+            }
+        });
     }
 
-    // Updates data
-    updateData() {
-        if (this.hasTotalTarget && this.hasQuantityTarget) {
-            fetch("/shop/basket/json", {
-                method: "GET",
+    // Load basket data with caching
+    loadBasketData() {
+        const now = Date.now();
+
+        // If cache expired or no promise exists
+        if (!this.constructor.basketDataPromise ||
+            (now - this.constructor.lastFetchTime > this.constructor.CACHE_DURATION)) {
+
+            this.constructor.lastFetchTime = now;
+            this.constructor.basketDataPromise = fetch("/shop/basket/json", {
+                method: "GET"
             })
-            .then((response) => {
+            .then(response => {
                 if (!response.ok) {
                     throw new Error(this.translate("basket.load.error"));
                 }
                 return response.json();
             })
-            .then((data) => {
+            .catch(error => {
+                this.displayMessage(this.translate("basket.load.error"), "alert-danger");
+                // Reset promise on error to allow retry
+                this.constructor.basketDataPromise = null;
+                return null;
+            });
+        }
+
+        return this.constructor.basketDataPromise;
+    }
+
+    // Updates data using shared fetch
+    updateData() {
+        if (this.hasTotalTarget && this.hasQuantityTarget) {
+            this.loadBasketData().then(data => {
                 if (data) {
                     this.update(data);
                 }
-            })
-            .catch((error) => {
-                this.displayMessage(this.translate("basket.load.error"), "alert-danger");
             });
         }
     }
@@ -50,8 +76,10 @@ export default class extends Controller {
         fetch("/shop/basket", { method: "DELETE" })
         .then((response) => {
             if (!response.ok) {
-                throw new Error(this.translate("basket.delete.error"));
+                this.displayMessage(this.translate("basket.delete.error"), "alert-danger");
             }
+            // Force refresh cache on basket deletion
+            this.constructor.basketDataPromise = null;
             window.location.reload();
         })
         .catch((error) => {
@@ -68,7 +96,7 @@ export default class extends Controller {
         this.fetchData(event.currentTarget);
     }
 
-    // Removes a quantity of productItem to the basket
+    // Removes a quantity of productItem from the basket
     removeProductItem(event) {
         // Adds an animation to the clicked button
         this.animation(event.currentTarget);
@@ -94,11 +122,14 @@ export default class extends Controller {
         })
         .then((response) => {
             if (!response.ok) {
-                throw new Error(this.translate("product.delete.error"));
+                this.displayMessage(this.translate("product.delete.error"), "alert-danger");
             }
             return response.json();
         })
         .then((data) => {
+            // Force refresh cache after deletion
+            this.constructor.basketDataPromise = null;
+
             const message = `${target.dataset.title} ${target.dataset.text}`;
             this.displayMessage(message, "alert-" + target.dataset.alert);
             this.update(data);
@@ -122,11 +153,14 @@ export default class extends Controller {
         })
         .then((response) => {
             if (!response.ok) {
-                throw new Error(this.translate("basket.add.error"));
+                this.displayMessage(this.translate("basket.add.error"), "alert-danger");
             }
             return response.json();
         })
         .then((data) => {
+            // Force refresh cache after modification
+            this.constructor.basketDataPromise = null;
+
             if (data.error) {
                 this.displayMessage(data.error, "alert-danger");
             } else {
@@ -147,6 +181,7 @@ export default class extends Controller {
         }
         this.updateBasketButton(data);
         this.updateBasketPage(data);
+        this.updateProductButtons(data);
 
         // Dispatches a global event
         const event = new CustomEvent("basket:update", {
@@ -310,7 +345,7 @@ export default class extends Controller {
         }
     }
 
-    // Handles global messages - simplifiée pour éviter la duplication
+    // Handles global messages
     handleGlobalMessage(event) {
         if (this.hasMessageTarget && event.target !== this.element) {
             const { message, alertClass } = event.detail;
@@ -322,7 +357,11 @@ export default class extends Controller {
     // Handles global basket updates
     handleGlobalUpdate(event) {
         if (event.detail?.data && event.target !== this.element) {
+            // Force refresh of cached data
+            this.constructor.basketDataPromise = null;
+
             this.updateBasketButton(event.detail.data);
+            this.updateProductButtons(event.detail.data);
         }
     }
 
@@ -349,5 +388,41 @@ export default class extends Controller {
         const translationsMap = new Map(Object.entries(translations));
 
         return translationsMap.get(key) || key;
+    }
+
+    // Update product buttons with basket data
+    updateProductButtons(data) {
+        if (!data?.basket?.productItems) {
+            return;
+        }
+
+        // Retrieve all add to cart buttons on the page
+        const addButtons = document.querySelectorAll("[data-action='click->basket#addProductItem']");
+
+        // If no buttons, stop here
+        if (!addButtons.length) {
+            return;
+        }
+
+        // For each add button
+        addButtons.forEach(button => {
+            const productItemId = button.dataset.productItemId;
+
+            // Updates quantity if productItem is in the basket
+            if (data.basket.productItems[productItemId]) {
+                const quantity = data.basket.productItems[productItemId].quantity;
+                if (quantity > 0) {
+                    const quantityElement = document.querySelector(`.quantity[data-product-item-id="${productItemId}"]`);
+                    if (quantityElement && quantityElement.classList.contains('quantity')) {
+                        quantityElement.textContent = `${quantity}`;
+                    }
+
+                    // Disable the button for digital item and quantity = 1
+                    if (data.basket.productItems[productItemId].productItem.file !== null && quantity >= 1) {
+                        button.setAttribute("disabled", "disabled");
+                    }
+                }
+            }
+        });
     }
 }

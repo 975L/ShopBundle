@@ -1,5 +1,17 @@
 {# <twig:c975LShop:Basket:AddOneButton productItem="{{ productItem }}" [type="primary"]/> #}
 {% set type = type | default('primary') %}
-<button data-action="click->basket#addProductItem" data-quantity="1" data-product-item-id="{{ productItem.productItem.id }}" data-title="{{ productItem.product.title ~ ' (' ~ productItem.productItem.title ~')' }}" data-alert="success" data-text="{{ 'label.added'|trans({}, 'shop') }}" class="btn btn-{{ type }} btn-small">
+{% set disabled = "" %}
+{% if null != productItem.productItem.file %}
+    {% set disabled = "disabled" %}
+{% endif %}
+<button
+    data-action="click->basket#addProductItem"
+    data-quantity="1"
+    data-product-item-id="{{ productItem.productItem.id }}"
+    data-title="{{ productItem.product.title ~ ' (' ~ productItem.productItem.title ~')' }}"
+    data-alert="success"
+    data-text="{{ 'label.added'|trans({}, 'shop') }}"
+    class="btn btn-{{ type }} btn-small lead"
+    {{ disabled }}>
     +
 </button>

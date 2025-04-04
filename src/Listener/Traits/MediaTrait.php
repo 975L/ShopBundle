@@ -52,7 +52,7 @@ trait MediaTrait
                 $fileInfo = new SplFileInfo($filePath);
                 $filename = self::SHOP_ROOT . '/items/' ;
                 $filename .= $entity->getProductItem()->getProduct()->getSlug() . '-';
-                $filename .= $this->slugger->slug($entity->getProductItem()->getTitle())->lower() . '-';
+                $filename .= $entity->getProductItem()->getSlug() . '-';
                 $filename .= $fileInfo->getBasename('.' . $fileInfo->getExtension()) . '.' . $fileInfo->getExtension();
 
                 $filesystem = new Filesystem();

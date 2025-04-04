@@ -42,9 +42,28 @@ class ProductRepository extends ServiceEntityRepository
     public function findAllSorted(): array
     {
         return $this->createQueryBuilder('p')
+            ->select('p, m')
+            ->leftJoin('p.medias', 'm')
             ->orderBy('p.position', 'ASC')
             ->getQuery()
-            ->getResult();
+            ->getResult()
+        ;
+    }
+
+    // Finds a product by slug with joined data
+    public function findOneBySlug(string $slug): ?Product
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p, m, i, im, if')
+            ->leftJoin('p.medias', 'm')
+            ->leftJoin('p.items', 'i')
+            ->leftJoin('i.media', 'im')
+            ->leftJoin('i.file', 'if')
+            ->andWhere('p.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     //    /**

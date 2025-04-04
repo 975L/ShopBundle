@@ -1,5 +1,13 @@
 # Changelog
 
+# v0.19
+
+- Corrected DownloadLinks (04/04/2025)
+- Added desactivation of + button in basket when digital product as it has no sense (04/04/2025)
+- Added join on queries to optimize them (04/04/2025)
+- Enhanced basket AddRemoveButtons (04/04/2025)
+- Added slug for productItem (04/04/2025)
+
 # v0.18
 
 - Added checkboxes for Terms of use/Terms of sales (03/04/2025)

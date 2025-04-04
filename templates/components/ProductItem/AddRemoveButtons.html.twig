@@ -2,5 +2,6 @@
 <div class="quantity-controls">
     <twig:c975LShop:ProductItem:DeleteButton productItem="{{ productItem }}"/>
     <twig:c975LShop:ProductItem:RemoveOneButton productItem="{{ productItem }}"/>
+    <span class="quantity lead" data-basket-target="productItemQuantity" data-product-item-id="{{ productItem.productItem.id }}">{{ quantity }}</span>
     <twig:c975LShop:ProductItem:AddOneButton productItem="{{ productItem }}"/>
 </div>
