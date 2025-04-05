@@ -1,0 +1,12 @@
+{% extends 'layout.html.twig' %}
+{% trans_default_domain 'shop' %}
+
+{# Defines specific variables #}
+{% set title = 'label.crowdfundings'|trans %}
+{% set description = 'text.crowdfundings'|trans %}
+
+{% block content %}
+    <section class="text-center">
+        <twig:c975LShop:Crowdfunding:Crowdfundings crowdfundings="{{ crowdfundings }}"/>
+    </section>
+{% endblock %}

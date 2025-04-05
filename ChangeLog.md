@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.20
+
+- Added Crowdfunding structure (05/04/2025)
+
 ## v0.19.4
 
 - Corrected errors on namespace (05/04/2025)

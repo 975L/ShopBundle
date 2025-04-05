@@ -1,0 +1,10 @@
+<h2 id="counterparts">{{ 'label.counterparts'|trans({}, 'shop') }}</h2>
+<section class="counterparts cards">
+    {% if counterparts is not empty %}
+        {% for counterpart in counterparts %}
+            <twig:c975LShop:Crowdfunding:Counterpart counterpart="{{ counterpart }}"/>
+        {% endfor %}
+    {% else %}
+        <p class="text text-center lead">{{ 'label.no_counterpart'|trans({}, 'shop') }}</p>
+    {% endif %}
+</section>
