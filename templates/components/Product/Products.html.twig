@@ -1,5 +1,9 @@
 <section class="products" id="products">
-    {% for product in products %}
-        <twig:c975LShop:Product:Product product="{{ product }}"/>
-    {% endfor %}
+    {% if products is not empty %}
+        {% for product in products %}
+            <twig:c975LShop:Product:Product product="{{ product }}"/>
+        {% endfor %}
+    {% else %}
+        <p class="text text-center lead">{{ 'label.no_item'|trans({}, 'shop') }}</p>
+    {% endif %}
 </section>

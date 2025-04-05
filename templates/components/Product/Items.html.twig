@@ -1,11 +1,9 @@
-<section class="items">
-    <div class="cards">
-        {% if items is not empty %}
-            {% for item in items %}
-                <twig:c975LShop:Product:Item item="{{ item }}"/>
-            {% endfor %}
-        {% else %}
-            <p class="text text-center lead">{{ 'label.no_item'|trans({}, 'shop') }}</p>
-        {% endif %}
-    </div>
+<section class="items" class="cards">
+    {% if items is not empty %}
+        {% for item in items %}
+            <twig:c975LShop:Product:Item item="{{ item }}"/>
+        {% endfor %}
+    {% else %}
+        <p class="text text-center lead">{{ 'label.no_item'|trans({}, 'shop') }}</p>
+    {% endif %}
 </section>

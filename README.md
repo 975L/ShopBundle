@@ -3,18 +3,37 @@ Shop Bundle for eCommerce with Symfony
 
 **BUNDLE UNDER DEVELOPMENT, USE AT YOUR OWN RISKS**
 
-The bundle relies on the use of `App\Entity\User`.
+With is bundle, you'll be able to manage a shop + crowdfunding.
 
-In `config/packages/security.yaml` add the following configuration:
+## Installation
+
+First, launch `composer require c975l/shop-bundle` to install the bundle.
+
+Create database tables : `php bin/console make:migration` and `php bin/console doctrine:migrations:migrate`.
+
+Crreate a `private` at your root level and add it to your `.gitignore` file.
+
+## Configuration
+
+The bundle relies on the use of `App\Entity\User`. If you haven't, create it with `php bin/console make:user`. Then add one and give it `ROLE_ADMIN`. You can use `php bin/console security:hash-password` to hash the password.
+
+Create a login form/logout route: `php bin/console make:security:form-login`. Then adapt `` to your needs.
+
+Add the following configuration in the different files:
 
 ```yaml
+# config/packages/security.yaml
+security:
+    firewalls:
+        main:
+            logout:
+                path: app_logout
     access_control:
         - { path: ^/shop/management, roles: ROLE_ADMIN }
 ```
 
-In `config/packages/vich_uploader.yaml` add the following configuration:
-
 ```yaml
+# config/packages/vich_uploader.yaml
 vich_uploader:
     db_driver: orm
 
@@ -43,21 +62,60 @@ vich_uploader:
             inject_on_load: false
             delete_on_update: true
             delete_on_remove: true
+
+        crowdfundings:
+            uri_prefix: '' # path added in Listener
+            upload_destination: '%kernel.project_dir%/public/medias/shop/crowdfundings'
+            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
+        crowdfundingsCounterparts:
+            uri_prefix: '' # path added in Listener
+            upload_destination: '%kernel.project_dir%/public/medias/shop/counterparts'
+            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
+            delete_on_remove: true
 ```
+
+
+```yaml
+# config/routes.yaml
+c975_l_shop:
+    resource: "@c975LShopBundle/"
+    type:     attribute
+    prefix:   /
+```
+
+## Configure the webhook in Stripe dashboard
+
+Create a Stripe account if not: https://stripe.com
+
+1. Sign in to your [Stripe Dashboard](https://dashboard.stripe.com/)
+2. Navigate to Developers > Webhooks
+3. Click "Add endpoint"
+4. Enter your webhook URL (https://your-website.com/shop/stripe/webhook)
+5. Select the event `checkout.session.completed`
+6. Copy the webhook signing secret and add it to your environment variables `config/config_bundles.yaml` -> `stripeWebhookSecret`
+7. Test the endpoint to ensure proper configuration
+
+This webhook allows Stripe to notify your application when payments are completed, ensuring order processing even if customers close their browser after payment.
 
 Create the configuration file `config/config_bundles.yaml` with these settings:
 
 ```yaml
-c975lShop:
-    name: 'My Shop'  # Name of the shop
-    roleNeeded: 'ROLE_ADMIN'  # Role needed to access shop management
-    from: 'shop@example.com'  # Email address for sending emails
-    fromName: 'My Shop'       # Sender name
-    replyTo: 'contact@example.com'
-    replyToName: 'Customer Service'
-    currency: 'eur'           # ISO currency code
-    shipping: 500             # Shipping cost in cents (5.00)
-    shippingFree: 10000       # Free shipping threshold (100.00)
+c975LShop:
+    name: 'My Shop' # Name of the shop
+    roleNeeded: 'ROLE_ADMIN' # Role needed to access shop management
+    from: 'contactp@example.com' # Email address for sending emails
+    fromName: 'My Shop' # Sender name
+    replyTo: 'contact@example.com' # Reply-to email address
+    replyToName: 'My Shop' # Reply-to name
+    currency: 'eur' # ISO currency code
+    shipping: 500 # Shipping cost in cents (5.00)
+    shippingFree: 10000 # Free shipping threshold (100.00)
     sitemapBaseUrl: 'https://example.com'  # Base URL for sitemap
     stripeSecret: 'STRIPE_SECRET' # Stripe secret key
     stripeWebhookSecret: 'STRIPE_WEBHOOK_SECRET' # Stripe webhook secret
@@ -65,27 +123,30 @@ c975lShop:
     tosUrl: 'https://example.com/terms-of-sales' # Terms of sales URL
 ```
 
-## Configure the webhook in Stripe dashboard
+In `assets/bootstrap.js`, add the following code:
 
-1. Sign in to your [Stripe Dashboard](https://dashboard.stripe.com/)
-2. Navigate to Developers > Webhooks
-3. Click "Add endpoint"
-4. Enter your webhook URL (https://your-website.com/shop/stripe/webhook)
-5. Select the event `checkout.session.completed`
-6. Copy the webhook signing secret and add it to your environment variables
-7. Test the endpoint to ensure proper configuration
+```javascript
+import c975lShopBasket from '/bundles/c975lshop/js/basket.js';
 
-This webhook allows Stripe to notify your application when payments are completed, ensuring order processing even if customers close their browser after payment.
+app.register('basket', c975lShopBasket);
+```
 
-## Entities structure
+Launch configuration process `php bin/console config:create`.
 
-Product [Collection]
-    - ProductMedia [Collection]
-    - ProductItem [Collection]
-        - ProductItemMedia [One]
-        - ProductItemFile [One]
+## CSP
 
-## Commands
+Adapts your CSP to allow:
+
+script-src: unsafe-inline
+
+## Urls
+
+You should be able to use your shop + Management with the following urls:
+
+- Shop https://example.com/shop
+- Management: https://example.com/shop/management
+
+## Useful Commands
 
 The `basket.digital` has 3 values: 1 (digital), 2 (both) and 3 (physical).
 
@@ -108,6 +169,17 @@ For creating the sitemap, you can run `php bin/console shop:sitemaps:create` tha
         $command->run($inputArray, $output);
     }
 ```
+
+## Entities structure and nesting
+
+- Product [Collection]
+  - ProductMedia [Collection]
+  - ProductItem [Collection]
+    - ProductItemMedia [One]
+    - ProductItemFile [One]
+
+![Shop Bundle Entity Structure](docs/structure.png)
+
 
 ## TODO
 
