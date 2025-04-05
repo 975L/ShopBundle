@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace c975L\ShopBundle\Traits;
+namespace c975L\ShopBundle\Listener\Traits;
 
 use SplFileInfo;
 use Imagine\Image\Box;

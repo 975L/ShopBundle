@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace c975L\ShopBundle\Management;
+namespace c975L\ShopBundle\Controller\Management;
 
 use c975L\ShopBundle\Entity\Payment;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
