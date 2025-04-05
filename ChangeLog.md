@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.19.2
+
+- Modified Delivery component to delete date as redundant with above information (05/04/2025)
+
 ## v0.19.1
 
 - Updated Readme (05/04/2025)
