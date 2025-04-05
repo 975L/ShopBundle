@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.19.4
+
+- Corrected errors on namespace (05/04/2025)
+
 ## v0.19.3
 
 - Added no products information (05/04/2025)
