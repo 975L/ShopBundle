@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * (c) 2025: 975L <contact@975l.com>
+ * (c) 2025: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace c975L\ShopBundle\Controller;
 
 use SplFileInfo;
@@ -11,11 +19,6 @@ use c975L\ShopBundle\Service\ProductItemDownloadServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-/**
- * Main Controller class
- * @author Laurent Marquet <laurent.marquet@laposte.net>
- * @copyright 2024 975L <contact@975l.com>
- */
 class ProductItemDownloadController extends AbstractController
 {
     public function __construct(

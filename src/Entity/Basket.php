@@ -1,7 +1,7 @@
 <?php
 /*
- * (c) 2024: 975L <contact@975l.com>
- * (c) 2024: Laurent Marquet <laurent.marquet@laposte.net>
+ * (c) 2025: 975L <contact@975l.com>
+ * (c) 2025: Laurent Marquet <laurent.marquet@laposte.net>
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
@@ -13,8 +13,6 @@ use App\Entity\User;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 use c975L\ShopBundle\Repository\BasketRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;

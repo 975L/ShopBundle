@@ -1,7 +1,7 @@
 <?php
 /*
- * (c) 2017: 975L <contact@975l.com>
- * (c) 2017: Laurent Marquet <laurent.marquet@laposte.net>
+ * (c) 2025: 975L <contact@975l.com>
+ * (c) 2025: Laurent Marquet <laurent.marquet@laposte.net>
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
@@ -16,11 +16,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Shop FormType
- * @author Laurent Marquet <laurent.marquet@laposte.net>
- * @copyright 2024 975L <contact@975l.com>
- */
 class CoordinatesType extends AbstractType
 {
     /**

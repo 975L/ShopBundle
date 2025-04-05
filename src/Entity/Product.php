@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * (c) 2025: 975L <contact@975l.com>
+ * (c) 2025: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace c975L\ShopBundle\Entity;
 
 use App\Entity\User;
@@ -35,8 +43,8 @@ class Product
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $modification = null;
 
-    #[ORM\Column(name: "position", type: "integer")]
-    private $position;
+    #[ORM\Column(nullable: true)]
+    private ?int $position = null;
 
     #[ORM\OneToMany(targetEntity: ProductMedia::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist'])]
     #[ORM\OrderBy(["position" => "ASC"])]
