@@ -128,7 +128,7 @@
             </trans-unit>
             <trans-unit id="32">
                 <source>label.basket_delivery</source>
-                <target>Votre commande sera livrée à l'adresse :</target>
+                <target>Votre commande sera expédiée à l'adresse :</target>
             </trans-unit>
             <trans-unit id="33">
                 <source>label.confirm_order</source>
@@ -389,6 +389,10 @@
             <trans-unit id="97">
                 <source>text.items_not_shipped</source>
                 <target>Les articles n'ont pas encore été expédiés.</target>
+            </trans-unit>
+            <trans-unit id="98">
+                <source>label.basket_delivered</source>
+                <target>Votre commande a été expédiée à l'adresse :</target>
             </trans-unit>
         </body>
     </file>

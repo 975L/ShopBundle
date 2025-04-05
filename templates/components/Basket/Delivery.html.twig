@@ -5,7 +5,7 @@
     {% if basket.status == "paid" %}
         <p class="text text-center">{{ 'label.basket_delivery'|trans }}</p>
     {% elseif basket.status == "shipped" %}
-        <p class="text text-center">{{ 'text.items_shipped'|trans }} {{ basket.shipped|date('d/m/Y - H:i') }}</p>
+        <p class="text text-center">{{ 'label.basket_delivered'|trans }}</p>
     {% endif %}
     <p class="text text-center">{{ basket.name }}</p>
     <p class="text text-center">{{ basket.address }}</p>
