@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.19.1
+
+- Updated Readme (05/04/2025)
+- Added Track order steps even if not done to give information to user (05/04/2025)
+
 # v0.19
 
 - Corrected DownloadLinks (04/04/2025)

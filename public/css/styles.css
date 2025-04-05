@@ -22,6 +22,34 @@
     filter: invert(33%) sepia(0%) saturate(0%) hue-rotate(198deg) brightness(90%) contrast(79%);
 }
 
+/* QUANTITY */
+.quantity-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    max-width: 200px;
+}
+
+.quantity-controls button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.quantity-controls button img {
+    width: 18px;
+    height: 18px;
+}
+
+.quantity {
+    margin: 0 6px;
+}
+
 /* PRODUCTS */
 .products {
     display: flex;
@@ -159,33 +187,6 @@ tfoot th {
     border-bottom: none;
 }
 
-.quantity-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-    margin: 0 auto;
-    padding: 0;
-    width: 100%;
-    max-width: 200px;
-}
-
-.quantity-controls button {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    margin: 0 auto;
-}
-
-.quantity-controls button img {
-    width: 18px;
-    height: 18px;
-}
-
-.quantity {
-    margin: 0 6px;
-}
-
 /* LISTS */
 .circle-numbers {
     counter-reset: item;
@@ -198,7 +199,7 @@ tfoot th {
 .circle-numbers li {
     position: relative;
     padding-left: 45px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     counter-increment: item;
     display: flex;
     align-items: center;
@@ -218,6 +219,10 @@ tfoot th {
     color: white;
     font-weight: bold;
     font-size: 1.2em;
+}
+
+.circle-numbers li.disabled::before {
+    background-color: grey;
 }
 
 /* COMPONENTS */
