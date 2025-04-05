@@ -45,6 +45,48 @@ vich_uploader:
             delete_on_remove: true
 ```
 
+Create the configuration file `config/config_bundles.yaml` with these settings:
+
+```yaml
+c975lShop:
+    name: 'My Shop'  # Name of the shop
+    roleNeeded: 'ROLE_ADMIN'  # Role needed to access shop management
+    from: 'shop@example.com'  # Email address for sending emails
+    fromName: 'My Shop'       # Sender name
+    replyTo: 'contact@example.com'
+    replyToName: 'Customer Service'
+    currency: 'eur'           # ISO currency code
+    shipping: 500             # Shipping cost in cents (5.00)
+    shippingFree: 10000       # Free shipping threshold (100.00)
+    sitemapBaseUrl: 'https://example.com'  # Base URL for sitemap
+    stripeSecret: 'STRIPE_SECRET' # Stripe secret key
+    stripeWebhookSecret: 'STRIPE_WEBHOOK_SECRET' # Stripe webhook secret
+    touUrl: 'https://example.com/terms-of-use' # Terms of use URL
+    tosUrl: 'https://example.com/terms-of-sales' # Terms of sales URL
+```
+
+## Configure the webhook in Stripe dashboard
+
+1. Sign in to your [Stripe Dashboard](https://dashboard.stripe.com/)
+2. Navigate to Developers > Webhooks
+3. Click "Add endpoint"
+4. Enter your webhook URL (https://your-website.com/shop/stripe/webhook)
+5. Select the event `checkout.session.completed`
+6. Copy the webhook signing secret and add it to your environment variables
+7. Test the endpoint to ensure proper configuration
+
+This webhook allows Stripe to notify your application when payments are completed, ensuring order processing even if customers close their browser after payment.
+
+## Entities structure
+
+Product [Collection]
+    - ProductMedia [Collection]
+    - ProductItem [Collection]
+        - ProductItemMedia [One]
+        - ProductItemFile [One]
+
+## Commands
+
 The `basket.digital` has 3 values: 1 (digital), 2 (both) and 3 (physical).
 
 The `basket.status` are the following: new, validated, paid, downloaded, shipped, finished
@@ -67,41 +109,7 @@ For creating the sitemap, you can run `php bin/console shop:sitemaps:create` tha
     }
 ```
 
-Create the configuration file `config/packages/c975l_shop.yaml` with these settings:
-
-```yaml
-c975l_shop:
-    roleNeeded: 'ROLE_ADMIN'  # Role needed to access shop management
-    from: 'shop@example.com'  # Email address for sending emails
-    fromName: 'My Shop'       # Sender name
-    replyTo: 'contact@example.com'
-    replyToName: 'Customer Service'
-    currency: 'EUR'           # ISO currency code
-    shipping: 500             # Shipping cost in cents (5.00)
-    shippingFree: 10000       # Free shipping threshold (100.00)
-    sitemapBaseUrl: 'https://example.com'  # Base URL for sitemap
-```
-
-```yaml
-# config/config_bundles.yaml
-c975LShop:
-    stripeSecret: 'STRIPE_SECRET'
-    stripeWebhookSecret: 'STRIPE_WEBHOOK_SECRET'
-```
-
-## Configure the webhook in Stripe dashboard
-
-1. Sign in to your [Stripe Dashboard](https://dashboard.stripe.com/)
-2. Navigate to Developers > Webhooks
-3. Click "Add endpoint"
-4. Enter your webhook URL (https://your-website.com/shop/stripe/webhook)
-5. Select the event `checkout.session.completed`
-6. Copy the webhook signing secret and add it to your environment variables
-7. Test the endpoint to ensure proper configuration
-
-This webhook allows Stripe to notify your application when payments are completed, ensuring order processing even if customers close their browser after payment.
-
-TODO
+## TODO
 
 In `src/Listener/ProductItemListener.php` we need to create an empty `ProductItemMedia|ProductItemFile` if none is added, otherwise we can't add one afterwards. The physical ProdutItemMedia is not deleted when the ProductItem is deleted, but the link is removed. See `ProductItemListener->prePersist()`. Furthermoe, need to create ProductItem without Meida/File first.
 

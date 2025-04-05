@@ -383,6 +383,14 @@
                 <source>label.ordered_items</source>
                 <target>Ordered items</target>
             </trans-unit>
+            <trans-unit id="96">
+                <source>text.items_not_downloaded</source>
+                <target>The items have not been uploaded yet.</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>text.items_not_shipped</source>
+                <target>The items have not been shipped yet.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

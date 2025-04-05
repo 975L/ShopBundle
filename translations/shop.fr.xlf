@@ -382,6 +382,14 @@
                 <source>label.ordered_items</source>
                 <target>Articles commandés</target>
             </trans-unit>
+            <trans-unit id="96">
+                <source>text.items_not_downloaded</source>
+                <target>Les articles n'ont pas encore été téléchargés.</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>text.items_not_shipped</source>
+                <target>Les articles n'ont pas encore été expédiés.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

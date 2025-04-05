@@ -5,14 +5,26 @@
 <ol class="circle-numbers">
     <li>{{ 'text.order_registered'|trans }} {{ basket.creation|date('d/m/Y - H:i') }}</li>
     <li>{{ 'label.confirmation_email_sent'|trans }}</li>
+    {# Digital items information #}
     {% if basket.digital != 3 %}
         <li>{{ 'label.basket_download'|trans }}</li>
+        {# Not downloaded #}
+        {% if basket.downloaded is null %}
+            <li class="disabled text-muted">{{ 'text.items_not_downloaded'|trans }}</li>
+        {# Downloaded #}
+        {% elseif basket.downloaded.timestamp > 0 %}
+            <li>{{ 'text.items_downloaded'|trans }} {{ basket.downloaded|date('d/m/Y - H:i') }}</li>
+        {% endif %}
     {% endif %}
-    {% if basket.downloaded is not null and basket.downloaded.timestamp > 0 %}
-        <li>{{ 'text.items_downloaded'|trans }} {{ basket.shipped|date('d/m/Y - H:i') }}</li>
-    {% endif %}
-    {% if basket.shipped is not null and basket.shipped.timestamp > 0 %}
-        <li>{{ 'text.items_shipped'|trans }} {{ basket.shipped|date('d/m/Y - H:i') }}</li>
+    {# Shipping information #}
+    {% if basket.digital != 1 %}
+        {# Not shipped #}
+        {% if basket.shipped is null %}
+            <li class="disabled text-muted">{{ 'text.items_not_shipped'|trans }}</li>
+        {# Shipped #}
+        {% elseif basket.shipped.timestamp > 0 %}
+            <li>{{ 'text.items_shipped'|trans }} {{ basket.shipped|date('d/m/Y - H:i') }}</li>
+        {% endif %}
     {% endif %}
 </ol>
 <twig:c975LShop:Basket:Delivery basket="{{ basket }}"/>

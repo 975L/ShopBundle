@@ -22,7 +22,7 @@ export default class extends Controller {
         };
 
         // Load basket data once and use for everything
-        this.loadBasketData().then(data => {
+        this.loadBasketData().then((data) => {
             if (data) {
                 // Update basket UI and check product buttons
                 this.update(data);
@@ -43,13 +43,13 @@ export default class extends Controller {
             this.constructor.basketDataPromise = fetch("/shop/basket/json", {
                 method: "GET"
             })
-            .then(response => {
+            .then((response) => {
                 if (!response.ok) {
                     throw new Error(this.translate("basket.load.error"));
                 }
                 return response.json();
             })
-            .catch(error => {
+            .catch((error) => {
                 this.displayMessage(this.translate("basket.load.error"), "alert-danger");
                 // Reset promise on error to allow retry
                 this.constructor.basketDataPromise = null;
@@ -63,7 +63,7 @@ export default class extends Controller {
     // Updates data using shared fetch
     updateData() {
         if (this.hasTotalTarget && this.hasQuantityTarget) {
-            this.loadBasketData().then(data => {
+            this.loadBasketData().then((data) => {
                 if (data) {
                     this.update(data);
                 }
@@ -405,15 +405,15 @@ export default class extends Controller {
         }
 
         // For each add button
-        addButtons.forEach(button => {
+        addButtons.forEach((button) => {
             const productItemId = button.dataset.productItemId;
 
             // Updates quantity if productItem is in the basket
-            if (data.basket.productItems[productItemId]) {
+            if (productItemId && data.basket.productItems[productItemId]) {
                 const quantity = data.basket.productItems[productItemId].quantity;
                 if (quantity > 0) {
                     const quantityElement = document.querySelector(`.quantity[data-product-item-id="${productItemId}"]`);
-                    if (quantityElement && quantityElement.classList.contains('quantity')) {
+                    if (quantityElement && quantityElement.classList.contains("quantity")) {
                         quantityElement.textContent = `${quantity}`;
                     }
 
