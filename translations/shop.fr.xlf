@@ -394,6 +394,54 @@
                 <source>label.basket_delivered</source>
                 <target>Votre commande a été expédiée à l'adresse :</target>
             </trans-unit>
+            <trans-unit id="99">
+                <source>label.crowdfunding</source>
+                <target>Financement participatif</target>
+            </trans-unit>
+            <trans-unit id="100">
+                <source>label.no_crowdfunding</source>
+                <target>Pas de financements participatif</target>
+            </trans-unit>
+            <trans-unit id="101">
+                <source>label.crowdfundings</source>
+                <target>Financements participatifs</target>
+            </trans-unit>
+            <trans-unit id="102">
+                <source>text.crowdfundings</source>
+                <target>Tous nos financements participatifs</target>
+            </trans-unit>
+            <trans-unit id="103">
+                <source>label.contributors</source>
+                <target>Contributeurs</target>
+            </trans-unit>
+            <trans-unit id="104">
+                <source>label.days_left</source>
+                <target>Jours restants</target>
+            </trans-unit>
+            <trans-unit id="105">
+                <source>label.crowdfunding_ended</source>
+                <target>Financement terminé</target>
+            </trans-unit>
+            <trans-unit id="106">
+                <source>label.counterparts</source>
+                <target>Contreparties</target>
+            </trans-unit>
+            <trans-unit id="107">
+                <source>label.no_counterpart</source>
+                <target>Pas de contreparties</target>
+            </trans-unit>
+            <trans-unit id="108">
+                <source>label.no_contributor</source>
+                <target>Pas de contributeurs</target>
+            </trans-unit>
+            <trans-unit id="109">
+                <source>label.news</source>
+                <target>Nouvelles</target>
+            </trans-unit>
+            <trans-unit id="110">
+                <source>label.no_news</source>
+                <target>Pas de nouvelles</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

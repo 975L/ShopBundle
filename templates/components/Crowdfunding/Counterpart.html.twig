@@ -1,0 +1,18 @@
+<twig:c975LSite:Card:Card id="{{ counterpart.slug }}" title="{{ counterpart.title }}" class="procrowdfundingduct-counterpart">
+    <div>
+        {% if counterpart.media != null and counterpart.media.name != null %}
+            <div class="card-img">
+                <twig:c975LSite:Image:Image src="{{ counterpart.media.name }}" class="img-shadow" width="100" height="auto"/>
+                <twig:c975LShop:Product:Icon counterpart="{{ counterpart }}"/>
+            </div>
+        {% endif %}
+        <div class="card-data">
+            <p>{{ counterpart.description }}</p>
+            <p class="price">{{ (counterpart.price / 100)|number_format(2) ~ counterpart.currency }}</p>
+            <p>
+                <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24"/> x<span class="quantity lead" data-basket-target="productCounterpartQuantity" data-product-counterpart-id="{{ counterpart.id }}">0</span>
+            </p>
+        </div>
+    </div>
+    {# <twig:c975LShop:ProductCounterpart:AddButton productCounterpart="{{ counterpart }}"/> #}
+</twig:c975LSite:Card:Card>

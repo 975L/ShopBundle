@@ -1,0 +1,8 @@
+{% set class = class | default('') %}
+<a href="{{ url('crowdfunding_display', {'slug': crowdfunding.slug}) }}" class="crowdfunding-link">
+    <article class="crowdfunding {{ class }}" id="crowdfunding-{{ crowdfunding.id }}">
+        {% set imageSrc = crowdfunding.medias|first != false ? crowdfunding.medias|first : "bundles/c975lshop/images/no-product-image.webp" %}
+        <twig:c975LSite:Image:Image src="{{ absolute_url(asset(imageSrc)) }}" class="img-shadow img-crowdfunding" width="150" height="auto"/>
+        <h2>{{ crowdfunding.title }}</h2>
+    </article>
+</a>

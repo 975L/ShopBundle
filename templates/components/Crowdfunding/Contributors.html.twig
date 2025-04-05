@@ -1,0 +1,10 @@
+<h2 id="contributors">{{ 'label.contributors'|trans({}, 'shop') }}</h2>
+<section class="contributors cards">
+    {% if contributors is not empty %}
+        {% for contributor in contributors %}
+            <twig:c975LShop:Crowdfunding:Contributor contributor="{{ contributor }}"/>
+        {% endfor %}
+    {% else %}
+        <p class="text text-center lead">{{ 'label.no_contributor'|trans({}, 'shop') }}</p>
+    {% endif %}
+</section>

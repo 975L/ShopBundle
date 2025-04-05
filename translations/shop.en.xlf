@@ -395,6 +395,42 @@
                 <source>label.basket_delivered</source>
                 <target>Your order has been shipped to the address:</target>
             </trans-unit>
+            <trans-unit id="99">
+                <source>label.crowdfunding</source>
+                <target>Crowdfunding</target>
+            </trans-unit>
+            <trans-unit id="100">
+                <source>label.no_crowdfunding</source>
+                <target>No crowdfunding</target>
+            </trans-unit>
+            <trans-unit id="101">
+                <source>label.crowdfundings</source>
+                <target>Crowdfundings</target>
+            </trans-unit>
+            <trans-unit id="102">
+                <source>text.crowdfundings</source>
+                <target>All our crowdfundings</target>
+            </trans-unit>
+            <trans-unit id="103">
+                <source>label.contributors</source>
+                <target>Contributors</target>
+            </trans-unit>
+            <trans-unit id="104">
+                <source>label.days_left</source>
+                <target>Days left</target>
+            </trans-unit>
+            <trans-unit id="105">
+                <source>label.crowdfunding_ended</source>
+                <target>Crowdfunding ended</target>
+            </trans-unit>
+            <trans-unit id="106">
+                <source>label.counterparts</source>
+                <target>Counterparts</target>
+            </trans-unit>
+            <trans-unit id="107">
+                <source>label.no_counterpart</source>
+                <target>No counterparts</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

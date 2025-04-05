@@ -31,7 +31,7 @@ class ProductService implements ProductServiceInterface
         return $this->productRepository->findAll();
     }
 
-    // Finds all
+    // Finds all sorted by position
     public function findAllSorted()
     {
         return $this->productRepository->findAllSorted();

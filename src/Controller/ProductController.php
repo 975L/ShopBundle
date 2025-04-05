@@ -42,5 +42,4 @@ class ProductController extends AbstractController
             ]
         )->setMaxAge(3600);
     }
-
 }
