@@ -27,7 +27,7 @@ class ProductMedia
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
-    private $position;
+    private ?int $position = null;
 
     #[ORM\Column(nullable: true)]
     private ?string $name = null;
