@@ -3,7 +3,7 @@ import translationsEn from "./translations.en.js";
 import translationsFr from "./translations.fr.js";
 
 export default class extends Controller {
-    static targets = [ "quantity", "total", "message", "currency", "shipping", "submitButton", "productItemTotal", "productItemQuantity" ];
+    static targets = [ "quantity", "total", "message", "shipping", "submitButton", "productItemTotal", "productItemQuantity" ];
     static basketDataPromise = null; // Store the fetch promise for reuse
     static lastFetchTime = 0;
     static CACHE_DURATION = 5000; // Cache duration in ms
@@ -217,7 +217,7 @@ export default class extends Controller {
         if (!data.basket) {return;}
 
         if (this.hasTotalTarget) {
-            this.totalTarget.textContent = (data.basket.total / 100).toFixed(2);
+            this.totalTarget.textContent = (data.basket.total / 100).toFixed(2) + this.getCurrencySymbol(data.basket.currency);
         }
 
         if (this.hasQuantityTarget) {
@@ -279,7 +279,7 @@ export default class extends Controller {
         }
 
         if (this.hasTotalTarget) {
-            this.totalTarget.textContent = ((data.basket.total + data.basket.shipping) / 100).toFixed(2);
+            this.totalTarget.textContent = ((data.basket.total + data.basket.shipping) / 100).toFixed(2) + this.getCurrencySymbol(data.basket.currency);
         }
 
         if (this.hasQuantityTarget) {
@@ -296,7 +296,7 @@ export default class extends Controller {
         }
 
         this.shippingTarget.textContent = data.basket.shipping > 0
-            ? (data.basket.shipping / 100).toFixed(2) + data.basket.currency
+            ? (data.basket.shipping / 100).toFixed(2) + this.getCurrencySymbol(data.basket.currency)
             : this.translate("basket.offered");
     }
 
@@ -307,10 +307,9 @@ export default class extends Controller {
         }
 
         const label = this.translate("label.pay");
-        const total = ((data.basket.total + data.basket.shipping) / 100).toFixed(2);
-        const currency = data.basket.currency;
+        const total = ((data.basket.total + data.basket.shipping) / 100).toFixed(2) + this.getCurrencySymbol(data.basket.currency);
 
-        this.submitButtonTarget.value = `${label} ${total} ${currency}`;
+        this.submitButtonTarget.value = `${label} ${total}`;
     }
 
     // Updates a single productItem row
@@ -319,7 +318,7 @@ export default class extends Controller {
             (target) => target.dataset.productItemId === productItemId
         );
         if (productItemTotalElement) {
-            productItemTotalElement.textContent = (productItemData.total / 100).toFixed(2) + productItemData.productItem.currency;
+            productItemTotalElement.textContent = (productItemData.total / 100).toFixed(2) + this.getCurrencySymbol(productItemData.productItem.currency);
         }
 
         const productItemQuantityElement = this.productItemQuantityTargets.find(
@@ -424,5 +423,30 @@ export default class extends Controller {
                 }
             }
         });
+    }
+
+    // Updates the currency symbol based on the currency code
+    getCurrencySymbol(currencyCode) {
+        if (!currencyCode) return '';
+
+        const symbols = {
+            'eur': '€',
+            'usd': '$',
+            'gbp': '£',
+            'jpy': '¥',
+            'cny': '¥',
+            'rub': '₽',
+            'inr': '₹',
+            'chf': 'CHF',
+            'cad': 'CA$',
+            'aud': 'A$',
+            'brl': 'R$',
+            'mxn': 'MX$',
+            'zar': 'R'
+        };
+
+        const code = currencyCode.toLowerCase();
+
+        return " " + symbols[code] || currencyCode.toUpperCase();
     }
 }

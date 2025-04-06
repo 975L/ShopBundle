@@ -1,6 +1,13 @@
 # Changelog
 
-## v0.20
+## v0.20.1
+
+- Corrected displayed size of download files (06/04/2025)
+- Added basket icon where quantity is set (06/04/2025)
+- Made use of format_currency (06/04/2025)
+- Added quantity purchased in readonly basket (06/04/2025)
+
+## v0.20
 
 - Added Crowdfunding structure (05/04/2025)
 
