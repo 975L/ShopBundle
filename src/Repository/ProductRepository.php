@@ -53,6 +53,7 @@ class ProductRepository extends ServiceEntityRepository
             ->select('p, m')
             ->leftJoin('p.medias', 'm')
             ->orderBy('p.position', 'ASC')
+            ->addOrderBy('m.position', 'ASC')
             ->getQuery()
             ->getResult()
         ;
@@ -68,10 +69,12 @@ class ProductRepository extends ServiceEntityRepository
             ->leftJoin('i.media', 'im')
             ->leftJoin('i.file', 'if')
             ->andWhere('p.slug = :slug')
+            ->orderBy('m.position', 'ASC')
+            ->addOrderBy('i.position', 'ASC')
             ->setParameter('slug', $slug)
             ->getQuery()
             ->getOneOrNullResult()
-        ;
+    ;
     }
 
     //    /**

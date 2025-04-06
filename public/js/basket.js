@@ -427,22 +427,14 @@ export default class extends Controller {
 
     // Updates the currency symbol based on the currency code
     getCurrencySymbol(currencyCode) {
-        if (!currencyCode) return '';
+        if (!currencyCode) { return ''; };
 
         const symbols = {
-            'eur': '€',
-            'usd': '$',
-            'gbp': '£',
-            'jpy': '¥',
-            'cny': '¥',
-            'rub': '₽',
-            'inr': '₹',
-            'chf': 'CHF',
-            'cad': 'CA$',
-            'aud': 'A$',
-            'brl': 'R$',
-            'mxn': 'MX$',
-            'zar': 'R'
+            "eur": "€",
+            "usd": "$",
+            "gbp": "£",
+            "jpy": "¥",
+            "chf": "CHF",
         };
 
         const code = currencyCode.toLowerCase();

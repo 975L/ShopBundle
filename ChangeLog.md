@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.20.2
+
+- Corrected product.media that was not anymore an integer (06/04/2025)
+
 ## v0.20.1
 
 - Corrected displayed size of download files (06/04/2025)

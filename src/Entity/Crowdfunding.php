@@ -60,28 +60,20 @@ class Crowdfunding
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
-    /**
-     * @var Collection<int, CrowdfundingMedia>
-     */
     #[ORM\OneToMany(targetEntity: CrowdfundingMedia::class, mappedBy: 'crowdfunding')]
+    #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $medias;
 
-    /**
-     * @var Collection<int, CrowdfundingContributor>
-     */
     #[ORM\OneToMany(targetEntity: CrowdfundingContributor::class, mappedBy: 'crowdfunding')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $contributors;
 
-    /**
-     * @var Collection<int, CrowdfundingNews>
-     */
     #[ORM\OneToMany(targetEntity: CrowdfundingNews::class, mappedBy: 'crowdfunding')]
+    #[ORM\OrderBy(['publishedDate' => 'DESC'])]
     private Collection $news;
 
-    /**
-     * @var Collection<int, CrowdfundingCounterpart>
-     */
     #[ORM\OneToMany(targetEntity: CrowdfundingCounterpart::class, mappedBy: 'crowdfunding')]
+    #[ORM\OrderBy(['price' => 'ASC'])]
     private Collection $counterparts;
 
     public function __construct()
