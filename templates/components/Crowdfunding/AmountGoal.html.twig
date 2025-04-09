@@ -1,1 +1,5 @@
-<p>{{ (amount / 100)|number_format(0) }} {{ currency }}</p>
+<p class="amount">
+    {{ 'label.goal'|trans({}, 'shop') }}
+    <br>
+    {{ (amount / 100)|format_currency(currency, {fraction_digit: 0}) }}
+</p>

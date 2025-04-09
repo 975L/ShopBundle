@@ -431,6 +431,42 @@
                 <source>label.no_counterpart</source>
                 <target>No counterparts</target>
             </trans-unit>
+            <trans-unit id="108">
+                <source>label.no_contributor</source>
+                <target>No contributor</target>
+            </trans-unit>
+            <trans-unit id="109">
+                <source>label.news</source>
+                <target>News</target>
+            </trans-unit>
+            <trans-unit id="110">
+                <source>label.no_news</source>
+                <target>No news</target>
+            </trans-unit>
+            <trans-unit id="111">
+                <source>label.goal</source>
+                <target>Goal</target>
+            </trans-unit>
+            <trans-unit id="112">
+                <source>label.end</source>
+                <target>End</target>
+            </trans-unit>
+            <trans-unit id="113">
+                <source>label.dates</source>
+                <target>Dates</target>
+            </trans-unit>
+            <trans-unit id="114">
+                <source>label.author</source>
+                <target>Author</target>
+            </trans-unit>
+            <trans-unit id="115">
+                <source>label.funding</source>
+                <target>Funding</target>
+            </trans-unit>
+            <trans-unit id="116">
+                <source>label.outof</source>
+                <target>out of</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

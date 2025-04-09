@@ -2,7 +2,7 @@
 {% trans_default_domain 'shop' %}
 
 {# Defines specific variables #}
-{% set title = 'label.crowdfunding'|trans ~ ' -' ~ crowdfunding.title %}
+{% set title = 'label.crowdfunding'|trans ~ ' : "' ~ crowdfunding.title ~ '"' %}
 {% if crowdfunding.medias is not empty %}
     {% set ogImage = absolute_url(asset(crowdfunding.medias[0].name)) %}
 {% endif %}
@@ -10,14 +10,14 @@
 {% set description = crowdfunding.description %}
 
 {% block content %}
-    <section class="text-center">
+    <div class="crowdfunding">
 {# {{ dump(crowdfunding) }} #}
         <twig:c975LShop:Crowdfunding:AmountGoal amount="{{ crowdfunding.amountGoal }}" currency="{{ crowdfunding.currency }}"/>
-        <twig:c975LShop:Crowdfunding:AmountAchieved amount="{{ crowdfunding.amountAchieved }}" currency="{{ crowdfunding.currency }}"/>
-        {# <twig:c975LSite:SliderVideo video="{{ crowdfunding.video }}"/> #}
-        <twig:c975LShop:Crowdfunding:Date endDate="{{ crowdfunding.endDate }}"/>
-        <twig:c975LShop:Crowdfunding:ContributorsNumber contributors="{{ crowdfunding.contributors|length }}"/>
+        <twig:c975LShop:Crowdfunding:AmountAchieved amount="{{ crowdfunding.amountGoal }}" amountAchieved="{{ crowdfunding.amountAchieved }}" currency="{{ crowdfunding.currency }}"/>
         <twig:c975LShop:Crowdfunding:Author name="{{ crowdfunding.authorName }}" presentation="{{ crowdfunding.authorPresentation }}" website="{{ crowdfunding.authorWebsite }}"/>
+        <twig:c975LShop:Crowdfunding:Dates beginDate="{{ crowdfunding.beginDate }}" endDate="{{ crowdfunding.endDate }}"/>
+        {# <twig:c975LSite:SliderVideo video="{{ crowdfunding.video }}"/> #}
+        <twig:c975LShop:Crowdfunding:ContributorsNumber contributors="{{ crowdfunding.contributors|length }}"/>
         <twig:c975LShop:Crowdfunding:Description description="{{ crowdfunding.description }}"/>
         <twig:c975LShop:Crowdfunding:UseFor description="{{ crowdfunding.useFor }}"/>
         <twig:c975LSite:Slider:Slider slides="{{ crowdfunding.medias }}" id="slider"/>
@@ -28,5 +28,5 @@
         </div>
         <twig:c975LShop:Crowdfunding:NewsCollection newsCollection="{{ crowdfunding.news }}"/>
         <twig:c975LShop:Crowdfunding:Contributors contributors="{{ crowdfunding.contributors }}"/>
-    </section>
+    </div>
 {% endblock %}

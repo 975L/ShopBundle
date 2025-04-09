@@ -16,6 +16,7 @@ use c975L\ShopBundle\Entity\Product;
 use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
