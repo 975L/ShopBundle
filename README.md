@@ -139,6 +139,10 @@ Adapts your CSP to allow:
 
 script-src: unsafe-inline
 
+## CSS
+
+Add `@import url("/bundles/c975lshop/css/styles.min.css");` to your `assets/app.css` file.
+
 ## Urls
 
 You should be able to use your shop + Management with the following urls:

@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.21
+
+- Added beginDate for Crowdfunding (09/04/2025)
+- Added styles for Crowdfunding (09/04/2025)
+
 ## v0.20.2
 
 - Corrected product.media that was not anymore an integer (06/04/2025)

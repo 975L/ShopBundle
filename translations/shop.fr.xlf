@@ -442,6 +442,30 @@
                 <source>label.no_news</source>
                 <target>Pas de nouvelles</target>
             </trans-unit>
+            <trans-unit id="111">
+                <source>label.goal</source>
+                <target>Objectif</target>
+            </trans-unit>
+            <trans-unit id="112">
+                <source>label.end</source>
+                <target>Fin</target>
+            </trans-unit>
+            <trans-unit id="113">
+                <source>label.dates</source>
+                <target>Dates</target>
+            </trans-unit>
+            <trans-unit id="114">
+                <source>label.author</source>
+                <target>Auteur</target>
+            </trans-unit>
+            <trans-unit id="115">
+                <source>label.funding</source>
+                <target>Financement</target>
+            </trans-unit>
+            <trans-unit id="116">
+                <source>label.outof</source>
+                <target>sur</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

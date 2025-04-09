@@ -55,6 +55,9 @@ class Crowdfunding
     private ?string $useFor = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $beginDate = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $endDate = null;
 
     #[ORM\Column(nullable: true)]
@@ -205,6 +208,18 @@ class Crowdfunding
     public function setUseFor(string $useFor): static
     {
         $this->useFor = $useFor;
+
+        return $this;
+    }
+
+    public function getBeginDate(): ?\DateTimeInterface
+    {
+        return $this->beginDate;
+    }
+
+    public function setBeginDate(?\DateTimeInterface $beginDate): static
+    {
+        $this->beginDate = $beginDate;
 
         return $this;
     }

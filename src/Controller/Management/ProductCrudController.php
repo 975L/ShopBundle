@@ -10,7 +10,6 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
-use DateTimeImmutable;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Form\ProductItemType;
 use c975L\ShopBundle\Form\ProductMediaType;
@@ -24,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;

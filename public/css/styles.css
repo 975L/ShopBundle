@@ -225,6 +225,103 @@ tfoot th {
     background-color: grey;
 }
 
+/* CROWDFUNDING */
+.crowdfunding {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    padding: 10px;
+    text-align: center;
+}
+
+.crowdfunding h2 {
+    margin: 5px auto;
+}
+
+.crowdfunding section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    padding: 10px;
+    width: 100%;
+}
+
+.crowdfunding section::after {
+    content: "";
+    position: relative;
+    display: block;
+    height: 8px;
+    width: 100%;
+    margin-top: 20px;
+    background-image:
+        linear-gradient(45deg, transparent 33.333%, var(--primary) 33.333%, var(--primary) 66.667%, transparent 66.667%),
+        linear-gradient(-45deg, transparent 33.333%, var(--primary) 33.333%, var(--primary) 66.667%, transparent 66.667%);
+    background-size: 16px 16px;
+    background-position: 0 0;
+}
+
+.crowdfunding p {
+    margin: 5px auto;
+    font-size: 1em;
+    font-family: var(--font-family-body);
+}
+
+.crowdfunding .amount {
+    font-family: var(--font-family-title);
+    font-size: 4em;
+    color: #fff;
+    font-weight: bold;
+    background-color: var(--primary);
+    width: 100%;
+    margin: 0 auto;
+    padding: 15px 0;
+    box-shadow: var(--box-shadow);
+    border-radius: 20px;
+    text-align: center;
+}
+
+.crowdfunding .date {
+    width: 100%;
+    margin: 10px auto;
+    font-size: 1.2em;
+}
+
+.crowdfunding .icon-progression {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px auto;
+}
+
+.prev-icon img {
+    opacity: 0.5;
+    width: 24px;
+    height: 24px;
+    filter: grayscale(70%);
+}
+
+.current-icon img {
+    transform: scale(1.2);
+    position: relative;
+    z-index: 2;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto;
+    filter: invert(78%) sepia(73%) saturate(3967%) hue-rotate(7deg) brightness(113%) contrast(106%);
+}
+
+.next-icon img {
+    transition: all 0.3s ease;
+    width: 32px;
+    height: 32px;
+    filter: invert(11%) sepia(98%) saturate(4648%) hue-rotate(159deg) brightness(87%) contrast(101%);
+}
+
 /* COMPONENTS */
 .shop-shipping,
 .shop-information,
@@ -257,13 +354,19 @@ tfoot th {
     opacity: 0;
 }
 
-@keyframes zoom-in {
-    from {
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
         transform: scale(1);
     }
-
-    to {
-        transform: scale(1.5);
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
     }
 }
 
