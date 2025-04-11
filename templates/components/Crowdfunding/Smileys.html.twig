@@ -1,0 +1,55 @@
+{# set of icons #}
+{% set iconRanges = [
+    { threshold: 200, icon: "face-flushed" },
+    { threshold: 150, icon: "face-surprise" },
+    { threshold: 100, icon: "face-grin-stars" },
+    { threshold: 90, icon: "face-grin-squint" },
+    { threshold: 80, icon: "face-kiss-wink-heart" },
+    { threshold: 70, icon: "face-kiss-beam" },
+    { threshold: 60, icon: "face-kiss" },
+    { threshold: 50, icon: "face-grin-hearts" },
+    { threshold: 40, icon: "face-grin-wide" },
+    { threshold: 30, icon: "face-grin-beam" },
+    { threshold: 20, icon: "face-grin" },
+    { threshold: 10, icon: "face-smile-beam" },
+    { threshold: 1, icon: "face-smile" },
+    { threshold: 0, icon: "face-rolling-eyes" },
+] %}
+{# Icons to be used #}
+{% set currentIcon = null %}
+{% set prevIcon = null %}
+{% set nextIcon = null %}
+{% set currentIndex = -1 %}
+{% set found = false %}
+{# Current Icon #}
+{% for range in iconRanges %}
+    {% if not found and progressPercent >= range.threshold %}
+        {% set currentIcon = range.icon %}
+        {% set currentIndex = loop.index0 %}
+        {% set found = true %}
+    {% endif %}
+{% endfor %}
+{# Previous icon #}
+{% if currentIndex < iconRanges|length - 1 %}
+    {% set prevIcon = iconRanges[currentIndex + 1].icon %}
+{% endif %}
+{# Next icon #}
+{% if currentIndex > 0 %}
+    {% set nextIcon = iconRanges[currentIndex - 1].icon %}
+{% endif %}
+{# Displays icons #}
+<div class="icon-progression">
+    {% if prevIcon is not null %}
+        <div class="prev-icon">
+            <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/{{ prevIcon }}.svg" width="32" height="32"/>
+        </div>
+    {% endif %}
+    <div class="current-icon">
+        <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/{{ currentIcon }}.svg" width="48" height="48"/>
+    </div>
+    {% if nextIcon is not null %}
+        <div class="next-icon">
+            <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/{{ nextIcon }}.svg" width="32" height="32" class="pulse-animation"/>
+        </div>
+    {% endif %}
+</div>

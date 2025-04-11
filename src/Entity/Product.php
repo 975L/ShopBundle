@@ -163,6 +163,7 @@ class Product
     public function setPosition(?int $position): self
     {
         $this->position = $position;
+
         return $this;
     }
 

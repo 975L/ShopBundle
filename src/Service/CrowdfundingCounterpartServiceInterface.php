@@ -10,15 +10,13 @@
 
 namespace c975L\ShopBundle\Service;
 
-use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
 
-interface ProductItemServiceInterface
+interface CrowdfundingCounterpartServiceInterface
 {
-    public function findOneById(int $id): ProductItem;
+    public function findOneById(int $id): CrowdfundingCounterpart;
 
     public function findAllMedias();
-
-    public function findAllFiles();
 
     public function deleteOneMediaByName(string $name): void;
 }

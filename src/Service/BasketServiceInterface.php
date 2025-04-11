@@ -32,6 +32,8 @@ interface BasketServiceInterface
 
     public function deleteProductItem(Request $request): array;
 
+    public function defineProductItem(array $productItems, string $type, $productItem, int $quantity): array;
+
     public function generateSecurityToken(): string;
 
     public function get(): ?Basket;

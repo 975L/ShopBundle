@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.22
+
+- Added amount to CrowdfundingContributor (10/04/2025)
+- Added CrowdfundingVideo (10/04/2025)
+- Renamed CrowdfundingCounterpart quantityAvailable -> limitedQuantity (10/04/2025)
+- Renamed CrowdfundingCounterpart quantityTaken -> orderedQuantity (10/04/2025)
+- Finished frontend design for crowdfunding (10/04/2025)
+
 ## v0.21
 
 - Added beginDate for Crowdfunding (09/04/2025)

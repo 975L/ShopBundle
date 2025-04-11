@@ -146,6 +146,7 @@ export default class extends Controller {
             body: JSON.stringify({
                 id: target.dataset.productItemId,
                 quantity: target.dataset.quantity,
+                type: target.dataset.type || 'product', // 'product' ou 'counterpart'
             }),
             headers: {
                 "Content-Type": "application/json",

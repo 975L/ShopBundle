@@ -35,7 +35,7 @@ class CorrectPositionCommand extends Command
 
         $this->positionProduct();
 
-        $io->success('Unused medias deleted.');
+        $io->success('Medias position s have resetted.');
 
         return Command::SUCCESS;
     }

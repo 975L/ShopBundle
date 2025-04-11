@@ -467,6 +467,42 @@
                 <source>label.outof</source>
                 <target>out of</target>
             </trans-unit>
+            <trans-unit id="117">
+                <source>label.next_smiley</source>
+                <target>I want the next smiley!</target>
+            </trans-unit>
+            <trans-unit id="118">
+                <source>label.presentation</source>
+                <target>Presentation</target>
+            </trans-unit>
+            <trans-unit id="119">
+                <source>label.project</source>
+                <target>Project</target>
+            </trans-unit>
+            <trans-unit id="120">
+                <source>label.use</source>
+                <target>Use</target>
+            </trans-unit>
+            <trans-unit id="121">
+                <source>label.limited_quantity</source>
+                <target>Limited quantity</target>
+            </trans-unit>
+            <trans-unit id="122">
+                <source>label.ordered_quantity</source>
+                <target>Ordered quantity</target>
+            </trans-unit>
+            <trans-unit id="123">
+                <source>label.remaining_quantity</source>
+                <target>Remaining quantity</target>
+            </trans-unit>
+            <trans-unit id="124">
+                <source>label.i_participate</source>
+                <target>I participate!</target>
+            </trans-unit>
+            <trans-unit id="125">
+                <source>label.expected_delivery</source>
+                <target>Expected delivery</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -9,11 +9,12 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use c975L\ShopBundle\Repository\CrowdfundingRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use c975L\ShopBundle\Entity\CrowdfundingVideo;
+use Doctrine\Common\Collections\ArrayCollection;
+use c975L\ShopBundle\Repository\CrowdfundingRepository;
 
 #[ORM\Entity(repositoryClass: CrowdfundingRepository::class)]
 #[ORM\Table(name: 'shop_crowdfunding')]
@@ -62,6 +63,9 @@ class Crowdfunding
 
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
+
+    #[ORM\OneToOne(inversedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
+    private ?CrowdfundingVideo $video = null;
 
     #[ORM\OneToMany(targetEntity: CrowdfundingMedia::class, mappedBy: 'crowdfunding')]
     #[ORM\OrderBy(['position' => 'ASC'])]
@@ -244,6 +248,18 @@ class Crowdfunding
     public function setPosition(?int $position): self
     {
         $this->position = $position;
+        return $this;
+    }
+
+    public function getVideo(): ?CrowdfundingVideo
+    {
+        return $this->video;
+    }
+
+    public function setVideo(?CrowdfundingVideo $video): static
+    {
+        $this->video = $video;
+
         return $this;
     }
 

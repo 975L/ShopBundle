@@ -1,6 +1,5 @@
-<twig:c975LSite:Card:Card id="news-{{ news.id }}" title="{{ news.title }}" class="crowdfunding-news">
-    <div class="card-data">
-        <p>{{ news.publishedDate|date('d/m/Y') }}</p>
-        <p>{{ news.content|raw }}</p>
-    </div>
-</twig:c975LSite:Card:Card>
+<div>
+    <h3 id="news-{{ news.id }}">{{ news.title }}</h3>
+    <p class="text-left">{{ news.content|raw }}</p>
+    <p class="text-right text-muted">{{ news.publishedDate|date('d/m/Y') }}</p>
+</div>
