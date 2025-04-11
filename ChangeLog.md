@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.23
+
+- Removed tables for media/file and made use of only one (11/04/2025)
+- Added EasyAdmin CRUD controllers for crowdfundings (11/04/2025)
+- Made use of a ShopMediaNamer (11/04/2025)
+
 ## v0.22
 
 - Added amount to CrowdfundingContributor (10/04/2025)

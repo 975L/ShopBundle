@@ -28,7 +28,8 @@ class ProductItem
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
-    #[ORM\OneToOne(inversedBy: 'productItem', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
     private ?ProductItemFile $file = null;
 
     #[ORM\Column(length: 50)]

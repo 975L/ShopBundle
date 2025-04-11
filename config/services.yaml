@@ -16,6 +16,9 @@ services:
     c975L\ShopBundle\Listener\:
         resource: '../src/Listener/*'
 
+    c975L\ShopBundle\Namer\:
+        resource: '../src/Namer/*'
+
     c975L\ShopBundle\MessageHandler\:
         resource: '../src/MessageHandler/*'
 

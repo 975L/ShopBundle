@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
     name: 'shop:downloads:delete',
     description: 'Deletes download files after their expiry date',
 )]
-class ProductIemDownloadDelete extends Command
+class ProductItemDownloadDelete extends Command
 {
     private string $downloadDir;
 
