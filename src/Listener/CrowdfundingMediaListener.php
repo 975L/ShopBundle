@@ -8,18 +8,18 @@
  * with this source code in the file LICENSE.
  */
 
-namespace c975L\ShopBundle\Listener;
+ namespace c975L\ShopBundle\Listener;
 
 use Doctrine\ORM\Events;
-use c975L\ShopBundle\Entity\ProductMedia;
+use c975L\ShopBundle\Entity\CrowdfundingMedia;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use c975L\ShopBundle\Listener\Traits\UserTrait;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
-#[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: ProductMedia::class)]
-class ProductMediaListener
+#[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: CrowdfundingMedia::class)]
+class CrowdfundingMediaListener
 {
     use UserTrait;
 
@@ -29,15 +29,8 @@ class ProductMediaListener
     ) {
     }
 
-    public function preFlush(ProductMedia $entity, PreFlushEventArgs $event): void
+    public function preFlush(CrowdfundingMedia $entity, PreFlushEventArgs $event): void
     {
-        if (null === $entity->getPosition()) {
-            $maxPosition = 0;
-            foreach ($entity->getProduct()->getMedias() as $media) {
-                $maxPosition = max($maxPosition, $media->getPosition());
-            }
-            $entity->setPosition($maxPosition + 5);
-        }
         $this->setUser($entity);
     }
 }

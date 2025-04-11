@@ -13,6 +13,7 @@ namespace c975L\ShopBundle\Controller\Management;
 use c975L\ShopBundle\Entity\Basket;
 use c975L\ShopBundle\Entity\Payment;
 use c975L\ShopBundle\Entity\Product;
+use c975L\ShopBundle\Entity\Crowdfunding;
 use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -42,6 +43,7 @@ class ShopDashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('label.dashboard', 'fa fa-home')->setPermission('ROLE_ADMIN');
         yield MenuItem::linkToCrud('label.products', 'fas fa-shop', Product::class)->setPermission('ROLE_ADMIN');
+        yield MenuItem::linkToCrud('label.crowdfundings', 'fas fa-money-bill', Crowdfunding::class)->setPermission('ROLE_ADMIN');
         yield MenuItem::linkToCrud('label.baskets', 'fas fa-basket-shopping', Basket::class)->setPermission('ROLE_ADMIN');
         yield MenuItem::linkToCrud('label.payments', 'fas fa-money-bill-wave', Payment::class)->setPermission('ROLE_ADMIN');
         yield MenuItem::linkToUrl('label.shop', 'fas fa-home', $this->generateUrl('shop_index'));

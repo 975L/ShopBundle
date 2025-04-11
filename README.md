@@ -42,41 +42,32 @@ vich_uploader:
 
     mappings:
         products:
-            uri_prefix: '' # path added in Listener
+            uri_prefix: '' # path added in ShopMediaNamer
             upload_destination: '%kernel.project_dir%/public/medias/shop/products'
-            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            namer: c975L\ShopBundle\Namer\ShopMediaNamer
             inject_on_load: false
             delete_on_update: true
             delete_on_remove: true
         productItems:
-            uri_prefix: '' # path added in Listener
+            uri_prefix: '' # path added in ShopMediaNamer
             upload_destination: '%kernel.project_dir%/public/medias/shop/items'
-            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            namer: c975L\ShopBundle\Namer\ShopMediaNamer
             inject_on_load: false
             delete_on_update: true
             delete_on_remove: true
-        productItemsFiles:
-            uri_prefix: '' # path added in Listener
-            upload_destination: '%kernel.project_dir%/private/medias/shop/items' # Has to be outside of public folder, otherwise accessible to anyone, and added in .gitignore
-            namer: Vich\UploaderBundle\Naming\UniqidNamer
-            inject_on_load: false
-            delete_on_update: true
-            delete_on_remove: true
-
         crowdfundings:
-            uri_prefix: '' # path added in Listener
+            uri_prefix: '' # path added in ShopMediaNamer
             upload_destination: '%kernel.project_dir%/public/medias/shop/crowdfundings'
-            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            namer: c975L\ShopBundle\Namer\ShopMediaNamer
             inject_on_load: false
             delete_on_update: true
             delete_on_remove: true
         crowdfundingsCounterparts:
-            uri_prefix: '' # path added in Listener
+            uri_prefix: '' # path added in ShopMediaNamer
             upload_destination: '%kernel.project_dir%/public/medias/shop/counterparts'
-            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            namer: c975L\ShopBundle\Namer\ShopMediaNamer
             inject_on_load: false
             delete_on_update: true
-            delete_on_remove: true
             delete_on_remove: true
 ```
 
