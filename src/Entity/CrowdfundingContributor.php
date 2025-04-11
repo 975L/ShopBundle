@@ -32,6 +32,9 @@ class CrowdfundingContributor
     #[ORM\Column(length: 100)]
     private ?string $email = null;
 
+    #[ORM\Column]
+    private ?int $amount = null;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation = null;
 
@@ -78,6 +81,18 @@ class CrowdfundingContributor
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getAmount(): ?int
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(int $amount): static
+    {
+        $this->amount = $amount;
 
         return $this;
     }

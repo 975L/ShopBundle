@@ -13,7 +13,6 @@ namespace c975L\ShopBundle\Service;
 use DateTimeImmutable;
 use c975L\ShopBundle\Entity\ProductItem;
 use Doctrine\ORM\EntityManagerInterface;
-use c975L\ShopBundle\Entity\ProductItemDownload;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Repository\ProductItemFileRepository;
 use c975L\ShopBundle\Repository\ProductItemMediaRepository;

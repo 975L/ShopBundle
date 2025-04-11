@@ -1,0 +1,8 @@
+<section id="presentation">
+    <h2>{{ 'label.presentation'|trans({}, 'shop') }}</h2>
+    <twig:c975LShop:Crowdfunding:Video video="{{ crowdfunding.video }}"/>
+    <h3>{{ 'label.project'|trans({}, 'shop') }}</h3>
+    <p class="text-center">{{ crowdfunding.description|raw }}</p>
+    <h3>{{ 'label.use'|trans({}, 'shop') }}</h3>
+    <p class="text-center">{{ crowdfunding.useFor|raw }}</p>
+</section>

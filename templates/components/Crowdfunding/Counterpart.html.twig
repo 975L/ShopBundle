@@ -1,4 +1,4 @@
-<twig:c975LSite:Card:Card id="{{ counterpart.slug }}" title="{{ counterpart.title }}" class="procrowdfundingduct-counterpart">
+<twig:c975LSite:Card:Card id="{{ counterpart.slug }}" level="h3" title="{{ counterpart.title }}">
     <div>
         {% if counterpart.media != null and counterpart.media.name != null %}
             <div class="card-img">
@@ -12,7 +12,9 @@
             <p>
                 <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24"/> x<span class="quantity lead" data-basket-target="productCounterpartQuantity" data-product-counterpart-id="{{ counterpart.id }}">0</span>
             </p>
+            <p>{{ 'label.expected_delivery'|trans({}, 'shop') }} : <strong>{{ counterpart.expectedDelivery }}</strong></p>
+            <twig:c975LShop:CrowdfundingCounterpart:Quantity limited="{{ counterpart.limitedQuantity }}" ordered="{{ counterpart.orderedQuantity }}"/>
         </div>
     </div>
-    {# <twig:c975LShop:ProductCounterpart:AddButton productCounterpart="{{ counterpart }}"/> #}
+    <twig:c975LShop:CrowdfundingCounterpart:AddButton crowdfundingCounterpart="{{ counterpart }}"/>
 </twig:c975LSite:Card:Card>

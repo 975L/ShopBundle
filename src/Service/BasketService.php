@@ -19,7 +19,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\Form;
 use c975L\ShopBundle\Entity\Basket;
 use c975L\ShopBundle\Entity\Payment;
-use c975L\ShopBundle\Entity\ProductItem;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session as StripeSession;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,6 +33,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use c975L\ShopBundle\Service\CrowdfundingCounterpartServiceInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class BasketService implements BasketServiceInterface
@@ -46,6 +46,7 @@ class BasketService implements BasketServiceInterface
     public function __construct(
         private readonly BasketRepository $basketRepository,
         private readonly ConfigServiceInterface $configService,
+        private readonly CrowdfundingCounterpartServiceInterface $crowdfundingCounterpartService,
         private readonly EntityManagerInterface $entityManager,
         private readonly ProductItemServiceInterface $productItemService,
         private readonly RequestStack $requestStack,
@@ -133,14 +134,16 @@ class BasketService implements BasketServiceInterface
         $hasDigital = false;
         $hasPhysical = false;
 
-        foreach ($productItems as $productItem) {
-            $total += $productItem['total'];
-            $quantity += $productItem['quantity'];
+        foreach ($productItems as $type => $item) {
+            foreach ($item as $id => $productItem) {
+                $total += $productItem['total'];
+                $quantity += $productItem['quantity'];
 
-            if (null === $productItem['productItem']['file']) {
-                $hasPhysical = true;
-            } else {
-                $hasDigital = true;
+                if ('product' === $type && null === $productItem['productItem']['file']) {
+                    $hasPhysical = true;
+                } elseif ('product' === $type) {
+                    $hasDigital = true;
+                }
             }
         }
 
@@ -233,26 +236,32 @@ class BasketService implements BasketServiceInterface
         $productItems = $this->basket->getProductItems();
         $productItemId = $data["id"];
         $quantity = $data["quantity"];
-        $productItem = $this->productItemService->findOneById($productItemId);
+        $type = $data["type"];
+
+        if ('product' === $type) {
+            $productItem = $this->productItemService->findOneById($productItemId);
+        } else if ('counterpart' === $type) {
+            $productItem = $this->crowdfundingCounterpartService->findOneById($productItemId);
+        }
 
         if (null === $productItem) {
             throw new \Exception('Product not found');
         }
 
         // Adds productItem to basket
-        if (isset($productItems[$productItemId])) {
+        if (isset($productItems[$type][$productItemId])) {
             // Deletes productItem if quantity is 0
-            if ($productItems[$productItemId]['quantity'] + $quantity <= 0) {
-                unset($productItems[$productItemId]);
+            if ($productItems[$type][$productItemId]['quantity'] + $quantity <= 0) {
+                unset($productItems[$type][$productItemId]);
             // Otherwise updates quantity unless it's a digital item
             } elseif ($productItem->getFile()->getName() === null) {
-                $productItems[$productItemId]['quantity'] += $quantity;
-                $productItems[$productItemId]['totalVat'] = $productItems[$productItemId]['quantity'] * $productItem->getVat();
-                $productItems[$productItemId]['total'] = $productItems[$productItemId]['quantity'] * $productItem->getPrice();
+                $productItems[$type][$productItemId]['quantity'] += $quantity;
+                $productItems[$type][$productItemId]['totalVat'] = $productItems[$productItemId]['quantity'] * $productItem->getVat();
+                $productItems[$type][$productItemId]['total'] = $productItems[$productItemId]['quantity'] * $productItem->getPrice();
             }
         // New productItem
         } else {
-            $productItems = $this->defineProductItem($productItems, $productItem, $quantity);
+            $productItems = $this->defineProductItem($productItems, $type, $productItem, $quantity);
         }
 
         $this->basket->setProductItems($productItems);
@@ -290,7 +299,7 @@ class BasketService implements BasketServiceInterface
     }
 
     // Defines productItem
-    private function defineProductItem(array $productItems, ProductItem $productItem, int $quantity): array
+    public function defineProductItem(array $productItems, string $type, $productItem, int $quantity): array
     {
         // Removes values not needed in basket
         $productItemData = $productItem->toArray();
@@ -300,23 +309,35 @@ class BasketService implements BasketServiceInterface
         unset($productItemData['position']);
         unset($productItemData['modification']);
         unset($productItemData['user']);
-        $productItemData['file'] = $productItem->getFile() ? $productItem->getFile()->getName() : null;
-        $productItemData['size'] = $productItem->getFile() ? $productItem->getFile()->getSize() : null;
-        $productItemData['media'] = $productItem->getMedia() ? $productItem->getMedia()->getName() : null;
 
-        // Adds values related to product itself
-        $product = $productItem->getProduct();
+        if (method_exists($productItem, 'getFile')) {
+            $productItemData['file'] = $productItem->getFile() ? $productItem->getFile()->getName() : null;
+            $productItemData['size'] = $productItem->getFile() ? $productItem->getFile()->getSize() : null;
+        }
+        if (method_exists($productItem, 'getMedia')) {
+            $productItemData['media'] = $productItem->getMedia() ? $productItem->getMedia()->getName() : null;
+        }
+
+        // Adds values related to product/counterpart itself
+        if ('product' === $type) {
+            $product = $productItem->getProduct();
+            $vat = $productItem->getVat();
+        } elseif ('counterpart' === $type) {
+            $product = $productItem->getCrowdfunding();
+            $vat = 0;
+        }
+
         $productData = [];
         $productData['title'] = $product->getTitle();
         $productData['slug'] = $product->getSlug();
         $productData['image'] = $product->getMedias()->isEmpty() ? null : $product->getMedias()[0]->getName();
 
         // Adds productItem to basket
-        $productItems[$productItem->getId()] = [
+        $productItems[$type][$productItem->getId()] = [
             'productItem' => $productItemData,
             'product' => $productData,
             'quantity' => $quantity,
-            'totalVat' => $quantity * $productItem->getVat(),
+            'totalVat' => $quantity * $vat,
             'total' => $quantity * $productItem->getPrice(),
         ];
 

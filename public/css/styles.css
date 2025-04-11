@@ -298,14 +298,14 @@ tfoot th {
     margin: 20px auto;
 }
 
-.prev-icon img {
+.crowdfunding .prev-icon img {
     opacity: 0.5;
     width: 24px;
     height: 24px;
     filter: grayscale(70%);
 }
 
-.current-icon img {
+.crowdfunding .current-icon img {
     transform: scale(1.2);
     position: relative;
     z-index: 2;
@@ -315,11 +315,20 @@ tfoot th {
     filter: invert(78%) sepia(73%) saturate(3967%) hue-rotate(7deg) brightness(113%) contrast(106%);
 }
 
-.next-icon img {
+.crowdfunding .next-icon img {
     transition: all 0.3s ease;
     width: 32px;
     height: 32px;
     filter: invert(11%) sepia(98%) saturate(4648%) hue-rotate(159deg) brightness(87%) contrast(101%);
+}
+
+#news .cards h3 {
+    margin: 0 auto;
+}
+
+#contributors div,
+#news div {
+    width: 100%;
 }
 
 /* COMPONENTS */
@@ -362,9 +371,11 @@ tfoot th {
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.2);
     }
+
     100% {
         transform: scale(1);
     }

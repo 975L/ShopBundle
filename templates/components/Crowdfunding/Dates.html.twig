@@ -6,7 +6,7 @@
 {% set progressPercent = (elapsedDuration / totalDuration * 100)|round %}
 {% set progressPercent = progressPercent > 100 ? 100 : (progressPercent < 0 ? 0 : progressPercent) %}
 
-<section class="dates">
+<section id="dates">
     <h2>{{ 'label.dates'|trans({}, 'shop') }}</h2>
     <p><twig:c975LSite:Image:Icon src="bundles/c975lshop/images/calendar-check.svg" width="24" height="24"/> <strong>{{ beginDate|date('d/m/Y') }} - {{ endDate|date('d/m/Y') }}</strong></p>
     {% if daysLeft > 0 %}

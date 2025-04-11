@@ -1,6 +1,4 @@
-<twig:c975LSite:Card:Card id="contributor-{{ contributor.id }}" title="{{ contributor.name }}" class="product-contributor">
-    <div class="card-data">
-        <p>{{ contributor.name }}</p>
-        <p>{{ contributor.message }}</p>
-    </div>
-</twig:c975LSite:Card:Card>
+<div>
+    <p class="text-left">{{ contributor.message|raw }}</p>
+    <p class="text-right text-muted">{{ contributor.name }} {{ contributor.creation|date('d/m/Y') }}</p>
+</div>

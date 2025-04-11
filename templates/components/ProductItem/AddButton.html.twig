@@ -1,8 +1,9 @@
-{# <twig:c975LShop:Basket:AddButton productItem="{{ productItem }}" [type="primary"] [quantity="1"]/> #}
+{# <twig:c975LShop:ProductItem:AddButton productItem="{{ productItem }}" [type="primary"] [quantity="1"]/> #}
 {% set type = type | default('primary') %}
 {% set quantity = quantity | default(1) %}
 <button
     data-action="click->basket#addProductItem"
+    data-type="product"
     data-quantity="{{ quantity }}"
     data-product-item-id="{{ productItem.id }}"
     data-title="{{ productItem.title }}"

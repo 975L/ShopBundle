@@ -132,17 +132,6 @@ class BasketController extends AbstractController
         )->setMaxAge(3600);
     }
 
-    // DELETE
-    #[Route(
-        '/shop/basket',
-        name: 'basket_delete',
-        methods: ['DELETE']
-    )]
-    public function delete(): JsonResponse
-    {
-        return new JsonResponse($this->basketService->delete());
-    }
-
     // ADD PRODUCT ITEM
     #[Route(
         '/shop/basket',
@@ -163,5 +152,16 @@ class BasketController extends AbstractController
     public function remove(Request $request): JsonResponse
     {
         return new JsonResponse($this->basketService->deleteProductItem($request));
+    }
+
+    // DELETE
+    #[Route(
+        '/shop/basket',
+        name: 'basket_delete',
+        methods: ['DELETE']
+    )]
+    public function delete(): JsonResponse
+    {
+        return new JsonResponse($this->basketService->delete());
     }
 }

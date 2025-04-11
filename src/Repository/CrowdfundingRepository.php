@@ -40,10 +40,11 @@ class CrowdfundingRepository extends ServiceEntityRepository
     public function findOneBySlug(string $slug): ?Crowdfunding
     {
         return $this->createQueryBuilder('c')
-            ->select('c, cm, cn, cc, ccm, cct')
+            ->select('c, cm, cc, ccm, v, cn, cct')
             ->leftJoin('c.medias', 'cm')
             ->leftJoin('c.counterparts', 'cc')
             ->leftJoin('cc.media', 'ccm')
+            ->leftJoin('c.video', 'v')
             ->leftJoin('c.news', 'cn')
             ->leftJoin('c.contributors', 'cct')
             ->andWhere('c.slug = :slug')

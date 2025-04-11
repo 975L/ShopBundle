@@ -1,9 +1,11 @@
-<h2 id="news">{{ 'label.news'|trans({}, 'shop') }}</h2>
-<section class="news cards">
+<section id="news">
+    <h2>{{ 'label.news'|trans({}, 'shop') }}</h2>
     {% if newsCollection is not empty %}
-        {% for news in newsCollection %}
-            <twig:c975LShop:Crowdfunding:News news="{{ news }}"/>
-        {% endfor %}
+        <div class="cards">
+            {% for news in newsCollection %}
+                <twig:c975LShop:Crowdfunding:News news="{{ news }}"/>
+            {% endfor %}
+        </div>
     {% else %}
         <p class="text text-center lead">{{ 'label.no_news'|trans({}, 'shop') }}</p>
     {% endif %}

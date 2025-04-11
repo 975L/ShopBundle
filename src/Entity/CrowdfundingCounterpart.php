@@ -33,10 +33,10 @@ class CrowdfundingCounterpart
     private ?int $price = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $quantityAvailable = null;
+    private ?int $limitedQuantity = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $quantityTaken = null;
+    private ?int $orderedQuantity = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
@@ -58,6 +58,16 @@ class CrowdfundingCounterpart
 
     #[ORM\OneToOne(inversedBy: 'crowdfundingCounterpart', cascade: ['persist', 'remove'])]
     private ?CrowdfundingCounterpartMedia $media = null;
+
+    public function __toString()
+    {
+        return $this->title;
+    }
+
+    public function toArray()
+    {
+        return get_object_vars($this);
+    }
 
     public function getId(): ?int
     {
@@ -100,26 +110,26 @@ class CrowdfundingCounterpart
         return $this;
     }
 
-    public function getQuantityAvailable(): ?int
+    public function getLimitedQuantity(): ?int
     {
-        return $this->quantityAvailable;
+        return $this->limitedQuantity;
     }
 
-    public function setQuantityAvailable(?int $quantityAvailable): static
+    public function setLimitedQuantity(?int $limitedQuantity): static
     {
-        $this->quantityAvailable = $quantityAvailable;
+        $this->limitedQuantity = $limitedQuantity;
 
         return $this;
     }
 
-    public function getQuantityTaken(): ?int
+    public function getOrderedQuantity(): ?int
     {
-        return $this->quantityTaken;
+        return $this->orderedQuantity;
     }
 
-    public function setQuantityTaken(?int $quantityTaken): static
+    public function setOrderedQuantity(?int $orderedQuantity): static
     {
-        $this->quantityTaken = $quantityTaken;
+        $this->orderedQuantity = $orderedQuantity;
 
         return $this;
     }
