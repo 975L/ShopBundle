@@ -1,7 +1,7 @@
 <section class="items cards">
     {% if items is not empty %}
         {% for item in items %}
-            <twig:c975LShop:Product:Item item="{{ item }}"/>
+            <twig:c975LShop:Product:Item productItem="{{ item }}"/>
         {% endfor %}
     {% else %}
         <p class="text text-center lead">{{ 'label.no_item'|trans({}, 'shop') }}</p>

@@ -1,0 +1,7 @@
+{# <twig:c975LShop:Basket:AddRemoveButtons item="{{ item }}"/> #}
+<div class="quantity-controls">
+    <twig:c975LShop:Basket:DeleteButton type="{{ type }}" item="{{ item }}"/>
+    <twig:c975LShop:Basket:RemoveOneButton type="{{ type }}" item="{{ item }}"/>
+    <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24"/> <span class="quantity lead" data-basket-target="itemQuantity" data-item-id="{{ item.item.id }}">{{ quantity }}</span>
+    <twig:c975LShop:Basket:AddOneButton type="{{ type }}" item="{{ item }}"/>
+</div>

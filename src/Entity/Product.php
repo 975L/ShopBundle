@@ -46,11 +46,11 @@ class Product
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
-    #[ORM\OneToMany(targetEntity: ProductMedia::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: ProductMedia::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(["position" => "ASC"])]
     private Collection $medias;
 
-    #[ORM\OneToMany(targetEntity: ProductItem::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: ProductItem::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(["position" => "ASC"])]
     private Collection $items;
 

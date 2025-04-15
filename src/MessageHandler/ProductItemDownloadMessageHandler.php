@@ -22,7 +22,7 @@ class ProductItemDownloadMessageHandler
     public function __construct(
         private BasketRepository $basketRepository,
         private readonly EmailServiceInterface $emailService,
-        private ProductItemDownloadServiceInterface $productItemDownloadService
+        private ProductItemDownloadServiceInterface $itemDownloadService
     ) {}
 
     public function __invoke(ProductItemDownloadMessage $message): void
@@ -35,18 +35,18 @@ class ProductItemDownloadMessageHandler
 
         // Process all product items in the basket
         $downloadLinks = [];
-        foreach ($basket->getProductItems() as $id => $productItem) {
-            if (!empty($productItem['productItem']['file'])) {
-                $token = $this->productItemDownloadService->prepareFileForDownload(
+        foreach ($basket->getItems() as $id => $item) {
+            if (!empty($item['item']['file'])) {
+                $token = $this->itemDownloadService->prepareFileForDownload(
                     $basket->getId(),
                     $id,
-                    $productItem['productItem']['file']
+                    $item['item']['file']
                 );
 
                 $downloadLinks[$id] = [
-                    'title' => $productItem['product']['title'] . ' (' . $productItem['productItem']['title'] . ')',
+                    'title' => $item['product']['title'] . ' (' . $item['item']['title'] . ')',
                     'token' => $token,
-                    'size' => $productItem['productItem']['size'],
+                    'size' => $item['item']['size'],
                 ];
             }
         }

@@ -28,10 +28,6 @@ class ProductItem
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
-    #[ORM\ManyToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?ProductItemFile $file = null;
-
     #[ORM\Column(length: 50)]
     private ?string $title = null;
 
@@ -51,10 +47,15 @@ class ProductItem
     private ?float $vat = null;
 
     #[ORM\OneToOne(inversedBy: 'productItem', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?ProductItemFile $file = null;
+
+    #[ORM\OneToOne(inversedBy: 'productItem', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
     private ?ProductItemMedia $media = null;
 
-    #[ORM\ManyToOne(inversedBy: 'items', cascade: ['persist'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'items')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Product $product = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -63,7 +64,7 @@ class ProductItem
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $modification = null;
 
-    #[ORM\ManyToOne(inversedBy: 'productMedias')]
+    #[ORM\ManyToOne(inversedBy: 'productItems')]
     private ?User $user = null;
 
     public function __toString()

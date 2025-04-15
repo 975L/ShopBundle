@@ -1,10 +1,17 @@
 # Changelog
 
+## v0.24
+
+- Corrected relations in entities (15/04/2025)
+- Added relation Counterpart -> Contributor (15/04/2025)
+- Renamed parts of ProductItems to items as strategy has changed to use a type of items (15/04/2025)
+
 ## v0.23
 
 - Removed tables for media/file and made use of only one (11/04/2025)
 - Added EasyAdmin CRUD controllers for crowdfundings (11/04/2025)
 - Made use of a ShopMediaNamer (11/04/2025)
+- Removed MediaTrait and use of VichUploader to resize image (11/04/2025)
 
 ## v0.22
 

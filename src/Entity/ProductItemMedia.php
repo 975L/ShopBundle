@@ -23,8 +23,7 @@ class ProductItemMedia extends Media
     #[Vich\UploadableField(mapping: 'productItems', fileNameProperty: 'name', size: 'size')]
     protected ?File $file = null;
 
-    #[ORM\ManyToOne(targetEntity: ProductItem::class, inversedBy: 'medias')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(mappedBy: 'media')]
     private ?ProductItem $productItem = null;
 
     public function getMappingName(): string

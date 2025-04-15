@@ -14,7 +14,7 @@ class CrowdfundingVideo extends Media
     #[Vich\UploadableField(mapping: 'crowdfundings', fileNameProperty: 'name', size: 'size')]
     protected ?File $file = null;
 
-    #[ORM\OneToOne(inversedBy: 'video', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'video')]
     private ?Crowdfunding $crowdfunding = null;
 
     public function getMappingName(): string

@@ -496,8 +496,8 @@
                 <target>Remaining quantity</target>
             </trans-unit>
             <trans-unit id="124">
-                <source>label.i_participate</source>
-                <target>I participate!</target>
+                <source>label.i_contribute</source>
+                <target>I contribute!</target>
             </trans-unit>
             <trans-unit id="125">
                 <source>label.expected_delivery</source>

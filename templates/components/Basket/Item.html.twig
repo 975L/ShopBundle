@@ -1,0 +1,30 @@
+{# <twig:c975LShop:Basket:Item item="{{ item }}" quantity="{{ item.quantity }}" total="{{ item.total }}" type="simple|complex"  readonly="{{ readonly }}"/> #}
+<tr class="text-center" id="item-{{ type }}-{{ item.item.id }}" data-type="{{ type }}" data-item-id="{{ item.item.id }}">
+    {# Image and Title #}
+    <td>
+        {% set imageSrc = item.item.media != null ? item.item.media : "bundles/c975lshop/images/no-product-image.webp" %}
+        {% set imageSrc = item.product.image != false ? item.product.image : imageSrc %}
+        <twig:c975LSite:Image:Link src="{{ asset(imageSrc) }}" url="{{ url('product_display', {'slug': item.product.slug}) }}#{{ item.item.slug }}" class="img-shadow img-product" width="100" height="auto"/>
+        <p>
+            <a href="{{ url('product_display', {'slug': item.product.slug}) }}#{{ item.item.slug }}">
+                {{ item.product.title }}
+                <br>
+                ({{ item.item.title }})
+            </a>
+        </p>
+    </td>
+    {# Price and Quantity #}
+    <td>
+        <twig:c975LShop:Basket:Price item="{{ item.item }}" type="{{ type }}"/>
+        <twig:c975LShop:Product:Digital file="{{ item.item.file }}"/>
+        {% if readonly == "false" %}
+            <br>
+            <twig:c975LShop:Basket:AddRemoveButtons type="{{ type }}" item="{{ item }}" quantity="{{ quantity }}"/>
+        {% else %}
+            <br>
+            <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24"/> <span class="quantity lead" data-basket-target="itemQuantity" data-item-id="{{ item.item.id }}">{{ quantity }}</span>
+        {% endif %}
+        <br>
+        <twig:c975LShop:Basket:Total item="{{ item.item }}" total="{{ total }}" totalVat="{{ totalVat }}" type="{{ type }}"/>
+    </td>
+</tr>

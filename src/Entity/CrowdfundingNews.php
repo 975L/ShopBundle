@@ -38,7 +38,8 @@ class CrowdfundingNews
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $modification = null;
 
-    #[ORM\ManyToOne(inversedBy: 'news')]
+    #[ORM\ManyToOne(targetEntity: Crowdfunding::class, inversedBy: 'news')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Crowdfunding $crowdfunding = null;
 
     public function getId(): ?int

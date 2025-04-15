@@ -3,7 +3,7 @@ import translationsEn from "./translations.en.js";
 import translationsFr from "./translations.fr.js";
 
 export default class extends Controller {
-    static targets = [ "quantity", "total", "message", "shipping", "submitButton", "productItemTotal", "productItemQuantity" ];
+    static targets = [ "quantity", "total", "message", "shipping", "submitButton", "itemTotal", "itemQuantity" ];
     static basketDataPromise = null; // Store the fetch promise for reuse
     static lastFetchTime = 0;
     static CACHE_DURATION = 5000; // Cache duration in ms
@@ -87,8 +87,8 @@ export default class extends Controller {
         });
     }
 
-    // Adds a quantity of productItem to the basket
-    addProductItem(event) {
+    // Adds a quantity of item to the basket
+    addItem(event) {
         // Adds an animation to the clicked button
         this.animation(event.currentTarget);
 
@@ -96,8 +96,8 @@ export default class extends Controller {
         this.fetchData(event.currentTarget);
     }
 
-    // Removes a quantity of productItem from the basket
-    removeProductItem(event) {
+    // Removes a quantity of item from the basket
+    removeItem(event) {
         // Adds an animation to the clicked button
         this.animation(event.currentTarget);
 
@@ -105,16 +105,17 @@ export default class extends Controller {
         this.fetchData(event.currentTarget);
     }
 
-    // Deletes completely a productItem
-    deleteProductItem(event) {
+    // Deletes completely a item
+    deleteItem(event) {
         // Store event data before the asynchronous call
         const target = event.currentTarget;
 
         fetch("/shop/basket/delete", {
             method: "DELETE",
             body: JSON.stringify({
-                id: event.currentTarget.dataset.productItemId,
+                id: event.currentTarget.dataset.itemId,
                 quantity: 0,
+                type: target.dataset.type,
             }),
             headers: {
                 "Content-Type": "application/json",
@@ -144,9 +145,9 @@ export default class extends Controller {
         fetch("/shop/basket", {
             method: "POST",
             body: JSON.stringify({
-                id: target.dataset.productItemId,
+                id: target.dataset.itemId,
                 quantity: target.dataset.quantity,
-                type: target.dataset.type || 'product', // 'product' ou 'counterpart'
+                type: target.dataset.type,
             }),
             headers: {
                 "Content-Type": "application/json",
@@ -233,43 +234,53 @@ export default class extends Controller {
             return;
         }
 
-        this.removeDeletedProductItems(data);
-        this.updateExistingProductItems(data);
-        this.updateBasketTotals(data);
-        this.updateSubmitButton(data);
-
-        // Reloads the page if the basket is empty
+        // Display empty basket template if total is 0
         if (data.basket.total === 0) {
-            window.location.reload();
-        }
-    }
+            const template = document.getElementById('empty-basket-template');
+            basketPage.innerHTML = template.innerHTML;
 
-    // Removes productItems that are no longer in the basket
-    removeDeletedProductItems(data) {
-        if (!data.basket || !data.basket.productItems) {
             return;
         }
 
-        const currentProductItemIds = Object.keys(data.basket.productItems);
-        const productItemRows = document.querySelectorAll("tr[id^=\"productItem-\"]");
+        this.removeDeletedItems(data);
+        this.updateExistingItems(data);
+        this.updateBasketTotals(data);
+        this.updateSubmitButton(data);
+    }
 
-        productItemRows.forEach((row) => {
-            const productItemId = row.id.replace("productItem-", "");
-            if (!currentProductItemIds.includes(productItemId)) {
+    // Removes items that are no longer in the basket
+    removeDeletedItems(data) {
+        if (!data.basket || !data.basket.items) {
+            return;
+        }
+
+        const itemPairs = [];
+        Object.keys(data.basket.items).forEach(type => {
+            Object.keys(data.basket.items[type]).forEach(id => {
+                itemPairs.push(`${type}-${id}`);
+            });
+        });
+
+        const itemRows = document.querySelectorAll("tr[id^=\"item-\"]");
+        itemRows.forEach((row) => {
+            const type = row.getAttribute('data-type');
+            const itemId = row.getAttribute('data-item-id');
+
+            if (!itemPairs.includes(`${type}-${itemId}`)) {
                 row.classList.add("fade-out");
                 setTimeout(() => row.remove(), 100);
             }
         });
     }
 
-    // Updates existing productItems
-    updateExistingProductItems(data) {
-        if (!data.basket || !data.basket.productItems) {
+    // Updates existing items
+    updateExistingItems(data) {
+        if (!data.basket || !data.basket.items) {
             return;
         }
 
-        Object.entries(data.basket.productItems).forEach(([productItemId, productItemData]) => {
-            this.updateProductItemRow(productItemId, productItemData);
+        Object.entries(data.basket.items).forEach(([itemId, itemData]) => {
+            this.updateItemRow(itemId, itemData);
         });
     }
 
@@ -313,20 +324,20 @@ export default class extends Controller {
         this.submitButtonTarget.value = `${label} ${total}`;
     }
 
-    // Updates a single productItem row
-    updateProductItemRow(productItemId, productItemData) {
-        const productItemTotalElement = this.productItemTotalTargets.find(
-            (target) => target.dataset.productItemId === productItemId
+    // Updates a single item row
+    updateItemRow(itemId, itemData) {
+        const itemTotalElement = this.itemTotalTargets.find(
+            (target) => target.dataset.itemId === itemId
         );
-        if (productItemTotalElement) {
-            productItemTotalElement.textContent = (productItemData.total / 100).toFixed(2) + this.getCurrencySymbol(productItemData.productItem.currency);
+        if (itemTotalElement) {
+            itemTotalElement.textContent = (itemData.total / 100).toFixed(2) + this.getCurrencySymbol(itemData.item.currency);
         }
 
-        const productItemQuantityElement = this.productItemQuantityTargets.find(
-            (target) => target.dataset.productItemId === productItemId
+        const itemQuantityElement = this.itemQuantityTargets.find(
+            (target) => target.dataset.itemId === itemId
         );
-        if (productItemQuantityElement) {
-            productItemQuantityElement.textContent = productItemData.quantity;
+        if (itemQuantityElement) {
+            itemQuantityElement.textContent = itemData.quantity;
         }
     }
 
@@ -392,12 +403,12 @@ export default class extends Controller {
 
     // Update product buttons with basket data
     updateProductButtons(data) {
-        if (!data?.basket?.productItems) {
+        if (!data?.basket?.items) {
             return;
         }
 
         // Retrieve all add to cart buttons on the page
-        const addButtons = document.querySelectorAll("[data-action='click->basket#addProductItem']");
+        const addButtons = document.querySelectorAll("[data-action='click->basket#addItem']");
 
         // If no buttons, stop here
         if (!addButtons.length) {
@@ -406,19 +417,20 @@ export default class extends Controller {
 
         // For each add button
         addButtons.forEach((button) => {
-            const productItemId = button.dataset.productItemId;
+            const type = button.dataset.type;
+            const itemId = button.dataset.itemId;
 
-            // Updates quantity if productItem is in the basket
-            if (productItemId && data.basket.productItems[productItemId]) {
-                const quantity = data.basket.productItems[productItemId].quantity;
+            // Updates quantity if item is in the basket
+            if (type && itemId && data.basket.items[type][itemId]) {
+                const quantity = data.basket.items[type][itemId].quantity;
                 if (quantity > 0) {
-                    const quantityElement = document.querySelector(`.quantity[data-product-item-id="${productItemId}"]`);
+                    const quantityElement = document.querySelector(`.quantity[data-item-id="${itemId}"]`);
                     if (quantityElement && quantityElement.classList.contains("quantity")) {
                         quantityElement.textContent = `${quantity}`;
                     }
 
                     // Disable the button for digital item and quantity = 1
-                    if (data.basket.productItems[productItemId].productItem.file !== null && quantity >= 1) {
+                    if (data.basket.items[type][itemId].item.file !== null && quantity >= 1) {
                         button.setAttribute("disabled", "disabled");
                     }
                 }
