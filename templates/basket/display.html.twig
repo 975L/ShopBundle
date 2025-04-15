@@ -31,6 +31,11 @@
         <p class="text text-center lead">{{ 'label.basket_empty'|trans({}, 'shop') }}</p>
         <twig:c975LShop:Shop:ViewButton/>
     {% endif %}
+    {# Empty basket for javascript use #}
+    <template id="empty-basket-template">
+        <p class="text text-center lead">{{ 'label.basket_empty'|trans({}, 'shop') }}</p>
+        <twig:c975LShop:Shop:ViewButton/>
+    </template>
 {% endblock %}
 
 {% block share %}

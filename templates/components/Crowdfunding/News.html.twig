@@ -1,5 +1,5 @@
 <div>
     <h3 id="news-{{ news.id }}">{{ news.title }}</h3>
+    <p><strong>{{ news.publishedDate|date('d/m/Y') }}</strong></p>
     <p class="text-left">{{ news.content|raw }}</p>
-    <p class="text-right text-muted">{{ news.publishedDate|date('d/m/Y') }}</p>
 </div>

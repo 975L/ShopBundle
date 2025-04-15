@@ -1,19 +1,19 @@
-<twig:c975LSite:Card:Card id="{{ item.slug }}" title="{{ item.title }}" class="product-item">
+<twig:c975LSite:Card:Card id="{{ productItem.slug }}" title="{{ productItem.title }}" class="product-item">
     <div>
-        {% if item.media != null and item.media.name != null %}
+        {% if productItem.media != null and productItem.media.name != null %}
             <div class="card-img">
-                <twig:c975LSite:Image:Image src="{{ item.media.name }}" class="img-shadow" width="100" height="auto"/>
-                <twig:c975LShop:Product:Icon item="{{ item }}"/>
+                <twig:c975LSite:Image:Image src="{{ productItem.media.name }}" class="img-shadow" width="100" height="auto"/>
+                <twig:c975LShop:Product:Icon productItem="{{ productItem }}"/>
             </div>
         {% endif %}
         <div class="card-data">
-            <p>{{ item.description }}</p>
-            <p class="price">{{ (item.price / 100)|format_currency(item.currency) }}</p>
-            <twig:c975LShop:Product:Digital file="{{ item.file.name }}"/>
+            <p>{{ productItem.description }}</p>
+            <p class="price">{{ (productItem.price / 100)|format_currency(productItem.currency) }}</p>
+            <twig:c975LShop:Product:Digital file="{{ productItem.file.name }}"/>
             <p>
-                <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24"/> <span class="quantity lead" data-basket-target="productItemQuantity" data-product-item-id="{{ item.id }}">0</span>
+                <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24"/> <span class="quantity lead" data-basket-target="itemQuantity" data-item-id="{{ productItem.id }}">0</span>
             </p>
         </div>
     </div>
-    <twig:c975LShop:ProductItem:AddButton productItem="{{ item }}"/>
+    <twig:c975LShop:ProductItem:AddButton productItem="{{ productItem }}"/>
 </twig:c975LSite:Card:Card>

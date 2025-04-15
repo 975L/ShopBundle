@@ -2,13 +2,13 @@
 {% set type = type | default('primary') %}
 {% set quantity = quantity | default(1) %}
 <button
-    data-action="click->basket#addProductItem"
+    data-action="click->basket#addItem"
     data-type="counterpart"
     data-quantity="{{ quantity }}"
-    data-product-item-id="{{ crowdfundingCounterpart.id }}"
+    data-item-id="{{ crowdfundingCounterpart.id }}"
     data-title="{{ crowdfundingCounterpart.title }}"
     data-alert="success"
     data-text="{{ 'label.added'|trans({}, 'shop') }}"
     class="btn btn-large btn-{{ type }}">
-    <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-grin.svg" width="24" height="24" class="white"/> {{ 'label.i_participate'|trans({}, 'shop') }}
+    <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-grin.svg" width="24" height="24" class="white"/> {{ 'label.i_contribute'|trans({}, 'shop') }}
 </button>

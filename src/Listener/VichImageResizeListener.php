@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Listener;
 
+use SplFileInfo;
 use Imagine\Image\Box;
 use Imagine\Gd\Imagine;
 use Vich\UploaderBundle\Event\Event;
@@ -28,10 +29,13 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 #[AsEventListener(event: 'vich_uploader.post_upload', method: 'onPostUpload')]
 class VichImageResizeListener implements EventSubscriberInterface
 {
+    private Filesystem $filesystem;
+
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
         private readonly EntityManagerInterface $entityManager,
     ) {
+        $this->filesystem = new Filesystem();
     }
 
     public static function getSubscribedEvents()
@@ -48,57 +52,86 @@ class VichImageResizeListener implements EventSubscriberInterface
         $filename = $mapping->getFileName($entity);
         $absolutePath = $this->parameterBag->get('kernel.project_dir') . '/public/' . $filename;
 
-        if (!file_exists($absolutePath)) {
+        if (!$this->filesystem->exists($absolutePath)) {
             return;
         }
 
         $extension = $entity->getFile()->getExtension();
+
+        // Process images
         if (in_array($extension, ['jpg', 'png', 'gif', 'webp'])) {
-            // ProductMedia - CrowdfundingMedia
-            if ($entity instanceof ProductMedia || $entity instanceof CrowdfundingMedia) {
-                $width = 400;
-            // ProductItemMedia - CrowdfundingCounterpartMedia
-            } elseif ($entity instanceof ProductItemMedia || $entity instanceof CrowdfundingCounterpartMedia) {
-                $width = 200;
-            }
-
-            // Resizes image file
-            $format = 'webp';
-            $imagine = new Imagine();
-            $media = $imagine->open($absolutePath);
-            $size = $media->getSize();
-            $originalHeight = $size->getHeight();
-            $originalWidth = $size->getWidth();
-
-            $height = (int) ($originalHeight * $width / $originalWidth);
-            $media
-                ->resize(new Box($width, $height))
-                ->save($absolutePath, ['format' => $format])
-            ;
-
-            // Updates entity
-            if (method_exists($entity, 'setSize')) {
-                $newFileSize = filesize($absolutePath);
-                $entity->setSize($newFileSize);
-
-                $this->entityManager->persist($entity);
-                $this->entityManager->flush();
-            }
-
+            $this->processImage($entity, $absolutePath);
             return;
         }
 
-        // Moves ProductItemFile to private folder
+        // Process private files
         if ($entity instanceof ProductItemFile) {
-            $filename = $entity->getName();
-            if (file_exists($filename)) {
-                $publicPath = $this->parameterBag->get('kernel.project_dir') . '/public/' . $filename;
-                $privatePath = $this->parameterBag->get('kernel.project_dir') . '/private/' . $filename;
-
-                $filesystem = new Filesystem();
-                $filesystem->copy($publicPath, $privatePath, true);
-                $filesystem->remove($publicPath);
-            }
+            $this->moveFileToPrivate($entity);
         }
+    }
+
+    // Resize and save the image
+    private function processImage($entity, string $absolutePath): void
+    {
+        // Gets the width for the entity
+        $width = $this->getWidthForEntity($entity);
+
+        // Resizes the image
+        $format = 'webp';
+        $imagine = new Imagine();
+        $media = $imagine->open($absolutePath);
+        $size = $media->getSize();
+        $height = (int) ($size->getHeight() * $width / $size->getWidth());
+
+        $media
+            ->resize(new Box($width, $height))
+            ->save($absolutePath, ['format' => $format])
+        ;
+
+        $this->updateEntitySize($entity);
+    }
+
+    // Gets the width for the entity
+    private function getWidthForEntity($entity): int
+    {
+        if ($entity instanceof ProductMedia || $entity instanceof CrowdfundingMedia) {
+            return 400;
+        }
+
+        if ($entity instanceof ProductItemMedia || $entity instanceof CrowdfundingCounterpartMedia) {
+            return 200;
+        }
+
+        return 400;
+    }
+
+    // Updates the size of the entity
+    private function updateEntitySize($entity): void
+    {
+        if (method_exists($entity, 'setSize')) {
+            $file = new SplFileInfo($filePath);
+            $entity->setSize($file->getSize());
+            $this->entityManager->persist($entity);
+        }
+    }
+
+    // Moves the file to the private directory
+    private function moveFileToPrivate(ProductItemFile $entity): void
+    {
+        $filename = $entity->getName();
+
+        if (!$this->filesystem->exists($filename)) {
+            return;
+        }
+
+        $publicPath = $this->parameterBag->get('kernel.project_dir') . '/public/' . $filename;
+        $privatePath = $this->parameterBag->get('kernel.project_dir') . '/private/' . $filename;
+
+        // Ensure the private directory exists
+        $this->filesystem->mkdir(dirname($privatePath), 0755);
+
+        // Copy the file to the private directory and remove the public one
+        $this->filesystem->copy($publicPath, $privatePath, true);
+        $this->filesystem->remove($publicPath);
     }
 }

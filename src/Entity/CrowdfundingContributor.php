@@ -10,9 +10,11 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use c975L\ShopBundle\Repositiry\CrowdfundingContributorRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use c975L\ShopBundle\Entity\Crowdfunding;
+use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
+use c975L\ShopBundle\Repositiry\CrowdfundingContributorRepository;
 
 #[ORM\Entity(repositoryClass: CrowdfundingContributorRepository::class)]
 #[ORM\Table(name: 'shop_crowdfunding_contributor')]
@@ -32,17 +34,19 @@ class CrowdfundingContributor
     #[ORM\Column(length: 100)]
     private ?string $email = null;
 
-    #[ORM\Column]
-    private ?int $amount = null;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $modification = null;
 
-    #[ORM\ManyToOne(inversedBy: 'contributors')]
+    #[ORM\ManyToOne(targetEntity: Crowdfunding::class, inversedBy: 'contributors')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Crowdfunding $crowdfunding = null;
+
+    #[ORM\ManyToOne(targetEntity: CrowdfundingCounterpart::class, inversedBy: 'contributors')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?CrowdfundingCounterpart $crowdfundingCounterpart = null;
 
     public function getId(): ?int
     {
@@ -85,18 +89,6 @@ class CrowdfundingContributor
         return $this;
     }
 
-    public function getAmount(): ?int
-    {
-        return $this->amount;
-    }
-
-    public function setAmount(int $amount): static
-    {
-        $this->amount = $amount;
-
-        return $this;
-    }
-
     public function getCreation(): ?\DateTimeInterface
     {
         return $this->creation;
@@ -129,6 +121,18 @@ class CrowdfundingContributor
     public function setCrowdfunding(?Crowdfunding $crowdfunding): static
     {
         $this->crowdfunding = $crowdfunding;
+
+        return $this;
+    }
+
+    public function getCrowdfundingCounterpart(): ?CrowdfundingCounterpart
+    {
+        return $this->crowdfundingCounterpart;
+    }
+
+    public function setCrowdfundingCounterpart(?CrowdfundingCounterpart $crowdfundingCounterpart): static
+    {
+        $this->crowdfundingCounterpart = $crowdfundingCounterpart;
 
         return $this;
     }

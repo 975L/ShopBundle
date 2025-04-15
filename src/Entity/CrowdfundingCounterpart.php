@@ -13,6 +13,8 @@ namespace c975L\ShopBundle\Entity;
 use c975L\ShopBundle\Repositiry\CrowdfundingCounterpartRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: CrowdfundingCounterpartRepository::class)]
 #[ORM\Table(name: 'shop_crowdfunding_counterpart')]
@@ -53,11 +55,21 @@ class CrowdfundingCounterpart
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $modification = null;
 
-    #[ORM\ManyToOne(inversedBy: 'counterparts')]
+    #[ORM\ManyToOne(targetEntity: Crowdfunding::class, inversedBy: 'counterparts')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Crowdfunding $crowdfunding = null;
+
+    #[ORM\OneToMany(targetEntity: CrowdfundingContributor::class, mappedBy: 'crowdfundingCounterpart', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $contributors;
 
     #[ORM\OneToOne(inversedBy: 'crowdfundingCounterpart', cascade: ['persist', 'remove'])]
     private ?CrowdfundingCounterpartMedia $media = null;
+
+    public function __construct()
+    {
+        $this->contributors = new ArrayCollection();
+    }
 
     public function __toString()
     {
@@ -202,6 +214,36 @@ class CrowdfundingCounterpart
     public function setCrowdfunding(?Crowdfunding $crowdfunding): static
     {
         $this->crowdfunding = $crowdfunding;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CrowdfundingContributor>
+     */
+    public function getContributors(): Collection
+    {
+        return $this->contributors;
+    }
+
+    public function addContributor(CrowdfundingContributor $contributor): static
+    {
+        if (!$this->contributors->contains($contributor)) {
+            $this->contributors->add($contributor);
+            $contributor->setCrowdfunding($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContributor(CrowdfundingContributor $contributor): static
+    {
+        if ($this->contributors->removeElement($contributor)) {
+            // set the owning side to null (unless already changed)
+            if ($contributor->getCrowdfunding() === $this) {
+                $contributor->setCrowdfunding(null);
+            }
+        }
 
         return $this;
     }

@@ -2,9 +2,11 @@
 {% trans_default_domain 'shop' %}
 {% if basket.total > 0 %}
     <table>
-        {# ProductItems #}
-        {% for productItem in basket.productItems %}
-            <twig:c975LShop:Basket:ProductItem productItem="{{ productItem }}" quantity="{{ productItem.quantity }}" total="{{ productItem.total }}" totalVat="{{ productItem.totalVat }}" type="{{ type }}" readonly="{{ readonly }}"/>
+        {# Items #}
+        {% for type, items in basket.items %}
+            {% for item in items %}
+                <twig:c975LShop:Basket:Item type="{{ type }}" item="{{ item }}" quantity="{{ item.quantity }}" total="{{ item.total }}" totalVat="{{ item.totalVat }}" type="{{ type }}" readonly="{{ readonly }}"/>
+            {% endfor %}
         {% endfor %}
         {# Frais de port #}
             <tr class="shipping">

@@ -1,0 +1,18 @@
+{# <twig:c975LShop:Basket:AddOneButton item="{{ item }}" [type="primary"]/> #}
+{% set type = type | default('primary') %}
+{% set disabled = "" %}
+{% if null != item.item.file %}
+    {% set disabled = "disabled" %}
+{% endif %}
+<button
+    data-action="click->basket#addItem"
+    data-type="{{ type }}"
+    data-quantity="1"
+    data-item-id="{{ item.item.id }}"
+    data-title="{{ item.product.title ~ ' (' ~ item.item.title ~')' }}"
+    data-alert="success"
+    data-text="{{ 'label.added'|trans({}, 'shop') }}"
+    class="btn btn-{{ type }} btn-small lead"
+    {{ disabled }}>
+    +
+</button>

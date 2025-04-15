@@ -67,19 +67,19 @@ class Crowdfunding
     #[ORM\OneToOne(inversedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
     private ?CrowdfundingVideo $video = null;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingMedia::class, mappedBy: 'crowdfunding')]
+    #[ORM\OneToMany(targetEntity: CrowdfundingMedia::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $medias;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingContributor::class, mappedBy: 'crowdfunding')]
+    #[ORM\OneToMany(targetEntity: CrowdfundingContributor::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $contributors;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingNews::class, mappedBy: 'crowdfunding')]
+    #[ORM\OneToMany(targetEntity: CrowdfundingNews::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['publishedDate' => 'DESC'])]
     private Collection $news;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingCounterpart::class, mappedBy: 'crowdfunding')]
+    #[ORM\OneToMany(targetEntity: CrowdfundingCounterpart::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['price' => 'ASC'])]
     private Collection $counterparts;
 

@@ -1,11 +1,16 @@
 <?php
 
+/*
+ * (c) 2025: 975L <contact@975l.com>
+ * (c) 2025: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace c975L\ShopBundle\Namer;
 
-use SplFileInfo;
-use Imagine\Image\Box;
-use Imagine\Gd\Imagine;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Entity\ProductItemFile;
 use c975L\ShopBundle\Entity\ProductItemMedia;
@@ -19,54 +24,80 @@ class ShopMediaNamer implements NamerInterface
 {
     const SHOP_ROOT = 'medias/shop';
 
+    private Filesystem $filesystem;
+
     public function __construct(
         private readonly ParameterBagInterface $parameterBag
     ) {
+        $this->filesystem = new Filesystem();
     }
 
     public function name($entity, PropertyMapping $mapping): string
     {
         $filePath = $entity->getFile()->getPathname();
-        if (file_exists($filePath)) {
-            $file = $mapping->getFile($entity);
 
-            $mimeType = $file->getMimeType();
-            $extension = $file->getExtension();
-            if ('image/jpeg' === $mimeType || 'image/jpg' === $mimeType) {
-                $extension = 'jpg';
-            } elseif ('image/png' === $mimeType) {
-                $extension = 'png';
-            } elseif ('image/gif' === $mimeType) {
-                $extension = 'gif';
-            } elseif ('image/webp' === $mimeType) {
-                $extension = 'webp';
-            }
-
-            // Changes to webp for images files
-            if (in_array($extension, ['jpg', 'png', 'gif', 'webp'])) {
-                $extension = 'webp';
-            }
-
-            // ProductMedia
-            if ($entity instanceof ProductMedia) {
-                $filename = '/products/' . $entity->getProduct()->getSlug();
-            // CrowdfundingMedia
-            } elseif ($entity instanceof CrowdfundingMedia) {
-                $filename = '/crowdfundings/' . $entity->getCrowdfunding()->getSlug();
-            // ProductItemMedia
-            } elseif ($entity instanceof ProductItemMedia) {
-                $filename = '/items/' . $entity->getProductItem()->getProduct()->getSlug() . '-' . $entity->getProductItem()->getSlug();
-            // ProductItemFile
-            } elseif ($entity instanceof ProductItemFile) {
-                $filename = '/items/' . $entity->getProductItem()->getProduct()->getSlug() . '-' . $entity->getProductItem()->getSlug();
-            // CrowdfundingCounterpartMedia
-            } elseif ($entity instanceof CrowdfundingCounterpartMedia) {
-                $filename = '/items/' . $entity->getCrowdfundingCounterpart()->getCrowdfunding()->getSlug() . '-' . $entity->getCrowdfundingCounterpart()->getSlug();
-            }
-
-            $extension = '' === $extension ? $entity->getFile()->getClientOriginalExtension() : $extension;
-
-            return self::SHOP_ROOT . $filename . '-' . uniqid() . '.' . $extension;
+        if (!$this->filesystem->exists($filePath)) {
+            throw new \RuntimeException('File not found: ' . $filePath);
         }
+
+        $file = $mapping->getFile($entity);
+        $extension = $this->determineExtension($file);
+        $filename = $this->getEntityPath($entity);
+
+        return self::SHOP_ROOT . $filename . '-' . uniqid() . '.' . $extension;
+    }
+
+
+    // Determine file extension based on mime type
+    private function determineExtension(\Symfony\Component\HttpFoundation\File\File $file): string
+    {
+        $mimeType = $file->getMimeType();
+        $extension = $file->getExtension();
+
+        // Determine the extension based on mime type
+        if ('image/jpeg' === $mimeType || 'image/jpg' === $mimeType) {
+            $extension = 'jpg';
+        } elseif ('image/png' === $mimeType) {
+            $extension = 'png';
+        } elseif ('image/gif' === $mimeType) {
+            $extension = 'gif';
+        } elseif ('image/webp' === $mimeType) {
+            $extension = 'webp';
+        }
+
+        // Converts to webp if the mime type is an image
+        if (in_array($extension, ['jpg', 'png', 'gif', 'webp'])) {
+            return 'webp';
+        }
+
+        // Fallback to the original extension
+        return $extension ?: $file->getClientOriginalExtension();
+    }
+
+    // Get path segment based on entity type
+    private function getEntityPath($entity): string
+    {
+        if ($entity instanceof ProductMedia) {
+            return '/products/' . $entity->getProduct()->getSlug();
+        }
+
+        if ($entity instanceof ProductItemMedia) {
+            return '/items/' . $entity->getProductItem()->getProduct()->getSlug() . '-' . $entity->getProductItem()->getSlug();
+        }
+
+        if ($entity instanceof ProductItemFile) {
+            return '/items/' . $entity->getProductItem()->getProduct()->getSlug() . '-' . $entity->getProductItem()->getSlug();
+        }
+
+        if ($entity instanceof CrowdfundingMedia) {
+            return '/crowdfundings/' . $entity->getCrowdfunding()->getSlug();
+        }
+
+        if ($entity instanceof CrowdfundingCounterpartMedia) {
+            return '/crowdfundings/' . $entity->getCrowdfundingCounterpart()->getCrowdfunding()->getSlug() . '-' . $entity->getCrowdfundingCounterpart()->getSlug();
+        }
+
+        // Fallback pour les types non pris en charge
+        return '/misc';
     }
 }

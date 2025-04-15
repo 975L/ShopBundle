@@ -140,7 +140,7 @@ class BasketController extends AbstractController
     )]
     public function add(Request $request): JsonResponse
     {
-        return new JsonResponse($this->basketService->addProductItem($request));
+        return new JsonResponse($this->basketService->addItem($request));
     }
 
     // DELETE PRODUCT ITEM
@@ -151,7 +151,7 @@ class BasketController extends AbstractController
     )]
     public function remove(Request $request): JsonResponse
     {
-        return new JsonResponse($this->basketService->deleteProductItem($request));
+        return new JsonResponse($this->basketService->deleteItem($request));
     }
 
     // DELETE

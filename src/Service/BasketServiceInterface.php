@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 interface BasketServiceInterface
 {
-    public function addProductItem(Request $request): array;
+    public function addItem(Request $request): array;
 
     public function create(): Basket;
 
@@ -30,9 +30,9 @@ interface BasketServiceInterface
 
     public function deleteUnvalidated(): void;
 
-    public function deleteProductItem(Request $request): array;
+    public function deleteItem(Request $request): array;
 
-    public function defineProductItem(array $productItems, string $type, $productItem, int $quantity): array;
+    public function defineItem(array $items, string $type, $item, int $quantity): array;
 
     public function generateSecurityToken(): string;
 

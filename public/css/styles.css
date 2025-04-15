@@ -331,6 +331,20 @@ tfoot th {
     width: 100%;
 }
 
+#contributors .cards div,
+#news .cards div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 320px;
+    padding: 10px;
+    box-shadow: var(--box-shadow);
+}
+
+#news .cards div {
+    max-width: 640px;
+}
+
 /* COMPONENTS */
 .shop-shipping,
 .shop-information,
