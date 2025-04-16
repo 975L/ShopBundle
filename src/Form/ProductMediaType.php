@@ -14,6 +14,7 @@ use Symfony\Component\Form\AbstractType;
 use c975L\ShopBundle\Entity\ProductMedia;
 use Symfony\Component\Form\FormBuilderInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
@@ -30,6 +31,15 @@ class ProductMediaType extends AbstractType
             ])
             ->add('file', VichImageType::class, [
                 'label' => 'Media',
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => true,
+                'asset_helper' => true,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '20M',
+                    ])
+                ],
             ])
         ;
     }
@@ -38,6 +48,7 @@ class ProductMediaType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ProductMedia::class,
+            'translation_domain' => 'shop'
         ]);
     }
 }

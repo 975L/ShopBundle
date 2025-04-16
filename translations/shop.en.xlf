@@ -503,6 +503,26 @@
                 <source>label.expected_delivery</source>
                 <target>Expected delivery</target>
             </trans-unit>
+            <trans-unit id="126">
+                <source>label.links</source>
+                <target>Links</target>
+            </trans-unit>
+            <trans-unit id="127">
+                <source>label.user</source>
+                <target>User</target>
+            </trans-unit>
+            <trans-unit id="128">
+                <source>label.begin_date</source>
+                <target>Begin date</target>
+            </trans-unit>
+            <trans-unit id="129">
+                <source>label.end_date</source>
+                <target>End date</target>
+            </trans-unit>
+            <trans-unit id="130">
+                <source>label.amount_achieved</source>
+                <target>Amount achieved</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

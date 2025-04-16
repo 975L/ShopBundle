@@ -30,7 +30,7 @@ class ProductItemFileType extends AbstractType
                 'asset_helper' => true,
                 'constraints' => [
                     new File([
-                        'maxSize' => '50M',
+                        'maxSize' => '200M',
                     ])
                 ],
             ])

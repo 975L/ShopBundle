@@ -10,7 +10,7 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use c975L\ShopBundle\Repositiry\CrowdfundingNewsRepository;
+use c975L\ShopBundle\Repository\CrowdfundingNewsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 

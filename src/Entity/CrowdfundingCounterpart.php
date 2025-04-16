@@ -10,11 +10,12 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use c975L\ShopBundle\Repositiry\CrowdfundingCounterpartRepository;
+use App\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use c975L\ShopBundle\Repository\CrowdfundingCounterpartRepository;
 
 #[ORM\Entity(repositoryClass: CrowdfundingCounterpartRepository::class)]
 #[ORM\Table(name: 'shop_crowdfunding_counterpart')]
@@ -65,6 +66,9 @@ class CrowdfundingCounterpart
 
     #[ORM\OneToOne(inversedBy: 'crowdfundingCounterpart', cascade: ['persist', 'remove'])]
     private ?CrowdfundingCounterpartMedia $media = null;
+
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    private ?User $user = null;
 
     public function __construct()
     {
@@ -230,7 +234,7 @@ class CrowdfundingCounterpart
     {
         if (!$this->contributors->contains($contributor)) {
             $this->contributors->add($contributor);
-            $contributor->setCrowdfunding($this);
+            $contributor->setCrowdfundingCounterpart($this);
         }
 
         return $this;
@@ -240,8 +244,8 @@ class CrowdfundingCounterpart
     {
         if ($this->contributors->removeElement($contributor)) {
             // set the owning side to null (unless already changed)
-            if ($contributor->getCrowdfunding() === $this) {
-                $contributor->setCrowdfunding(null);
+            if ($contributor->getCrowdfundingCounterpart() === $this) {
+                $contributor->setCrowdfundingCounterpart(null);
             }
         }
 
@@ -256,6 +260,18 @@ class CrowdfundingCounterpart
     public function setMedia(?CrowdfundingCounterpartMedia $media): static
     {
         $this->media = $media;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

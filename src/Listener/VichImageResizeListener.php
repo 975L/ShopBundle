@@ -21,6 +21,7 @@ use c975L\ShopBundle\Entity\ProductItemFile;
 use Symfony\Component\Filesystem\Filesystem;
 use c975L\ShopBundle\Entity\ProductItemMedia;
 use c975L\ShopBundle\Entity\CrowdfundingMedia;
+use c975L\ShopBundle\Entity\CrowdfundingVideo;
 use c975L\ShopBundle\Entity\CrowdfundingCounterpartMedia;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -61,6 +62,7 @@ class VichImageResizeListener implements EventSubscriberInterface
         // Process images
         if (in_array($extension, ['jpg', 'png', 'gif', 'webp'])) {
             $this->processImage($entity, $absolutePath);
+
             return;
         }
 
@@ -111,7 +113,6 @@ class VichImageResizeListener implements EventSubscriberInterface
         if (method_exists($entity, 'setSize')) {
             $file = new SplFileInfo($filePath);
             $entity->setSize($file->getSize());
-            $this->entityManager->persist($entity);
         }
     }
 

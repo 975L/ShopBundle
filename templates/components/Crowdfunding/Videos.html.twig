@@ -1,0 +1,5 @@
+{% if videos is not empty %}
+    {% for video in videos %}
+        <twig:c975LSite:Video:Video src="{{ video.name }}" type="video/mp4" width="600" class="img-thumbnail"/>
+    {% endfor %}
+{% endif %}

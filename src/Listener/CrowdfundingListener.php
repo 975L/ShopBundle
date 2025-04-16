@@ -10,34 +10,36 @@
 
 namespace c975L\ShopBundle\Listener;
 
+use DateTime;
 use Doctrine\ORM\Events;
-use c975L\ShopBundle\Entity\CrowdfundingMedia;
+use c975L\ShopBundle\Entity\Crowdfunding;
 use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
 use c975L\ShopBundle\Listener\Traits\UserTrait;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
-#[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: CrowdfundingMedia::class)]
-class CrowdfundingMediaListener
+#[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: Crowdfunding::class)]
+#[AsEntityListener(event: Events::prePersist, method: 'prePersist', entity: Crowdfunding::class)]
+class CrowdfundingListener
 {
     use UserTrait;
 
     public function __construct(
         private readonly Security $security,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface $entityManager
     ) {
     }
 
-    public function preFlush(CrowdfundingMedia $entity, PreFlushEventArgs $event): void
+    public function preFlush(Crowdfunding $entity, PreFlushEventArgs $event): void
     {
-        if (null === $entity->getPosition()) {
-            $maxPosition = 0;
-            foreach ($entity->getCrowdfunding()->getMedias() as $media) {
-                $maxPosition = max($maxPosition, $media->getPosition());
-            }
-            $entity->setPosition($maxPosition + 5);
-        }
+        $entity->setModification(new DateTime());
         $this->setUser($entity);
+    }
+
+    public function prePersist(Crowdfunding $entity, PrePersistEventArgs $event): void
+    {
+        $entity->setCreation(new DateTime());
     }
 }

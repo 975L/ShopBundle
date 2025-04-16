@@ -10,40 +10,36 @@
 
 namespace c975L\ShopBundle\Form;
 
-use c975L\ShopBundle\Entity\CrowdfundingMedia;
 use Symfony\Component\Form\AbstractType;
+use c975L\ShopBundle\Entity\CrowdfundingMedia;
 use Symfony\Component\Form\FormBuilderInterface;
+use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class CrowdfundingMediaType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('file', VichFileType::class, [
-                'label' => 'label.file',
-                'required' => false,
-                'allow_delete' => true,
-                'delete_label' => 'label.delete_file',
-                'download_uri' => false,
-                'imagine_pattern' => 'thumbnail',
-                'asset_helper' => true,
-            ])
             ->add('position', IntegerType::class, [
                 'label' => 'label.position',
-                'required' => false,
                 'attr' => [
-                    'min' => 0,
-                    'step' => 5
-                ]
+                    'placeholder' => 'label.position',
+                ],
             ])
-            ->add('alt', TextType::class, [
-                'label' => 'label.alt_text',
+            ->add('file', VichImageType::class, [
+                'label' => 'Media',
                 'required' => false,
-                'help' => 'help.image_alt'
+                'allow_delete' => true,
+                'download_uri' => true,
+                'asset_helper' => true,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '20M',
+                    ])
+                ],
             ])
         ;
     }

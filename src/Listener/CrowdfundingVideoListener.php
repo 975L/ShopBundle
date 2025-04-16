@@ -11,15 +11,15 @@
 namespace c975L\ShopBundle\Listener;
 
 use Doctrine\ORM\Events;
-use c975L\ShopBundle\Entity\CrowdfundingMedia;
+use c975L\ShopBundle\Entity\CrowdfundingVideo;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use c975L\ShopBundle\Listener\Traits\UserTrait;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
-#[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: CrowdfundingMedia::class)]
-class CrowdfundingMediaListener
+#[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: CrowdfundingVideo::class)]
+class CrowdfundingVideoListener
 {
     use UserTrait;
 
@@ -29,15 +29,8 @@ class CrowdfundingMediaListener
     ) {
     }
 
-    public function preFlush(CrowdfundingMedia $entity, PreFlushEventArgs $event): void
+    public function preFlush(CrowdfundingVideo $entity, PreFlushEventArgs $event): void
     {
-        if (null === $entity->getPosition()) {
-            $maxPosition = 0;
-            foreach ($entity->getCrowdfunding()->getMedias() as $media) {
-                $maxPosition = max($maxPosition, $media->getPosition());
-            }
-            $entity->setPosition($maxPosition + 5);
-        }
         $this->setUser($entity);
     }
 }

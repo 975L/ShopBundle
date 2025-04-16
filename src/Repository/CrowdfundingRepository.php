@@ -44,7 +44,7 @@ class CrowdfundingRepository extends ServiceEntityRepository
             ->leftJoin('c.medias', 'cm')
             ->leftJoin('c.counterparts', 'cc')
             ->leftJoin('cc.media', 'ccm')
-            ->leftJoin('c.video', 'v')
+            ->leftJoin('c.videos', 'v')
             ->leftJoin('c.news', 'cn')
             ->leftJoin('c.contributors', 'cct')
             ->andWhere('c.slug = :slug')

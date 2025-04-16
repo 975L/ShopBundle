@@ -10,16 +10,14 @@
 
 namespace c975L\ShopBundle\Form;
 
-use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use c975L\ShopBundle\Form\CrowdfundingCounterpartMediaType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class CrowdfundingCounterpartType extends AbstractType
 {
@@ -30,6 +28,13 @@ class CrowdfundingCounterpartType extends AbstractType
                 'label' => 'label.title',
                 'required' => true,
             ])
+            ->add('slug', TextType::class, [
+                'required' => false,
+                'empty_data' => '',
+                'attr' => [
+                    'readonly' => true,
+                ],
+            ])
             ->add('description', TextareaType::class, [
                 'label' => 'label.description',
                 'required' => false,
@@ -37,43 +42,47 @@ class CrowdfundingCounterpartType extends AbstractType
                     'rows' => 3
                 ]
             ])
-            ->add('amount', MoneyType::class, [
-                'label' => 'label.amount',
+            ->add('price', IntegerType::class, [
                 'required' => true,
-                'divisor' => 100,
-                'currency' => 'EUR',
-            ])
-            ->add('position', IntegerType::class, [
-                'label' => 'label.position',
-                'required' => false,
+                'label' => 'label.price',
                 'attr' => [
-                    'min' => 0,
-                    'step' => 5
-                ]
+                    'placeholder' => 'label.price',
+                ],
             ])
-            ->add('active', CheckboxType::class, [
-                'label' => 'label.active',
-                'required' => false,
+            ->add('currency', TextType::class, [
+                'required' => true,
+                'label' => 'label.currency',
+                'data' => 'eur',
+                'attr' => [
+                    'placeholder' => 'label.currency',
+                ],
             ])
-            ->add('isLimited', CheckboxType::class, [
-                'label' => 'label.limited_quantity',
-                'required' => false,
+            ->add('expectedDelivery', TextType::class, [
+                'required' => true,
+                'label' => 'label.expected_delivery',
+                'attr' => [
+                    'placeholder' => 'label.expected_delivery',
+                ],
             ])
             ->add('limitedQuantity', IntegerType::class, [
-                'label' => 'label.quantity_available',
+                'label' => 'label.limited_quantity',
                 'required' => false,
                 'attr' => [
-                    'min' => 0
-                ]
-            ])
-            ->add('file', VichFileType::class, [
-                'label' => 'label.image',
+                    'placeholder' => 'label.limited_quantity',
+                ],
+                ])
+            ->add('orderedQuantity', IntegerType::class, [
+                'label' => 'label.ordered_quantity',
                 'required' => false,
-                'allow_delete' => true,
-                'delete_label' => 'label.delete_file',
-                'download_uri' => false,
-                'imagine_pattern' => 'thumbnail',
-                'asset_helper' => true,
+                'empty_data' => '',
+                'attr' => [
+                    'placeholder' => 'label.ordered_quantity',
+                    'readonly' => true,
+                ],
+            ])
+            ->add('media', CrowdfundingCounterpartMediaType::class, [
+                'label' => false,
+                'required' => false,
             ])
         ;
     }

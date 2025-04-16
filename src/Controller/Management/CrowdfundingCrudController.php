@@ -11,24 +11,25 @@
 namespace c975L\ShopBundle\Controller\Management;
 
 use c975L\ShopBundle\Entity\Crowdfunding;
+use c975L\ShopBundle\Entity\CrowdfundingVideo;
 use c975L\ShopBundle\Form\CrowdfundingMediaType;
-use c975L\ShopBundle\Form\CrowdfundingCounterpartType;
+use c975L\ShopBundle\Form\CrowdfundingVideoType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use c975L\ShopBundle\Form\CrowdfundingCounterpartType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 
 #[IsGranted('ROLE_ADMIN')]
 class CrowdfundingCrudController extends AbstractCrudController
@@ -48,26 +49,32 @@ class CrowdfundingCrudController extends AbstractCrudController
             SlugField::new('slug')
                 ->setTargetFieldName('title')
                 ->hideOnIndex(),
-            MoneyField::new('targetAmount')
-                ->setLabel('label.target_amount')
+            TextField::new('authorName')
+                ->setLabel('label.author'),
+            MoneyField::new('amountGoal')
+                ->setLabel('label.goal')
                 ->setCurrency('EUR')
                 ->setStoredAsCents(true),
-            MoneyField::new('currentAmount')
-                ->setLabel('label.current_amount')
+            MoneyField::new('amountAchieved')
+                ->setLabel('label.amount_achieved')
                 ->setCurrency('EUR')
                 ->setStoredAsCents(true)
                 ->hideOnForm(),
-            BooleanField::new('active')
-                ->setLabel('label.active'),
-            DateTimeField::new('beginDate')
+            DateField::new('beginDate')
                 ->setLabel('label.begin_date'),
-            DateTimeField::new('endDate')
+            DateField::new('endDate')
                 ->setLabel('label.end_date'),
             FormField::addPanel('Media Management')
                 ->hideOnIndex(),
             CollectionField::new('medias')
                 ->hideOnIndex()
                 ->setEntryType(CrowdfundingMediaType::class),
+            CollectionField::new('videos')
+                ->hideOnIndex()
+                ->setEntryType(CrowdfundingVideoType::class)
+                ->setFormTypeOptions([
+                    'allow_add' => true,
+                ]),
             FormField::addPanel('Counterparts Management')
                 ->setHelp('Add counterparts to offer to contributors')
                 ->hideOnIndex(),
@@ -79,9 +86,6 @@ class CrowdfundingCrudController extends AbstractCrudController
                 ->onlyOnDetail(),
             TextEditorField::new('description')
                 ->setLabel('label.description')
-                ->hideOnIndex(),
-            TextField::new('videoUrl')
-                ->setLabel('label.video_url')
                 ->hideOnIndex(),
             DateTimeField::new('creation')
                 ->setLabel('label.creation')
@@ -110,15 +114,6 @@ class CrowdfundingCrudController extends AbstractCrudController
             ->showEntityActionsInlined()
             ->setEntityPermission('ROLE_ADMIN')
             ->setDefaultSort(['endDate' => 'DESC'])
-        ;
-    }
-
-    public function configureFilters(Filters $filters): Filters
-    {
-        return $filters
-            ->add('title')
-            ->add('active')
-            ->add('endDate')
         ;
     }
 }

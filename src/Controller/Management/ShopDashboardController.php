@@ -42,11 +42,18 @@ class ShopDashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('label.dashboard', 'fa fa-home')->setPermission('ROLE_ADMIN');
+
+        yield MenuItem::section('label.management');
         yield MenuItem::linkToCrud('label.products', 'fas fa-shop', Product::class)->setPermission('ROLE_ADMIN');
         yield MenuItem::linkToCrud('label.crowdfundings', 'fas fa-money-bill', Crowdfunding::class)->setPermission('ROLE_ADMIN');
         yield MenuItem::linkToCrud('label.baskets', 'fas fa-basket-shopping', Basket::class)->setPermission('ROLE_ADMIN');
         yield MenuItem::linkToCrud('label.payments', 'fas fa-money-bill-wave', Payment::class)->setPermission('ROLE_ADMIN');
-        yield MenuItem::linkToUrl('label.shop', 'fas fa-home', $this->generateUrl('shop_index'));
+
+        yield MenuItem::section('label.links');
+        yield MenuItem::linkToUrl('label.shop', 'fas fa-shop', $this->generateUrl('shop_index'));
+        yield MenuItem::linkToUrl('label.crowdfundings', 'fas fa-money-bill', $this->generateUrl('crowdfunding_index'));
+
+        yield MenuItem::section('label.user');
         yield MenuItem::linkToLogout('label.signout', 'fa fa-exit');
     }
 }
