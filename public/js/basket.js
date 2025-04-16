@@ -236,8 +236,10 @@ export default class extends Controller {
 
         // Display empty basket template if total is 0
         if (data.basket.total === 0) {
-            const template = document.getElementById('empty-basket-template');
-            basketPage.innerHTML = template.innerHTML;
+            const template = document.getElementById("empty-basket-template");
+            const templateContent = template.content.cloneNode(true);
+            basketPage.innerHTML = '';
+            basketPage.appendChild(templateContent);
 
             return;
         }
@@ -255,16 +257,20 @@ export default class extends Controller {
         }
 
         const itemPairs = [];
-        Object.keys(data.basket.items).forEach(type => {
-            Object.keys(data.basket.items[type]).forEach(id => {
-                itemPairs.push(`${type}-${id}`);
-            });
+        Object.keys(data.basket.items || {}).forEach((type) => {
+            // Vérifier que l'entrée existe et est un objet
+            const typeItems = data.basket.items[type];
+            if (typeItems && typeof typeItems === 'object') {
+                Object.keys(typeItems).forEach((id) => {
+                    itemPairs.push(`${type}-${id}`);
+                });
+            }
         });
 
         const itemRows = document.querySelectorAll("tr[id^=\"item-\"]");
         itemRows.forEach((row) => {
-            const type = row.getAttribute('data-type');
-            const itemId = row.getAttribute('data-item-id');
+            const type = row.getAttribute("data-type");
+            const itemId = row.getAttribute("data-item-id");
 
             if (!itemPairs.includes(`${type}-${itemId}`)) {
                 row.classList.add("fade-out");
@@ -419,20 +425,21 @@ export default class extends Controller {
         addButtons.forEach((button) => {
             const type = button.dataset.type;
             const itemId = button.dataset.itemId;
+            const basketItem = data.basket?.items?.[type]?.[itemId];
 
             // Updates quantity if item is in the basket
-            if (type && itemId && data.basket.items[type][itemId]) {
-                const quantity = data.basket.items[type][itemId].quantity;
-                if (quantity > 0) {
-                    const quantityElement = document.querySelector(`.quantity[data-item-id="${itemId}"]`);
-                    if (quantityElement && quantityElement.classList.contains("quantity")) {
-                        quantityElement.textContent = `${quantity}`;
-                    }
+            if (basketItem && basketItem.quantity > 0) {
+                const quantity = basketItem.quantity;
 
-                    // Disable the button for digital item and quantity = 1
-                    if (data.basket.items[type][itemId].item.file !== null && quantity >= 1) {
-                        button.setAttribute("disabled", "disabled");
-                    }
+                const quantityElement = document.querySelector(`.quantity[data-item-id="${itemId}"]`);
+                if (quantityElement && quantityElement.classList.contains("quantity")) {
+                    quantityElement.textContent = `${quantity}`;
+                }
+
+                // Disable the button for digital item and quantity = 1
+                const hasFile = basketItem.item && basketItem.item.file !== null;
+                if (hasFile && quantity >= 1) {
+                    button.setAttribute("disabled", "disabled");
                 }
             }
         });
@@ -440,7 +447,7 @@ export default class extends Controller {
 
     // Updates the currency symbol based on the currency code
     getCurrencySymbol(currencyCode) {
-        if (!currencyCode) { return ''; }
+        if (!currencyCode) { return ""; }
 
         const symbols = {
             "eur": "€",

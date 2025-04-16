@@ -35,19 +35,21 @@ class ProductItemDownloadMessageHandler
 
         // Process all product items in the basket
         $downloadLinks = [];
-        foreach ($basket->getItems() as $id => $item) {
-            if (!empty($item['item']['file'])) {
-                $token = $this->itemDownloadService->prepareFileForDownload(
-                    $basket->getId(),
-                    $id,
-                    $item['item']['file']
-                );
+        foreach ($basket->getItems() as $type => $items) {
+            foreach ($items as $id => $item) {
+                if (!empty($item['item']['file'])) {
+                    $token = $this->itemDownloadService->prepareFileForDownload(
+                        $basket->getId(),
+                        $id,
+                        $item['item']['file']
+                    );
 
-                $downloadLinks[$id] = [
-                    'title' => $item['product']['title'] . ' (' . $item['item']['title'] . ')',
-                    'token' => $token,
-                    'size' => $item['item']['size'],
-                ];
+                    $downloadLinks[$id] = [
+                        'title' => $item['product']['title'] . ' (' . $item['item']['title'] . ')',
+                        'token' => $token,
+                        'size' => $item['item']['size'],
+                    ];
+                }
             }
         }
 

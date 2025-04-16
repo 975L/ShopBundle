@@ -10,15 +10,15 @@
 
 namespace c975L\ShopBundle\Command;
 
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Attribute\AsCommand;
+use c975L\ShopBundle\Service\MediaServiceInterface;
 use Symfony\Component\Console\Input\InputInterface;
-use c975L\ShopBundle\Service\ProductServiceInterface;
-use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Finder\Finder;
 
 #[AsCommand(
     name: 'shop:media:delete',
@@ -28,15 +28,16 @@ class MediaDeleteCommand extends Command
 {
     private string $publicDir;
     private string $privateDir;
+    private Filesystem $filesystem;
 
     public function __construct(
-        private readonly ProductServiceInterface $productService,
-        private readonly ProductItemServiceInterface $productItemService,
+        private readonly MediaServiceInterface $mediaService,
         private readonly ParameterBagInterface $parameterBag,
     ) {
         parent::__construct();
         $this->publicDir = $this->parameterBag->get('kernel.project_dir') . '/public/';
         $this->privateDir = $this->parameterBag->get('kernel.project_dir') . '/private/';
+        $this->filesystem = new Filesystem();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -60,21 +61,11 @@ class MediaDeleteCommand extends Command
         $mediasDb = [];
 
         // Adds the media files of products
-        $productMedias = $this->productService->findAllMedias();
-        $productItemMedias = $this->productItemService->findAllMedias();
-
-        $medias = array_merge($productMedias, $productItemMedias);
+        $medias = $this->mediaService->findAll();
         foreach($medias as $media) {
             if (null !== $media->getName()) {
                 $mediasDb[] = $this->publicDir . $media->getName();
-            }
-        }
-
-        // Adds the files of products
-        $productItemFiles = $this->productItemService->findAllFiles();
-        foreach($productItemFiles as $item) {
-            if (null !== $item->getName()) {
-                $mediasDb[] = $this->privateDir . $item->getName();
+                $mediasDb[] = $this->privateDir . $media->getName();
             }
         }
 
@@ -112,7 +103,7 @@ class MediaDeleteCommand extends Command
             $io->listing($unusedFiles);
 
             foreach ($unusedFiles as $file) {
-                unlink($file);
+                $this->filesystem->remove($file);
             }
         }
     }
@@ -123,14 +114,38 @@ class MediaDeleteCommand extends Command
         $inexistingFiles = array_diff($mediasDb, $mediasFiles);
 
         if (count($inexistingFiles) > 0) {
+            // Checks if the file exists in the public or private directory
+            foreach ($inexistingFiles as $key => $file) {
+                // Check if the file exists in the public directory
+                if (strpos($file, '/private/') !== false) {
+                    $file = str_replace($this->privateDir, $this->publicDir, $file);
+                    if (file_exists($file)) {
+                        unset($inexistingFiles[$key]);
+                    }
+                // Check if the file exists in the private directory
+                } elseif (strpos($file, '/public/') !== false) {
+                    $file = str_replace($this->publicDir, $this->privateDir, $file);
+                    if (file_exists($file)) {
+                        unset($inexistingFiles[$key]);
+                    }
+                }
+            }
+
+            // Supress double entries
+            foreach ($inexistingFiles as $key => $file) {
+                $inexistingFiles[$key] = str_replace([$this->publicDir, $this->privateDir], '', $file);
+            }
+            $inexistingFiles = array_unique($inexistingFiles);
+        }
+
+        // Process the inexisting files
+        if (count($inexistingFiles) > 0) {
             $io->title('Inexisting files:');
             $io->listing($inexistingFiles);
 
+            // Updates database
             foreach ($inexistingFiles as $file) {
-                $filePath = str_replace($this->publicDir, '', $file);
-                if (strpos($filePath, 'shop/items/') !== false) {
-                    $this->productItemService->deleteOneMediaByName($filePath);
-                }
+                $this->mediaService->updateDatabaseByName($file);
             }
         }
     }

@@ -336,11 +336,11 @@
             </trans-unit>
             <trans-unit id="84">
                 <source>label.physical_item</source>
-                <target>Produit physique</target>
+                <target>Article physique</target>
             </trans-unit>
             <trans-unit id="85">
                 <source>label.digital_item</source>
-                <target>Produit numérique</target>
+                <target>Article numérique</target>
             </trans-unit>
             <trans-unit id="86">
                 <source>label.item_already_downloaded</source>
