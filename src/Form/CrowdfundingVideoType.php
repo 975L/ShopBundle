@@ -11,26 +11,32 @@
 namespace c975L\ShopBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use c975L\ShopBundle\Entity\ProductItemMedia;
+use c975L\ShopBundle\Entity\CrowdfundingVideo;
 use Symfony\Component\Form\FormBuilderInterface;
-use Vich\UploaderBundle\Form\Type\VichImageType;
+use Vich\UploaderBundle\Form\Type\VichFileType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProductItemMediaType extends AbstractType
+class CrowdfundingVideoType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('file', VichImageType::class, [
-                'label' => 'Media',
+            ->add('file', VichFileType::class, [
+                'label' => 'Video',
                 'required' => false,
                 'allow_delete' => true,
                 'download_uri' => true,
                 'asset_helper' => true,
                 'constraints' => [
                     new File([
-                        'maxSize' => '20M',
+                        'maxSize' => '500M',
+                        'mimeTypes' => [
+                            'video/mp4',
+                            'video/webm',
+                            'video/ogg',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid video file',
                     ])
                 ],
             ])
@@ -40,7 +46,8 @@ class ProductItemMediaType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ProductItemMedia::class,
+            'data_class' => CrowdfundingVideo::class,
+            'translation_domain' => 'shop'
         ]);
     }
 }

@@ -14,7 +14,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use c975L\ShopBundle\Entity\Crowdfunding;
 use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
-use c975L\ShopBundle\Repositiry\CrowdfundingContributorRepository;
+use c975L\ShopBundle\Repository\CrowdfundingContributorRepository;
 
 #[ORM\Entity(repositoryClass: CrowdfundingContributorRepository::class)]
 #[ORM\Table(name: 'shop_crowdfunding_contributor')]

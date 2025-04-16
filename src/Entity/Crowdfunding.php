@@ -9,6 +9,7 @@
 
 namespace c975L\ShopBundle\Entity;
 
+use App\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
@@ -64,11 +65,8 @@ class Crowdfunding
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
-    #[ORM\OneToOne(inversedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
-    private ?CrowdfundingVideo $video = null;
-
     #[ORM\OneToMany(targetEntity: CrowdfundingMedia::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(["position" => "ASC"])]
     private Collection $medias;
 
     #[ORM\OneToMany(targetEntity: CrowdfundingContributor::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
@@ -83,9 +81,22 @@ class Crowdfunding
     #[ORM\OrderBy(['price' => 'ASC'])]
     private Collection $counterparts;
 
+    #[ORM\OneToMany(targetEntity: CrowdfundingVideo::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
+    private Collection $videos;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $creation = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $modification = null;
+
+    #[ORM\ManyToOne(inversedBy: 'crowdfundings')]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->medias = new ArrayCollection();
+        $this->videos = new ArrayCollection();
         $this->contributors = new ArrayCollection();
         $this->news = new ArrayCollection();
         $this->counterparts = new ArrayCollection();
@@ -251,21 +262,6 @@ class Crowdfunding
         return $this;
     }
 
-    public function getVideo(): ?CrowdfundingVideo
-    {
-        return $this->video;
-    }
-
-    public function setVideo(?CrowdfundingVideo $video): static
-    {
-        $this->video = $video;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, CrowdfundingMedia>
-     */
     public function getMedias(): Collection
     {
         return $this->medias;
@@ -293,9 +289,6 @@ class Crowdfunding
         return $this;
     }
 
-    /**
-     * @return Collection<int, CrowdfundingContributor>
-     */
     public function getContributors(): Collection
     {
         return $this->contributors;
@@ -323,9 +316,6 @@ class Crowdfunding
         return $this;
     }
 
-    /**
-     * @return Collection<int, CrowdfundingNews>
-     */
     public function getNews(): Collection
     {
         return $this->news;
@@ -353,9 +343,6 @@ class Crowdfunding
         return $this;
     }
 
-    /**
-     * @return Collection<int, CrowdfundingCounterpart>
-     */
     public function getCounterparts(): Collection
     {
         return $this->counterparts;
@@ -379,6 +366,69 @@ class Crowdfunding
                 $counterpart->setCrowdfunding(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getVideos(): Collection
+    {
+        return $this->videos;
+    }
+
+    public function addVideo(CrowdfundingVideo $video): static
+    {
+        if (!$this->videos->contains($video)) {
+            $this->videos->add($video);
+            $video->setCrowdfunding($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVideo(CrowdfundingVideo $video): static
+    {
+        if ($this->videos->removeElement($video)) {
+            // set the owning side to null (unless already changed)
+            if ($video->getCrowdfunding() === $this) {
+                $video->setCrowdfunding(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCreation(): ?\DateTimeInterface
+    {
+        return $this->creation;
+    }
+
+    public function setCreation(\DateTimeInterface $creation): static
+    {
+        $this->creation = $creation;
+
+        return $this;
+    }
+
+    public function getModification(): ?\DateTimeInterface
+    {
+        return $this->modification;
+    }
+
+    public function setModification(\DateTimeInterface $modification): static
+    {
+        $this->modification = $modification;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

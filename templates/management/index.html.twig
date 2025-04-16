@@ -8,9 +8,11 @@
             <a href="{{ path('shop_management_product_index') }}" class="btn btn-primary">{{ ('label.products'|trans({}, 'shop')) }}</a>
             <a href="{{ path('shop_management_basket_index') }}" class="btn btn-primary">{{ ('label.baskets'|trans({}, 'shop')) }}</a>
             <a href="{{ path('shop_management_payment_index') }}" class="btn btn-primary">{{ ('label.payments'|trans({}, 'shop')) }}</a>
+            <a href="{{ path('shop_management_crowdfunding_index') }}" class="btn btn-primary">{{ ('label.crowdfundings'|trans({}, 'shop')) }}</a>
         </p>
         <p>
-            <a href="{{ path('shop_index') }}" class="btn btn-primary">{{ ('label.shop'|trans({}, 'shop')) }}</a>
+            <a href="{{ path('shop_index') }}" class="btn btn-primary" target="_blank">{{ ('label.shop'|trans({}, 'shop')) }}</a>
+            <a href="{{ path('crowdfunding_index') }}" class="btn btn-primary" target="_blank">{{ ('label.crowdfundings'|trans({}, 'shop')) }}</a>
         </p>
     </section>
 {% endblock main %}

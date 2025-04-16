@@ -10,12 +10,15 @@
 
 namespace c975L\ShopBundle\Namer;
 
-use Symfony\Component\Filesystem\Filesystem;
+use RuntimeException;
 use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Entity\ProductItemFile;
+use Symfony\Component\Filesystem\Filesystem;
 use c975L\ShopBundle\Entity\ProductItemMedia;
 use c975L\ShopBundle\Entity\CrowdfundingMedia;
+use c975L\ShopBundle\Entity\CrowdfundingVideo;
 use Vich\UploaderBundle\Naming\NamerInterface;
+use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 use c975L\ShopBundle\Entity\CrowdfundingCounterpartMedia;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -37,9 +40,8 @@ class ShopMediaNamer implements NamerInterface
         $filePath = $entity->getFile()->getPathname();
 
         if (!$this->filesystem->exists($filePath)) {
-            throw new \RuntimeException('File not found: ' . htmlspecialchars($filePath, ENT_QUOTES, 'UTF-8'));
+            throw new RuntimeException('File not found: ' . htmlspecialchars($filePath, ENT_QUOTES, 'UTF-8'));
         }
-
         $file = $mapping->getFile($entity);
         $extension = $this->determineExtension($file);
         $filename = $this->getEntityPath($entity);
@@ -49,7 +51,7 @@ class ShopMediaNamer implements NamerInterface
 
 
     // Determine file extension based on mime type
-    private function determineExtension(\Symfony\Component\HttpFoundation\File\File $file): string
+    private function determineExtension(File $file): string
     {
         $mimeType = $file->getMimeType();
         $extension = $file->getExtension();
@@ -89,12 +91,12 @@ class ShopMediaNamer implements NamerInterface
             return '/items/' . $entity->getProductItem()->getProduct()->getSlug() . '-' . $entity->getProductItem()->getSlug();
         }
 
-        if ($entity instanceof CrowdfundingMedia) {
+        if ($entity instanceof CrowdfundingMedia || $entity instanceof CrowdfundingVideo) {
             return '/crowdfundings/' . $entity->getCrowdfunding()->getSlug();
         }
 
         if ($entity instanceof CrowdfundingCounterpartMedia) {
-            return '/crowdfundings/' . $entity->getCrowdfundingCounterpart()->getCrowdfunding()->getSlug() . '-' . $entity->getCrowdfundingCounterpart()->getSlug();
+            return '/counterparts/' . $entity->getCrowdfundingCounterpart()->getCrowdfunding()->getSlug() . '-' . $entity->getCrowdfundingCounterpart()->getSlug();
         }
     }
 }

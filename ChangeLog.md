@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.26
+
+- Finished backoffice management of Crowdfunding (16/04/2025)
+- Set CrowdfundingVideo as a collection (16/04/2025)
+
 ## v0.25
 
 - Updated MediaDeleteCommand (16/04/2025)

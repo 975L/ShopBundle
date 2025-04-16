@@ -238,7 +238,7 @@ export default class extends Controller {
         if (data.basket.total === 0) {
             const template = document.getElementById("empty-basket-template");
             const templateContent = template.content.cloneNode(true);
-            basketPage.innerHTML = '';
+            basketPage.innerHTML = "";
             basketPage.appendChild(templateContent);
 
             return;
@@ -257,13 +257,18 @@ export default class extends Controller {
         }
 
         const itemPairs = [];
-        Object.keys(data.basket.items || {}).forEach((type) => {
-            // Vérifier que l'entrée existe et est un objet
-            const typeItems = data.basket.items[type];
-            if (typeItems && typeof typeItems === 'object') {
-                Object.keys(typeItems).forEach((id) => {
-                    itemPairs.push(`${type}-${id}`);
-                });
+        Object.keys(data.basket.items).forEach((type) => {
+            // Ensure that the type is a direct property and not inherited
+            if (Object.prototype.hasOwnProperty.call(data.basket.items, type)) {
+                const typeItems = data.basket.items[type];
+                if (typeItems && typeof typeItems === "object") {
+                    // Secure access to IDs with similar verification
+                    Object.keys(typeItems).forEach((id) => {
+                        if (Object.prototype.hasOwnProperty.call(typeItems, id)) {
+                            itemPairs.push(`${type}-${id}`);
+                        }
+                    });
+                }
             }
         });
 

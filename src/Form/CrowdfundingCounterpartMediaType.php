@@ -11,13 +11,13 @@
 namespace c975L\ShopBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use c975L\ShopBundle\Entity\ProductItemMedia;
+use c975L\ShopBundle\Entity\CrowdfundingCounterpartMedia;
 use Symfony\Component\Form\FormBuilderInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProductItemMediaType extends AbstractType
+class CrowdfundingCounterpartMediaType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -40,7 +40,7 @@ class ProductItemMediaType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ProductItemMedia::class,
+            'data_class' => CrowdfundingCounterpartMedia::class,
         ]);
     }
 }

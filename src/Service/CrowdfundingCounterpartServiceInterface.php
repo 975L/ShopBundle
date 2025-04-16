@@ -15,8 +15,4 @@ use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
 interface CrowdfundingCounterpartServiceInterface
 {
     public function findOneById(int $id): CrowdfundingCounterpart;
-
-    public function findAllMedias();
-
-    public function deleteOneMediaByName(string $name): void;
 }

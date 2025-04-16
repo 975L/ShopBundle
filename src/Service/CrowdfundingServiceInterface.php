@@ -17,12 +17,4 @@ interface CrowdfundingServiceInterface
     public function findAll();
 
     public function findAllSorted();
-
-    public function findAllMedias();
-
-    public function findOneById(int $id): Crowdfunding;
-
-    public function search(string $query);
-
-    public function save(Crowdfunding $crowdfunding): void;
 }

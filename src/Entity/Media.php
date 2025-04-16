@@ -45,7 +45,7 @@ abstract class Media
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true, unique: true)]
     private ?string $name = null;
 
     #[ORM\Column(nullable: true)]
@@ -54,14 +54,35 @@ abstract class Media
     protected ?File $file = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne()]
     private ?User $user = null;
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->name;
+        return (string) $this->getName();
+    }
+
+    // Critical for preventing duplicates - overrides default Doctrine behavior
+    public function equals(object $other): bool
+    {
+        if (!$other instanceof Media) {
+            return false;
+        }
+
+        // If both entities have IDs, compare by ID
+        if ($this->getId() !== null && $other->getId() !== null) {
+            return $this->getId() === $other->getId();
+        }
+
+        // If one doesn't have an ID but both have names, compare by name
+        if ($this->getName() && $other->getName()) {
+            return $this->getName() === $other->getName();
+        }
+
+        // Otherwise, they're not equal
+        return false;
     }
 
     abstract public function getMappingName(): string;

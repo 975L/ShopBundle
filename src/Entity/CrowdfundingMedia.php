@@ -36,6 +36,7 @@ class CrowdfundingMedia extends Media
     {
         return $this->crowdfunding;
     }
+
     public function setCrowdfunding(?Crowdfunding $crowdfunding): static
     {
         $this->crowdfunding = $crowdfunding;

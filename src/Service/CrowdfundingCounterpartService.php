@@ -30,36 +30,4 @@ class CrowdfundingCounterpartService implements CrowdfundingCounterpartServiceIn
     {
         return $this->crowdfundingCounterpartRepository->findOneById($id);
     }
-
-    // Finds all medias
-    public function findAllMedias()
-    {
-        return $this->crowdfundingCounterpartMediaRepository->findAll();
-    }
-
-    // Deletes one media by name
-    public function deleteOneMediaByName(string $name): void
-    {
-        $this->deleteCrowdfundingCounterpartMedia($this->crowdfundingCounterpartMediaRepository->findOneByName($name));
-
-        $this->entityManager->flush();
-    }
-
-    // Deletes CrowdfundingCounterpartMedia/File
-    public function deleteCrowdfundingCounterpartMedia($media): void
-    {
-        if ($media) {
-            // Not linked to CrowdfundingCounterpart
-            if (null === $media->getCrowdfundingCounterpart()) {
-                $this->entityManager->remove($media);
-            // Not deleted, see CrowdfundingCounterpartListener->prePersist()
-            } else {
-                $media->setName(null);
-                $media->setUser(null);
-                $media->setSize(null);
-                $media->setUpdatedAt(new \DateTimeImmutable());
-                $this->entityManager->persist($media);
-            }
-        }
-    }
 }

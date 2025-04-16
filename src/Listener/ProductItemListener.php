@@ -52,10 +52,7 @@ class ProductItemListener
 
     public function prePersist(ProductItem $entity, PrePersistEventArgs $event): void
     {
-        // Adds an empty ProductItemMedia because when adding a new ProductItem without ProductItemMedia, we can't add a ProductItemMedia afterwards.
-        // Because the ProductItemMediaListener->postUpdate() doesn't have access to productItem, so ProductItemMedia is persisted but not linked to ProductItem.
-        // By adding an empty record we can update it later. (27/03/2025)
-        // Same for /ProductItemFile
+        // Needs to add empty placeholder and a add contents aftewards because the owner is not yet persisted
         if (null === $entity->getMedia()) {
             $productItemMedia = new ProductItemMedia();
             $productItemMedia->setUpdatedAt(new DateTimeImmutable());
