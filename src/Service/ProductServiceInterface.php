@@ -20,8 +20,6 @@ interface ProductServiceInterface
 
     public function findAllPaginated($query);
 
-    public function findAllMedias();
-
     public function findOneById(int $id): Product;
 
     public function search(string $query);

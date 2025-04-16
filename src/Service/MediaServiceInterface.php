@@ -10,9 +10,9 @@
 
 namespace c975L\ShopBundle\Service;
 
-use c975L\ShopBundle\Entity\ProductItem;
-
-interface ProductItemServiceInterface
+interface MediaServiceInterface
 {
-    public function findOneById(int $id): ProductItem;
+    public function findAll(): array;
+
+    public function updateDatabaseByName(string $file): void;
 }

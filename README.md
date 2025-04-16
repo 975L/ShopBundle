@@ -128,7 +128,8 @@ Launch configuration process `php bin/console config:create`.
 
 Adapts your CSP to allow:
 
-script-src: unsafe-inline
+`script-src: 'unsafe-inline'` et `form-action '*'`
+
 
 ## CSS
 

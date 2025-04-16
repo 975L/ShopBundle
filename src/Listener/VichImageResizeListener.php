@@ -88,7 +88,7 @@ class VichImageResizeListener implements EventSubscriberInterface
             ->save($absolutePath, ['format' => $format])
         ;
 
-        $this->updateEntitySize($entity);
+        $this->updateEntitySize($entity, $absolutePath);
     }
 
     // Gets the width for the entity
@@ -106,7 +106,7 @@ class VichImageResizeListener implements EventSubscriberInterface
     }
 
     // Updates the size of the entity
-    private function updateEntitySize($entity): void
+    private function updateEntitySize($entity, $filePath): void
     {
         if (method_exists($entity, 'setSize')) {
             $file = new SplFileInfo($filePath);

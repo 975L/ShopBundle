@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.25
+
+- Updated MediaDeleteCommand (16/04/2025)
+- - Finished corrections for Shop items (16/04/2025)
+
 ## v0.24
 
 - Corrected relations in entities (15/04/2025)

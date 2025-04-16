@@ -37,7 +37,7 @@ class ShopMediaNamer implements NamerInterface
         $filePath = $entity->getFile()->getPathname();
 
         if (!$this->filesystem->exists($filePath)) {
-            throw new \RuntimeException('File not found: ' . $filePath);
+            throw new \RuntimeException('File not found: ' . htmlspecialchars($filePath, ENT_QUOTES, 'UTF-8'));
         }
 
         $file = $mapping->getFile($entity);
@@ -96,8 +96,5 @@ class ShopMediaNamer implements NamerInterface
         if ($entity instanceof CrowdfundingCounterpartMedia) {
             return '/crowdfundings/' . $entity->getCrowdfundingCounterpart()->getCrowdfunding()->getSlug() . '-' . $entity->getCrowdfundingCounterpart()->getSlug();
         }
-
-        // Fallback pour les types non pris en charge
-        return '/misc';
     }
 }
