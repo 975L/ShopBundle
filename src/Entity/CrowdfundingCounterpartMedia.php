@@ -23,7 +23,7 @@ class CrowdfundingCounterpartMedia extends Media
     #[Vich\UploadableField(mapping: 'crowdfundingsCounterparts', fileNameProperty: 'name', size: 'size')]
     protected ?File $file = null;
 
-    #[ORM\OneToOne(inversedBy: 'media')]
+    #[ORM\OneToOne(mappedBy: 'media', cascade: ['persist', 'remove'])]
     private ?CrowdfundingCounterpart $crowdfundingCounterpart = null;
 
     public function getMappingName(): string

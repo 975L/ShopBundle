@@ -23,6 +23,7 @@
         {% elseif "paid" == action %}
             <twig:c975LShop:Basket:PaidInfos number="{{ basket.number }}"/>
             <twig:c975LShop:Basket:TrackOrder basket="{{ basket }}"/>
+            <twig:c975LShop:Basket:Delivery basket="{{ basket }}"/>
             <twig:c975LShop:Basket:Display basket="{{ basket }}" readonly="true"/>
             <twig:c975LShop:Shop:ViewButton/>
         {% endif %}

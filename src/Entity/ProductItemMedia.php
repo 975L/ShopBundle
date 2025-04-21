@@ -23,7 +23,7 @@ class ProductItemMedia extends Media
     #[Vich\UploadableField(mapping: 'productItems', fileNameProperty: 'name', size: 'size')]
     protected ?File $file = null;
 
-    #[ORM\OneToOne(mappedBy: 'media')]
+    #[ORM\OneToOne(mappedBy: 'media', cascade: ['persist', 'remove'])]
     private ?ProductItem $productItem = null;
 
     public function getMappingName(): string

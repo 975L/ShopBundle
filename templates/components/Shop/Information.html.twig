@@ -1,8 +1,9 @@
-{# Add your own information in templates/bundles/c975LShopBundle/components/Shop/Information.html.twig #}
-{#
+{# Define your own information in templates/bundles/c975LShopBundle/components/Shop/Information.html.twig by overriding this component #}
 <div class="shop-information">
-    <p>
-        Your text
+    <p class="text text-center big">
+        {{ 'label.welcome_shop'|trans({}, 'shop') }}
+        <br>
+        {{ 'label.hope_find_items'|trans({}, 'shop') }}
     </p>
 </div>
-#}
+<h2>{{ 'label.all_our_items'|trans({}, 'shop') }}</h2>

@@ -4,8 +4,7 @@
 {% block email_content %}
     <twig:c975LShop:Basket:Thanks/>
     <twig:c975LShop:Basket:Number number="{{ basket.number }}" securityToken="{{ basket.securityToken }}"/>
-    <twig:c975LShop:Basket:ItemsReminder/>
-    <twig:c975LShop:Basket:Items basket="{{ basket }}" kind="simple" readonly="true"/>
-    <twig:c975LShop:Basket:DigitalItems basket="{{ basket }}"/>
+    <twig:c975LShop:Basket:CounterpartsReminder/>
+    <twig:c975LShop:Basket:Counterparts counterparts="{{ counterparts }}"/>
     <twig:c975LShop:Basket:Delivery basket="{{ basket }}"/>
 {% endblock %}

@@ -1,22 +1,33 @@
-{# <twig:c975LShop:Basket:Products basket="{{ basket }}" [type="simple|complex"]" readonly="true"/> #}
+{# <twig:c975LShop:Basket:Items basket="{{ basket }}" [kind="simple|complex"]" readonly="true"/> #}
 {% trans_default_domain 'shop' %}
 {% if basket.total > 0 %}
-    <table>
-        {# Items #}
-        {% for type, items in basket.items %}
+    {# Items (Product and Crowdfunding) #}
+    {% for type, items in basket.items %}
+        {% set title = "label.items" %}
+        {% if "crowdfunding" == type %}
+            {% set title = "label.counterparts" %}
+        {% endif %}
+        <h3>
+            {{ ('label.' ~ type)|trans }}
+            <br>
+            {{ title|trans }}
+        </h3>
+        <table>
             {% for item in items %}
-                <twig:c975LShop:Basket:Item type="{{ type }}" item="{{ item }}" quantity="{{ item.quantity }}" total="{{ item.total }}" totalVat="{{ item.totalVat }}" type="{{ type }}" readonly="{{ readonly }}"/>
+                <twig:c975LShop:Basket:Item kind="{{ kind }}" item="{{ item }}" quantity="{{ item.quantity }}" total="{{ item.total }}" totalVat="{{ item.totalVat }}" type="{{ type }}" readonly="{{ readonly }}"/>
             {% endfor %}
-        {% endfor %}
-        {# Frais de port #}
-            <tr class="shipping">
-                <td>
-                    {{ 'label.shipping'|trans }}
-                </td>
-                <td>
-                    <span data-basket-target="shipping">{{ basket.shipping > 0 ? (basket.shipping / 100)|format_currency(basket.currency) : 'label.offered'|trans }}</span>
-                </td>
-            </tr>
+        </table>
+    {% endfor %}
+    <table>
+        {# Shipping #}
+        <tr class="shipping">
+            <td>
+                {{ 'label.shipping'|trans }}
+            </td>
+            <td>
+                <span data-basket-target="shipping">{{ basket.shipping > 0 ? (basket.shipping / 100)|format_currency(basket.currency) : 'label.offered'|trans }}</span>
+            </td>
+        </tr>
         {# Total #}
         <tfoot>
             <tr>

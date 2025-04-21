@@ -5,6 +5,8 @@
     data-action="click->basket#addItem"
     data-type="product"
     data-quantity="{{ quantity }}"
+    data-limited="{{ productItem.limitedQuantity|default(0) }}"
+    data-ordered="{{ productItem.orderedQuantity|default(0) }}"
     data-item-id="{{ productItem.id }}"
     data-title="{{ productItem.title }}"
     data-alert="success"

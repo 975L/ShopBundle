@@ -14,6 +14,7 @@ use DateTime;
 use Exception;
 use Stripe\Stripe;
 use RuntimeException;
+use DateTimeImmutable;
 use Stripe\PaymentIntent;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\Form;
@@ -27,12 +28,16 @@ use c975L\ShopBundle\Message\ItemsShippedMessage;
 use c975L\ShopBundle\Repository\BasketRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use c975L\ShopBundle\Form\ShopFormFactoryInterface;
+use c975L\ShopBundle\Entity\CrowdfundingContributor;
 use Symfony\Component\Messenger\MessageBusInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
+use c975L\ShopBundle\Service\CrowdfundingServiceInterface;
+use c975L\ShopBundle\Message\CrowdfundingContributionMessage;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use c975L\ShopBundle\Entity\CrowdfundingContributorCounterpart;
 use c975L\ShopBundle\Service\CrowdfundingCounterpartServiceInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -46,6 +51,7 @@ class BasketService implements BasketServiceInterface
     public function __construct(
         private readonly BasketRepository $basketRepository,
         private readonly ConfigServiceInterface $configService,
+        private readonly CrowdfundingServiceInterface $crowdfundingService,
         private readonly CrowdfundingCounterpartServiceInterface $crowdfundingCounterpartService,
         private readonly EntityManagerInterface $entityManager,
         private readonly ProductItemServiceInterface $productItemService,
@@ -60,7 +66,6 @@ class BasketService implements BasketServiceInterface
         try {
             $this->session = $this->requestStack->getSession();
         } catch (\LogicException $e) {
-            // En contexte CLI, pas de session disponible
             $this->session = null;
         }
         $this->stripeSecret = $this->configService->getParameter('c975LShop.stripeSecret');
@@ -78,7 +83,6 @@ class BasketService implements BasketServiceInterface
         $basket->setCreation(new DateTime());
         $basket->setModification(new DateTime());
         $basket->setStatus('new');
-        $basket->setDigital(true);
         $basket->setUser($this->user);
 
         $this->entityManager->persist($basket);
@@ -131,33 +135,36 @@ class BasketService implements BasketServiceInterface
 
         $total = 0;
         $quantity = 0;
-        $hasDigital = false;
-        $hasPhysical = false;
+        $contentFlags = 0;
 
         foreach ($items as $type => $item) {
             foreach ($item as $id => $itemContent) {
                 $total += $itemContent['total'];
                 $quantity += $itemContent['quantity'];
 
-                if ('product' === $type && null === $itemContent['item']['file']) {
-                    $hasPhysical = true;
-                } elseif ('product' === $type) {
-                    $hasDigital = true;
+                // Defines flags for items
+                if ($type === 'product') {
+                    if ($itemContent['item']['file'] !== null) {
+                        $contentFlags |= Basket::CONTENT_FLAG_DIGITAL;
+                    } else {
+                        $contentFlags |= Basket::CONTENT_FLAG_PHYSICAL;
+                    }
+                } elseif ($type === 'crowdfunding') {
+                    if ($itemContent['item']['requiresShipping'] ?? true) {
+                        $contentFlags |= Basket::CONTENT_FLAG_CF_SHIPPING;
+                    } else {
+                        $contentFlags |= Basket::CONTENT_FLAG_CF_DIGITAL;
+                    }
                 }
             }
         }
 
-        $digitalStatus = Basket::DIGITAL_STATUS_NONE;
-        if ($hasDigital && $hasPhysical) {
-            $digitalStatus = Basket::DIGITAL_STATUS_MIXED;
-        } elseif ($hasDigital && !$hasPhysical) {
-            $digitalStatus = Basket::DIGITAL_STATUS_FULL;
-        }
-
-        $this->basket->setDigital($digitalStatus);
+        $this->basket->setContentFlags($contentFlags);
         $this->basket->setTotal($total);
 
-        $applyShipping = ($digitalStatus !== Basket::DIGITAL_STATUS_FULL && $total < $shippingFree);
+        // Shipping only for physical items
+        $requiresShipping = ($contentFlags & Basket::FLAG_NEEDS_SHIPPING) > 0;
+        $applyShipping = $requiresShipping && $total < $shippingFree;
         $this->basket->setShipping($applyShipping ? $shipping : 0);
         $this->basket->setQuantity($quantity);
     }
@@ -177,6 +184,10 @@ class BasketService implements BasketServiceInterface
 
         $this->entityManager->flush();
 
+        // Define contributor if any
+        $this->defineContributor($request->request->all());
+
+        // Redirects to payment
         return $data['url'];
     }
 
@@ -184,8 +195,12 @@ class BasketService implements BasketServiceInterface
     public function paid(Basket $basket): void
     {
         if ('validated' === $basket->getStatus()) {
+            // Registers contributor if any
+            $this->registerContributor();
+
+            // Updates basket
             $basket->setStatus('paid');
-            $basket->setModification(new DateTime());
+            $basket->setModification(new DateTimeImmutable());
 
             $this->entityManager->persist($basket);
             $this->entityManager->flush();
@@ -194,32 +209,61 @@ class BasketService implements BasketServiceInterface
             $this->session->remove('basket');
 
             // Dispatch messages emails
-            $this->messageBus->dispatch(new ConfirmOrderMessage($basket->getId()));
-            if ($basket->getDigital() === Basket::DIGITAL_STATUS_FULL || $basket->getDigital() === Basket::DIGITAL_STATUS_MIXED) {
-                $this->messageBus->dispatch(new ProductItemDownloadMessage($basket->getId()));
-            }
+            $this->sendEmails($basket);
         }
     }
 
-    // Sends email when physical items are shipped
-    public function itemsShipped(string $number): Basket
+    // Sends emails after payment
+    public function sendEmails(Basket $basket)
+    {
+        $contentFlags = $basket->getContentFlags();
+
+        // Confirm order
+        $this->messageBus->dispatch(new ConfirmOrderMessage($basket->getId()));
+
+        // Digital products
+        if ($contentFlags & (Basket::CONTENT_FLAG_DIGITAL | Basket::CONTENT_FLAG_CF_DIGITAL)) {
+            $this->messageBus->dispatch(new ProductItemDownloadMessage($basket->getId()));
+        }
+
+        // Crowdfunding
+        if ($contentFlags & (Basket::CONTENT_FLAG_CF_SHIPPING | Basket::CONTENT_FLAG_CF_DIGITAL)) {
+            $this->messageBus->dispatch(new CrowdfundingContributionMessage($basket->getId()));
+        }
+    }
+
+    // Sends email when physical items/counterparts are shipped
+    public function itemsShipped(string $number, string $type): Basket
     {
         $basket = $this->basketRepository->findOneByNumber($number);
 
         if (null === $basket) {
-            throw new \Exception('Basket not found');
+            throw new Exception('Basket not found');
         }
-
         if ('shipped' !== $basket->getStatus()) {
-            $basket->setStatus('shipped');
-            $basket->setShipped(new DateTime());
+            $items = $basket->getItems();
+
+            // Items
+            if ('product' === $type && isset($items['product'])) {
+                $basket->setItemsShipped(new DateTime());
+            }
+
+            // Counterparts
+            if ('crowdfunding' === $type && isset($items['crowdfunding'])) {
+                $basket->setCounterpartsShipped(new DateTime());
+            }
+
+            // Check if there's items and counterparts and if both have been shipped
+            if (1 === count($items) or (null !== $basket->getItemsShipped() and null !== $basket->getCounterpartsShipped())) {
+                $basket->setStatus('shipped');
+            }
             $basket->setModification(new DateTime());
 
             $this->entityManager->persist($basket);
             $this->entityManager->flush();
 
             // Sends email
-            $this->messageBus->dispatch(new ItemsShippedMessage($basket->getId()));
+            $this->messageBus->dispatch(new ItemsShippedMessage($basket->getId(), $type));
         }
 
         return $basket;
@@ -237,14 +281,33 @@ class BasketService implements BasketServiceInterface
         $quantity = $data["quantity"];
         $type = $data["type"];
 
+        // Selects the kind of item
         if ('product' === $type) {
             $item = $this->productItemService->findOneById($itemId);
-        } else if ('counterpart' === $type) {
+        } else if ('crowdfunding' === $type) {
             $item = $this->crowdfundingCounterpartService->findOneById($itemId);
         }
 
         if (null === $item) {
-            throw new \Exception('Item not found');
+            throw new Exception('Item not found');
+        }
+
+        // Checks if limitedQuantity is defined and if it would be exceeded
+        if ($item->getLimitedQuantity() !== null) {
+            $currentlyInBasket = isset($items[$type][$itemId]) ? $items[$type][$itemId]['quantity'] : 0;
+            $alreadyOrdered = $item->getOrderedQuantity() ?? 0;
+            $wouldBeOrdered = $alreadyOrdered + $quantity;
+
+            // Over the limit
+            if ($wouldBeOrdered > $item->getLimitedQuantity()) {
+                $canAdd = $item->getLimitedQuantity() - $alreadyOrdered;
+
+                if ($canAdd <= 0) {
+                    return [
+                        'error' => $this->translator->trans('label.no_more_items_available', [], 'shop'),
+                    ];
+                }
+            }
         }
 
         // Adds item to basket
@@ -253,9 +316,11 @@ class BasketService implements BasketServiceInterface
             if ($items[$type][$itemId]['quantity'] + $quantity <= 0) {
                 unset($items[$type][$itemId]);
             // Otherwise updates quantity unless it's a digital item
-            } elseif ($item->getFile()->getName() === null) {
+            } elseif (false === method_exists($item, 'getFile') || $item->getFile()->getName() === null) {
+                if (method_exists($item, 'getVat')) {
+                    $items[$type][$itemId]['totalVat'] = $items[$type][$itemId]['quantity'] * $item->getVat();
+                }
                 $items[$type][$itemId]['quantity'] += $quantity;
-                $items[$type][$itemId]['totalVat'] = $items[$type][$itemId]['quantity'] * $item->getVat();
                 $items[$type][$itemId]['total'] = $items[$type][$itemId]['quantity'] * $item->getPrice();
             }
         // New item
@@ -303,26 +368,28 @@ class BasketService implements BasketServiceInterface
     {
         // Removes values not needed in basket
         $itemData = $item->toArray();
-        unset($itemData['description']);
+        if ('crowdfunding' !== $type) {
+            unset($itemData['description']);
+        }
         unset($itemData['product']);
         unset($itemData['creation']);
         unset($itemData['position']);
         unset($itemData['modification']);
         unset($itemData['user']);
 
-        if (method_exists($item, 'getFile')) {
-            $itemData['file'] = $item->getFile() ? $item->getFile()->getName() : null;
-            $itemData['size'] = $item->getFile() ? $item->getFile()->getSize() : null;
-        }
+        // Adds values related to productItem/crowdfundingCounterpart itself
         if (method_exists($item, 'getMedia')) {
             $itemData['media'] = $item->getMedia() ? $item->getMedia()->getName() : null;
         }
-
-        // Adds values related to product/counterpart itself
         if ('product' === $type) {
+            if (method_exists($item, 'getFile')) {
+                $itemData['file'] = $item->getFile() ? $item->getFile()->getName() : null;
+                $itemData['size'] = $item->getFile() ? $item->getFile()->getSize() : null;
+            }
+
             $product = $item->getProduct();
             $vat = $item->getVat();
-        } elseif ('counterpart' === $type) {
+        } elseif ('crowdfunding' === $type) {
             $product = $item->getCrowdfunding();
             $vat = 0;
         }
@@ -335,13 +402,95 @@ class BasketService implements BasketServiceInterface
         // Adds item to basket
         $items[$type][$item->getId()] = [
             'item' => $itemData,
-            'product' => $productData,
+            'parent' => $productData,
+            'type' => $type,
             'quantity' => $quantity,
             'totalVat' => $quantity * $vat,
             'total' => $quantity * $item->getPrice(),
         ];
 
         return $items;
+    }
+
+    // Defines the contributor in session
+    public function defineContributor(array $data): void
+    {
+        $items = $this->basket->getItems();
+        if (isset($items['crowdfunding'])) {
+            $counterparts = $items['crowdfunding'];
+
+            $counterpartsArray = [];
+            foreach ($counterparts as $id => $counterpartData) {
+                $counterpart = $this->crowdfundingCounterpartService->findOneById($counterpartData['item']['id']);
+                if ($counterpart) {
+                    $counterpartsArray[$counterpartData['item']['id']] = $counterpartData['quantity'];
+                }
+            }
+
+            $contributor = [
+                'name' => $data['coordinates']['contributorName'] ?? null,
+                'message' => $data['coordinates']['contributorMessage'] ?? null,
+                'email' => $this->basket->getEmail(),
+                'basket_id' => $this->basket->getId(),
+                'counterparts' => $counterpartsArray,
+            ];
+
+            $this->session->set('contributor', $contributor);
+        }
+    }
+
+    // Registers contributos
+    public function registerContributor()
+    {
+        $contributorData = $this->session->get('contributor');
+        if (null !== $contributorData) {
+            $basket = $this->basketRepository->findOneById([$contributorData['basket_id']]);
+            // Creates contributor from session
+            $contributor = new CrowdfundingContributor();
+            $contributor->setName($contributorData['name']);
+            $contributor->setMessage($contributorData['message']);
+            $contributor->setEmail($contributorData['email']);
+            $contributor->setCreation(new DateTimeImmutable());
+            $contributor->setModification(new DateTimeImmutable());
+            $contributor->setBasket($basket);
+
+            $this->entityManager->persist($contributor);
+
+            // Adds counterparts
+            foreach ($contributorData['counterparts'] as $id => $quantity) {
+                $counterpart = $this->crowdfundingCounterpartService->findOneById($id);
+                if (!$counterpart) {
+                    continue;
+                }
+
+                // Updates counterpart
+                $counterpart->setOrderedQuantity(($counterpart->getOrderedQuantity() ?? 0) + $quantity);
+
+                // Adds counterpart to contributor
+                $contributorCounterpart = new CrowdfundingContributorCounterpart();
+                $contributorCounterpart->setContributor($contributor);
+                $contributorCounterpart->setCounterpart($counterpart);
+                $contributorCounterpart->setQuantity($quantity);
+
+                $this->entityManager->persist($contributorCounterpart);
+
+                // Updates crowdfunding
+                $crowdfunding = $counterpart->getCrowdfunding();
+                if ($crowdfunding) {
+                    $amount = $counterpart->getPrice() * $quantity;
+                    $crowdfunding->setAmountAchieved($crowdfunding->getAmountAchieved() + $amount);
+                    $crowdfunding->setModification(new DateTimeImmutable());
+                    $crowdfunding->addContributor($contributor);
+
+                    $contributor->setCrowdfunding($crowdfunding);
+
+                    $this->entityManager->persist($crowdfunding);
+                }
+            }
+
+            $this->entityManager->flush();
+            $this->session->remove('contributor');
+        }
     }
 
     // Generates order number with format AAAAMM-YY-XXXXX
@@ -401,7 +550,7 @@ class BasketService implements BasketServiceInterface
                     'price_data' => [
                         'currency' => $this->basket->getCurrency(),
                         'product_data' => [
-                            'name' => $item[$type]['title'] . ' ('. $item['item']['title'] . ')',
+                            'name' => $item['parent']['title'] . ' ('. $item['item']['title'] . ')',
                         ],
                         'unit_amount' => $item['item']['price'],
                     ],

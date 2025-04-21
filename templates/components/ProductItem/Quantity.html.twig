@@ -1,0 +1,7 @@
+{% if null != limited %}
+    <div class="limited-quantity">
+        <p>{{ 'label.limited_quantity'|trans({}, 'shop') }} : {{ limited }}</p>
+        <p>{{ 'label.ordered_quantity'|trans({}, 'shop') }} : {{ ordered ?? 0 }}</p>
+        <p><strong>{{ 'label.remaining_quantity'|trans({}, 'shop') }} : {{ limited - ordered }}</strong></p>
+    </div>
+{% endif %}

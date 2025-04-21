@@ -1,5 +1,5 @@
 {# <twig:c975LShop:Basket:Display basket="{{ basket }}" [type="simple|complex"]/> #}
-{% set type = type | default('simple') %}
+{% set kind = kind | default('simple') %}
 {% set readonly = readonly | default(false) %}
 <h2 class="text-center">{{ 'label.ordered_items'|trans({}, 'shop') }}</h2>
-<twig:c975LShop:Basket:Items basket="{{ basket }}" type="{{ type }}" readonly="{{ readonly }}"/>
+<twig:c975LShop:Basket:Items basket="{{ basket }}" kind="{{ kind }}" readonly="{{ readonly }}"/>

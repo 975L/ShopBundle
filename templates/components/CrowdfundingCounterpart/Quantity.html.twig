@@ -1,9 +1,12 @@
-{% if null != limited %}
-    <p>{{ 'label.limited_quantity'|trans({}, 'shop') }} : {{ limited }}</p>
-    <p>{{ 'label.ordered_quantity'|trans({}, 'shop') }} : {{ ordered }}</p>
-    <p><strong>{{ 'label.remaining_quantity'|trans({}, 'shop') }} : {{ limited - ordered }}</strong></p>
-{% else %}
-    <p>&nbsp;</p>
-    <p><strong>{{ 'label.ordered_quantity'|trans({}, 'shop') }} : {{ ordered }}</strong></p>
-    <p>&nbsp;</p>
-{% endif %}
+<hr>
+<div class="limited-quantity">
+    {% if null != limited %}
+        <p>{{ 'label.limited_quantity'|trans({}, 'shop') }} : {{ limited }}</p>
+        <p>{{ 'label.ordered_quantity'|trans({}, 'shop') }} : {{ ordered ?? 0 }}</p>
+        <p><strong>{{ 'label.remaining_quantity'|trans({}, 'shop') }} : {{ limited - ordered }}</strong></p>
+    {% else %}
+        <p><strong>{{ 'label.ordered_quantity'|trans({}, 'shop') }} : {{ ordered ?? 0 }}</strong></p>
+    {% endif %}
+    <p>{{ 'label.expected_delivery'|trans({}, 'shop') }} : <strong>{{ expectedDelivery }}</strong></p>
+</div>
+<hr>

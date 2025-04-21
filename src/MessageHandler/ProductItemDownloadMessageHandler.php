@@ -20,9 +20,9 @@ use c975L\ShopBundle\Service\EmailServiceInterface;
 class ProductItemDownloadMessageHandler
 {
     public function __construct(
-        private BasketRepository $basketRepository,
+        private readonly BasketRepository $basketRepository,
         private readonly EmailServiceInterface $emailService,
-        private ProductItemDownloadServiceInterface $itemDownloadService
+        private readonly ProductItemDownloadServiceInterface $itemDownloadService
     ) {}
 
     public function __invoke(ProductItemDownloadMessage $message): void
@@ -36,26 +36,28 @@ class ProductItemDownloadMessageHandler
         // Process all product items in the basket
         $downloadLinks = [];
         foreach ($basket->getItems() as $type => $items) {
-            foreach ($items as $id => $item) {
-                if (!empty($item['item']['file'])) {
-                    $token = $this->itemDownloadService->prepareFileForDownload(
-                        $basket->getId(),
-                        $id,
-                        $item['item']['file']
-                    );
+            if ('product' === $type) {
+                foreach ($items as $id => $item) {
+                    if (false === empty($item['item']['file'])) {
+                        $token = $this->itemDownloadService->prepareFileForDownload(
+                            $basket->getId(),
+                            $id,
+                            $item['item']['file']
+                        );
 
-                    $downloadLinks[$id] = [
-                        'title' => $item['product']['title'] . ' (' . $item['item']['title'] . ')',
-                        'token' => $token,
-                        'size' => $item['item']['size'],
-                    ];
+                        $downloadLinks[$id] = [
+                            'title' => $item['parent']['title'] . ' (' . $item['item']['title'] . ')',
+                            'token' => $token,
+                            'size' => $item['item']['size'],
+                        ];
+                    }
                 }
             }
         }
 
         // Sends the email with download links
         if (!empty($downloadLinks)) {
-            $this->emailService->sendDownloadInformation($basket, $downloadLinks);
+            $this->emailService->downloadInformation($basket, $downloadLinks);
         }
     }
 }

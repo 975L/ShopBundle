@@ -105,31 +105,11 @@ class BasketController extends AbstractController
         if (null !== $basket) {
             $this->basketService->paid($basket);
         }
-
+dump($basket);
         return $this->render('@c975LShop/basket/display.html.twig', [
             'action' => 'paid',
             'basket' => $basket,
         ]);
-    }
-
-    // ITEMS SHIPPED
-    #[Route(
-        '/shop/basket/items-shipped/{number}',
-        name: 'items_shipped',
-        requirements: ['number' => '.{15,20}'],
-        methods: ['GET']
-    )]
-    #[IsGranted('ROLE_ADMIN')]
-    public function itemsShipped(string $number): Response
-    {
-        $basket = $this->basketService->itemsShipped($number);
-
-        return $this->render(
-            '@c975LShop/basket/shipped.html.twig',
-            [
-                'basket' => $basket,
-            ]
-        )->setMaxAge(3600);
     }
 
     // ADD PRODUCT ITEM
@@ -163,5 +143,28 @@ class BasketController extends AbstractController
     public function delete(): JsonResponse
     {
         return new JsonResponse($this->basketService->delete());
+    }
+
+    // ITEMS SHIPPED
+    #[Route(
+        '/shop/basket/items-shipped/{number}/{type}',
+        name: 'items_shipped',
+        requirements: [
+            'number' => '.{15,20}',
+            'type' => 'product|crowdfunding'
+        ],
+        methods: ['GET']
+    )]
+    #[IsGranted('ROLE_ADMIN')]
+    public function itemsShipped(string $number, string $type): Response
+    {
+        $basket = $this->basketService->itemsShipped($number, $type);
+
+        return $this->render(
+            '@c975LShop/basket/shipped.html.twig',
+            [
+                'basket' => $basket,
+            ]
+        )->setMaxAge(3600);
     }
 }

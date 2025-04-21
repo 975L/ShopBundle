@@ -24,7 +24,7 @@ class ProductItemDownloadRepository extends ServiceEntityRepository
         parent::__construct($registry, ProductItemDownload::class);
     }
 
-    public function findExpired(\DateTimeImmutable $expirationDate): array
+    public function findExpired(DateTimeImmutable $expirationDate): array
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.expiresAt < :expirationDate')

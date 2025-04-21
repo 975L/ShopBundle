@@ -144,7 +144,7 @@ You should be able to use your shop + Management with the following urls:
 
 ## Useful Commands
 
-The `basket.digital` has 3 values: 1 (digital), 2 (both) and 3 (physical).
+The `basket.contentflags` has 3 values: 1 (digital), 2 (both) and 3 (physical).
 
 The `basket.status` are the following: new, validated, paid, downloaded, shipped, finished
 

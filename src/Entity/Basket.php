@@ -23,9 +23,17 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 class Basket
 {
-    public const DIGITAL_STATUS_FULL = 1;
-    public const DIGITAL_STATUS_MIXED = 2;
-    public const DIGITAL_STATUS_NONE = 3;
+    public const CONTENT_FLAG_DIGITAL = 1;
+    public const CONTENT_FLAG_PHYSICAL = 2;
+    public const CONTENT_FLAG_CF_SHIPPING = 4;
+    public const CONTENT_FLAG_CF_DIGITAL = 8;
+
+    // Pre-defined flags
+    public const FLAG_PRODUCT_MIXED = self::CONTENT_FLAG_DIGITAL | self::CONTENT_FLAG_PHYSICAL; // 3
+    public const FLAG_CF_MIXED = self::CONTENT_FLAG_CF_DIGITAL | self::CONTENT_FLAG_CF_SHIPPING; // 12
+    public const FLAG_DIGITAL_ONLY = self::CONTENT_FLAG_DIGITAL | self::CONTENT_FLAG_CF_DIGITAL; // 9
+    public const FLAG_NEEDS_SHIPPING = self::CONTENT_FLAG_PHYSICAL | self::CONTENT_FLAG_CF_SHIPPING; // 6
+    public const FLAG_MIXED = self::FLAG_DIGITAL_ONLY | self::FLAG_NEEDS_SHIPPING; // 15
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -80,10 +88,10 @@ class Basket
     #[Assert\Length(min:3, max: 5)]
     private ?string $currency = null;
 
-    #[ORM\Column(type: 'integer')]
-    private ?int $digital = self::DIGITAL_STATUS_NONE;
+    #[ORM\Column(type: 'smallint')]
+    private ?int $contentflags = 0;
 
-    #[ORM\OneToOne(inversedBy: 'basket', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'basket')]
     private ?Payment $payment = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -93,7 +101,10 @@ class Basket
     private ?DateTimeInterface $modification = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $shipped = null;
+    private ?DateTimeInterface $itemsShipped = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $counterpartsShipped = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $downloaded = null;
@@ -284,14 +295,14 @@ class Basket
         return $this;
     }
 
-    public function getDigital(): int
+    public function getContentFlags(): int
     {
-        return $this->digital;
+        return $this->contentflags;
     }
 
-    public function setDigital(int $digital): static
+    public function setContentFlags(int $contentflags): static
     {
-        $this->digital = $digital;
+        $this->contentflags = $contentflags;
 
         return $this;
     }
@@ -320,14 +331,26 @@ class Basket
         return $this;
     }
 
-    public function getShipped(): ?DateTimeInterface
+    public function getItemsShipped(): ?DateTimeInterface
     {
-        return $this->shipped;
+        return $this->itemsShipped;
     }
 
-    public function setShipped(?DateTimeInterface $shipped): static
+    public function setItemsShipped(?DateTimeInterface $itemsShipped): static
     {
-        $this->shipped = $shipped;
+        $this->itemsShipped = $itemsShipped;
+
+        return $this;
+    }
+
+    public function getCounterpartsShipped(): ?DateTimeInterface
+    {
+        return $this->counterpartsShipped;
+    }
+
+    public function setCounterpartsShipped(?DateTimeInterface $counterpartsShipped): static
+    {
+        $this->counterpartsShipped = $counterpartsShipped;
 
         return $this;
     }

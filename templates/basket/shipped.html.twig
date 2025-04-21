@@ -7,7 +7,14 @@
 
 {% block content %}
     {% if null != basket %}
-        <p class="text text-center lead">{{ 'text.items_shipped'|trans({}, 'shop') }} {{ basket.shipped|date('d/m/Y - H:i') }}</p>
+        {# items #}
+        {% if null != basket.itemsShipped %}
+            <p class="text text-center lead">{{ 'text.items_shipped'|trans({}, 'shop') }} {{ basket.itemsShipped|date('d/m/Y - H:i') }}</p>
+        {% endif %}
+        {# counterparts #}
+        {% if null != basket.counterpartsShipped %}
+            <p class="text text-center lead">{{ 'text.counterparts_shipped'|trans({}, 'shop') }} {{ basket.counterpartsShipped|date('d/m/Y - H:i') }}</p>
+        {% endif %}
         <p class="text text-center">{{ 'label.order_number'|trans({}, 'shop') }}: {{ basket.number }}</p>
     {% endif %}
 {% endblock %}

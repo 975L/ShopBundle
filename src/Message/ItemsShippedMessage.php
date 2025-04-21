@@ -13,11 +13,17 @@ namespace c975L\ShopBundle\Message;
 class ItemsShippedMessage
 {
     public function __construct(
-        private int $basketId
+        private int $basketId,
+        private string $type,
     ) {}
 
     public function getBasketId(): int
     {
         return $this->basketId;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
     }
 }

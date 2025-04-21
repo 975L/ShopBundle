@@ -9,11 +9,10 @@
         <div class="card-data">
             <p>{{ productItem.description }}</p>
             <p class="price">{{ (productItem.price / 100)|format_currency(productItem.currency) }}</p>
-            <twig:c975LShop:Product:Digital file="{{ productItem.file.name }}"/>
-            <p>
-                <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24"/> <span class="quantity lead" data-basket-target="itemQuantity" data-item-id="{{ productItem.id }}">0</span>
-            </p>
+            <twig:c975LShop:Item:Type item="{{ productItem }}"/>
+            <twig:c975LShop:Item:Quantity id="{{ productItem.id }}"/>
         </div>
     </div>
+    <twig:c975LShop:ProductItem:Quantity limited="{{ productItem.limitedQuantity }}" ordered="{{ productItem.orderedQuantity }}"/>
     <twig:c975LShop:ProductItem:AddButton productItem="{{ productItem }}"/>
 </twig:c975LSite:Card:Card>

@@ -15,7 +15,7 @@ export default class extends Controller {
         document.addEventListener("basket:update", this.handleGlobalUpdate.bind(this));
 
         // Initialize translations
-        this.language = "fr"; // Default language
+        this.language = "fr";
         this.translations = {
             en: translationsEn,
             fr: translationsFr
@@ -26,7 +26,6 @@ export default class extends Controller {
             if (data) {
                 // Update basket UI and check product buttons
                 this.update(data);
-                this.updateProductButtons(data);
             }
         });
     }
@@ -58,17 +57,6 @@ export default class extends Controller {
         }
 
         return this.constructor.basketDataPromise;
-    }
-
-    // Updates data using shared fetch
-    updateData() {
-        if (this.hasTotalTarget && this.hasQuantityTarget) {
-            this.loadBasketData().then((data) => {
-                if (data) {
-                    this.update(data);
-                }
-            });
-        }
     }
 
     // Deletes the basket
@@ -169,6 +157,8 @@ export default class extends Controller {
                 const message = `${target.dataset.title} ${target.dataset.text}`;
                 this.displayMessage(message, "alert-" + target.dataset.alert);
                 this.update(data);
+
+                this.showToast(message + " Voir le panier");
             }
         })
         .catch((error) => {
@@ -183,7 +173,6 @@ export default class extends Controller {
         }
         this.updateBasketButton(data);
         this.updateBasketPage(data);
-        this.updateProductButtons(data);
 
         // Dispatches a global event
         const event = new CustomEvent("basket:update", {
@@ -290,8 +279,12 @@ export default class extends Controller {
             return;
         }
 
-        Object.entries(data.basket.items).forEach(([itemId, itemData]) => {
-            this.updateItemRow(itemId, itemData);
+        Object.entries(data.basket.items).forEach(([type, items]) => {
+            if (items && typeof items === "object") {
+                Object.entries(items).forEach(([id, itemData]) => {
+                    this.updateItemRow(`${type}-${id}`, itemData);
+                });
+            }
         });
     }
 
@@ -336,19 +329,21 @@ export default class extends Controller {
     }
 
     // Updates a single item row
-    updateItemRow(itemId, itemData) {
-        const itemTotalElement = this.itemTotalTargets.find(
-            (target) => target.dataset.itemId === itemId
-        );
-        if (itemTotalElement) {
-            itemTotalElement.textContent = (itemData.total / 100).toFixed(2) + this.getCurrencySymbol(itemData.item.currency);
-        }
-
+    updateItemRow(combinedId, itemData) {
+        // Quantity
         const itemQuantityElement = this.itemQuantityTargets.find(
-            (target) => target.dataset.itemId === itemId
+            (target) => target.dataset.itemId === combinedId
         );
         if (itemQuantityElement) {
             itemQuantityElement.textContent = itemData.quantity;
+        }
+
+        // Total
+        const itemTotalElement = this.itemTotalTargets.find(
+            (target) => target.dataset.itemId === combinedId
+        );
+        if (itemTotalElement) {
+            itemTotalElement.textContent = (itemData.total / 100).toFixed(2) + this.getCurrencySymbol(itemData.item.currency);
         }
     }
 
@@ -379,11 +374,10 @@ export default class extends Controller {
     // Handles global basket updates
     handleGlobalUpdate(event) {
         if (event.detail?.data && event.target !== this.element) {
-            // Force refresh of cached data
             this.constructor.basketDataPromise = null;
 
             this.updateBasketButton(event.detail.data);
-            this.updateProductButtons(event.detail.data);
+            this.updateAddButtons(event.detail.data);
         }
     }
 
@@ -413,7 +407,7 @@ export default class extends Controller {
     }
 
     // Update product buttons with basket data
-    updateProductButtons(data) {
+    updateAddButtons(data) {
         if (!data?.basket?.items) {
             return;
         }
@@ -435,16 +429,31 @@ export default class extends Controller {
             // Updates quantity if item is in the basket
             if (basketItem && basketItem.quantity > 0) {
                 const quantity = basketItem.quantity;
-
                 const quantityElement = document.querySelector(`.quantity[data-item-id="${itemId}"]`);
                 if (quantityElement && quantityElement.classList.contains("quantity")) {
                     quantityElement.textContent = `${quantity}`;
                 }
 
                 // Disable the button for digital item and quantity = 1
-                const hasFile = basketItem.item && basketItem.item.file !== null;
+                const hasFile = !!basketItem.item?.file;
                 if (hasFile && quantity >= 1) {
                     button.setAttribute("disabled", "disabled");
+                }
+            }
+
+            // Disable the button if limited quantity is reached
+            const limitedQuantity = parseInt(button.dataset.limited, 10);
+            const orderedQuantity = parseInt(button.dataset.ordered, 10);
+            const inBasketQuantity = basketItem ? basketItem.quantity : 0;
+
+            if (!isNaN(limitedQuantity) && limitedQuantity > 0) {
+                const totalOrdered = (orderedQuantity || 0) + inBasketQuantity;
+                const remaining = limitedQuantity - totalOrdered;
+
+                if (remaining <= 0) {
+                    // Désactiver le bouton
+                    button.setAttribute("disabled", "disabled");
+                    button.classList.add("disabled");
                 }
             }
         });
@@ -465,5 +474,47 @@ export default class extends Controller {
         const code = currencyCode.toLowerCase();
 
         return " " + symbols[code] || currencyCode.toUpperCase();
+    }
+
+    // Displays a toast message
+    showToast(message) {
+        const oldToast = document.getElementById("basket-toast");
+        if (oldToast) {
+            oldToast.remove();
+        }
+
+        const toast = document.createElement("div");
+        toast.id = "basket-toast";
+        toast.style.position = "fixed";
+        toast.style.bottom = "20px";
+        toast.style.right = "20px";
+        toast.style.backgroundColor = "#28a745";
+        toast.style.color = "white";
+        toast.style.padding = "15px 20px";
+        toast.style.borderRadius = "5px";
+        toast.style.boxShadow = "0 2px 10px rgba(0,0,0,0.3)";
+        toast.style.zIndex = "100000";
+        toast.style.opacity = "0";
+        toast.style.transition = "opacity 0.3s ease";
+        toast.style.fontSize = "16px";
+        toast.style.display = "flex";
+        toast.style.alignItems = "center";
+        toast.style.cursor = "pointer";
+        toast.textContent = message;
+
+        toast.addEventListener("click", () => {
+            window.location.href = "/shop/basket";
+        });
+
+        document.body.appendChild(toast);
+
+        requestAnimationFrame(() => {
+            toast.style.opacity = "1";
+        });
+
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => toast.remove(), 300);
+        }, 10000);
     }
 }

@@ -1,10 +1,12 @@
-{# <twig:c975LShop:Basket:AddButton crowdfundingCounterpart="{{ counterpart }}" [type="primary"] [quantity="1"]/> #}
+{# <twig:c975LShop:Crowdfunding:AddButton crowdfundingCounterpart="{{ counterpart }}" [type="primary"] [quantity="1"]/> #}
 {% set type = type | default('primary') %}
 {% set quantity = quantity | default(1) %}
 <button
     data-action="click->basket#addItem"
-    data-type="counterpart"
+    data-type="crowdfunding"
     data-quantity="{{ quantity }}"
+    data-limited="{{ crowdfundingCounterpart.limitedQuantity|default(0) }}"
+    data-ordered="{{ crowdfundingCounterpart.orderedQuantity|default(0) }}"
     data-item-id="{{ crowdfundingCounterpart.id }}"
     data-title="{{ crowdfundingCounterpart.title }}"
     data-alert="success"

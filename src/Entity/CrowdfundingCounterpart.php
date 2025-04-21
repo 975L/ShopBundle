@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Entity;
 
 use App\Entity\User;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
@@ -35,10 +36,10 @@ class CrowdfundingCounterpart
     #[ORM\Column]
     private ?int $price = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true, type: 'smallint')]
     private ?int $limitedQuantity = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true, type: 'smallint')]
     private ?int $orderedQuantity = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -50,6 +51,9 @@ class CrowdfundingCounterpart
     #[ORM\Column(length: 3)]
     private ?string $currency = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $requiresShipping = false;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation = null;
 
@@ -60,14 +64,14 @@ class CrowdfundingCounterpart
     #[ORM\JoinColumn(nullable: true)]
     private ?Crowdfunding $crowdfunding = null;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingContributor::class, mappedBy: 'crowdfundingCounterpart', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: CrowdfundingContributorCounterpart::class, mappedBy: 'counterpart')]
     #[ORM\OrderBy(['id' => 'ASC'])]
-    private Collection $contributors;
+    private Collection $contributorCounterparts;
 
     #[ORM\OneToOne(inversedBy: 'crowdfundingCounterpart', cascade: ['persist', 'remove'])]
     private ?CrowdfundingCounterpartMedia $media = null;
 
-    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[ORM\ManyToOne(inversedBy: 'crowdfundingCounterparts')]
     private ?User $user = null;
 
     public function __construct()
@@ -186,24 +190,36 @@ class CrowdfundingCounterpart
         return $this;
     }
 
-    public function getCreation(): ?\DateTimeInterface
+    public function getRequiresShipping(): bool
+    {
+        return $this->requiresShipping;
+    }
+
+    public function setRequiresShipping(bool $requiresShipping): self
+    {
+        $this->requiresShipping = $requiresShipping;
+
+        return $this;
+    }
+
+    public function getCreation(): ?DateTimeInterface
     {
         return $this->creation;
     }
 
-    public function setCreation(\DateTimeInterface $creation): static
+    public function setCreation(DateTimeInterface $creation): static
     {
         $this->creation = $creation;
 
         return $this;
     }
 
-    public function getModification(): ?\DateTimeInterface
+    public function getModification(): ?DateTimeInterface
     {
         return $this->modification;
     }
 
-    public function setModification(\DateTimeInterface $modification): static
+    public function setModification(DateTimeInterface $modification): static
     {
         $this->modification = $modification;
 
@@ -222,13 +238,28 @@ class CrowdfundingCounterpart
         return $this;
     }
 
+
+    public function getContributors(): Collection
+    {
+        $contributors = new ArrayCollection();
+
+        foreach ($this->contributorCounterparts as $relation) {
+            $contributors->add($relation->getContributor());
+        }
+
+        return $contributors;
+    }
+
+
+
     /**
      * @return Collection<int, CrowdfundingContributor>
      */
-    public function getContributors(): Collection
+/*    public function getContributors(): Collection
     {
         return $this->contributors;
     }
+*/
 
     public function addContributor(CrowdfundingContributor $contributor): static
     {

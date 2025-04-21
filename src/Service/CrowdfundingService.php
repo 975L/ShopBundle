@@ -36,4 +36,10 @@ class CrowdfundingService implements CrowdfundingServiceInterface
     {
         return $this->crowdfundingRepository->findAllSorted();
     }
+
+    // Finds one by id
+    public function findOneById(int $id): ?Crowdfunding
+    {
+        return $this->crowdfundingRepository->findOneById($id);
+    }
 }
