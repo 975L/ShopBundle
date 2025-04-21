@@ -36,6 +36,9 @@ class BasketCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
+            IntegerField::new('id')
+                ->setFormTypeOption('disabled', 'disabled')
+                ->setFormTypeOption('disabled', 'disabled'),
             TextField::new('number')
                 ->setLabel('label.order_number')
                 ->setFormTypeOption('disabled', 'disabled'),
@@ -45,14 +48,37 @@ class BasketCrudController extends AbstractCrudController
             TextField::new('status')
                 ->setLabel('label.status')
                 ->setFormTypeOption('disabled', 'disabled'),
-            ChoiceField::new('digital')
-                ->setLabel('label.digital')
+            ChoiceField::new('contentFlags')
+                ->setLabel('label.content')
                 ->setFormTypeOption('disabled', 'disabled')
                 ->setChoices([
-                    'label.digital' => 1,
-                    'label.mixed' => 2,
-                    'label.physical' => 3,
-                ]),
+                    'label.digital' => Basket::CONTENT_FLAG_DIGITAL,
+                    'label.physical' => Basket::CONTENT_FLAG_PHYSICAL,
+                    'label.mixed' => Basket::FLAG_PRODUCT_MIXED,
+                    'label.crowdfunding_digital' => Basket::CONTENT_FLAG_CF_DIGITAL,
+                    'label.crowdfunding_shipping' => Basket::CONTENT_FLAG_CF_SHIPPING,
+                    'label.crowdfunding_mixed' => Basket::FLAG_CF_MIXED,
+                    'label.all_mixed' => Basket::FLAG_MIXED,
+                    ])
+                ->formatValue(function ($value, $entity) {
+                    if ($value == Basket::FLAG_MIXED) {
+                        return 'Mixed (Digital + Physical + Crowdfunding)';
+                    } elseif ($value == Basket::FLAG_DIGITAL_ONLY) {
+                        return 'Digital Only (Products + Crowdfunding)';
+                    } elseif ($value == Basket::FLAG_NEEDS_SHIPPING) {
+                        return 'Requires Shipping (Physical + Crowdfunding)';
+                    } elseif ($value == Basket::CONTENT_FLAG_DIGITAL) {
+                        return 'Digital Product';
+                    } elseif ($value == Basket::CONTENT_FLAG_PHYSICAL) {
+                        return 'Physical Product';
+                    } elseif ($value == Basket::CONTENT_FLAG_CF_DIGITAL) {
+                        return 'Digital Crowdfunding';
+                    } elseif ($value == Basket::CONTENT_FLAG_CF_SHIPPING) {
+                        return 'Physical Crowdfunding';
+                    }
+
+                    return 'Unknown (' . $value . ')';
+                }),
             IntegerField::new('total')
                 ->setLabel('label.total')
                 ->setFormTypeOption('disabled', 'disabled'),
@@ -90,9 +116,7 @@ class BasketCrudController extends AbstractCrudController
                 ->setFormTypeOption('disabled', 'disabled'),
             DateTimeField::new('creation')
                 ->setLabel('label.creation')
-                ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled')
-                ->onlyOnDetail()
                 ->setFormTypeOption('disabled', 'disabled'),
             DateTimeField::new('modification')
                 ->setLabel('label.modification')
@@ -106,7 +130,7 @@ class BasketCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         // Paid baskets
-        $filterPaid = Action::new('filterPaid', 'paid', 'fa fa-filter')
+        $filterPaid = Action::new('filterPaid', 'Paid', 'fa fa-filter')
             ->createAsGlobalAction()
             ->linkToUrl(function () {
                 $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
@@ -119,7 +143,7 @@ class BasketCrudController extends AbstractCrudController
             });
 
         // Validated baskets
-        $filterValidated = Action::new('filterValidated', ' (03/04/2025)', 'fa fa-filter')
+        $filterValidated = Action::new('filterValidated', 'Validated', 'fa fa-filter')
             ->createAsGlobalAction()
             ->linkToUrl(function () {
                 $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
@@ -132,7 +156,7 @@ class BasketCrudController extends AbstractCrudController
             });
 
         // New baskets
-        $filterNew = Action::new('filterNew', 'new', 'fa fa-filter')
+        $filterNew = Action::new('filterNew', 'New', 'fa fa-filter')
             ->createAsGlobalAction()
             ->linkToUrl(function () {
                 $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
@@ -144,18 +168,41 @@ class BasketCrudController extends AbstractCrudController
                     ->generateUrl();
             });
 
+
         // Send items
-        $sendItems = Action::new('itemsShipped', 'label.send_items')
+        $sendPhysicalItems = Action::new('sendPhysicalItems', 'label.send_items')
             ->linkToRoute('items_shipped', function (Basket $basket): array {
                 return [
                     'number' => $basket->getNumber(),
+                    'type' => 'product'
                 ];
             })
             ->setHtmlAttributes([
-                'target' => '_blank'
+                'target' => '_blank',
             ])
             ->displayIf(function (Basket $basket): bool {
-                return $basket->getStatus() === 'paid' && $basket->getNumber() !== null && $basket->getDigital() !== 1;
+                return $basket->getStatus() === 'paid' &&
+                    $basket->getNumber() !== null &&
+                    ($basket->getContentFlags() & Basket::CONTENT_FLAG_PHYSICAL) &&
+                    $basket->getItemsShipped() === null;
+            });
+
+        // Send counterparts
+        $sendCounterparts = Action::new('sendCounterparts', 'label.send_counterparts')
+            ->linkToRoute('items_shipped', function (Basket $basket): array {
+                return [
+                    'number' => $basket->getNumber(),
+                    'type' => 'crowdfunding'
+                ];
+            })
+            ->setHtmlAttributes([
+                'target' => '_blank',
+            ])
+            ->displayIf(function (Basket $basket): bool {
+                return $basket->getStatus() === 'paid' &&
+                    $basket->getNumber() !== null &&
+                    ($basket->getContentFlags() & Basket::CONTENT_FLAG_CF_SHIPPING) &&
+                    $basket->getCounterpartsShipped() === null;
             });
 
         return $actions
@@ -164,7 +211,8 @@ class BasketCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, $filterPaid)
             ->add(Crud::PAGE_INDEX, $filterValidated)
             ->add(Crud::PAGE_INDEX, $filterNew)
-            ->add(Crud::PAGE_INDEX, $sendItems)
+            ->add(Crud::PAGE_INDEX, $sendPhysicalItems)
+            ->add(Crud::PAGE_INDEX, $sendCounterparts)
             ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
             ->setPermission('filterPaid', 'ROLE_ADMIN')
@@ -178,6 +226,7 @@ class BasketCrudController extends AbstractCrudController
         return $crud
             ->showEntityActionsInlined()
             ->setEntityPermission('ROLE_ADMIN')
+            ->setDefaultSort(['id' => 'DESC'])
         ;
     }
 

@@ -21,6 +21,8 @@ use c975L\ShopBundle\Repository\CrowdfundingRepository;
 #[ORM\Table(name: 'shop_crowdfunding')]
 class Crowdfunding
 {
+    private string $type = 'crowdfunding';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -65,23 +67,23 @@ class Crowdfunding
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingMedia::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: CrowdfundingMedia::class, mappedBy: 'crowdfunding', cascade: ['remove'])]
     #[ORM\OrderBy(["position" => "ASC"])]
     private Collection $medias;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingContributor::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: CrowdfundingContributor::class, mappedBy: 'crowdfunding')]
     #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $contributors;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingNews::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: CrowdfundingNews::class, mappedBy: 'crowdfunding', cascade: ['remove'])]
     #[ORM\OrderBy(['publishedDate' => 'DESC'])]
     private Collection $news;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingCounterpart::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: CrowdfundingCounterpart::class, mappedBy: 'crowdfunding', cascade: ['remove'])]
     #[ORM\OrderBy(['price' => 'ASC'])]
     private Collection $counterparts;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingVideo::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: CrowdfundingVideo::class, mappedBy: 'crowdfunding', cascade: ['remove'])]
     private Collection $videos;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -100,6 +102,23 @@ class Crowdfunding
         $this->contributors = new ArrayCollection();
         $this->news = new ArrayCollection();
         $this->counterparts = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->title;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     public function getId(): ?int

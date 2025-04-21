@@ -14,6 +14,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use c975L\ShopBundle\Form\CrowdfundingCounterpartMediaType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -41,6 +42,10 @@ class CrowdfundingCounterpartType extends AbstractType
                 'attr' => [
                     'rows' => 3
                 ]
+            ])
+            ->add('requiresShipping', CheckboxType::class, [
+                'label' => 'label.requires_shipping',
+                'required' => false,
             ])
             ->add('price', IntegerType::class, [
                 'required' => true,

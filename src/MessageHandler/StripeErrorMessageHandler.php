@@ -47,6 +47,6 @@ class StripeErrorMessageHandler
             'date' => new \DateTime(),
         ];
 
-        $this->emailService->sendStripeErrorMessage($basket, $context);
+        $this->emailService->stripeErrorMessage($basket, $context);
     }
 }

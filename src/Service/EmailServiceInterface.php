@@ -17,15 +17,17 @@ interface EmailServiceInterface
 {
     public function create(): TemplatedEmail;
 
-    public function getEmailConfig(): array;
+    public function getConfig(): array;
 
     public function send($email);
 
-    public function sendConfirmOrder(Basket $basket);
+    public function confirmOrder(Basket $basket);
 
-    public function sendShippedItems(Basket $basket);
+    public function crowdfundingContribution(Basket $basket, array $counterparts): void;
 
-    public function sendDownloadInformation(Basket $basket, array $downloadLinks): void;
+    public function shippedItems(Basket $basket, string $type);
 
-    public function sendStripeErrorMessage(Basket $basket, array $context): void;
+    public function downloadInformation(Basket $basket, array $downloadLinks): void;
+
+    public function stripeErrorMessage(Basket $basket, array $context): void;
 }

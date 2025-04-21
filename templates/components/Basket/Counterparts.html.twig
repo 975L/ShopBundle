@@ -1,0 +1,7 @@
+{# <twig:c975LShop:Basket:Counterparts counterparts="{{ counterparts }}"/> #}
+{% trans_default_domain 'shop' %}
+<table>
+    {% for counterpart in counterparts %}
+        <twig:c975LShop:Basket:Counterpart counterpart="{{ counterpart }}"/>
+    {% endfor %}
+</table>

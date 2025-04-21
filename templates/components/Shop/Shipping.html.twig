@@ -1,8 +1,8 @@
-{# Add your own information in templates/bundles/c975LShopBundle/components/Shop/Shipping.html.twig #}
-{#
+{# Define your own information in templates/bundles/c975LShopBundle/components/Shop/Shipping.html.twig by overriding this component #}
 <div class="shop-shipping">
-    <p>
-        Your text
+    <p class="text text-center big white">
+        <strong class="white">{{ 'label.shipping_free_from'|trans({'%amount%': (config('c975LShop.shippingFree') / 100)|format_currency(config('c975LShop.currency'), {fraction_digit: 0}) }, 'shop') }}</strong>
+        <br>
+        {{ 'label.shipping_france_only'|trans({}, 'shop') }}
     </p>
 </div>
-#}

@@ -17,4 +17,6 @@ interface CrowdfundingServiceInterface
     public function findAll();
 
     public function findAllSorted();
+
+    public function findOneById(int $id): ?Crowdfunding;
 }

@@ -36,6 +36,24 @@ class CrowdfundingRepository extends ServiceEntityRepository
         ;
     }
 
+    // Finds a crowdfunding by id with joined data
+    public function findOneById(int $id): ?Crowdfunding
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c, cm, cc, ccm, v, cn, cct')
+            ->leftJoin('c.medias', 'cm')
+            ->leftJoin('c.counterparts', 'cc')
+            ->leftJoin('cc.media', 'ccm')
+            ->leftJoin('c.videos', 'v')
+            ->leftJoin('c.news', 'cn')
+            ->leftJoin('c.contributors', 'cct')
+            ->where('c.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     // Finds a crowdfunding by slug with joined data
     public function findOneBySlug(string $slug): ?Crowdfunding
     {
@@ -47,7 +65,7 @@ class CrowdfundingRepository extends ServiceEntityRepository
             ->leftJoin('c.videos', 'v')
             ->leftJoin('c.news', 'cn')
             ->leftJoin('c.contributors', 'cct')
-            ->andWhere('c.slug = :slug')
+            ->where('c.slug = :slug')
             ->setParameter('slug', $slug)
             ->getQuery()
             ->getOneOrNullResult()

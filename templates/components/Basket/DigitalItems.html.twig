@@ -1,6 +1,6 @@
 {# <twig:c975LShop:Basket:DigitalItems basket="{{ basket }}"/> #}
 {% trans_default_domain 'shop' %}
-{% if basket.digital != 3 %}
+{% if (basket.contentflags b-and (constant('c975L\\ShopBundle\\Entity\\Basket::CONTENT_FLAG_DIGITAL') b-or constant('c975L\\ShopBundle\\Entity\\Basket::CONTENT_FLAG_CF_DIGITAL'))) > 0 %}
     <h2 class="text-center">{{ 'label.digital_items'|trans }}</h2>
     <p class="text text-center">{{ 'label.basket_download'|trans }}</p>
 {% endif %}

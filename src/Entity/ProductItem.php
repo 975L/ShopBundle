@@ -46,6 +46,12 @@ class ProductItem
     #[ORM\Column]
     private ?float $vat = null;
 
+    #[ORM\Column(nullable: true, type: 'smallint')]
+    private ?int $limitedQuantity = null;
+
+    #[ORM\Column(nullable: true, type: 'smallint')]
+    private ?int $orderedQuantity = null;
+
     #[ORM\OneToOne(inversedBy: 'productItem', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
     private ?ProductItemFile $file = null;
@@ -174,6 +180,30 @@ class ProductItem
     public function setVat(float $vat): static
     {
         $this->vat = $vat;
+
+        return $this;
+    }
+
+    public function getLimitedQuantity(): ?int
+    {
+        return $this->limitedQuantity;
+    }
+
+    public function setLimitedQuantity(?int $limitedQuantity): static
+    {
+        $this->limitedQuantity = $limitedQuantity;
+
+        return $this;
+    }
+
+    public function getOrderedQuantity(): ?int
+    {
+        return $this->orderedQuantity;
+    }
+
+    public function setOrderedQuantity(?int $orderedQuantity): static
+    {
+        $this->orderedQuantity = $orderedQuantity;
 
         return $this;
     }

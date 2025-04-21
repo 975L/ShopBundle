@@ -19,7 +19,7 @@ use c975L\ShopBundle\Service\EmailServiceInterface;
 class ConfirmOrderMessageHandler
 {
     public function __construct(
-        private BasketRepository $basketRepository,
+        private readonly BasketRepository $basketRepository,
         private readonly EmailServiceInterface $emailService,
     ) {}
 
@@ -31,6 +31,6 @@ class ConfirmOrderMessageHandler
         }
 
         // Sends the email
-        $this->emailService->sendConfirmOrder($basket);
+        $this->emailService->confirmOrder($basket);
     }
 }

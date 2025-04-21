@@ -19,7 +19,7 @@ use c975L\ShopBundle\Service\EmailServiceInterface;
 class ItemsShippedMessageHandler
 {
     public function __construct(
-        private BasketRepository $basketRepository,
+        private readonly BasketRepository $basketRepository,
         private readonly EmailServiceInterface $emailService,
     ) {}
 
@@ -31,6 +31,6 @@ class ItemsShippedMessageHandler
         }
 
         // Sends the email
-        $this->emailService->sendShippedItems($basket);
+        $this->emailService->shippedItems($basket, $message->getType());
     }
 }

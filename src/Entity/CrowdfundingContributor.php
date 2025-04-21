@@ -12,8 +12,10 @@ namespace c975L\ShopBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use c975L\ShopBundle\Entity\Crowdfunding;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
+use c975L\ShopBundle\Entity\CrowdfundingContributorCounterpart;
 use c975L\ShopBundle\Repository\CrowdfundingContributorRepository;
 
 #[ORM\Entity(repositoryClass: CrowdfundingContributorRepository::class)]
@@ -40,13 +42,31 @@ class CrowdfundingContributor
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $modification = null;
 
-    #[ORM\ManyToOne(targetEntity: Crowdfunding::class, inversedBy: 'contributors')]
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Basket $basket = null;
+
+    #[ORM\OneToMany(mappedBy: 'contributor', targetEntity: CrowdfundingContributorCounterpart::class, cascade: ['remove'])]
+    private Collection $contributorCounterparts;
+
+    #[ORM\ManyToOne(inversedBy: 'contributors')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Crowdfunding $crowdfunding = null;
 
-    #[ORM\ManyToOne(targetEntity: CrowdfundingCounterpart::class, inversedBy: 'contributors')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?CrowdfundingCounterpart $crowdfundingCounterpart = null;
+    public function toArray(): array
+    {
+        return get_object_vars($this);
+    }
+
+    public function __toString()
+    {
+        return $this->name;
+    }
+
+    public function __construct()
+    {
+        $this->contributorCounterparts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -113,26 +133,43 @@ class CrowdfundingContributor
         return $this;
     }
 
+    public function addCounterpart(CrowdfundingCounterpart $counterpart, int $quantity): self
+    {
+        $contributorCounterpart = new CrowdfundingContributorCounterpart();
+        $contributorCounterpart->setContributor($this);
+        $contributorCounterpart->setCounterpart($counterpart);
+        $contributorCounterpart->setQuantity($quantity);
+
+        $this->contributorCounterparts->add($contributorCounterpart);
+
+        return $this;
+    }
+
+    public function getContributorCounterparts(): Collection
+    {
+        return $this->contributorCounterparts;
+    }
+
+    public function getBasket(): ?Basket
+    {
+        return $this->basket;
+    }
+
+    public function setBasket(?Basket $basket): static
+    {
+        $this->basket = $basket;
+
+        return $this;
+    }
+
     public function getCrowdfunding(): ?Crowdfunding
     {
         return $this->crowdfunding;
     }
 
-    public function setCrowdfunding(?Crowdfunding $crowdfunding): static
+    public function setCrowdfunding(?Crowdfunding $crowdfunding): self
     {
         $this->crowdfunding = $crowdfunding;
-
-        return $this;
-    }
-
-    public function getCrowdfundingCounterpart(): ?CrowdfundingCounterpart
-    {
-        return $this->crowdfundingCounterpart;
-    }
-
-    public function setCrowdfundingCounterpart(?CrowdfundingCounterpart $crowdfundingCounterpart): static
-    {
-        $this->crowdfundingCounterpart = $crowdfundingCounterpart;
 
         return $this;
     }

@@ -79,12 +79,12 @@ class ProductItemDownload
         return $this;
     }
 
-    public function getExpiresAt(): \DateTimeImmutable
+    public function getExpiresAt(): DateTimeImmutable
     {
         return $this->expiresAt;
     }
 
-    public function setExpiresAt(\DateTimeImmutable $expiresAt): self
+    public function setExpiresAt(DateTimeImmutable $expiresAt): self
     {
         $this->expiresAt = $expiresAt;
         return $this;
@@ -101,12 +101,12 @@ class ProductItemDownload
         return $this;
     }
 
-    public function getDownloadedAt(): ?\DateTimeImmutable
+    public function getDownloadedAt(): ?DateTimeImmutable
     {
         return $this->downloadedAt;
     }
 
-    public function setDownloadedAt(?\DateTimeImmutable $downloadedAt): self
+    public function setDownloadedAt(?DateTimeImmutable $downloadedAt): self
     {
         $this->downloadedAt = $downloadedAt;
         return $this;

@@ -352,11 +352,11 @@
             </trans-unit>
             <trans-unit id="88">
                 <source>label.send_items</source>
-                <target>Envoi articles</target>
+                <target>Expédition articles</target>
             </trans-unit>
             <trans-unit id="89">
                 <source>label.items_shipped</source>
-                <target>Envoi des articles commandés</target>
+                <target>Expédition des articles commandés</target>
             </trans-unit>
             <trans-unit id="90">
                 <source>label.mixed</source>
@@ -468,7 +468,7 @@
             </trans-unit>
             <trans-unit id="117">
                 <source>label.next_smiley</source>
-                <target>Je veux le smiley suivant !</target>
+                <target>Je contribue pour le smiley suivant !</target>
             </trans-unit>
             <trans-unit id="118">
                 <source>label.presentation</source>
@@ -521,6 +521,102 @@
             <trans-unit id="130">
                 <source>label.amount_achieved</source>
                 <target>Montant réalisé</target>
+            </trans-unit>
+            <trans-unit id="131">
+                <source>label.counterpart</source>
+                <target>Contrepartie</target>
+            </trans-unit>
+            <trans-unit id="132">
+                <source>label.requires_shipping</source>
+                <target>Nécessite une expédition</target>
+            </trans-unit>
+            <trans-unit id="133">
+                <source>label.counterpart_without_shipping</source>
+                <target>Contrepartie SANS expédition</target>
+            </trans-unit>
+            <trans-unit id="134">
+                <source>label.counterpart_with_shipping</source>
+                <target>Contrepartie AVEC expédition</target>
+            </trans-unit>
+            <trans-unit id="135">
+                <source>label.shipping_free_from</source>
+                <target>Frais de port offerts à partir de %amount% d'achats</target>
+            </trans-unit>
+            <trans-unit id="136">
+                <source>label.shipping_france_only</source>
+                <target>Livraisons seulement en France</target>
+            </trans-unit>
+            <trans-unit id="137">
+                <source>label.all_our_items</source>
+                <target>Tous nos articles</target>
+            </trans-unit>
+            <trans-unit id="138">
+                <source>label.welcome_shop</source>
+                <target>Bienvenue dans notre boutique !</target>
+            </trans-unit>
+            <trans-unit id="139">
+                <source>label.hope_find_items</source>
+                <target>Nous espérons que vous trouverez votre bonheur parmi tous nos articles proposés.</target>
+            </trans-unit>
+            <trans-unit id="140">
+                <source>label.signature</source>
+                <target>Signature</target>
+            </trans-unit>
+            <trans-unit id="141">
+                <source>label.support_message</source>
+                <target>Message de soutien</target>
+            </trans-unit>
+            <trans-unit id="142">
+                <source>label.contributor_message</source>
+                <target>Message du contributeur</target>
+            </trans-unit>
+            <trans-unit id="143">
+                <source>label.crowdfunding_contribution</source>
+                <target>Contribution au financement participatif</target>
+            </trans-unit>
+            <trans-unit id="144">
+                <source>label.basket_counterparts_reminder</source>
+                <target>Rappel des contreparties commandées :</target>
+            </trans-unit>
+            <trans-unit id="145">
+                <source>placeholder.signature</source>
+                <target>Signature (ou laissez vide)</target>
+            </trans-unit>
+            <trans-unit id="146">
+                <source>placeholder.support_message</source>
+                <target>Message de soutien (ou laissez vide)</target>
+            </trans-unit>
+            <trans-unit id="147">
+                <source>label.no_more_items_available</source>
+                <target>Il n'y a plus d'articles disponibles, désolé</target>
+            </trans-unit>
+            <trans-unit id="148">
+                <source>label.send_counterparts</source>
+                <target>Expédition des contreparties</target>
+            </trans-unit>
+            <trans-unit id="149">
+                <source>label.content</source>
+                <target>Contenu</target>
+            </trans-unit>
+            <trans-unit id="150">
+                <source>text.counterparts_shipped</source>
+                <target>Les contreparties ont été expédiées le </target>
+            </trans-unit>
+            <trans-unit id="151">
+                <source>label.crowdfunding_information</source>
+                <target>Vous avez contribué à un financement participatif, un email contenant les informations vous a été envoyé.</target>
+            </trans-unit>
+            <trans-unit id="152">
+                <source>text.counterparts_not_shipped</source>
+                <target>Les contreparties n'ont pas encore été expédiées.</target>
+            </trans-unit>
+            <trans-unit id="153">
+                <source>label.track_order_information</source>
+                <target>Revenez sur cette page pour suivre votre commande.</target>
+            </trans-unit>
+            <trans-unit id="154">
+                <source>label.counterparts_shipped</source>
+                <target>Expédition des contreparties commandées</target>
             </trans-unit>
         </body>
     </file>

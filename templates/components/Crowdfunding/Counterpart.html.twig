@@ -1,4 +1,4 @@
-<twig:c975LSite:Card:Card id="{{ counterpart.slug }}" level="h3" title="{{ counterpart.title }}">
+<twig:c975LSite:Card:Card id="{{ counterpart.slug }}" level="h3" title="{{ counterpart.title }}" class="crowdfunding-counterpart">
     <div>
         {% if counterpart.media != null and counterpart.media.name != null %}
             <div class="card-img">
@@ -8,14 +8,13 @@
         <div class="card-data">
             <p class="description">{{ counterpart.description|nl2br }}</p>
             <p class="price-counterpart">{{ (counterpart.price / 100)|format_currency(counterpart.currency, {fraction_digit: 0}) }}</p>
-            <hr>
-            <twig:c975LShop:CrowdfundingCounterpart:Quantity limited="{{ counterpart.limitedQuantity }}" ordered="{{ counterpart.orderedQuantity }}"/>
-            <p>{{ 'label.expected_delivery'|trans({}, 'shop') }} : <strong>{{ counterpart.expectedDelivery }}</strong></p>
-            <hr>
-            <p>
-                <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24"/> x<span class="quantity lead" data-basket-target="productCounterpartQuantity" data-product-counterpart-id="{{ counterpart.id }}">0</span>
-            </p>
+            <twig:c975LShop:Item:Type item="{{ counterpart }}"/>
+            <twig:c975LShop:CrowdfundingCounterpart:Quantity limited="{{ counterpart.limitedQuantity }}" ordered="{{ counterpart.orderedQuantity }}" expectedDelivery="{{ counterpart.expectedDelivery }}"/>
+            <twig:c975LShop:Item:Quantity id="{{ counterpart.id }}"/>
         </div>
     </div>
     <twig:c975LShop:CrowdfundingCounterpart:AddButton crowdfundingCounterpart="{{ counterpart }}"/>
 </twig:c975LSite:Card:Card>
+
+
+

@@ -4,7 +4,7 @@
     data-action="click->basket#deleteItem"
     data-type="{{ type }}"
     data-item-id="{{ item.item.id }}"
-    data-title="{{ item.product.title ~ ' (' ~ item.item.title ~')' }}"
+    data-title="{{ item.parent.title ~ ' (' ~ item.item.title ~')' }}"
     data-alert="success"
     data-text="{{ 'label.removed'|trans({}, 'shop') }}"
     class="btn btn-{{ type }} btn-small btn-grey">

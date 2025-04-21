@@ -11,7 +11,6 @@
 
 {% block content %}
     <div class="crowdfunding">
-{# {{ dump(crowdfunding) }} #}
         <twig:c975LShop:Crowdfunding:AmountGoal amount="{{ crowdfunding.amountGoal }}" currency="{{ crowdfunding.currency }}"/>
         <twig:c975LShop:Crowdfunding:AmountAchieved amount="{{ crowdfunding.amountGoal }}" amountAchieved="{{ crowdfunding.amountAchieved }}" currency="{{ crowdfunding.currency }}" contributorsLength="{{ crowdfunding.contributors|length }}"/>
         <twig:c975LShop:Crowdfunding:Author name="{{ crowdfunding.authorName }}" presentation="{{ crowdfunding.authorPresentation }}" website="{{ crowdfunding.authorWebsite }}"/>

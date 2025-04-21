@@ -13,7 +13,9 @@ use c975L\ShopBundle\Entity\Basket;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
@@ -34,7 +36,7 @@ class CoordinatesType extends AbstractType
             ])
         ;
         // Shipping address if not full digital
-        if (1 !== $options['data']->getDigital()) {
+        if (1 !== $options['data']->getContentFlags()) {
             $builder
                 ->add('name', TextType::class, [
                     'label' => 'label.name',
@@ -69,6 +71,40 @@ class CoordinatesType extends AbstractType
                 ])
             ;
         }
+
+        // Message if crowdfunding
+        $items = $options['data']->getItems();
+        if (isset($items['crowdfunding'])) {
+            $builder
+                ->add('contribution', FormType::class, [
+                    'label' => 'label.contributor_message',
+                    'required' => false,
+                    'mapped' => false,
+                    'label_attr' => [
+                        'class' => 'form-section-title',
+                    ],
+                ])
+                ->add('contributorMessage', TextAreaType::class, [
+                    'label' => 'label.support_message',
+                    'required' => false,
+                    'mapped' => false,
+                    'attr' => [
+                        'placeholder' => 'placeholder.support_message',
+                        'rows' => 3,
+                    ],
+                ])
+                ->add('contributorName', TextType::class, [
+                    'label' => 'label.signature',
+                    'required' => false,
+                    'mapped' => false,
+                    'attr' => [
+                        'placeholder' => 'placeholder.signature',
+                    ],
+                ])
+            ;
+        }
+
+        // Checkboxes
         $builder
             // GDPR
             ->add('gdpr', CheckboxType::class, [
@@ -99,7 +135,8 @@ class CoordinatesType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Basket::class,
             'intention' => 'basket',
-            'translation_domain' => 'shop'
+            'translation_domain' => 'shop',
+            'allow_extra_fields' => true,
         ]);
 
         $resolver->setRequired('config');

@@ -14,6 +14,7 @@ use c975L\ShopBundle\Entity\Basket;
 use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\BodyRendererInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -24,13 +25,15 @@ class EmailService implements EmailServiceInterface
     public function __construct(
         private readonly MailerInterface $mailer,
         private readonly ConfigServiceInterface $configService,
-        private readonly TranslatorInterface $translator
+        private readonly TranslatorInterface $translator,
+        private readonly BodyRendererInterface $bodyRenderer,
+
     ) {
         $this->subjectPrefix = $this->translator->trans('label.shop', [], 'shop') . ' ' . $this->configService->getParameter('c975LShop.name') . ' - ';
     }
 
     // Retrieves the email configuration
-    public function getEmailConfig(): array
+    public function getConfig(): array
     {
         return [
             'name' => $this->configService->getParameter('c975LShop.name'),
@@ -46,12 +49,12 @@ class EmailService implements EmailServiceInterface
     // Creates a new email
     public function create(): TemplatedEmail
     {
-        $data = $this->getEmailConfig();
+        $data = $this->getConfig();
 
         $email = new TemplatedEmail();
-        $email->from(new Address($data['from'], $data['fromName']));
-        $email->bcc(new Address($data['bcc'], $data['bccName']));
-        $email->replyTo(new Address($data['replyTo'], $data['replyToName']));
+       $email->from(new Address($data['from'], $data['fromName']));
+       $email->bcc(new Address($data['bcc'], $data['bccName']));
+       $email->replyTo(new Address($data['replyTo'], $data['replyToName']));
 
         return $email;
     }
@@ -59,14 +62,17 @@ class EmailService implements EmailServiceInterface
     // Sends the email
     public function send($email)
     {
+        // To display the message in place of sending (for debug)
+        // $this->bodyRenderer->render($email);
+        // echo $email->getHtmlBody();
         $this->mailer->send($email);
     }
 
     // Sends the order confirmation email
-    public function sendConfirmOrder(Basket $basket)
+    public function confirmOrder(Basket $basket)
     {
         $email = $this->create();
-        $email->to(new Address($basket->getEmail()));
+       $email->to(new Address($basket->getEmail()));
         $email->subject($this->subjectPrefix . $this->translator->trans('label.confirm_order', [], 'shop'));
         $email->htmlTemplate('@c975LShop/emails/confirm_order.html.twig');
         $email->context([
@@ -77,10 +83,10 @@ class EmailService implements EmailServiceInterface
     }
 
     // Sends the download information email
-    public function sendDownloadInformation(Basket $basket, array $downloadLinks): void
+    public function downloadInformation(Basket $basket, array $downloadLinks): void
     {
         $email = $this->create();
-        $email->to(new Address($basket->getEmail()));
+       $email->to(new Address($basket->getEmail()));
         $email->subject($this->subjectPrefix . $this->translator->trans('label.download_information', [], 'shop'));
         $email->htmlTemplate('@c975LShop/emails/download_information.html.twig');
         $email->context([
@@ -92,13 +98,30 @@ class EmailService implements EmailServiceInterface
         $this->send($email);
     }
 
-    // Sends the items shipped email
-    public function sendShippedItems(Basket $basket): void
+    // Sends the crowdfunding contribution email
+    public function crowdfundingContribution(Basket $basket, array $counterparts): void
     {
         $email = $this->create();
+       $email->to(new Address($basket->getEmail()));
+        $email->subject($this->subjectPrefix . $this->translator->trans('label.crowdfunding_contribution', [], 'shop'));
+        $email->htmlTemplate('@c975LShop/emails/crowdfunding_contribution.html.twig');
+        $email->context([
+            'basket' => $basket,
+            'counterparts' => $counterparts,
+        ]);
+
+        $this->send($email);
+    }
+
+    // Sends the items shipped email
+    public function shippedItems(Basket $basket, string $type): void
+    {
+        $subject = 'product' === $type ? 'label.items_shipped' : 'label.counterparts_shipped';
+        $template = 'product' === $type ? 'items_shipped' : 'counterparts_shipped';
+        $email = $this->create();
         $email->to(new Address($basket->getEmail()));
-        $email->subject($this->subjectPrefix . $this->translator->trans('label.items_shipped', [], 'shop'));
-        $email->htmlTemplate('@c975LShop/emails/items_shipped.html.twig');
+        $email->subject($this->subjectPrefix . $this->translator->trans($subject, [], 'shop'));
+        $email->htmlTemplate('@c975LShop/emails/' . $template . '.html.twig');
         $email->context([
             'basket' => $basket,
         ]);
@@ -107,7 +130,7 @@ class EmailService implements EmailServiceInterface
     }
 
     // Sends the Stripe error message email
-    public function sendStripeErrorMessage(Basket $basket, array $context): void
+    public function stripeErrorMessage(Basket $basket, array $context): void
     {
         $email = $this->create();
         $email->to(new Address($this->configService->getParameter('c975LShop.replyTo')));

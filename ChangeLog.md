@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.27
+
+- Added requiresShipping on Counterpart (20/04/2025)
+- Corrected counterpart type to crowdfunding (20/04/2025)
+- Added Item type in place of Digital (20/04/2025)
+- Added default text for customizable parts (20/04/2025)
+- Changed basket digital to contentFlag to allow more possibilities (20/04/2025)
+- Finished system of crowdfunding contribution (20/04/2025)
+- Added limitedQuantity on ProductItem (21/04/2025)
+- Split shipped in two for tiems and counterparts (21/04/2025)
+
 ## v0.26
 
 - Finished backoffice management of Crowdfunding (16/04/2025)

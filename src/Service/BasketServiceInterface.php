@@ -32,6 +32,8 @@ interface BasketServiceInterface
 
     public function deleteItem(Request $request): array;
 
+    public function defineContributor(array $data): void;
+
     public function defineItem(array $items, string $type, $item, int $quantity): array;
 
     public function generateSecurityToken(): string;
@@ -42,7 +44,7 @@ interface BasketServiceInterface
 
     public function processStripePayment($session): void;
 
-    public function itemsShipped(string $number): Basket;
+    public function itemsShipped(string $number, string $type): Basket;
 
     public function updateTotals(): void;
 
