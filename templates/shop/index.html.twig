@@ -6,11 +6,12 @@
 {% set description = 'label.all_our_items'|trans %}
 
 {% block content %}
+    <twig:c975LShop:Shop:TestMode/>
     <div data-controller="basket">
         <twig:c975LShop:Shop:Shipping/>
         <twig:c975LShop:Shop:Information/>
         <twig:c975LShop:Product:Products products="{{ products }}"/>
-        <twig:c975LShop:Basket:ViewButton icon="true" type="secondary" class="black"/>
+        <twig:c975LShop:Shop:NavbarBasket/>
         <twig:c975LShop:Basket:Message/>
         <twig:c975LShop:Shop:Footer/>
     </div>

@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Entity;
 
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
@@ -27,7 +28,7 @@ class CrowdfundingContributor
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -37,10 +38,10 @@ class CrowdfundingContributor
     private ?string $email = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $creation = null;
+    private ?DateTimeInterface $creation = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $modification = null;
+    private ?DateTimeInterface $modification = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: true)]
@@ -60,7 +61,7 @@ class CrowdfundingContributor
 
     public function __toString()
     {
-        return $this->name;
+        return $this->email;
     }
 
     public function __construct()
@@ -78,7 +79,7 @@ class CrowdfundingContributor
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): static
     {
         $this->name = $name;
 
@@ -109,24 +110,24 @@ class CrowdfundingContributor
         return $this;
     }
 
-    public function getCreation(): ?\DateTimeInterface
+    public function getCreation(): ?DateTimeInterface
     {
         return $this->creation;
     }
 
-    public function setCreation(\DateTimeInterface $creation): static
+    public function setCreation(DateTimeInterface $creation): static
     {
         $this->creation = $creation;
 
         return $this;
     }
 
-    public function getModification(): ?\DateTimeInterface
+    public function getModification(): ?DateTimeInterface
     {
         return $this->modification;
     }
 
-    public function setModification(\DateTimeInterface $modification): static
+    public function setModification(DateTimeInterface $modification): static
     {
         $this->modification = $modification;
 

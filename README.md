@@ -114,22 +114,25 @@ c975LShop:
     tosUrl: 'https://example.com/terms-of-sales' # Terms of sales URL
 ```
 
+Then launch configuration process `php bin/console config:create`.
+
+## Stimulus vcontrollers
+
 In `assets/bootstrap.js`, add the following code:
 
 ```javascript
 import c975lShopBasket from '/bundles/c975lshop/js/basket.js';
+import c975lShopLottery from '/bundles/c975lshop/js/lottery.js';
 
-app.register('basket', c975lShopBasket);
+app.register("basket", c975lShopBasket);
+app.register("lottery", c975lShopLottery);
 ```
-
-Launch configuration process `php bin/console config:create`.
 
 ## CSP
 
 Adapts your CSP to allow:
 
 `script-src: 'unsafe-inline'` et `form-action '*'`
-
 
 ## CSS
 
@@ -144,7 +147,7 @@ You should be able to use your shop + Management with the following urls:
 
 ## Useful Commands
 
-The `basket.contentflags` has 3 values: 1 (digital), 2 (both) and 3 (physical).
+The `basket.contentflags` has multiples values depending on its content.
 
 The `basket.status` are the following: new, validated, paid, downloaded, shipped, finished
 
@@ -153,6 +156,8 @@ Run this Command `php bin/console shop:downloads:delete` once a day to delete fi
 Run this Command `php bin/console shop:products:position` once a day to correct position and keep a 5 gap between them.
 
 Run this Command `php bin/console shop:baskets:delete` once a day to delete unvalidated baskets (status new and creation > 14 days).
+
+Run this Command `php bin/console shop:media:delete` once a day to remove physical ProdutItemMedia not deleted when the ProductItem is deleted (see TODO below)
 
 For creating the sitemap, you can run `php bin/console shop:sitemaps:create` thath will give a `public/sitemap-shop.xml` that you can add to your `sitemap-index.xml` file or run the following:
 
@@ -174,11 +179,19 @@ For creating the sitemap, you can run `php bin/console shop:sitemaps:create` tha
     - ProductItemMedia [One]
     - ProductItemFile [One]
 
-![Shop Bundle Entity Structure](docs/structure.png)
+- Crowdfunding [Collection]
+  - CrowdfundingMedia [Collection]
+  - CrowdfundingVideo [Collection]
+  - CrowdfundingCounterpart [Collection]
+    - CrowdfundingCounterpartMedia [One]
+  - CrowdfundingNews [Collection]
+  - CrowdfundingContributor [Collection]
+    - CrowdfundingContributorCounterpart [Collection]
 
+- Lottery [Collection]
+  - LotteryPrize [Collection]
+  - LotteryTickets [Collection]
 
 ## TODO
 
-In `src/Listener/ProductItemListener.php` we need to create an empty `ProductItemMedia|ProductItemFile` if none is added, otherwise we can't add one afterwards. The physical ProdutItemMedia is not deleted when the ProductItem is deleted, but the link is removed. See `ProductItemListener->prePersist()`. Furthermoe, need to create ProductItem without Meida/File first.
-
-A Command has been made to remove those files, simply run (and/or add incrontab) `php bin/console shop:media:delete`.
+In `src/Listener/ProductItemListener.php` we need to create an empty `ProductItemMedia|ProductItemFile` if none is added, otherwise we can't add one afterwards. The physical ProdutItemMedia is not deleted when the ProductItem is deleted, but the link is removed. See `ProductItemListener->prePersist()`. Furthermore, need to create ProductItem without Meida/File first.

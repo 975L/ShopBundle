@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.28
+
+- Removed toast (22/04/2025)
+- Replaced Basket View button by including it in a fixed bottom navbar (22/04/2025)
+- Added a test mode warning displayed message (22/04/2025)
+- Corrected CrowdfundingContribor->name to allow null (23/04/2025)
+- Updated README (23/04/2025)
+- Added lottery system for Crowdfunding (23/04/2025)
+
 ## v0.27
 
 - Added requiresShipping on Counterpart (20/04/2025)

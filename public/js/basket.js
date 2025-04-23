@@ -1,25 +1,16 @@
 import { Controller } from "@hotwired/stimulus";
-import translationsEn from "./translations.en.js";
-import translationsFr from "./translations.fr.js";
-
+import Handlers from "./handlers.js";
 export default class extends Controller {
     static targets = [ "quantity", "total", "message", "shipping", "submitButton", "itemTotal", "itemQuantity" ];
-    static basketDataPromise = null; // Store the fetch promise for reuse
+    static basketDataPromise = null;
     static lastFetchTime = 0;
-    static CACHE_DURATION = 5000; // Cache duration in ms
+    static CACHE_DURATION = 5000;
 
     // Fetches data from the Symfony controller when the controller is connected
     connect() {
         // Event listeners as some controller are outside the basket controller
         document.addEventListener("basket:message", this.handleGlobalMessage.bind(this));
         document.addEventListener("basket:update", this.handleGlobalUpdate.bind(this));
-
-        // Initialize translations
-        this.language = "fr";
-        this.translations = {
-            en: translationsEn,
-            fr: translationsFr
-        };
 
         // Load basket data once and use for everything
         this.loadBasketData().then((data) => {
@@ -157,8 +148,6 @@ export default class extends Controller {
                 const message = `${target.dataset.title} ${target.dataset.text}`;
                 this.displayMessage(message, "alert-" + target.dataset.alert);
                 this.update(data);
-
-                this.showToast(message + " Voir le panier");
             }
         })
         .catch((error) => {
@@ -182,16 +171,10 @@ export default class extends Controller {
         document.dispatchEvent(event);
     }
 
-    // Updates the basket button
+    // Updates the basket navbar
     updateBasketButton(data) {
-        // Updates the basket button if it exists
-        const basketButton = document.getElementById("basket-button");
-        if (!basketButton) {
-            return;
-        }
-
-        // Updates the visibility of the basket button
-        this.updateBasketButtonDisplay(basketButton, data);
+        // Updates the visibility of the basket navbar
+        this.updateBasketNavbarDisplay(data);
 
         // Updates the counters if the targets exist
         this.updateBasketCounters(data);
@@ -347,65 +330,6 @@ export default class extends Controller {
         }
     }
 
-    // Displays a message locally or globally
-    displayMessage(message, alertClass) {
-        if (this.hasMessageTarget) {
-            this.messageTarget.className = `alert ${alertClass}`;
-            this.messageTarget.textContent = message;
-        } else {
-            // Dispatch event if no message target
-            const event = new CustomEvent("basket:message", {
-                bubbles: true,
-                detail: { message, alertClass }
-            });
-            this.element.dispatchEvent(event);
-        }
-    }
-
-    // Handles global messages
-    handleGlobalMessage(event) {
-        if (this.hasMessageTarget && event.target !== this.element) {
-            const { message, alertClass } = event.detail;
-            this.messageTarget.className = `alert ${alertClass}`;
-            this.messageTarget.textContent = message;
-        }
-    }
-
-    // Handles global basket updates
-    handleGlobalUpdate(event) {
-        if (event.detail?.data && event.target !== this.element) {
-            this.constructor.basketDataPromise = null;
-
-            this.updateBasketButton(event.detail.data);
-            this.updateAddButtons(event.detail.data);
-        }
-    }
-
-    // Adds an animation to the clicked button
-    animation(clickedButton) {
-        if (!clickedButton.classList.contains("btn-primary")) {
-            return;
-        }
-        clickedButton.classList.remove("btn-primary");
-        clickedButton.classList.add("btn-secondary", "zoom-out-animation");
-        setTimeout(() => {
-            clickedButton.classList.remove("zoom-out-animation", "btn-secondary");
-            clickedButton.classList.add("btn-primary");
-        }, 500);
-    }
-
-    // Translates messages
-    translate(key) {
-        if (typeof key !== "string") {return "";}
-
-        const translations = this.translations?.[this.language];
-        if (!translations) {return key;}
-
-        const translationsMap = new Map(Object.entries(translations));
-
-        return translationsMap.get(key) || key;
-    }
-
     // Update product buttons with basket data
     updateAddButtons(data) {
         if (!data?.basket?.items) {
@@ -459,62 +383,64 @@ export default class extends Controller {
         });
     }
 
-    // Updates the currency symbol based on the currency code
-    getCurrencySymbol(currencyCode) {
-        if (!currencyCode) { return ""; }
+    // Uodates visibilty of basket navbar
+    updateBasketNavbarDisplay(data) {
+        const basketNavbar = document.getElementById("basket-navbar");
 
-        const symbols = {
-            "eur": "€",
-            "usd": "$",
-            "gbp": "£",
-            "jpy": "¥",
-            "chf": "CHF",
-        };
-
-        const code = currencyCode.toLowerCase();
-
-        return " " + symbols[code] || currencyCode.toUpperCase();
+        if (basketNavbar) {
+            const isEmpty = !data.basket || data.basket.total === 0;
+            if (isEmpty) {
+                basketNavbar.classList.add("d-none");
+                document.body.classList.remove("has-basket-navbar");
+            } else {
+                basketNavbar.classList.remove("d-none");
+                document.body.classList.add("has-basket-navbar");
+            }
+        }
     }
 
-    // Displays a toast message
-    showToast(message) {
-        const oldToast = document.getElementById("basket-toast");
-        if (oldToast) {
-            oldToast.remove();
+    // Handles global messages
+    handleGlobalMessage(event) {
+        if (this.hasMessageTarget && event.target !== this.element) {
+            const { message, alertClass } = event.detail;
+            this.messageTarget.className = `alert ${alertClass}`;
+            this.messageTarget.textContent = message;
         }
+    }
 
-        const toast = document.createElement("div");
-        toast.id = "basket-toast";
-        toast.style.position = "fixed";
-        toast.style.bottom = "20px";
-        toast.style.right = "20px";
-        toast.style.backgroundColor = "#28a745";
-        toast.style.color = "white";
-        toast.style.padding = "15px 20px";
-        toast.style.borderRadius = "5px";
-        toast.style.boxShadow = "0 2px 10px rgba(0,0,0,0.3)";
-        toast.style.zIndex = "100000";
-        toast.style.opacity = "0";
-        toast.style.transition = "opacity 0.3s ease";
-        toast.style.fontSize = "16px";
-        toast.style.display = "flex";
-        toast.style.alignItems = "center";
-        toast.style.cursor = "pointer";
-        toast.textContent = message;
+    // Handles global basket updates
+    handleGlobalUpdate(event) {
+        if (event.detail?.data && event.target !== this.element) {
+            this.constructor.basketDataPromise = null;
 
-        toast.addEventListener("click", () => {
-            window.location.href = "/shop/basket";
-        });
+            this.updateBasketButton(event.detail.data);
+            this.updateAddButtons(event.detail.data);
+        }
+    }
 
-        document.body.appendChild(toast);
-
-        requestAnimationFrame(() => {
-            toast.style.opacity = "1";
-        });
-
+    // Adds an animation to the clicked button
+    animation(clickedButton) {
+        if (!clickedButton.classList.contains("btn-primary")) {
+            return;
+        }
+        clickedButton.classList.remove("btn-primary");
+        clickedButton.classList.add("btn-secondary", "zoom-out-animation");
         setTimeout(() => {
-            toast.style.opacity = "0";
-            setTimeout(() => toast.remove(), 300);
-        }, 10000);
+            clickedButton.classList.remove("zoom-out-animation", "btn-secondary");
+            clickedButton.classList.add("btn-primary");
+        }, 500);
+    }
+
+    // HANDLERS
+    displayMessage(message, alertClass) {
+        Handlers.displayMessage(message, alertClass);
+    }
+
+    translate(key) {
+        return Handlers.translate(key);
+    }
+
+    getCurrencySymbol(currencyCode) {
+        return Handlers.getCurrencySymbol(currencyCode);
     }
 }

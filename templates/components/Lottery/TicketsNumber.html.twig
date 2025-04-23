@@ -1,0 +1,20 @@
+{% set winningTickets = [] %}
+{% for prize in prizes %}
+    {% if prize.winningTicket %}
+        {% set winningTickets = winningTickets|merge([prize.winningTicket.number]) %}
+    {% endif %}
+{% endfor %}
+
+<section id="tickets">
+    <h2>{{ 'label.lottery_tickets'|trans({}, 'shop') }}</h2>
+    <p class="text text-center">{{ 'label.quantity'|trans({}, 'shop') }} : <strong>{{ tickets|length }}</strong></p>
+    <div>
+        {% for ticket in tickets %}
+        {% set class= "" %}
+            {% if ticket.number in winningTickets %}
+                {% set class = 'winner' %}
+            {% endif %}
+            <twig:c975LShop:Lottery:TicketNumber number="{{ ticket.number }}" class="{{ class }}"/>
+        {% endfor %}
+    </div>
+</section>

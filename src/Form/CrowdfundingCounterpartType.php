@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use c975L\ShopBundle\Form\CrowdfundingCounterpartMediaType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -42,6 +43,27 @@ class CrowdfundingCounterpartType extends AbstractType
                 'attr' => [
                     'rows' => 3
                 ]
+            ])
+            ->add('lotteryTickets', ChoiceType::class, [
+                'label' => 'label.lottery_tickets',
+                'required' => false,
+                'choices' => [
+                    '0 ticket' => 0,
+                    '1 ticket' => 1,
+                    '2 tickets' => 2,
+                    '3 tickets' => 3,
+                    '4 tickets' => 4,
+                    '5 tickets' => 5,
+                    '6 tickets' => 6,
+                    '7 tickets' => 7,
+                    '8 tickets' => 8,
+                    '9 tickets' => 9,
+                    '10 tickets' => 10
+                ],
+                'placeholder' => 'Choisir un nombre de tickets',
+                'attr' => [
+                    'class' => 'form-select',
+                ],
             ])
             ->add('requiresShipping', CheckboxType::class, [
                 'label' => 'label.requires_shipping',

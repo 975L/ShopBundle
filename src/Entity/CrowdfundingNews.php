@@ -10,9 +10,10 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use c975L\ShopBundle\Repository\CrowdfundingNewsRepository;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use c975L\ShopBundle\Repository\CrowdfundingNewsRepository;
 
 #[ORM\Entity(repositoryClass: CrowdfundingNewsRepository::class)]
 #[ORM\Table(name: 'shop_crowdfunding_news')]
@@ -30,13 +31,13 @@ class CrowdfundingNews
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $publishedDate = null;
+    private ?DateTimeInterface $publishedDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $creation = null;
+    private ?DateTimeInterface $creation = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $modification = null;
+    private ?DateTimeInterface $modification = null;
 
     #[ORM\ManyToOne(targetEntity: Crowdfunding::class, inversedBy: 'news')]
     #[ORM\JoinColumn(nullable: true)]
@@ -71,36 +72,36 @@ class CrowdfundingNews
         return $this;
     }
 
-    public function getPublishedDate(): ?\DateTimeInterface
+    public function getPublishedDate(): ?DateTimeInterface
     {
         return $this->publishedDate;
     }
 
-    public function setPublishedDate(\DateTimeInterface $publishedDate): static
+    public function setPublishedDate(DateTimeInterface $publishedDate): static
     {
         $this->publishedDate = $publishedDate;
 
         return $this;
     }
 
-    public function getCreation(): ?\DateTimeInterface
+    public function getCreation(): ?DateTimeInterface
     {
         return $this->creation;
     }
 
-    public function setCreation(\DateTimeInterface $creation): static
+    public function setCreation(DateTimeInterface $creation): static
     {
         $this->creation = $creation;
 
         return $this;
     }
 
-    public function getModification(): ?\DateTimeInterface
+    public function getModification(): ?DateTimeInterface
     {
         return $this->modification;
     }
 
-    public function setModification(\DateTimeInterface $modification): static
+    public function setModification(DateTimeInterface $modification): static
     {
         $this->modification = $modification;
 

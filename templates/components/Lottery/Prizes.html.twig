@@ -1,0 +1,9 @@
+<section class="cards">
+    {% for prize in prizes %}
+        {% set winner = false %}
+        {% if prize.winningTicket %}
+            {% set winner = true %}
+        {% endif %}
+        <twig:c975LShop:Lottery:Prize prize="{{ prize }}" winner="{{ winner }}"/>
+    {% endfor %}
+</section>

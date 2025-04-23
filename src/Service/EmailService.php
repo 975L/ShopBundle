@@ -52,9 +52,9 @@ class EmailService implements EmailServiceInterface
         $data = $this->getConfig();
 
         $email = new TemplatedEmail();
-       $email->from(new Address($data['from'], $data['fromName']));
-       $email->bcc(new Address($data['bcc'], $data['bccName']));
-       $email->replyTo(new Address($data['replyTo'], $data['replyToName']));
+        $email->from(new Address($data['from'], $data['fromName']));
+        $email->bcc(new Address($data['bcc'], $data['bccName']));
+        $email->replyTo(new Address($data['replyTo'], $data['replyToName']));
 
         return $email;
     }
@@ -72,7 +72,7 @@ class EmailService implements EmailServiceInterface
     public function confirmOrder(Basket $basket)
     {
         $email = $this->create();
-       $email->to(new Address($basket->getEmail()));
+        $email->to(new Address($basket->getEmail()));
         $email->subject($this->subjectPrefix . $this->translator->trans('label.confirm_order', [], 'shop'));
         $email->htmlTemplate('@c975LShop/emails/confirm_order.html.twig');
         $email->context([
@@ -82,32 +82,46 @@ class EmailService implements EmailServiceInterface
         $this->send($email);
     }
 
+    // Sends the crowdfunding contribution email
+    public function crowdfundingContribution(Basket $basket, array $counterparts): void
+    {
+        $email = $this->create();
+        $email->to(new Address($basket->getEmail()));
+        $email->subject($this->subjectPrefix . $this->translator->trans('label.crowdfunding_contribution', [], 'shop'));
+        $email->htmlTemplate('@c975LShop/emails/crowdfunding_contribution.html.twig');
+        $email->context([
+            'basket' => $basket,
+            'counterparts' => $counterparts,
+        ]);
+
+        $this->send($email);
+    }
+
+    // Sends the lottery tickets email
+    public function lotteryTickets(string $emailAddress, array $tickets)
+    {
+        $email = $this->create();
+        $email->to(new Address($emailAddress));
+        $email->subject($this->subjectPrefix . $this->translator->trans('label.lottery_tickets', [], 'shop'));
+        $email->htmlTemplate('@c975LShop/emails/lottery_tickets.html.twig');
+        $email->context([
+            'tickets' => $tickets,
+        ]);
+
+        $this->send($email);
+    }
+
     // Sends the download information email
     public function downloadInformation(Basket $basket, array $downloadLinks): void
     {
         $email = $this->create();
-       $email->to(new Address($basket->getEmail()));
+        $email->to(new Address($basket->getEmail()));
         $email->subject($this->subjectPrefix . $this->translator->trans('label.download_information', [], 'shop'));
         $email->htmlTemplate('@c975LShop/emails/download_information.html.twig');
         $email->context([
             'basket' => $basket,
             'downloadLinks' => $downloadLinks,
             'expirationDays' => 7,
-        ]);
-
-        $this->send($email);
-    }
-
-    // Sends the crowdfunding contribution email
-    public function crowdfundingContribution(Basket $basket, array $counterparts): void
-    {
-        $email = $this->create();
-       $email->to(new Address($basket->getEmail()));
-        $email->subject($this->subjectPrefix . $this->translator->trans('label.crowdfunding_contribution', [], 'shop'));
-        $email->htmlTemplate('@c975LShop/emails/crowdfunding_contribution.html.twig');
-        $email->context([
-            'basket' => $basket,
-            'counterparts' => $counterparts,
         ]);
 
         $this->send($email);

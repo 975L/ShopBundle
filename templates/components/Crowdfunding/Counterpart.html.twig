@@ -6,6 +6,7 @@
             </div>
         {% endif %}
         <div class="card-data">
+            <twig:c975LShop:Lottery:TicketsQuantity tickets="{{ counterpart.lotteryTickets }}"/>
             <p class="description">{{ counterpart.description|nl2br }}</p>
             <p class="price-counterpart">{{ (counterpart.price / 100)|format_currency(counterpart.currency, {fraction_digit: 0}) }}</p>
             <twig:c975LShop:Item:Type item="{{ counterpart }}"/>
@@ -15,6 +16,3 @@
     </div>
     <twig:c975LShop:CrowdfundingCounterpart:AddButton crowdfundingCounterpart="{{ counterpart }}"/>
 </twig:c975LSite:Card:Card>
-
-
-

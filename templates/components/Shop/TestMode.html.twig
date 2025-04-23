@@ -1,0 +1,5 @@
+{% if "test" in config('c975LShop.stripeSecret') %}
+    <twig:c975LSite:Alert:Alert type="warning">
+        {{ 'label.test_mode'|trans({}, 'shop'    ) }}
+    </twig:c975LSite:Alert:Alert>
+{% endif %}

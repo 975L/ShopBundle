@@ -1,0 +1,8 @@
+{% extends "@c975LEmail/emails/layout.html.twig" %}
+{% trans_default_domain 'shop' %}
+
+{% block email_content %}
+    <p class="text">{{ 'text.lottery_reminder'|trans }}</p>
+    <twig:c975LShop:Lottery:Tickets tickets="{{ tickets }}"/>
+    <strong>{{ 'label.good_luck'|trans }}</strong>
+{% endblock %}

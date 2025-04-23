@@ -54,11 +54,14 @@ class CrowdfundingCounterpart
     #[ORM\Column(type: 'boolean')]
     private bool $requiresShipping = false;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $creation = null;
+    #[ORM\Column(type: 'smallint', options: ['default' => 0])]
+    private int $lotteryTickets = 0;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $modification = null;
+    private ?DateTimeInterface $creation = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTimeInterface $modification = null;
 
     #[ORM\ManyToOne(targetEntity: Crowdfunding::class, inversedBy: 'counterparts')]
     #[ORM\JoinColumn(nullable: true)]
@@ -202,6 +205,18 @@ class CrowdfundingCounterpart
         return $this;
     }
 
+    public function getLotteryTickets(): int
+    {
+        return $this->lotteryTickets;
+    }
+
+    public function setLotteryTickets(int $lotteryTickets): self
+    {
+        $this->lotteryTickets = max(0, min(10, $lotteryTickets));
+
+        return $this;
+    }
+
     public function getCreation(): ?DateTimeInterface
     {
         return $this->creation;
@@ -238,7 +253,6 @@ class CrowdfundingCounterpart
         return $this;
     }
 
-
     public function getContributors(): Collection
     {
         $contributors = new ArrayCollection();
@@ -249,17 +263,6 @@ class CrowdfundingCounterpart
 
         return $contributors;
     }
-
-
-
-    /**
-     * @return Collection<int, CrowdfundingContributor>
-     */
-/*    public function getContributors(): Collection
-    {
-        return $this->contributors;
-    }
-*/
 
     public function addContributor(CrowdfundingContributor $contributor): static
     {

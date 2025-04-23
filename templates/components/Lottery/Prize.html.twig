@@ -1,0 +1,26 @@
+{% trans_default_domain 'shop' %}
+
+{% set class = "not-drawn" %}
+{% set number = "XX-0000-YYY" %}
+{% set name = 'label.not_yet_drawn'|trans %}
+{% if true == winner %}
+    {% set class = "winner" %}
+    {% set number = prize.winningTicket.number %}
+    {% set contributorName = null != prize.winningTicket.contributor.name ? prize.winningTicket.contributor.name : 'label.anonymous'|trans %}
+    {% set name = "label.name"|trans ~ ": <strong>" ~ contributorName ~ "</strong>" %}
+    {% set disabled = "disabled" %}
+{% endif %}
+<twig:c975LSite:Card:Card id="prize-{{ prize.id }}" title="#{{ prize.rank }} - {{ prize.title }}">
+    <div class="card-data" data-prize-rank="{{ prize.rank }}">
+        <p>{{ prize.description }}</p>
+        <h3>{{ 'label.winner_ticket'|trans({}, 'shop') }}</h3>
+        <p class="ticket-number {{ class }}" data-lottery-target="winnerNumber">{{ number }}</p>
+        <p data-lottery-target="winnerName">{{ name|raw }}</p>
+        {# Draw #}
+        {% if false == winner and is_granted('ROLE_ADMIN') %}
+            <twig:c975LShop:Lottery:DrawButton rank="{{ prize.rank }}"/>
+        {% elseif true == winner %}
+            <p class="text text-center">{{ 'label.draw_date'|trans({}, 'shop') }} : <strong>{{ prize.drawDate|date('d/m/Y - H:i') }}</strong></p>
+        {% endif %}
+    </div>
+</twig:c975LSite:Card:Card>

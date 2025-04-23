@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use c975L\ShopBundle\Form\ShopFormFactoryInterface;
 use c975L\ShopBundle\Entity\CrowdfundingContributor;
 use Symfony\Component\Messenger\MessageBusInterface;
+use c975L\ShopBundle\Service\LotteryServiceInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
@@ -62,6 +63,7 @@ class BasketService implements BasketServiceInterface
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LoggerInterface $logger,
         private readonly TokenStorageInterface $tokenStorage,
+        private readonly LotteryServiceInterface $lotteryService,
     ) {
         try {
             $this->session = $this->requestStack->getSession();
@@ -294,7 +296,6 @@ class BasketService implements BasketServiceInterface
 
         // Checks if limitedQuantity is defined and if it would be exceeded
         if ($item->getLimitedQuantity() !== null) {
-            $currentlyInBasket = isset($items[$type][$itemId]) ? $items[$type][$itemId]['quantity'] : 0;
             $alreadyOrdered = $item->getOrderedQuantity() ?? 0;
             $wouldBeOrdered = $alreadyOrdered + $quantity;
 
@@ -445,10 +446,11 @@ class BasketService implements BasketServiceInterface
         $contributorData = $this->session->get('contributor');
         if (null !== $contributorData) {
             $basket = $this->basketRepository->findOneById([$contributorData['basket_id']]);
+
             // Creates contributor from session
             $contributor = new CrowdfundingContributor();
-            $contributor->setName($contributorData['name']);
-            $contributor->setMessage($contributorData['message']);
+            $contributor->setName(empty($contributorData['name']) ? null : $contributorData['name']);
+            $contributor->setMessage(empty($contributorData['message']) ? null : $contributorData['message']);
             $contributor->setEmail($contributorData['email']);
             $contributor->setCreation(new DateTimeImmutable());
             $contributor->setModification(new DateTimeImmutable());
@@ -486,6 +488,9 @@ class BasketService implements BasketServiceInterface
 
                     $this->entityManager->persist($crowdfunding);
                 }
+
+                // Generates lottery tickets if applicable
+                $this->lotteryService->generateTicketsForContributor($contributor, $counterpart);
             }
 
             $this->entityManager->flush();

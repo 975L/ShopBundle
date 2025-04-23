@@ -10,6 +10,7 @@
 {% set description = product.description %}
 
 {% block content %}
+    <twig:c975LShop:Shop:TestMode/>
     <section class="text-center">
         <twig:c975LShop:Shop:ViewButton/>
         <twig:c975LSite:Slider:Slider slides="{{ product.medias }}" id="slider"/>
@@ -18,7 +19,7 @@
         <div data-controller="basket">
             <twig:c975LShop:Product:Items items="{{ product.items }}"/>
             <twig:c975LShop:Basket:Message/>
-            <twig:c975LShop:Basket:ViewButton icon="true" type="secondary" class="black"/>
+            <twig:c975LShop:Shop:NavbarBasket/>
         </div>
         <twig:c975LShop:Basket:ContinueShoppingButton/>
     </section>

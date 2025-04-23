@@ -10,6 +10,7 @@
 namespace c975L\ShopBundle\Entity;
 
 use App\Entity\User;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
@@ -59,10 +60,10 @@ class Crowdfunding
     private ?string $useFor = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $beginDate = null;
+    private ?DateTimeInterface $beginDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $endDate = null;
+    private ?DateTimeInterface $endDate = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
@@ -86,11 +87,14 @@ class Crowdfunding
     #[ORM\OneToMany(targetEntity: CrowdfundingVideo::class, mappedBy: 'crowdfunding', cascade: ['remove'])]
     private Collection $videos;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $creation = null;
+    #[ORM\OneToMany(targetEntity: Lottery::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
+    private Collection $lotteries;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $modification = null;
+    private ?DateTimeInterface $creation = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTimeInterface $modification = null;
 
     #[ORM\ManyToOne(inversedBy: 'crowdfundings')]
     private ?User $user = null;
@@ -102,6 +106,7 @@ class Crowdfunding
         $this->contributors = new ArrayCollection();
         $this->news = new ArrayCollection();
         $this->counterparts = new ArrayCollection();
+        $this->lotteries = new ArrayCollection();
     }
 
     public function __toString()
@@ -246,24 +251,24 @@ class Crowdfunding
         return $this;
     }
 
-    public function getBeginDate(): ?\DateTimeInterface
+    public function getBeginDate(): ?DateTimeInterface
     {
         return $this->beginDate;
     }
 
-    public function setBeginDate(?\DateTimeInterface $beginDate): static
+    public function setBeginDate(?DateTimeInterface $beginDate): static
     {
         $this->beginDate = $beginDate;
 
         return $this;
     }
 
-    public function getEndDate(): ?\DateTimeInterface
+    public function getEndDate(): ?DateTimeInterface
     {
         return $this->endDate;
     }
 
-    public function setEndDate(?\DateTimeInterface $endDate): static
+    public function setEndDate(?DateTimeInterface $endDate): static
     {
         $this->endDate = $endDate;
 
@@ -416,24 +421,51 @@ class Crowdfunding
         return $this;
     }
 
-    public function getCreation(): ?\DateTimeInterface
+    public function getLotteries(): Collection
+    {
+        return $this->lotteries;
+    }
+
+    public function addLottery(Lottery $lottery): static
+    {
+        if (!$this->lotteries->contains($lottery)) {
+            $this->lotteries->add($lottery);
+            $lottery->setCrowdfunding($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLottery(Lottery $lottery): static
+    {
+        if ($this->lotteries->removeElement($lottery)) {
+            // set the owning side to null (unless already changed)
+            if ($lottery->getCrowdfunding() === $this) {
+                $lottery->setCrowdfunding(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCreation(): ?DateTimeInterface
     {
         return $this->creation;
     }
 
-    public function setCreation(\DateTimeInterface $creation): static
+    public function setCreation(DateTimeInterface $creation): static
     {
         $this->creation = $creation;
 
         return $this;
     }
 
-    public function getModification(): ?\DateTimeInterface
+    public function getModification(): ?DateTimeInterface
     {
         return $this->modification;
     }
 
-    public function setModification(\DateTimeInterface $modification): static
+    public function setModification(DateTimeInterface $modification): static
     {
         $this->modification = $modification;
 

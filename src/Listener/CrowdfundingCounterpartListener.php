@@ -17,7 +17,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Symfony\Bundle\SecurityBundle\Security;
-use c975L\ShopBundle\Entity\CrowdfundingCounterpartFile;
 use c975L\ShopBundle\Entity\CrowdfundingCounterpartMedia;
 use c975L\ShopBundle\Listener\Traits\UserTrait;
 use Symfony\Component\String\Slugger\SluggerInterface;

@@ -4,5 +4,9 @@ export default {
     "product.delete.error": "Impossible de supprimer le produit.",
     "basket.add.error": "Une erreur est survenue lors de l'ajout au panier.",
     "basket.offered": "Offert",
-    "label.pay": "Payer"
+    "label.pay": "Payer",
+    "name": "Nom",
+    "anonymous": "Anonyme",
+    "draw.date": "Date du tirage au sort",
+    "failed.draw.winner": "Impossible de tirer au sort un gagnant. Veuillez réessayer."
 };

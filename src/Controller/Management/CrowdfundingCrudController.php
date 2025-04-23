@@ -10,8 +10,8 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
+use c975L\ShopBundle\Form\LotteryType;
 use c975L\ShopBundle\Entity\Crowdfunding;
-use c975L\ShopBundle\Entity\CrowdfundingVideo;
 use c975L\ShopBundle\Form\CrowdfundingMediaType;
 use c975L\ShopBundle\Form\CrowdfundingVideoType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -28,7 +28,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 #[IsGranted('ROLE_ADMIN')]
@@ -64,29 +63,35 @@ class CrowdfundingCrudController extends AbstractCrudController
                 ->setLabel('label.begin_date'),
             DateField::new('endDate')
                 ->setLabel('label.end_date'),
-            FormField::addPanel('Media Management')
+            TextEditorField::new('description')
+                ->setLabel('label.description')
+                ->hideOnIndex(),
+
+            // Media management
+            FormField::addPanel('Media')
                 ->hideOnIndex(),
             CollectionField::new('medias')
                 ->hideOnIndex()
                 ->setEntryType(CrowdfundingMediaType::class),
             CollectionField::new('videos')
                 ->hideOnIndex()
-                ->setEntryType(CrowdfundingVideoType::class)
-                ->setFormTypeOptions([
-                    'allow_add' => true,
-                ]),
-            FormField::addPanel('Counterparts Management')
-                ->setHelp('Add counterparts to offer to contributors')
+                ->setEntryType(CrowdfundingVideoType::class),
+
+            // Counterpart management
+            FormField::addPanel('label.counterparts')
                 ->hideOnIndex(),
             CollectionField::new('counterparts')
                 ->hideOnIndex()
                 ->setEntryType(CrowdfundingCounterpartType::class),
-            AssociationField::new('contributors')
-                ->hideOnIndex()
-                ->onlyOnDetail(),
-            TextEditorField::new('description')
-                ->setLabel('label.description')
+
+            // Lottery management
+            FormField::addPanel('label.lottery')
                 ->hideOnIndex(),
+            CollectionField::new('lotteries')
+                ->hideOnIndex()
+                ->setEntryType(LotteryType::class),
+
+            // Dates
             DateTimeField::new('creation')
                 ->setLabel('label.creation')
                 ->hideOnIndex()

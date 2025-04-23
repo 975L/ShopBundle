@@ -105,7 +105,7 @@ class BasketController extends AbstractController
         if (null !== $basket) {
             $this->basketService->paid($basket);
         }
-dump($basket);
+
         return $this->render('@c975LShop/basket/display.html.twig', [
             'action' => 'paid',
             'basket' => $basket,
