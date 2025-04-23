@@ -1,0 +1,16 @@
+<p class="text-center">{{ 'text.lottery_information'|trans({}, 'shop') }}</p>
+<p class="text-center">{{ 'label.lottery_identifier'|trans({}, 'shop') }} : <a href="{{ path('lottery_display', {'identifier': lottery.identifier}) }}" target="_blank">{{ lottery.identifier }}</a></p>
+<p class="text-center">{{ 'label.draw_date'|trans({}, 'shop') }} : <strong>{{ lottery.drawDate|date('d/m/Y - H:i') }}</strong></p>
+<p class="text-center">{{ 'label.allocated'|trans({}, 'shop') }} : <strong>{{ lottery.tickets|length }}</strong></p>
+<h3 class="text-center">{{ 'label.prizes'|trans({}, 'shop') }}</h3>
+<ol class="circle-numbers">
+{% for prize in lottery.prizes %}
+    <li class="text-left">
+    <span>
+        <strong>{{ prize.title}}</strong>
+        <br>
+        {{ prize.description }}
+        </span>
+    </li>
+{% endfor %}
+</ol>

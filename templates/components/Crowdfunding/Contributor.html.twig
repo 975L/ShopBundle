@@ -1,4 +1,7 @@
-<div>
-    <p>{{ contributor.message|raw }}</pss=>
-    <p class="text-muted">{{ contributor.name }} {{ contributor.creation|date('d/m/Y') }}</p>
-</div>
+{% if contributor.message != null %}
+    {% set name = contributor.name != null ? contributor.name : 'label.anonymous'|trans({}, 'shop') %}
+    <div>
+        <p>{{ contributor.message|raw }}</pss=>
+        <p class="text-muted">{{ name }} {{ contributor.creation|date('d/m/Y') }}</p>
+    </div>
+{% endif %}

@@ -619,6 +619,78 @@
                 <source>label.counterparts_shipped</source>
                 <target>Shipping of ordered counterparts</target>
             </trans-unit>
+            <trans-unit id="155">
+                <source>label.lottery</source>
+                <target>Loterie</target>
+            </trans-unit>
+            <trans-unit id="156">
+                <source>label.lottery_tickets</source>
+                <target>Lottery tickets</target>
+            </trans-unit>
+            <trans-unit id="157">
+                <source>label.prize_rank</source>
+                <target>Prize rank</target>
+            </trans-unit>
+            <trans-unit id="158">
+                <source>label.enable_lottery</source>
+                <target>Enable lottery</target>
+            </trans-unit>
+            <trans-unit id="159">
+                <source>label.good_luck</source>
+                <target>Good luck!</target>
+            </trans-unit>
+            <trans-unit id="160">
+                <source>text.lottery_information</source>
+                <target>Some counterparts entitle you to a number of lottery tickets, the prizes of which are listed below.</target>
+            </trans-unit>
+            <trans-unit id="161">
+                <source>label.draw_date</source>
+                <target>Draw date</target>
+            </trans-unit>
+            <trans-unit id="162">
+                <source>label.prizes</source>
+                <target>Prizes</target>
+            </trans-unit>
+            <trans-unit id="163">
+                <source>label.allocated</source>
+                <target>Tickets allocated</target>
+            </trans-unit>
+            <trans-unit id="164">
+                <source>label.test_mode</source>
+                <target>This store is being tested, no charges will be made, nor will items be sent.</target>
+            </trans-unit>
+            <trans-unit id="165">
+                <source>label.anonymous</source>
+                <target>Anonymous</target>
+            </trans-unit>
+            <trans-unit id="166">
+                <source>text.lottery_reminder</source>
+                <target>By contributing to a crowdfunding campaign, you were eligible for the lottery tickets below:</target>
+            </trans-unit>
+            <trans-unit id="167">
+                <source>label.ticket_number</source>
+                <target>Ticket number</target>
+            </trans-unit>
+            <trans-unit id="168">
+                <source>label.lottery_identifier</source>
+                <target>Lottery identifier</target>
+            </trans-unit>
+            <trans-unit id="169">
+                <source>label.lottery_draw</source>
+                <target>Lottery draw</target>
+            </trans-unit>
+            <trans-unit id="170">
+                <source>label.winner_ticket</source>
+                <target>Winner ticket</target>
+            </trans-unit>
+            <trans-unit id="171">
+                <source>label.not_yet_drawn</source>
+                <target>Not yet drawn</target>
+            </trans-unit>
+            <trans-unit id="172">
+                <source>label.draw</source>
+                <target>Draw</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1,0 +1,10 @@
+{% if lotteries is not empty %}
+    <div id="lotteries">
+        <h2>{{ 'label.lottery'|trans({}, 'shop') }}</h2>
+        <div>
+            {% for lottery in lotteries %}
+                <twig:c975LShop:Lottery:Lottery lottery="{{ lottery }}"/>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

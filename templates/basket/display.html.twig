@@ -6,6 +6,7 @@
 {% set description = 'label.basket'|trans %}
 
 {% block content %}
+    <twig:c975LShop:Shop:TestMode/>
     {% if null != basket %}
         {% if "display" == action %}
             <div data-controller="basket" id="basket-page">

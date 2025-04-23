@@ -26,7 +26,7 @@
                 <li class="disabled text-muted">{{ 'text.items_not_shipped'|trans }}</li>
             {# Shipped #}
             {% elseif basket.itemsShipped.timestamp > 0 %}
-                <li>{{ 'text.items_shipped'|trans }} {{ basket.itemsShipped|date('d/m/Y - H:i') }}</li>
+                <li>{{ 'text.items_shipped'|trans }} {{ basket.itemsShipped|date('d/m/Y') }}</li>
             {% endif %}
         {% endif %}
     {# COUNTERPARTS #}
@@ -41,7 +41,7 @@
                 <li class="disabled text-muted">{{ 'text.counterparts_not_shipped'|trans }}</li>
             {# Shipped #}
             {% elseif basket.counterpartsShipped.timestamp > 0 %}
-                <li>{{ 'text.counterparts_shipped'|trans }} {{ basket.counterpartsShipped|date('d/m/Y - H:i') }}</li>
+                <li>{{ 'text.counterparts_shipped'|trans }} {{ basket.counterpartsShipped|date('d/m/Y') }}</li>
             {% endif %}
         {% endif %}
     </ol>

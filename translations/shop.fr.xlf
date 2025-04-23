@@ -618,6 +618,78 @@
                 <source>label.counterparts_shipped</source>
                 <target>Expédition des contreparties commandées</target>
             </trans-unit>
+            <trans-unit id="155">
+                <source>label.lottery</source>
+                <target>Loterie</target>
+            </trans-unit>
+            <trans-unit id="156">
+                <source>label.lottery_tickets</source>
+                <target>Tickets de loterie</target>
+            </trans-unit>
+            <trans-unit id="157">
+                <source>label.prize_rank</source>
+                <target>Rang du prix</target>
+            </trans-unit>
+            <trans-unit id="158">
+                <source>label.enable_lottery</source>
+                <target>Activer la loterie</target>
+            </trans-unit>
+            <trans-unit id="159">
+                <source>label.good_luck</source>
+                <target>Bonne chance !</target>
+            </trans-unit>
+            <trans-unit id="160">
+                <source>text.lottery_information</source>
+                <target>Certaines contreparties donnent droit à un nombre de tickets de loterie dont les prix figurent ci-dessous.</target>
+            </trans-unit>
+            <trans-unit id="161">
+                <source>label.draw_date</source>
+                <target>Date du tirage au sort</target>
+            </trans-unit>
+            <trans-unit id="162">
+                <source>label.prizes</source>
+                <target>Prix</target>
+            </trans-unit>
+            <trans-unit id="163">
+                <source>label.allocated</source>
+                <target>Tickets attribués</target>
+            </trans-unit>
+            <trans-unit id="164">
+                <source>label.test_mode</source>
+                <target>Cette boutique est en test, aucun prélèvement ne sera fait, ni d'envoi des articles.</target>
+            </trans-unit>
+            <trans-unit id="165">
+                <source>label.anonymous</source>
+                <target>Anonyme</target>
+            </trans-unit>
+            <trans-unit id="166">
+                <source>text.lottery_reminder</source>
+                <target>En contribuant à un financement participatif, vous avez eu droit aux tickets de loterie ci-dessous :</target>
+            </trans-unit>
+            <trans-unit id="167">
+                <source>label.ticket_number</source>
+                <target>Numéro de ticket</target>
+            </trans-unit>
+            <trans-unit id="168">
+                <source>label.lottery_identifier</source>
+                <target>Identifiant de loterie</target>
+            </trans-unit>
+            <trans-unit id="169">
+                <source>label.lottery_draw</source>
+                <target>Tirage au sort de la loterie</target>
+            </trans-unit>
+            <trans-unit id="170">
+                <source>label.winner_ticket</source>
+                <target>Ticket gagnant</target>
+            </trans-unit>
+            <trans-unit id="171">
+                <source>label.not_yet_drawn</source>
+                <target>Pas encore tiré au sort</target>
+            </trans-unit>
+            <trans-unit id="172">
+                <source>label.draw</source>
+                <target>Tirage au sort</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

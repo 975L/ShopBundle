@@ -12,6 +12,7 @@ namespace c975L\ShopBundle\Entity;
 
 use App\Entity\User;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use c975L\ShopBundle\Repository\ProductItemRepository;
@@ -65,10 +66,10 @@ class ProductItem
     private ?Product $product = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $creation = null;
+    private ?DateTimeInterface $creation = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $modification = null;
+    private ?DateTimeInterface $modification = null;
 
     #[ORM\ManyToOne(inversedBy: 'productItems')]
     private ?User $user = null;
@@ -220,24 +221,24 @@ class ProductItem
         return $this;
     }
 
-    public function getCreation(): ?\DateTimeInterface
+    public function getCreation(): ?DateTimeInterface
     {
         return $this->creation;
     }
 
-    public function setCreation(\DateTimeInterface $creation): static
+    public function setCreation(DateTimeInterface $creation): static
     {
         $this->creation = $creation;
 
         return $this;
     }
 
-    public function getModification(): ?\DateTimeInterface
+    public function getModification(): ?DateTimeInterface
     {
         return $this->modification;
     }
 
-    public function setModification(\DateTimeInterface $modification): static
+    public function setModification(DateTimeInterface $modification): static
     {
         $this->modification = $modification;
 
