@@ -37,7 +37,7 @@ class CrowdfundingCounterpart
     private ?int $price = null;
 
     #[ORM\Column(nullable: true, type: 'smallint')]
-    private ?int $limitedQuantity = null;
+    private ?int $limitedQuantity = 0;
 
     #[ORM\Column(nullable: true, type: 'smallint')]
     private ?int $orderedQuantity = null;
@@ -49,7 +49,7 @@ class CrowdfundingCounterpart
     private ?string $expectedDelivery = null;
 
     #[ORM\Column(length: 3)]
-    private ?string $currency = null;
+    private ?string $currency = 'eur';
 
     #[ORM\Column(type: 'boolean')]
     private bool $requiresShipping = false;

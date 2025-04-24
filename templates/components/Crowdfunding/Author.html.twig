@@ -1,7 +1,7 @@
 <section id="author">
     <h2>{{ 'label.author'|trans({}, 'shop') }}</h2>
     <h3 class="text"><strong>{{ name }}</strong></h3>
-    <p class="text text-left">{{ presentation }}</p>
+    <p class="text text-left">{{ presentation|raw }}</p>
     {% if null != website %}
         <p><a href="{{website }}" target="_blank">{{ website }}</a></p>
     {% endif %}

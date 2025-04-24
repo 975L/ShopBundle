@@ -1,7 +1,12 @@
 {# <twig:c975LShop:ProductItem:AddButton productItem="{{ productItem }}" [type="primary"] [quantity="1"]/> #}
 {% set type = type | default('primary') %}
 {% set quantity = quantity | default(1) %}
+{% set disabled = "" %}
+{% if productItem.limitedQuantity > 0 and productItem.limitedQuantity >= productItem.orderedQuantity %}
+    {% set disabled = "disabled" %}
+{% endif %}
 <button
+    {{ disabled }}
     data-action="click->basket#addItem"
     data-type="product"
     data-quantity="{{ quantity }}"

@@ -188,8 +188,8 @@
                 <target>Title</target>
             </trans-unit>
             <trans-unit id="47">
-                <source>label.price</source>
-                <target>Price in cents</target>
+                <source>label.last_day</source>
+                <target>Last day!</target>
             </trans-unit>
             <trans-unit id="48">
                 <source>label.currency</source>
@@ -690,6 +690,42 @@
             <trans-unit id="172">
                 <source>label.draw</source>
                 <target>Draw</target>
+            </trans-unit>
+            <trans-unit id="173">
+                <source>label.author_presentation</source>
+                <target>Author's presentation</target>
+            </trans-unit>
+            <trans-unit id="174">
+                <source>text.items_management</source>
+                <target>Add items WITHOUT media/files and then add them afterwards, otherwise it doesn't work.</target>
+            </trans-unit>
+            <trans-unit id="175">
+                <source>label.product_item_file_help</source>
+                <target>The file that will be sent for download</target>
+            </trans-unit>
+            <trans-unit id="176">
+                <source>label.website</source>
+                <target>Website</target>
+            </trans-unit>
+            <trans-unit id="177">
+                <source>label.use_for</source>
+                <target>Use for</target>
+            </trans-unit>
+            <trans-unit id="178">
+                <source>label.winning_ticket</source>
+                <target>Winning Ticket!</target>
+            </trans-unit>
+            <trans-unit id="179">
+                <source>text.lottery_ticket_winner</source>
+                <target>You entered a crowdfunding lottery and won!</target>
+            </trans-unit>
+            <trans-unit id="180">
+                <source>label.only_those_left_message</source>
+                <target>Only those who left a message appear here</target>
+            </trans-unit>
+            <trans-unit id="181">
+                <source>label.tickets_used</source>
+                <target>Only some tickets appear in the animation, but, obviously, all of them are used for the drawing.</target>
             </trans-unit>
         </body>
     </file>

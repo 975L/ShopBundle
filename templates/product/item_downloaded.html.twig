@@ -8,7 +8,7 @@
     <section class="text-center">
         <twig:c975LSite:Alert:Alert type="info">
             {{ 'text.item_already_downloaded'|trans({}, 'shop') }}
-            <p>{{ productItem.downloadedAt|date('d/m/Y - H:i') }}</p>
+            <p>{{ productItem.downloadedAt|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</p>
             <p><a href="{{ absolute_url(path('contactform_display')) }}" rel="nofollow" class="btn btn-primary">{{ 'label.contact'|trans({}, 'commons') }}</a></p>
         </twig:c975LSite:Alert:Alert>
     </section>

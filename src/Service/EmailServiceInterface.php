@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Service;
 
 use c975L\ShopBundle\Entity\Basket;
+use c975L\ShopBundle\Entity\LotteryPrize;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 interface EmailServiceInterface
@@ -25,9 +26,13 @@ interface EmailServiceInterface
 
     public function crowdfundingContribution(Basket $basket, array $counterparts): void;
 
-    public function shippedItems(Basket $basket, string $type);
-
     public function downloadInformation(Basket $basket, array $downloadLinks): void;
+
+    public function lotteryTickets(string $emailAddress, array $tickets);
+
+    public function lotteryWinningTicket(LotteryPrize $prize);
+
+    public function shippedItems(Basket $basket, string $type);
 
     public function stripeErrorMessage(Basket $basket, array $context): void;
 }

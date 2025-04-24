@@ -34,6 +34,14 @@ class CrowdfundingListener
 
     public function preFlush(Crowdfunding $entity, PreFlushEventArgs $event): void
     {
+        if (null === $entity->getPosition()) {
+            $maxPosition = 0;
+            $crowdfundings = $this->entityManager->getRepository(Crowdfunding::class)->findAll();
+            foreach ($crowdfundings as $crowdfunding) {
+                $maxPosition = max($maxPosition, $crowdfunding->getPosition());
+            }
+            $entity->setPosition($maxPosition + 5);
+        }
         $entity->setModification(new DateTime());
         $this->setUser($entity);
     }

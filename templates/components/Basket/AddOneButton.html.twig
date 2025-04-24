@@ -1,13 +1,15 @@
 {# <twig:c975LShop:Basket:AddOneButton item="{{ item }}" [type="primary"]/> #}
 {% set type = type | default('primary') %}
 {% set disabled = "" %}
-{% if item.item.orderedQuantity + item.quantity >= item.item.limitedQuantity or item.type == "product" and null != item.item.file %}
+{% if item.item.limitedQuantity > 0 and item.item.orderedQuantity + item.quantity >= item.item.limitedQuantity or item.type == "product" and null != item.item.file %}
     {% set disabled = "disabled" %}
 {% endif %}
 <button
     data-action="click->basket#addItem"
     data-type="{{ type }}"
     data-quantity="1"
+    data-limited="{{ item.item.limitedQuantity|default(0) }}"
+    data-ordered="{{ item.item.orderedQuantity|default(0) }}"
     data-item-id="{{ item.item.id }}"
     data-title="{{ item.parent.title ~ ' (' ~ item.item.title ~')' }}"
     data-alert="success"

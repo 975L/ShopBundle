@@ -17,7 +17,9 @@ Crreate a `private` at your root level and add it to your `.gitignore` file.
 
 The bundle relies on the use of `App\Entity\User`. If you haven't, create it with `php bin/console make:user`. Then add one and give it `ROLE_ADMIN`. You can use `php bin/console security:hash-password` to hash the password.
 
-Create a login form/logout route: `php bin/console make:security:form-login`. Then adapt `` to your needs.
+Create a login form/logout route: `php bin/console make:security:form-login`. Then adapt to your needs.
+
+You may launch `php bin/console doctrine:schema:validate` to check missing relations and them to your User class.
 
 Add the following configuration in the different files:
 

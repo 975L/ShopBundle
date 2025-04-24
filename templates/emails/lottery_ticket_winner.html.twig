@@ -1,0 +1,12 @@
+{% extends "@c975LEmail/emails/layout.html.twig" %}
+{% trans_default_domain 'shop' %}
+
+{% block email_content %}
+    <p class="text">{{ 'text.lottery_ticket_winner'|trans }}</p>
+    <p>{{ 'label.crowdfunding'|trans({}, 'shop') }} : <strong><a href="{{ absolute_url(path('crowdfunding_display', {'slug': prize.lottery.crowdfunding.slug})) }}">{{ prize.lottery.crowdfunding.title }}</a></strong></p>
+    <p>{{ 'label.lottery'|trans({}, 'shop') }} : <strong><a href="{{ absolute_url(path('lottery_display', {'identifier': prize.lottery.identifier})) }}">{{ prize.lottery.identifier }}</a></strong></p>
+    <p>{{ 'label.ticket_number'|trans({}, 'shop') }} : <strong>{{ prize.winningTicket.number }}</strong></p>
+    <p>{{ 'label.title'|trans({}, 'shop') }} : <strong>{{ prize.title }}</strong></p>
+    <p>{{ 'label.description'|trans({}, 'shop') }} : <strong>{{ prize.description }}</strong></p>
+    <p>{{ 'label.follow_up'|trans({}, 'shop') }}</p>
+{% endblock %}

@@ -1,5 +1,6 @@
 <section id="contributors">
     <h2>{{ 'label.contributors'|trans({}, 'shop') }}</h2>
+    <p class="text text-center">{{ 'label.only_those_left_message'|trans({}, 'shop') }}</p>
     {% if contributors is not empty %}
         <div class="cards">
             {% for contributor in contributors %}
@@ -7,6 +8,6 @@
             {% endfor %}
         </div>
     {% else %}
-        <p class="text text-center lead">{{ 'label.no_contributor'|trans({}, 'shop') }}</p>
+        <p class="text text-center">{{ 'label.no_contributor'|trans({}, 'shop') }}</p>
     {% endif %}
 </section>

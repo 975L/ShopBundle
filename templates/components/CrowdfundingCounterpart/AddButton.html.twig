@@ -1,16 +1,26 @@
 {# <twig:c975LShop:Crowdfunding:AddButton crowdfundingCounterpart="{{ counterpart }}" [type="primary"] [quantity="1"]/> #}
 {% set type = type | default('primary') %}
 {% set quantity = quantity | default(1) %}
-<button
-    data-action="click->basket#addItem"
-    data-type="crowdfunding"
-    data-quantity="{{ quantity }}"
-    data-limited="{{ crowdfundingCounterpart.limitedQuantity|default(0) }}"
-    data-ordered="{{ crowdfundingCounterpart.orderedQuantity|default(0) }}"
-    data-item-id="{{ crowdfundingCounterpart.id }}"
-    data-title="{{ crowdfundingCounterpart.title }}"
-    data-alert="success"
-    data-text="{{ 'label.added'|trans({}, 'shop') }}"
-    class="btn btn-large btn-{{ type }}">
-    <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-grin.svg" width="24" height="24" class="white"/> {{ 'label.i_contribute'|trans({}, 'shop') }}
-</button>
+
+{% set endOfDay = date(crowdfundingCounterpart.crowdfunding.endDate|date('Y-m-d 23:59:59')) %}
+{% set isEnded = date() > endOfDay %}
+
+{% if isEnded %}
+    <button disabled class="btn btn-large btn-{{ type }}">
+        <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-smile-wink.svg" width="24" height="24"/> {{ 'label.crowdfunding_ended'|trans({}, 'shop') }}
+    </button>
+{% else %}
+    <button
+        data-action="click->basket#addItem"
+        data-type="crowdfunding"
+        data-quantity="{{ quantity }}"
+        data-limited="{{ crowdfundingCounterpart.limitedQuantity|default(0) }}"
+        data-ordered="{{ crowdfundingCounterpart.orderedQuantity|default(0) }}"
+        data-item-id="{{ crowdfundingCounterpart.id }}"
+        data-title="{{ crowdfundingCounterpart.title }}"
+        data-alert="success"
+        data-text="{{ 'label.added'|trans({}, 'shop') }}"
+        class="btn btn-large btn-{{ type }}">
+        <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-grin.svg" width="24" height="24" class="white"/> {{ 'label.i_contribute'|trans({}, 'shop') }}
+    </button>
+{% endif %}

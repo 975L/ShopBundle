@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.29
+
+- Added random suffle on lottery's tickets before draw (24/04/2025)
+- Added missing translations (24/04/2025)
+- Added limitedQuantity field to ProductItem (24/04/2025)
+- Corrected limitedQuantity on ProductItem (24/04/2025)
+- Added default position for Product/Crowdfunding (24/04/2025)
+- Added missing fields for CrudController (24/04/2025)
+- Added a Timezone "setter" in session to display hours correctly (24/04/2025)
+- Added email send to lottery's winner (24/04/2025)
+- Corrected quantity for lottery tickets when purchasing more thant one counterpart (24/04/2025)
+
 ## v0.28
 
 - Removed toast (22/04/2025)

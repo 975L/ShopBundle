@@ -5,7 +5,7 @@
 <p class="text text-center lead">{{ 'label.track_order_information'|trans }}</p>
 <div>
     <ol class="circle-numbers">
-        <li>{{ 'text.order_registered'|trans }} {{ basket.creation|date('d/m/Y - H:i') }}</li>
+        <li>{{ 'text.order_registered'|trans }} {{ basket.creation|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</li>
         <li>{{ 'label.confirmation_email_sent'|trans }}</li>
     {# ITEMS #}
         {# Digital items information #}
@@ -16,7 +16,7 @@
                 <li class="disabled text-muted">{{ 'text.items_not_downloaded'|trans }}</li>
             {# Downloaded #}
             {% elseif basket.downloaded.timestamp > 0 %}
-                <li>{{ 'text.items_downloaded'|trans }} {{ basket.downloaded|date('d/m/Y - H:i') }}</li>
+                <li>{{ 'text.items_downloaded'|trans }} {{ basket.downloaded|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</li>
             {% endif %}
         {% endif %}
         {# Shipping information #}

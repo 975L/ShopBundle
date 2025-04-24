@@ -15,7 +15,7 @@ export default class extends Controller {
         const prizeRank = button.getAttribute("data-prize-rank");
 
         // Disables all buttons during the draw
-        this.drawButtonTargets.forEach(btn => btn.disabled = true);
+        this.drawButtonTargets.forEach((btn) => btn.disabled = true);
 
         // Show animation spin wheel
         this.animationDuration = Math.floor(8000 + Math.random() * 4000);
@@ -46,15 +46,15 @@ export default class extends Controller {
                 "Content-Type": "application/json"
             }
         })
-        .then(response => {
+        .then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.json();
         })
-        .then(data => {
+        .then((data) => {
             if (data.error) {
-                this.displayMessage(data.error, "alert-danger");
+                Handlers.displayMessage(data.error, "alert-danger");
 
                 return;
             }
@@ -64,10 +64,9 @@ export default class extends Controller {
                 this.showWinner(data, prizeRank);
             }, duration);
         })
-        .catch(error => {
-            console.error("Error:", error);
+        .catch((error) => {
             this.showError("Failed to draw a winner. Please try again.");
-            this.displayMessage(this.translate("failed.draw.winner"), "alert-danger");
+            Handlers.displayMessage(Handlers.translate("failed.draw.winner"), "alert-danger");
 
             // Resets interface
             if (this.hasDrumTarget) {
@@ -135,8 +134,8 @@ export default class extends Controller {
             );
 
             if (winnerNameElement) {
-                const contributorName = data.name || this.translate("anonymous");
-                winnerNameElement.innerHTML = `${this.translate("name")}: <strong>${contributorName}</strong>`;
+                const contributorName = data.name || Handlers.translate("anonymous");
+                winnerNameElement.innerHTML = `${Handlers.translate("name")}: <strong>${contributorName}</strong>`;
             }
         }
     }
@@ -150,7 +149,7 @@ export default class extends Controller {
 
                 // Replaces button
                 const formattedDate = Handlers.formatDate(new Date(), "fr-FR");
-                drawDateText.innerHTML = `${this.translate("draw.date")} : <strong>${formattedDate}</strong>`;
+                drawDateText.innerHTML = `${Handlers.translate("draw.date")} : <strong>${formattedDate}</strong>`;
                 const parentElement = btn.parentElement;
                 parentElement.replaceChild(drawDateText, btn);
             }
@@ -159,7 +158,7 @@ export default class extends Controller {
 
     // Activates draw buttons
     activateDrawButtons() {
-        this.drawButtonTargets.forEach(btn => {
+        this.drawButtonTargets.forEach((btn) => {
             if (!btn.closest(".prize-card")?.classList.contains("drawn")) {
                 btn.disabled = false;
             }
@@ -168,7 +167,9 @@ export default class extends Controller {
 
     // Animates tickets
     animateTickets(duration) {
-        if (!this.hasDrumTarget) return;
+        if (!this.hasDrumTarget) {
+            return;
+        }
 
         // Hides placeholder
         if (this.hasTicketPlaceholderTarget) {
@@ -204,14 +205,5 @@ export default class extends Controller {
                 }, displayDuration);
             }, appearTime);
         }
-    }
-
-    // HANDLERS
-    displayMessage(message, alertClass) {
-        Handlers.displayMessage(message, alertClass);
-    }
-
-    translate(key) {
-        return Handlers.translate(key);
     }
 }

@@ -49,18 +49,26 @@ class ProductCrudController extends AbstractCrudController
             IntegerField::new('position')
                 ->setLabel('label.position')
                 ->setRequired(false),
+            TextEditorField::new('description')
+                ->setLabel('label.description')
+                ->hideOnIndex(),
+
+            // Media management
+            FormField::addPanel('Media')
+                ->hideOnIndex(),
             CollectionField::new('medias')
                 ->hideOnIndex()
                 ->setEntryType(ProductMediaType::class),
-            FormField::addPanel('Items Management')
-                ->setHelp('Add items WITHOUT media/files, then add them afterwards.')
+
+            // Items
+            FormField::addPanel('label.items')
+                ->setHelp('text.items_management')
                 ->hideOnIndex(),
             CollectionField::new('items')
                 ->hideOnIndex()
                 ->setEntryType(ProductItemType::class),
-            TextEditorField::new('description')
-                ->setLabel('label.description')
-                ->hideOnIndex(),
+
+            // Dates
             DateTimeField::new('creation')
                 ->setLabel('label.creation')
                 ->hideOnIndex()

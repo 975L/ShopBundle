@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 
 class ProductItemType extends AbstractType
 {
@@ -47,41 +48,51 @@ class ProductItemType extends AbstractType
                     'placeholder' => 'label.description',
                 ],
             ])
+            ->add('limitedQuantity', IntegerType::class, [
+                'label' => 'label.limited_quantity',
+                'attr' => [
+                    'placeholder' => 'label.limited_quantity',
+                ],
+            ])
             ->add('position', IntegerType::class, [
                 'label' => 'label.position',
                 'attr' => [
                     'placeholder' => 'label.position',
                 ],
             ])
-            ->add('file', ProductItemFileType::class, [
-                'label' => false,
-                'required' => false,
-            ])
-            ->add('price', IntegerType::class, [
+            ->add('price', MoneyType::class, [
                 'required' => true,
                 'label' => 'label.price',
+                'divisor' => 100,
                 'attr' => [
                     'placeholder' => 'label.price',
                 ],
             ])
             ->add('currency', TextType::class, [
                 'required' => true,
+                'empty_data' => 'eur',
                 'label' => 'label.currency',
-                'data' => 'eur',
                 'attr' => [
                     'placeholder' => 'label.currency',
+                    'value' => 'eur',
                 ],
             ])
             ->add('vat', NumberType::class, [
                 'label' => 'label.vat',
-                'data' => 0,
+                'empty_data' => 0,
                 'attr' => [
                     'placeholder' => 'label.vat',
+                    'value' => 0,
                 ],
             ])
             ->add('media', ProductItemMediaType::class, [
                 'label' => false,
                 'required' => false,
+            ])
+            ->add('file', ProductItemFileType::class, [
+                'label' => false,
+                'required' => false,
+                'help' => 'label.product_item_file_help',
             ])
         ;
     }

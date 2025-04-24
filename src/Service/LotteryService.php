@@ -7,9 +7,9 @@ use DateTimeImmutable;
 use c975L\ShopBundle\Entity\Lottery;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\String\ByteString;
-use c975L\ShopBundle\Entity\Crowdfunding;
 use c975L\ShopBundle\Entity\LotteryTicket;
 use c975L\ShopBundle\Repository\LotteryRepository;
+use c975L\ShopBundle\Message\LotteryWinningTicketMessage;
 use c975L\ShopBundle\Message\LotteryTicketsMessage;
 use c975L\ShopBundle\Entity\CrowdfundingContributor;
 use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
@@ -26,37 +26,8 @@ class LotteryService implements LotteryServiceInterface
     ) {
     }
 
-    // Creates a new lottery for a crowdfunding campaign
-    public function createLotteryForCrowdfunding(Crowdfunding $crowdfunding): Lottery
-    {
-        // Check if a lottery already exists
-        if ($crowdfunding->getLottery() !== null) {
-            return $crowdfunding->getLottery();
-        }
-
-        $lottery = new Lottery();
-        $lottery->setCrowdfunding($crowdfunding);
-        $lottery->setIdentifier($this->generateIdentifier());
-        $lottery->setIsActive(true);
-
-        $this->entityManager->persist($lottery);
-        $this->entityManager->flush();
-
-        return $lottery;
-    }
-
-    // Generates a unique identifier for the lottery - Format: LOT-XXXX-XXXX (préfixe + 9 caractères aléatoires)
-    public function generateIdentifier(): string
-    {
-        $prefix = 'LOT';
-        $randomPart1 = strtoupper(bin2hex(random_bytes(2)));
-        $randomPart2 = strtoupper(bin2hex(random_bytes(2)));
-
-        return $prefix . '-' . $randomPart1 . '-' . $randomPart2;
-    }
-
     // Generates tickets for a contributor based on their purchase
-    public function generateTicketsForContributor(CrowdfundingContributor $contributor, CrowdfundingCounterpart $counterpart): array
+    public function generateTicketsForContributor(CrowdfundingContributor $contributor, CrowdfundingCounterpart $counterpart, int $quantity): array
     {
         $tickets = [];
         $crowdfunding = $contributor->getCrowdfunding();
@@ -64,7 +35,7 @@ class LotteryService implements LotteryServiceInterface
         // Generates tickets
         if ($counterpart->getLotteryTickets() > 0) {
             $lottery = $crowdfunding->getLotteries()[0];
-            $ticketsToGenerate = $counterpart->getLotteryTickets();
+            $ticketsToGenerate = $counterpart->getLotteryTickets() * $quantity;
             for ($i = 0; $i < $ticketsToGenerate; $i++) {
                 $ticket = new LotteryTicket();
                 $ticket->setLottery($lottery);
@@ -129,6 +100,12 @@ class LotteryService implements LotteryServiceInterface
                 return null;
             }
 
+            // Shuffles randomly the tickets
+            $shuffles = random_int(3, 10);
+            for ($i = 0; $i < $shuffles; $i++) {
+                shuffle($tickets);
+            }
+
             // Selects a random ticket
             $winnerIndex = array_rand($tickets);
             $winningTicket = $tickets[$winnerIndex];
@@ -139,10 +116,9 @@ class LotteryService implements LotteryServiceInterface
                 $prize->setDrawDate(new DateTimeImmutable());
                 $this->entityManager->flush();
             }
-// Sends email
 
-
-
+            // Sends email to the winner
+            $this->messageBus->dispatch(new LotteryWinningTicketMessage($prize->getId()));
         }
 
         return $winningTicket;

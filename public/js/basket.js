@@ -8,8 +8,10 @@ export default class extends Controller {
 
     // Fetches data from the Symfony controller when the controller is connected
     connect() {
+        // Sets timzonezone in Symfony session
+        Handlers.sendTimezoneToServer();
+
         // Event listeners as some controller are outside the basket controller
-        document.addEventListener("basket:message", this.handleGlobalMessage.bind(this));
         document.addEventListener("basket:update", this.handleGlobalUpdate.bind(this));
 
         // Load basket data once and use for everything
@@ -35,12 +37,12 @@ export default class extends Controller {
             })
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error(this.translate("basket.load.error"));
+                    throw new Error(Handlers.translate("basket.load.error"));
                 }
                 return response.json();
             })
             .catch((error) => {
-                this.displayMessage(this.translate("basket.load.error"), "alert-danger");
+                Handlers.displayMessage(Handlers.translate("basket.load.error"), "alert-danger");
                 // Reset promise on error to allow retry
                 this.constructor.basketDataPromise = null;
                 return null;
@@ -55,14 +57,14 @@ export default class extends Controller {
         fetch("/shop/basket", { method: "DELETE" })
         .then((response) => {
             if (!response.ok) {
-                this.displayMessage(this.translate("basket.delete.error"), "alert-danger");
+                Handlers.displayMessage(Handlers.translate("basket.delete.error"), "alert-danger");
             }
             // Force refresh cache on basket deletion
             this.constructor.basketDataPromise = null;
             window.location.reload();
         })
         .catch((error) => {
-            this.displayMessage(this.translate("basket.delete.error"), "alert-danger");
+            Handlers.displayMessage(Handlers.translate("basket.delete.error"), "alert-danger");
         });
     }
 
@@ -102,7 +104,7 @@ export default class extends Controller {
         })
         .then((response) => {
             if (!response.ok) {
-                this.displayMessage(this.translate("product.delete.error"), "alert-danger");
+                Handlers.displayMessage(Handlers.translate("product.delete.error"), "alert-danger");
             }
             return response.json();
         })
@@ -111,11 +113,11 @@ export default class extends Controller {
             this.constructor.basketDataPromise = null;
 
             const message = `${target.dataset.title} ${target.dataset.text}`;
-            this.displayMessage(message, "alert-" + target.dataset.alert);
+            Handlers.displayMessage(message, "alert-" + target.dataset.alert);
             this.update(data);
         })
         .catch((error) => {
-            this.displayMessage(this.translate("product.delete.error"), "alert-danger");
+            Handlers.displayMessage(Handlers.translate("product.delete.error"), "alert-danger");
         });
     }
 
@@ -134,7 +136,7 @@ export default class extends Controller {
         })
         .then((response) => {
             if (!response.ok) {
-                this.displayMessage(this.translate("basket.add.error"), "alert-danger");
+                Handlers.displayMessage(Handlers.translate("basket.add.error"), "alert-danger");
             }
             return response.json();
         })
@@ -143,15 +145,15 @@ export default class extends Controller {
             this.constructor.basketDataPromise = null;
 
             if (data.error) {
-                this.displayMessage(data.error, "alert-danger");
+                Handlers.displayMessage(data.error, "alert-danger");
             } else {
                 const message = `${target.dataset.title} ${target.dataset.text}`;
-                this.displayMessage(message, "alert-" + target.dataset.alert);
+                Handlers.displayMessage(message, "alert-" + target.dataset.alert);
                 this.update(data);
             }
         })
         .catch((error) => {
-            this.displayMessage(this.translate("basket.add.error"), "alert-danger");
+            Handlers.displayMessage(Handlers.translate("basket.add.error"), "alert-danger");
         });
     }
 
@@ -191,7 +193,7 @@ export default class extends Controller {
         if (!data.basket) {return;}
 
         if (this.hasTotalTarget) {
-            this.totalTarget.textContent = (data.basket.total / 100).toFixed(2) + this.getCurrencySymbol(data.basket.currency);
+            this.totalTarget.textContent = (data.basket.total / 100).toFixed(2) + Handlers.getCurrencySymbol(data.basket.currency);
         }
 
         if (this.hasQuantityTarget) {
@@ -269,6 +271,8 @@ export default class extends Controller {
                 });
             }
         });
+
+        this.updateAddButtons(data);
     }
 
     // Updates the basket totals
@@ -278,7 +282,7 @@ export default class extends Controller {
         }
 
         if (this.hasTotalTarget) {
-            this.totalTarget.textContent = ((data.basket.total + data.basket.shipping) / 100).toFixed(2) + this.getCurrencySymbol(data.basket.currency);
+            this.totalTarget.textContent = ((data.basket.total + data.basket.shipping) / 100).toFixed(2) + Handlers.getCurrencySymbol(data.basket.currency);
         }
 
         if (this.hasQuantityTarget) {
@@ -295,8 +299,8 @@ export default class extends Controller {
         }
 
         this.shippingTarget.textContent = data.basket.shipping > 0
-            ? (data.basket.shipping / 100).toFixed(2) + this.getCurrencySymbol(data.basket.currency)
-            : this.translate("basket.offered");
+            ? (data.basket.shipping / 100).toFixed(2) + Handlers.getCurrencySymbol(data.basket.currency)
+            : Handlers.translate("basket.offered");
     }
 
     // Updates the submit button
@@ -305,8 +309,8 @@ export default class extends Controller {
             return;
         }
 
-        const label = this.translate("label.pay");
-        const total = ((data.basket.total + data.basket.shipping) / 100).toFixed(2) + this.getCurrencySymbol(data.basket.currency);
+        const label = Handlers.translate("label.pay");
+        const total = ((data.basket.total + data.basket.shipping) / 100).toFixed(2) + Handlers.getCurrencySymbol(data.basket.currency);
 
         this.submitButtonTarget.value = `${label} ${total}`;
     }
@@ -326,24 +330,19 @@ export default class extends Controller {
             (target) => target.dataset.itemId === combinedId
         );
         if (itemTotalElement) {
-            itemTotalElement.textContent = (itemData.total / 100).toFixed(2) + this.getCurrencySymbol(itemData.item.currency);
+            itemTotalElement.textContent = (itemData.total / 100).toFixed(2) + Handlers.getCurrencySymbol(itemData.item.currency);
         }
     }
 
     // Update product buttons with basket data
     updateAddButtons(data) {
-        if (!data?.basket?.items) {
-            return;
-        }
-
-        // Retrieve all add to cart buttons on the page
+        // Retrieves all add to cart buttons on the page
         const addButtons = document.querySelectorAll("[data-action='click->basket#addItem']");
 
         // If no buttons, stop here
         if (!addButtons.length) {
             return;
         }
-
         // For each add button
         addButtons.forEach((button) => {
             const type = button.dataset.type;
@@ -357,7 +356,6 @@ export default class extends Controller {
                 if (quantityElement && quantityElement.classList.contains("quantity")) {
                     quantityElement.textContent = `${quantity}`;
                 }
-
                 // Disable the button for digital item and quantity = 1
                 const hasFile = !!basketItem.item?.file;
                 if (hasFile && quantity >= 1) {
@@ -365,7 +363,7 @@ export default class extends Controller {
                 }
             }
 
-            // Disable the button if limited quantity is reached
+            // Disables the button if limited quantity is reached
             const limitedQuantity = parseInt(button.dataset.limited, 10);
             const orderedQuantity = parseInt(button.dataset.ordered, 10);
             const inBasketQuantity = basketItem ? basketItem.quantity : 0;
@@ -375,7 +373,7 @@ export default class extends Controller {
                 const remaining = limitedQuantity - totalOrdered;
 
                 if (remaining <= 0) {
-                    // Désactiver le bouton
+                    // Disables button
                     button.setAttribute("disabled", "disabled");
                     button.classList.add("disabled");
                 }
@@ -396,15 +394,6 @@ export default class extends Controller {
                 basketNavbar.classList.remove("d-none");
                 document.body.classList.add("has-basket-navbar");
             }
-        }
-    }
-
-    // Handles global messages
-    handleGlobalMessage(event) {
-        if (this.hasMessageTarget && event.target !== this.element) {
-            const { message, alertClass } = event.detail;
-            this.messageTarget.className = `alert ${alertClass}`;
-            this.messageTarget.textContent = message;
         }
     }
 
@@ -429,18 +418,5 @@ export default class extends Controller {
             clickedButton.classList.remove("zoom-out-animation", "btn-secondary");
             clickedButton.classList.add("btn-primary");
         }, 500);
-    }
-
-    // HANDLERS
-    displayMessage(message, alertClass) {
-        Handlers.displayMessage(message, alertClass);
-    }
-
-    translate(key) {
-        return Handlers.translate(key);
-    }
-
-    getCurrencySymbol(currencyCode) {
-        return Handlers.getCurrencySymbol(currencyCode);
     }
 }

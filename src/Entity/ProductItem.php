@@ -42,13 +42,13 @@ class ProductItem
     private ?int $price = null;
 
     #[ORM\Column(length: 3)]
-    private ?string $currency = null;
+    private ?string $currency = 'eur';
 
     #[ORM\Column]
-    private ?float $vat = null;
+    private ?float $vat = 0;
 
     #[ORM\Column(nullable: true, type: 'smallint')]
-    private ?int $limitedQuantity = null;
+    private ?int $limitedQuantity = 0;
 
     #[ORM\Column(nullable: true, type: 'smallint')]
     private ?int $orderedQuantity = null;

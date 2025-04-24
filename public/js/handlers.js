@@ -2,7 +2,6 @@ import translationsEn from "./translations.en.js";
 import translationsFr from "./translations.fr.js";
 
 export default {
-    // Initialize translations
     translations: {
         "en": translationsEn,
         "fr": translationsFr
@@ -23,26 +22,46 @@ export default {
 
     // Displays a message
     displayMessage(message, alertClass) {
-        let messageElement = document.querySelector(".global-message");
-        messageElement.className = `alert ${alertClass}`;
-        messageElement.textContent = message;
+        const messageElement = document.querySelector(".global-message");
+        if (messageElement) {
+            messageElement.className = `global-message alert ${alertClass}`;
+            messageElement.textContent = message;
+            messageElement.style.display = "block";
+            messageElement.style.opacity = "1";
+        } else {
+            console.warn("Élément .global-message introuvable");
+        }
+    },
 
-        // Launches a global event for listeners
-        const event = new CustomEvent("basket:message", {
-            bubbles: true,
-            detail: { message, alertClass }
+    // Gets timezone from browser to be stored in Symfony session
+    sendTimezoneToServer() {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        // Sends request
+        fetch("/set-timezone", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify({ timezone: timezone })
         });
-        document.dispatchEvent(event);
+
+        return timezone;
     },
 
     // Translates messages
     translate(key) {
-        if (typeof key !== "string") {return "";}
+        if (typeof key !== "string") {
+            return "";
+        }
 
         const language = this.getLanguage();
         const translations = this.translations[language] || this.translations["en"];
 
-        if (!translations) return key;
+        if (!translations) {
+            return key;
+        }
 
         return translations[key] || key;
     },
