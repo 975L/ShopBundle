@@ -48,13 +48,13 @@ class CrowdfundingCrudController extends AbstractCrudController
             SlugField::new('slug')
                 ->setTargetFieldName('title')
                 ->hideOnIndex(),
-            TextField::new('authorName')
-                ->setLabel('label.author'),
             MoneyField::new('amountGoal')
                 ->setLabel('label.goal')
                 ->setCurrency('EUR')
                 ->setStoredAsCents(true),
-            MoneyField::new('amountAchieved')
+            TextField::new('currency')
+                ->setLabel('label.currency'),
+             MoneyField::new('amountAchieved')
                 ->setLabel('label.amount_achieved')
                 ->setCurrency('EUR')
                 ->setStoredAsCents(true)
@@ -65,6 +65,20 @@ class CrowdfundingCrudController extends AbstractCrudController
                 ->setLabel('label.end_date'),
             TextEditorField::new('description')
                 ->setLabel('label.description')
+                ->hideOnIndex(),
+
+            // Author
+            FormField::addPanel('label.author')
+                ->hideOnIndex(),
+            TextField::new('authorName')
+                ->setLabel('label.author'),
+            TextEditorField::new('authorPresentation')
+                ->setLabel('label.author_presentation')
+                ->hideOnIndex(),
+            TextField::new('authorWebsite')
+                ->setLabel('label.website'),
+            TextEditorField::new('useFor')
+                ->setLabel('label.use_for')
                 ->hideOnIndex(),
 
             // Media management
@@ -79,6 +93,7 @@ class CrowdfundingCrudController extends AbstractCrudController
 
             // Counterpart management
             FormField::addPanel('label.counterparts')
+                ->setHelp('text.items_management')
                 ->hideOnIndex(),
             CollectionField::new('counterparts')
                 ->hideOnIndex()

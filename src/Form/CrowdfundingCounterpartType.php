@@ -14,11 +14,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use c975L\ShopBundle\Form\CrowdfundingCounterpartMediaType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class CrowdfundingCounterpartType extends AbstractType
@@ -69,19 +70,21 @@ class CrowdfundingCounterpartType extends AbstractType
                 'label' => 'label.requires_shipping',
                 'required' => false,
             ])
-            ->add('price', IntegerType::class, [
+            ->add('price', MoneyType::class, [
                 'required' => true,
                 'label' => 'label.price',
+                'divisor' => 100,
                 'attr' => [
                     'placeholder' => 'label.price',
                 ],
             ])
             ->add('currency', TextType::class, [
                 'required' => true,
+                'empty_data' => 'eur',
                 'label' => 'label.currency',
-                'data' => 'eur',
                 'attr' => [
                     'placeholder' => 'label.currency',
+                    'value' => 'eur',
                 ],
             ])
             ->add('expectedDelivery', TextType::class, [

@@ -68,7 +68,7 @@ class Crowdfunding
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingMedia::class, mappedBy: 'crowdfunding', cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: CrowdfundingMedia::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(["position" => "ASC"])]
     private Collection $medias;
 
@@ -80,7 +80,7 @@ class Crowdfunding
     #[ORM\OrderBy(['publishedDate' => 'DESC'])]
     private Collection $news;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingCounterpart::class, mappedBy: 'crowdfunding', cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: CrowdfundingCounterpart::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['price' => 'ASC'])]
     private Collection $counterparts;
 

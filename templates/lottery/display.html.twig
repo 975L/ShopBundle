@@ -9,7 +9,7 @@
     <twig:c975LShop:Shop:TestMode/>
     <div data-controller="lottery" data-lottery-identifier-value="{{ lottery.identifier }}">
         <p class="text text-center">{{ 'label.crowdfunding'|trans }} : <a href="{{ absolute_url(path('crowdfunding_display', {'slug': lottery.crowdfunding.slug})) }}">{{ lottery.crowdfunding.title }}</a></p>
-        <p class="text text-center">{{ 'label.draw_date'|trans({}, 'shop') }} : <strong>{{ lottery.drawDate|date('d/m/Y - H:i') }}</strong></p>
+        <p class="text text-center">{{ 'label.draw_date'|trans({}, 'shop') }} : <strong>{{ lottery.drawDate|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</strong></p>
         <twig:c975LShop:Lottery:Prizes prizes="{{ lottery.prizes }}"/>
         <twig:c975LShop:Lottery:SpinWheel/>
         <twig:c975LShop:Lottery:TicketsNumber tickets="{{ lottery.tickets }}" prizes="{{ lottery.prizes }}"/>

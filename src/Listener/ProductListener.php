@@ -34,6 +34,14 @@ class ProductListener
 
     public function preFlush(Product $entity, PreFlushEventArgs $event): void
     {
+        if (null === $entity->getPosition()) {
+            $maxPosition = 0;
+            $products = $this->entityManager->getRepository(Product::class)->findAll();
+            foreach ($products as $product) {
+                $maxPosition = max($maxPosition, $product->getPosition());
+            }
+            $entity->setPosition($maxPosition + 5);
+        }
         $entity->setModification(new DateTime());
         $this->setUser($entity);
     }

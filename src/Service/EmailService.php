@@ -12,6 +12,7 @@ namespace c975L\ShopBundle\Service;
 
 use c975L\ShopBundle\Entity\Basket;
 use Symfony\Component\Mime\Address;
+use c975L\ShopBundle\Entity\LotteryPrize;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\BodyRendererInterface;
@@ -63,8 +64,11 @@ class EmailService implements EmailServiceInterface
     public function send($email)
     {
         // To display the message in place of sending (for debug)
+        // echo '*** ' . $email->getSubject() . ' ***';
         // $this->bodyRenderer->render($email);
         // echo $email->getHtmlBody();
+        // dd($email);
+
         $this->mailer->send($email);
     }
 
@@ -73,7 +77,7 @@ class EmailService implements EmailServiceInterface
     {
         $email = $this->create();
         $email->to(new Address($basket->getEmail()));
-        $email->subject($this->subjectPrefix . $this->translator->trans('label.confirm_order', [], 'shop'));
+        $email->subject($this->subjectPrefix . $this->translator->trans('label.confirm_order', [], 'shop') . ' - ' . $basket->getNumber());
         $email->htmlTemplate('@c975LShop/emails/confirm_order.html.twig');
         $email->context([
             'basket' => $basket,
@@ -85,9 +89,13 @@ class EmailService implements EmailServiceInterface
     // Sends the crowdfunding contribution email
     public function crowdfundingContribution(Basket $basket, array $counterparts): void
     {
+        foreach ($counterparts as $key => $counterpart) {
+            $crowdfundingTitle = $counterpart['parent']['title'];
+            continue;
+        }
         $email = $this->create();
         $email->to(new Address($basket->getEmail()));
-        $email->subject($this->subjectPrefix . $this->translator->trans('label.crowdfunding_contribution', [], 'shop'));
+        $email->subject($this->subjectPrefix . $this->translator->trans('label.crowdfunding_contribution', [], 'shop') . ' - ' . $crowdfundingTitle);
         $email->htmlTemplate('@c975LShop/emails/crowdfunding_contribution.html.twig');
         $email->context([
             'basket' => $basket,
@@ -102,10 +110,24 @@ class EmailService implements EmailServiceInterface
     {
         $email = $this->create();
         $email->to(new Address($emailAddress));
-        $email->subject($this->subjectPrefix . $this->translator->trans('label.lottery_tickets', [], 'shop'));
+        $email->subject($this->subjectPrefix . $this->translator->trans('label.lottery_tickets', [], 'shop') . ' - ' . $tickets[0]['lotteryIdentifier']);
         $email->htmlTemplate('@c975LShop/emails/lottery_tickets.html.twig');
         $email->context([
             'tickets' => $tickets,
+        ]);
+
+        $this->send($email);
+    }
+
+    // Sends the lottery winning ticket email
+    public function lotteryWinningTicket(LotteryPrize $prize)
+    {
+        $email = $this->create();
+        $email->to(new Address($prize->getWinningTicket()->getContributor()->getEmail()));
+        $email->subject($this->subjectPrefix . $this->translator->trans('label.lottery', [], 'shop') . ' - ' . $prize->getLottery()->getIdentifier() . ' - ' . $this->translator->trans('label.winning_ticket', [], 'shop'));
+        $email->htmlTemplate('@c975LShop/emails/lottery_ticket_winner.html.twig');
+        $email->context([
+            'prize' => $prize,
         ]);
 
         $this->send($email);
@@ -116,7 +138,7 @@ class EmailService implements EmailServiceInterface
     {
         $email = $this->create();
         $email->to(new Address($basket->getEmail()));
-        $email->subject($this->subjectPrefix . $this->translator->trans('label.download_information', [], 'shop'));
+        $email->subject($this->subjectPrefix . $this->translator->trans('label.download_information', [], 'shop') . ' - ' . $basket->getNumber());
         $email->htmlTemplate('@c975LShop/emails/download_information.html.twig');
         $email->context([
             'basket' => $basket,
@@ -134,7 +156,7 @@ class EmailService implements EmailServiceInterface
         $template = 'product' === $type ? 'items_shipped' : 'counterparts_shipped';
         $email = $this->create();
         $email->to(new Address($basket->getEmail()));
-        $email->subject($this->subjectPrefix . $this->translator->trans($subject, [], 'shop'));
+        $email->subject($this->subjectPrefix . $this->translator->trans($subject, [], 'shop') . ' - ' . $basket->getNumber());
         $email->htmlTemplate('@c975LShop/emails/' . $template . '.html.twig');
         $email->context([
             'basket' => $basket,

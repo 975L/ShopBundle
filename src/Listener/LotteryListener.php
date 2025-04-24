@@ -14,6 +14,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\Events;
 use c975L\ShopBundle\Entity\Lottery;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\String\ByteString;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -40,6 +41,14 @@ class LotteryListener
 
     public function prePersist(Lottery $entity, PrePersistEventArgs $event): void
     {
+        // Generates a unique lottery number - Format: XXX-YYYY-ZZZ (3 letters, 4 letters/numbers, 4 letters/numbers)
+
+        $prefix = strtoupper(ByteString::fromRandom(3, 'BCDFGHJKLMNPQRSTVWXYZ')->toString());
+        $randomPart1 = strtoupper(bin2hex(random_bytes(2)));
+        $randomPart2 = strtoupper(bin2hex(random_bytes(2)));
+
+        $entity->setIdentifier($prefix . '-' . $randomPart1 . '-' . $randomPart2);
+        $entity->setIsActive(true);
         $entity->setCreation(new DateTimeImmutable());
     }
 }

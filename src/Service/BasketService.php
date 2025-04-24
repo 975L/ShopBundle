@@ -294,8 +294,18 @@ class BasketService implements BasketServiceInterface
             throw new Exception('Item not found');
         }
 
+        // Checks if crowdfunding is not ended
+        if ('crowdfunding' === $type) {
+            $endOfDay = new DateTime($item->getCrowdfunding()->getEndDate()->format('Y-m-d 23:59:59'));
+            if (new DateTime() > $endOfDay) {
+                return [
+                    'error' => $this->translator->trans('label.crowdfunding_ended', [], 'shop'),
+                ];
+            }
+        }
+
         // Checks if limitedQuantity is defined and if it would be exceeded
-        if ($item->getLimitedQuantity() !== null) {
+        if ($item->getLimitedQuantity() > 0) {
             $alreadyOrdered = $item->getOrderedQuantity() ?? 0;
             $wouldBeOrdered = $alreadyOrdered + $quantity;
 
@@ -490,7 +500,7 @@ class BasketService implements BasketServiceInterface
                 }
 
                 // Generates lottery tickets if applicable
-                $this->lotteryService->generateTicketsForContributor($contributor, $counterpart);
+                $this->lotteryService->generateTicketsForContributor($contributor, $counterpart, $quantity);
             }
 
             $this->entityManager->flush();

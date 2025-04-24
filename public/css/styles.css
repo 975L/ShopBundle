@@ -11,6 +11,10 @@
     --product-background-color: #fff;
 }
 
+.card-data {
+    text-align: center;
+}
+
 /* TYPOGRAPHY */
 .delete-link {
     color: rgb(86, 86, 86);
@@ -290,6 +294,10 @@ body.has-basket-navbar {
     margin: 5px auto;
 }
 
+.crowdfunding h2.card-header {
+    margin: 0 auto;
+}
+
 .crowdfunding section {
     display: flex;
     flex-direction: column;
@@ -429,18 +437,6 @@ body.has-basket-navbar {
 #news .cards div {
     max-width: 640px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* LOTTERY */
 #tickets div{

@@ -17,10 +17,14 @@
         <p class="ticket-number {{ class }}" data-lottery-target="winnerNumber">{{ number }}</p>
         <p data-lottery-target="winnerName">{{ name|raw }}</p>
         {# Draw #}
-        {% if false == winner and is_granted('ROLE_ADMIN') %}
-            <twig:c975LShop:Lottery:DrawButton rank="{{ prize.rank }}"/>
+        {% if prize.lottery.tickets is not empty and false == winner and is_granted('ROLE_ADMIN') %}
+            {% set disabled = "" %}
+            {% if date() < prize.lottery.drawDate %}
+                {% set disabled = "disabled" %}
+            {% endif %}
+            <twig:c975LShop:Lottery:DrawButton rank="{{ prize.rank }}" disabled="{{ disabled }}"/>
         {% elseif true == winner %}
-            <p class="text text-center">{{ 'label.draw_date'|trans({}, 'shop') }} : <strong>{{ prize.drawDate|date('d/m/Y - H:i') }}</strong></p>
+            <p class="text text-center">{{ 'label.draw_date'|trans({}, 'shop') }} : <strong>{{ prize.drawDate|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</strong></p>
         {% endif %}
     </div>
 </twig:c975LSite:Card:Card>
