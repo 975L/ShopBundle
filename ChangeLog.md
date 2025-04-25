@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.30.1
+
+- Replaced c975LEmail by c975LSite as c975LEmailBundle is abandonned (25/04/2025)
+
 ## v0.30
 
 - Corrected generate lottery tickets for all avalailable lotteries of crowdfunding (25/04/2025)

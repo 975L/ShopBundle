@@ -1,9 +1,10 @@
 # ShopBundle
+
 Shop Bundle for eCommerce with Symfony
 
 **BUNDLE UNDER DEVELOPMENT, USE AT YOUR OWN RISKS**
 
-With is bundle, you'll be able to manage a shop + crowdfunding.
+With this bundle, you'll be able to manage a shop + crowdfunding.
 
 ## Installation
 
@@ -11,7 +12,7 @@ First, launch `composer require c975l/shop-bundle` to install the bundle.
 
 Create database tables : `php bin/console make:migration` and `php bin/console doctrine:migrations:migrate`.
 
-Crreate a `private` at your root level and add it to your `.gitignore` file.
+Create a `private` at your root level and add it to your `.gitignore` file.
 
 ## Configuration
 
