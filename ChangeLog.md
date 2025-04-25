@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.30
+
+- Corrected generate lottery tickets for all avalailable lotteries of crowdfunding (25/04/2025)
+
 ## v0.29
 
 - Added random suffle on lottery's tickets before draw (24/04/2025)

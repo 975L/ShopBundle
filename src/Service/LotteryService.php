@@ -31,21 +31,22 @@ class LotteryService implements LotteryServiceInterface
     {
         $tickets = [];
         $crowdfunding = $contributor->getCrowdfunding();
-
         // Generates tickets
         if ($counterpart->getLotteryTickets() > 0) {
-            $lottery = $crowdfunding->getLotteries()[0];
-            $ticketsToGenerate = $counterpart->getLotteryTickets() * $quantity;
-            for ($i = 0; $i < $ticketsToGenerate; $i++) {
-                $ticket = new LotteryTicket();
-                $ticket->setLottery($lottery);
-                $ticket->setContributor($contributor);
-                $ticket->setCounterpart($counterpart);
-                $ticket->setNumber($this->generateTicketNumber());
-                $ticket->setCreation(new DateTimeImmutable());
+            $lotteries = $crowdfunding->getLotteries();
+            foreach ($lotteries as $lottery) {
+                $ticketsToGenerate = $counterpart->getLotteryTickets() * $quantity;
+                for ($i = 0; $i < $ticketsToGenerate; $i++) {
+                    $ticket = new LotteryTicket();
+                    $ticket->setLottery($lottery);
+                    $ticket->setContributor($contributor);
+                    $ticket->setCounterpart($counterpart);
+                    $ticket->setNumber($this->generateTicketNumber());
+                    $ticket->setCreation(new DateTimeImmutable());
 
-                $this->entityManager->persist($ticket);
-                $tickets[] = $ticket;
+                    $this->entityManager->persist($ticket);
+                    $tickets[] = $ticket;
+                }
             }
         }
 
