@@ -28,8 +28,6 @@ export default {
             messageElement.textContent = message;
             messageElement.style.display = "block";
             messageElement.style.opacity = "1";
-        } else {
-            console.warn("Élément .global-message introuvable");
         }
     },
 
@@ -44,7 +42,7 @@ export default {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest"
             },
-            body: JSON.stringify({ timezone: timezone })
+            body: JSON.stringify({ timezone })
         });
 
         return timezone;
