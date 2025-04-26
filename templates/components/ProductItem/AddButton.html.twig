@@ -2,7 +2,7 @@
 {% set type = type | default('primary') %}
 {% set quantity = quantity | default(1) %}
 {% set disabled = "" %}
-{% if productItem.limitedQuantity > 0 and productItem.limitedQuantity >= productItem.orderedQuantity %}
+{% if productItem.limitedQuantity > 0 and productItem.orderedQuantity >= productItem.limitedQuantity %}
     {% set disabled = "disabled" %}
 {% endif %}
 <button
