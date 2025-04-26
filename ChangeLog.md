@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.30.2
+
+- Corrected limitedQUantity on productItems (26/04/2025)
+  Added limitedQuantity on CrowdfundingCounterparts (26/04/2025)
+- Added registration of orderedQuantity on productItems (26/04/2025)
+
 ## v0.30.1
 
 - Replaced c975LEmail by c975LSite as c975LEmailBundle is abandonned (25/04/2025)

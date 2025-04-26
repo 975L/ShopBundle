@@ -200,6 +200,9 @@ class BasketService implements BasketServiceInterface
             // Registers contributor if any
             $this->registerContributor();
 
+            // Updates productItem orderedQuantity if any
+            $this->updateOrderedQuantity($basket);
+
             // Updates basket
             $basket->setStatus('paid');
             $basket->setModification(new DateTimeImmutable());
@@ -214,6 +217,31 @@ class BasketService implements BasketServiceInterface
             $this->sendEmails($basket);
         }
     }
+
+    // Updates orderedQuantity for productItem and crowdfundingCounterpart
+    public function updateOrderedQuantity(Basket $basket): void
+    {
+        $items = $basket->getItems();
+
+        foreach ($items as $type => $item) {
+            foreach ($item as $id => $itemContent) {
+                if ('product' === $type) {
+                    $item = $this->productItemService->findOneById($id);
+                } elseif ('crowdfunding' === $type) {
+                    $item = $this->crowdfundingCounterpartService->findOneById($id);
+                }
+
+                if (null === $item) {
+                    continue;
+                }
+
+                $quantity = method_exists($item, 'getOrderedQuantity') ? $itemContent['quantity'] : 0;
+                $item->setOrderedQuantity(($item->getOrderedQuantity() ?? 0) + $quantity);
+            }
+        }
+    }
+
+
 
     // Sends emails after payment
     public function sendEmails(Basket $basket)
@@ -475,8 +503,8 @@ class BasketService implements BasketServiceInterface
                     continue;
                 }
 
-                // Updates counterpart
-                $counterpart->setOrderedQuantity(($counterpart->getOrderedQuantity() ?? 0) + $quantity);
+// Updates counterpart orderedQuantity
+// $counterpart->setOrderedQuantity(($counterpart->getOrderedQuantity() ?? 0) + $quantity);
 
                 // Adds counterpart to contributor
                 $contributorCounterpart = new CrowdfundingContributorCounterpart();

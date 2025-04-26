@@ -10,12 +10,12 @@
 
 namespace c975L\ShopBundle\Service;
 
+use Twig\Environment;
 use c975L\ShopBundle\Entity\Basket;
 use Symfony\Component\Mime\Address;
 use c975L\ShopBundle\Entity\LotteryPrize;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\BodyRendererInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -27,7 +27,7 @@ class EmailService implements EmailServiceInterface
         private readonly MailerInterface $mailer,
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
-        private readonly BodyRendererInterface $bodyRenderer,
+        private readonly Environment $twig,
 
     ) {
         $this->subjectPrefix = $this->translator->trans('label.shop', [], 'shop') . ' ' . $this->configService->getParameter('c975LShop.name') . ' - ';
@@ -63,12 +63,7 @@ class EmailService implements EmailServiceInterface
     // Sends the email
     public function send($email)
     {
-        // To display the message in place of sending (for debug)
-        // echo '*** ' . $email->getSubject() . ' ***';
-        // $this->bodyRenderer->render($email);
-        // echo $email->getHtmlBody();
-        // dd($email);
-
+        // for debug: echo $this->twig->render($email->getHtmlTemplate(), ['form' => $email->getContext()]); dd();
         $this->mailer->send($email);
     }
 

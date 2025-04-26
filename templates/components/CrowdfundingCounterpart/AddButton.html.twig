@@ -10,7 +10,12 @@
         <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-smile-wink.svg" width="24" height="24"/> {{ 'label.crowdfunding_ended'|trans({}, 'shop') }}
     </button>
 {% else %}
+    {% set disabled = "" %}
+    {% if crowdfundingCounterpart.limitedQuantity > 0 and crowdfundingCounterpart.orderedQuantity >= crowdfundingCounterpart.limitedQuantity %}
+        {% set disabled = "disabled" %}
+    {% endif %}
     <button
+        {{ disabled }}
         data-action="click->basket#addItem"
         data-type="crowdfunding"
         data-quantity="{{ quantity }}"
