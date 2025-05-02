@@ -54,14 +54,14 @@ class ProductCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             // Media management
-            FormField::addPanel('Media')
+            FormField::addFieldset('Media')
                 ->hideOnIndex(),
             CollectionField::new('medias')
                 ->hideOnIndex()
                 ->setEntryType(ProductMediaType::class),
 
             // Items
-            FormField::addPanel('label.items')
+            FormField::addFieldset('label.items')
                 ->setHelp('text.items_management')
                 ->hideOnIndex(),
             CollectionField::new('items')

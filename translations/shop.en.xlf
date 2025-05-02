@@ -541,11 +541,11 @@
             </trans-unit>
             <trans-unit id="135">
                 <source>label.shipping_free_from</source>
-                <target>Free shipping on purchases over %amount%</target>
+                <target>Free shipping on purchases over %amount% (digital items not concerned)</target>
             </trans-unit>
             <trans-unit id="136">
                 <source>label.shipping_france_only</source>
-                <target>Deliveries only in France</target>
+                <target>Deliveries only in mainland France</target>
             </trans-unit>
             <trans-unit id="137">
                 <source>label.all_our_items</source>
