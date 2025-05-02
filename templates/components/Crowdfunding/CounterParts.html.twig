@@ -4,7 +4,7 @@
         <div data-controller="basket">
             <div class="cards">
                 {% for counterpart in counterparts %}
-                    <twig:c975LShop:Crowdfunding:Counterpart counterpart="{{ counterpart }}"/>
+                    <twig:c975LShop:Crowdfunding:Counterpart counterpart="{{ counterpart }}" number="{{ loop.index }}"/>
                 {% endfor %}
             </div>
             <twig:c975LShop:Basket:Message/>
