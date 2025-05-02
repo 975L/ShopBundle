@@ -726,6 +726,14 @@
                 <source>label.tickets_used</source>
                 <target>Seuls certains tickets apparissent dans l'animation, mais, évidemment, tous sont utilisés pour le tirage au sort.</target>
             </trans-unit>
+            <trans-unit id="182">
+                <source>label.crowdfunding_not_started</source>
+                <target>Financement non commencé</target>
+            </trans-unit>
+            <trans-unit id="183">
+                <source>label.come_back_on</source>
+                <target>revenez le</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

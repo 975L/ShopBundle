@@ -1,4 +1,5 @@
 {% set now = date() %}
+{% set isStarted = date()|date("Y-m-d H:i:s") > beginDate|date("Y-m-d 00:00:00") %}
 {% set endOfDay = date(endDate|date('Y-m-d 23:59:59')) %}
 {% set isEnded = now > endOfDay %}
 {% set diffInHours = date(endOfDay).diff(now).h + (date(endOfDay).diff(now).days * 24) %}
@@ -9,10 +10,14 @@
 {% set elapsedDuration = now.diff(date(beginDate)).days %}
 {% set progressPercent = (elapsedDuration / totalDuration * 100)|round %}
 {% set progressPercent = progressPercent > 100 ? 100 : (progressPercent < 0 ? 0 : progressPercent) %}
+
 <section id="dates">
     <h2>{{ 'label.dates'|trans({}, 'shop') }}</h2>
     <p><twig:c975LSite:Image:Icon src="bundles/c975lshop/images/calendar-check.svg" width="24" height="24"/> <strong>{{ beginDate|date('d/m/Y') }} - {{ endDate|date('d/m/Y') }}</strong></p>
-    {% if isEnded %}
+    {% if false == isStarted %}
+        {% set progressPercent = 0 %}
+        <p>{{ 'label.crowdfunding_not_started'|trans({}, 'shop') }}, {{ 'label.come_back_on'|trans({}, 'shop') }} {{ beginDate|date('d/m/Y') }}</p>
+    {% elseif isEnded %}
         <p>{{ 'label.crowdfunding_ended'|trans({}, 'shop') }}</p>
     {% elseif isLastDay %}
         <p><twig:c975LSite:Image:Icon src="bundles/c975lshop/images/calendar-days.svg" width="24" height="24"/> <strong>{{ 'label.last_day'|trans({}, 'shop') }}</strong></p>
