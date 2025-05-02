@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.30.6.1
+
+- Corrected shop.en.xlf (02/05/2025)
+
 ## v0.30.6
 
 - Added styles (02/05/2025)
