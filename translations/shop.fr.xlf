@@ -734,6 +734,10 @@
                 <source>label.come_back_on</source>
                 <target>revenez le</target>
             </trans-unit>
+            <trans-unit id="184">
+                <source>label.counterpart_entitles</source>
+                <target>Cette contrepartie vous donne droit à :</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.30.6
+
+- Added styles (02/05/2025)
+- Changed lottery prize descriptin to text (02/05/2025)
+- Corrected persistence for Crowdfunding video (02/05/2025)
+
 ## v0.30.5
 
 - Added number of the counterpart (02/05/2025)

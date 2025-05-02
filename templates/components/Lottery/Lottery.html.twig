@@ -1,16 +1,20 @@
-<p class="text-center">{{ 'text.lottery_information'|trans({}, 'shop') }}</p>
-<p class="text-center">{{ 'label.lottery_identifier'|trans({}, 'shop') }} : <a href="{{ path('lottery_display', {'identifier': lottery.identifier}) }}" target="_blank">{{ lottery.identifier }}</a></p>
-<p class="text-center">{{ 'label.draw_date'|trans({}, 'shop') }} : <strong>{{ lottery.drawDate|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</strong></p>
-<p class="text-center">{{ 'label.allocated'|trans({}, 'shop') }} : <strong>{{ lottery.tickets|length }}</strong></p>
-<h3 class="text-center">{{ 'label.prizes'|trans({}, 'shop') }}</h3>
-<ol class="circle-numbers">
-{% for prize in lottery.prizes %}
-    <li class="text-left">
-    <span>
-        <strong>{{ prize.title}}</strong>
-        <br>
-        {{ prize.description }}
-        </span>
-    </li>
-{% endfor %}
-</ol>
+<twig:c975LSite:Card:Card id="lottery" title="{{ 'label.lottery'|trans({}, 'shop') }}">
+    <div class="card-data">
+        <p class="text-center">{{ 'text.lottery_information'|trans({}, 'shop') }}</p>
+        <p class="text-center">{{ 'label.lottery_identifier'|trans({}, 'shop') }} : <strong><a href="{{ path('lottery_display', {'identifier': lottery.identifier}) }}" target="_blank">{{ lottery.identifier }}</a></strong></p>
+        <p class="text-center">{{ 'label.draw_date'|trans({}, 'shop') }} : <strong>{{ lottery.drawDate|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</strong></p>
+        <p class="text-center ticket-number winner">{{ 'label.allocated'|trans({}, 'shop') }} : <strong>{{ lottery.tickets|length }}</strong></p>
+        <h3 class="text-center">{{ 'label.prizes'|trans({}, 'shop') }}</h3>
+        <ol class="circle-numbers">
+        {% for prize in lottery.prizes %}
+            <li class="text-left">
+            <span>
+                <strong>{{ prize.title}}</strong>
+                <br>
+                {{ prize.description|raw|nl2br }}
+                </span>
+            </li>
+        {% endfor %}
+        </ol>
+    </div>
+</twig:c975LSite:Card:Card>
