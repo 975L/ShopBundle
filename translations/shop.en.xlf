@@ -735,6 +735,10 @@
                 <source>label.come_back_on</source>
                 <target>come back on</target>
             </trans-unit>
+            <trans-unit id="183">
+                <source>label.counterpart_entitles</source>
+                <target>This counterpart entitles you to:</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

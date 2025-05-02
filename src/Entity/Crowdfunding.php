@@ -84,7 +84,7 @@ class Crowdfunding
     #[ORM\OrderBy(['price' => 'ASC'])]
     private Collection $counterparts;
 
-    #[ORM\OneToMany(targetEntity: CrowdfundingVideo::class, mappedBy: 'crowdfunding', cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: CrowdfundingVideo::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]
     private Collection $videos;
 
     #[ORM\OneToMany(targetEntity: Lottery::class, mappedBy: 'crowdfunding', cascade: ['persist', 'remove'])]

@@ -1,7 +1,7 @@
 <section id="contributors">
     <h2>{{ 'label.contributors'|trans({}, 'shop') }}</h2>
-    <p class="text text-center">{{ 'label.only_those_left_message'|trans({}, 'shop') }}</p>
     {% if contributors is not empty %}
+        <p class="text text-center italic">{{ 'label.only_those_left_message'|trans({}, 'shop') }}</p>
         <div class="cards">
             {% for contributor in contributors %}
                 <twig:c975LShop:Crowdfunding:Contributor contributor="{{ contributor }}"/>
