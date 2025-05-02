@@ -1,9 +1,13 @@
 # Changelog
 
+## v0.30.3
+
+- Replaced addPanel by addFieldset as deprecated (02/05/2025)
+
 ## v0.30.2
 
 - Corrected limitedQUantity on productItems (26/04/2025)
-  Added limitedQuantity on CrowdfundingCounterparts (26/04/2025)
+- Added limitedQuantity on CrowdfundingCounterparts (26/04/2025)
 - Added registration of orderedQuantity on productItems (26/04/2025)
 
 ## v0.30.1

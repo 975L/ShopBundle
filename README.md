@@ -12,7 +12,7 @@ First, launch `composer require c975l/shop-bundle` to install the bundle.
 
 Create database tables : `php bin/console make:migration` and `php bin/console doctrine:migrations:migrate`.
 
-Create a `private` at your root level and add it to your `.gitignore` file.
+Create folders `public/medias/`, `public/downloads/` and `private` at your root level and add them to your `.gitignore` file.
 
 ## Configuration
 
@@ -73,7 +73,6 @@ vich_uploader:
             delete_on_update: true
             delete_on_remove: true
 ```
-
 
 ```yaml
 # config/routes.yaml

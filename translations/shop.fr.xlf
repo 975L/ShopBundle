@@ -540,11 +540,11 @@
             </trans-unit>
             <trans-unit id="135">
                 <source>label.shipping_free_from</source>
-                <target>Frais de port offerts à partir de %amount% d'achats</target>
+                <target>Frais de port offerts à partir de %amount% d'achats (articles numériques non concernés)</target>
             </trans-unit>
             <trans-unit id="136">
                 <source>label.shipping_france_only</source>
-                <target>Livraisons seulement en France</target>
+                <target>Livraisons seulement en France métropolitaine</target>
             </trans-unit>
             <trans-unit id="137">
                 <source>label.all_our_items</source>

@@ -68,7 +68,7 @@ class CrowdfundingCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             // Author
-            FormField::addPanel('label.author')
+            FormField::addFieldset('label.author')
                 ->hideOnIndex(),
             TextField::new('authorName')
                 ->setLabel('label.author'),
@@ -82,7 +82,7 @@ class CrowdfundingCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             // Media management
-            FormField::addPanel('Media')
+            FormField::addFieldset('Media')
                 ->hideOnIndex(),
             CollectionField::new('medias')
                 ->hideOnIndex()
@@ -92,7 +92,7 @@ class CrowdfundingCrudController extends AbstractCrudController
                 ->setEntryType(CrowdfundingVideoType::class),
 
             // Counterpart management
-            FormField::addPanel('label.counterparts')
+            FormField::addFieldset('label.counterparts')
                 ->setHelp('text.items_management')
                 ->hideOnIndex(),
             CollectionField::new('counterparts')
@@ -100,7 +100,7 @@ class CrowdfundingCrudController extends AbstractCrudController
                 ->setEntryType(CrowdfundingCounterpartType::class),
 
             // Lottery management
-            FormField::addPanel('label.lottery')
+            FormField::addFieldset('label.lottery')
                 ->hideOnIndex(),
             CollectionField::new('lotteries')
                 ->hideOnIndex()
