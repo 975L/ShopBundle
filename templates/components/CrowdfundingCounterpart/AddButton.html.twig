@@ -2,10 +2,15 @@
 {% set type = type | default('primary') %}
 {% set quantity = quantity | default(1) %}
 
-{% set endOfDay = date(crowdfundingCounterpart.crowdfunding.endDate|date('Y-m-d 23:59:59')) %}
+{% set isStarted = date()|date("Y-m-d H:i:s") > crowdfundingCounterpart.crowdfunding.beginDate|date("Y-m-d 00:00:00") %}
+{% set endOfDay = date(crowdfundingCounterpart.crowdfunding.endDate|date("Y-m-d 23:59:59")) %}
 {% set isEnded = date() > endOfDay %}
 
-{% if isEnded %}
+{% if false == isStarted %}
+    <button disabled class="btn btn-large btn-{{ type }}">
+        <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-smile-wink.svg" width="24" height="24"/> {{ 'label.crowdfunding_not_started'|trans({}, 'shop') }}
+    </button>
+{% elseif isEnded %}
     <button disabled class="btn btn-large btn-{{ type }}">
         <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-smile-wink.svg" width="24" height="24"/> {{ 'label.crowdfunding_ended'|trans({}, 'shop') }}
     </button>

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.30.4
+
+- Modified files when crowdfunding has not started yet (02/05/2025)
+
 ## v0.30.3
 
 - Replaced addPanel by addFieldset as deprecated (02/05/2025)

@@ -322,10 +322,15 @@ class BasketService implements BasketServiceInterface
             throw new Exception('Item not found');
         }
 
-        // Checks if crowdfunding is not ended
+        // Checks if crowdfunding is started and not ended
         if ('crowdfunding' === $type) {
-            $endOfDay = new DateTime($item->getCrowdfunding()->getEndDate()->format('Y-m-d 23:59:59'));
-            if (new DateTime() > $endOfDay) {
+            $beginDatetime = new DateTime($item->getCrowdfunding()->getBeginDate()->format('Y-m-d 00:00:00'));
+            $endDatetime = new DateTime($item->getCrowdfunding()->getEndDate()->format('Y-m-d 23:59:59'));
+            if ($beginDatetime > new DateTime()) {
+                return [
+                    'error' => $this->translator->trans('label.crowdfunding_not_started', [], 'shop'),
+                ];
+            } elseif (new DateTime() > $endDatetime) {
                 return [
                     'error' => $this->translator->trans('label.crowdfunding_ended', [], 'shop'),
                 ];

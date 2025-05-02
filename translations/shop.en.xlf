@@ -727,6 +727,14 @@
                 <source>label.tickets_used</source>
                 <target>Only some tickets appear in the animation, but, obviously, all of them are used for the drawing.</target>
             </trans-unit>
+            <trans-unit id="182">
+                <source>label.crowdfunding_not_started</source>
+                <target>Crowdfuding not started</target>
+            </trans-unit>
+            <trans-unit id="183">
+                <source>label.come_back_on</source>
+                <target>come back on</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
