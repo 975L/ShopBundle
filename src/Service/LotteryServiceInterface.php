@@ -10,7 +10,7 @@ use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
 
 interface LotteryServiceInterface
 {
-    public function generateTicketsForContributor(CrowdfundingContributor $contributor, CrowdfundingCounterpart $counterpart, int $quantity): array;
+    public function generateTicketsForContributor(CrowdfundingContributor $contributor, CrowdfundingCounterpart $counterpart, int $quantity): void;
 
     public function generateTicketNumber(): string;
 

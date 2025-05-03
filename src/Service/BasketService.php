@@ -28,6 +28,7 @@ use c975L\ShopBundle\Message\ItemsShippedMessage;
 use c975L\ShopBundle\Repository\BasketRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use c975L\ShopBundle\Form\ShopFormFactoryInterface;
+use c975L\ShopBundle\Message\LotteryTicketsMessage;
 use c975L\ShopBundle\Entity\CrowdfundingContributor;
 use Symfony\Component\Messenger\MessageBusInterface;
 use c975L\ShopBundle\Service\LotteryServiceInterface;
@@ -508,9 +509,6 @@ class BasketService implements BasketServiceInterface
                     continue;
                 }
 
-// Updates counterpart orderedQuantity
-// $counterpart->setOrderedQuantity(($counterpart->getOrderedQuantity() ?? 0) + $quantity);
-
                 // Adds counterpart to contributor
                 $contributorCounterpart = new CrowdfundingContributorCounterpart();
                 $contributorCounterpart->setContributor($contributor);
@@ -535,6 +533,9 @@ class BasketService implements BasketServiceInterface
                 // Generates lottery tickets if applicable
                 $this->lotteryService->generateTicketsForContributor($contributor, $counterpart, $quantity);
             }
+
+            // Sends email to contributor with tickets numbers
+            $this->messageBus->dispatch(new LotteryTicketsMessage($contributor->getId()));
 
             $this->entityManager->flush();
             $this->session->remove('contributor');
