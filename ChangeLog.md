@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.30.7
+
+- Corrected DateImmutable (03/05/2025)
+- Corrected email send for lottery tickets (03/05/2025)
+- Corrected display for prizes (03/05/2025)
+
 ## v0.30.6.1
 
 - Corrected shop.en.xlf (02/05/2025)

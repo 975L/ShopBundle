@@ -10,7 +10,6 @@ use Symfony\Component\String\ByteString;
 use c975L\ShopBundle\Entity\LotteryTicket;
 use c975L\ShopBundle\Repository\LotteryRepository;
 use c975L\ShopBundle\Message\LotteryWinningTicketMessage;
-use c975L\ShopBundle\Message\LotteryTicketsMessage;
 use c975L\ShopBundle\Entity\CrowdfundingContributor;
 use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -27,7 +26,7 @@ class LotteryService implements LotteryServiceInterface
     }
 
     // Generates tickets for a contributor based on their purchase
-    public function generateTicketsForContributor(CrowdfundingContributor $contributor, CrowdfundingCounterpart $counterpart, int $quantity): array
+    public function generateTicketsForContributor(CrowdfundingContributor $contributor, CrowdfundingCounterpart $counterpart, int $quantity): void
     {
         $tickets = [];
         $crowdfunding = $contributor->getCrowdfunding();
@@ -51,11 +50,6 @@ class LotteryService implements LotteryServiceInterface
         }
 
         $this->entityManager->flush();
-
-        // Sends email to contributor with tickets numebr
-        $this->messageBus->dispatch(new LotteryTicketsMessage($contributor->getId()));
-
-        return $tickets;
     }
 
     // Generates a unique ticket number - Format: XX-YYYY-ZZZ (2 letters, 4 numbers, 3 letters)
