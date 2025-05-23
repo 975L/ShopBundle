@@ -10,11 +10,16 @@
 
 namespace c975L\ShopBundle\Service;
 
+use DateTimeImmutable;
+use Symfony\Component\Form\Form;
+use \Doctrine\ORM\EntityManagerInterface;
 use c975L\ShopBundle\Entity\Crowdfunding;
+use Knp\Component\Pager\PaginatorInterface;
+use c975L\ShopBundle\Entity\CrowdfundingNews;
+use c975L\ShopBundle\Form\ShopFormFactoryInterface;
 use c975L\ShopBundle\Repository\CrowdfundingRepository;
 use c975L\ShopBundle\Repository\CrowdfundingMediaRepository;
-use Knp\Component\Pager\PaginatorInterface;
-use \Doctrine\ORM\EntityManagerInterface;
+
 class CrowdfundingService implements CrowdfundingServiceInterface
 {
     public function __construct(
@@ -22,7 +27,26 @@ class CrowdfundingService implements CrowdfundingServiceInterface
         private readonly CrowdfundingMediaRepository $crowdfundingMediaRepository,
         private readonly PaginatorInterface $paginator,
         private readonly EntityManagerInterface $entityManager,
+        private readonly ShopFormFactoryInterface $shopFormFactory,
     ) {
+    }
+
+    // Add news
+    public function addNews(Crowdfunding $crowdfunding, CrowdfundingNews $news): void
+    {
+        $news->setCrowdfunding($crowdfunding);
+        $news->setCreation(new DateTimeImmutable());
+        $news->setModification(new DateTimeImmutable());
+        $news->setPublishedDate(new DateTimeImmutable());
+
+        $this->entityManager->persist($news);
+        $this->entityManager->flush();
+    }
+
+    // Creates form
+    public function createForm(string $name, $object): Form
+    {
+        return $this->shopFormFactory->create($name, $object);
     }
 
     // Finds all

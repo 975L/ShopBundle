@@ -1,5 +1,19 @@
 <section id="news">
     <h2>{{ 'label.news'|trans({}, 'shop') }}</h2>
+    {# Add news form #}
+    {% if null != form and null != app.user %}
+        {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+            {{ form_widget(form) }}
+            <div>
+                <input type="submit" name="submit" class="btn btn-primary" value="{{ 'label.add_news'|trans }}">
+            </div>
+            {# Champ obligatoire #}
+            <p class="text-muted">
+                {{ 'label.mandatory_field'|trans({}, 'site') }}
+            </p>
+        {{ form_end(form) }}
+    {% endif %}
+    {# NewsCollection #}
     {% if newsCollection is not empty %}
         <div class="cards">
             {% for news in newsCollection %}

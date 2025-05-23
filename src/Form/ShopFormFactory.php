@@ -13,6 +13,7 @@ namespace c975L\ShopBundle\Form;
 use Symfony\Component\Form\Form;
 use c975L\ShopBundle\Entity\Basket;
 use c975L\ShopBundle\Form\CoordinatesType;
+use c975L\ShopBundle\Form\CrowdfundingNewsType;
 use Symfony\Component\Form\FormFactoryInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -35,7 +36,7 @@ class ShopFormFactory implements ShopFormFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function create(string $name, Basket $basket): Form
+    public function create(string $name, $object): Form
     {
         switch ($name) {
             case 'coordinates':
@@ -55,11 +56,15 @@ class ShopFormFactory implements ShopFormFactoryInterface
                 ];
                 $type = CoordinatesType::class;
                 break;
+            case 'news':
+                $config = [];
+                $type = CrowdfundingNewsType::class;
+                break;
             default:
                 $config = [];
                 break;
         }
 
-        return $this->formFactory->create($type, $basket, ['config' => $config]);
+        return $this->formFactory->create($type, $object, ['config' => $config]);
     }
 }

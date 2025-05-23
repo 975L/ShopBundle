@@ -242,8 +242,6 @@ class BasketService implements BasketServiceInterface
         }
     }
 
-
-
     // Sends emails after payment
     public function sendEmails(Basket $basket)
     {
