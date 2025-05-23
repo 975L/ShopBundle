@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.1
+
+- Corrected english translations (23/05/2025)
+
 ## v1.0
 
 - Added possibility of limitedQuantity = 0 (23/05/2025)
