@@ -1,6 +1,7 @@
 {# <twig:c975LShop:Crowdfunding:AddButton crowdfundingCounterpart="{{ counterpart }}" [type="primary"] [quantity="1"]/> #}
 {% set type = type | default('primary') %}
 {% set quantity = quantity | default(1) %}
+{% set label = 'label.i_contribute'|trans({}, 'shop') %}
 
 {% set isStarted = date()|date("Y-m-d H:i:s") > crowdfundingCounterpart.crowdfunding.beginDate|date("Y-m-d 00:00:00") %}
 {% set endOfDay = date(crowdfundingCounterpart.crowdfunding.endDate|date("Y-m-d 23:59:59")) %}
@@ -16,8 +17,12 @@
     </button>
 {% else %}
     {% set disabled = "" %}
-    {% if crowdfundingCounterpart.limitedQuantity > 0 and crowdfundingCounterpart.orderedQuantity >= crowdfundingCounterpart.limitedQuantity %}
+    {% if crowdfundingCounterpart.limitedQuantity is same as 0 %}
         {% set disabled = "disabled" %}
+        {% set label = 'label.unavailable'|trans({}, 'shop') %}
+    {% elseif crowdfundingCounterpart.limitedQuantity > 0 and crowdfundingCounterpart.orderedQuantity >= crowdfundingCounterpart.limitedQuantity %}
+        {% set disabled = "disabled" %}
+        {% set label = 'label.limited_quantity_reached'|trans({}, 'shop') %}
     {% endif %}
     <button
         {{ disabled }}
@@ -31,6 +36,6 @@
         data-alert="success"
         data-text="{{ 'label.added'|trans({}, 'shop') }}"
         class="btn btn-large btn-{{ type }}">
-        <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-grin.svg" width="24" height="24" class="white"/> {{ 'label.i_contribute'|trans({}, 'shop') }}
+        <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-grin.svg" width="24" height="24" class="white"/> {{ label }}
     </button>
 {% endif %}

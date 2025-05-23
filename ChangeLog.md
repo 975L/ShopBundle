@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0
+
+- Added possibility of limitedQuantity = 0 (23/05/2025)
+- Moved to production (23/05/2025)
+
 ## v0.31
 
 - Added form to add News (23/05/2025)

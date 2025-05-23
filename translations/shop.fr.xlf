@@ -742,6 +742,14 @@
                 <source>label.add_news</source>
                 <target>Ajout de la nouvelle</target>
             </trans-unit>
+            <trans-unit id="186">
+                <source>label.limited_quantity_reached</source>
+                <target>Quantité limitée atteinte</target>
+            </trans-unit>
+            <trans-unit id="187">
+                <source>label.unavailable</source>
+                <target>Indisponible</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
