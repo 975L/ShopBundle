@@ -10,10 +10,13 @@
 
 namespace c975L\ShopBundle\Service;
 
+use Symfony\Component\Form\Form;
 use c975L\ShopBundle\Entity\Crowdfunding;
 
 interface CrowdfundingServiceInterface
 {
+    public function createForm(string $name, $object): Form;
+
     public function findAll();
 
     public function findAllSorted();

@@ -8,7 +8,7 @@
 
 {% if false == isStarted %}
     <button disabled class="btn btn-large btn-{{ type }}">
-        <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-smile-wink.svg" width="24" height="24"/> {{ 'label.crowdfunding_not_started'|trans({}, 'shop') }}
+        <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-smile-wink.svg" width="24" height="24"/> {{ 'label.crowdfunding_not_started'|trans({}, 'shop') }}<br>{{ 'label.come_back_on'|trans({}, 'shop')|capitalize }} {{ crowdfundingCounterpart.crowdfunding.beginDate|date('d/m/Y') }}
     </button>
 {% elseif isEnded %}
     <button disabled class="btn btn-large btn-{{ type }}">

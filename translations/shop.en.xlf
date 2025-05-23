@@ -739,6 +739,10 @@
                 <source>label.counterpart_entitles</source>
                 <target>This counterpart entitles you to:</target>
             </trans-unit>
+            <trans-unit id="185">
+                <source>label.add_news</source>
+                <target>Add news</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

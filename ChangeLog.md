@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.31
+
+- Added form to add News (23/05/2025)
+- Added come back later + date on Counterpart button if crowdfunding not started (23/05/2025)
+
 ## v0.30.7
 
 - Corrected DateImmutable (03/05/2025)

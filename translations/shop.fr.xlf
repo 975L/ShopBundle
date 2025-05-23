@@ -738,6 +738,10 @@
                 <source>label.counterpart_entitles</source>
                 <target>Cette contrepartie vous donne droit à :</target>
             </trans-unit>
+            <trans-unit id="185">
+                <source>label.add_news</source>
+                <target>Ajout de la nouvelle</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

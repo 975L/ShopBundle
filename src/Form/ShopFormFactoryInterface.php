@@ -10,7 +10,6 @@
 namespace c975L\ShopBundle\Form;
 
 use Symfony\Component\Form\Form;
-use c975L\ShopBundle\Entity\Basket;
 
 /**
  * Interface to be called for DI for ShopFactoryInterface related services
@@ -23,5 +22,5 @@ interface ShopFormFactoryInterface
      * Returns the defined form
      * @return Form
      */
-    public function create(string $name, Basket $basket): Form;
+    public function create(string $name, $object): Form;
 }
