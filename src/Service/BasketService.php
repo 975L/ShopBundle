@@ -321,6 +321,13 @@ class BasketService implements BasketServiceInterface
             throw new Exception('Item not found');
         }
 
+        // Limited quantity = 0
+        if (0 === $item->getLimitedQuantity()) {
+            return [
+                'error' => $this->translator->trans('label.unavailable', [], 'shop'),
+            ];
+        }
+
         // Checks if crowdfunding is started and not ended
         if ('crowdfunding' === $type) {
             $beginDatetime = new DateTime($item->getCrowdfunding()->getBeginDate()->format('Y-m-d 00:00:00'));

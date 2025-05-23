@@ -2,8 +2,14 @@
 {% set type = type | default('primary') %}
 {% set quantity = quantity | default(1) %}
 {% set disabled = "" %}
-{% if productItem.limitedQuantity > 0 and productItem.orderedQuantity >= productItem.limitedQuantity %}
+{% set label = 'label.add'|trans({}, 'shop') %}
+
+{% if productItem.limitedQuantity is same as 0 %}
     {% set disabled = "disabled" %}
+    {% set label = 'label.unavailable'|trans({}, 'shop') %}
+{% elseif productItem.limitedQuantity > 0 and productItem.orderedQuantity >= productItem.limitedQuantity %}
+    {% set disabled = "disabled" %}
+    {% set label = 'label.limited_quantity_reached'|trans({}, 'shop') %}
 {% endif %}
 <button
     {{ disabled }}
@@ -17,5 +23,5 @@
     data-alert="success"
     data-text="{{ 'label.added'|trans({}, 'shop') }}"
     class="btn btn-large btn-{{ type }}">
-    <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24" class="white"/> {{ 'label.add'|trans({}, 'shop') }}
+    <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24" class="white"/> {{ label }}
 </button>

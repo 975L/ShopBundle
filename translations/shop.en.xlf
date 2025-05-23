@@ -743,6 +743,14 @@
                 <source>label.add_news</source>
                 <target>Add news</target>
             </trans-unit>
+            <trans-unit id="186">
+                <source>label.limited_quantity_reached</source>
+                <target>Limited quantity reached</target>
+            </trans-unit>
+            <trans-unit id="187">
+                <source>label.unavailable</source>
+                <target>Unavailable</targetU>
+            </trans-unit>
         </body>
     </file>
 </xliff>
