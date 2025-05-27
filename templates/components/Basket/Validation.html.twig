@@ -1,6 +1,6 @@
 {# <twig:c975LShop:Basket:Validation basket="{{ basket }}" form="{{ form }}"/> #}
 {% trans_default_domain 'shop' %}
-{% if basket.total > 0 %}
+{% if basket.quantity > 0 %}
     <section>
         <h2 id="coordinates">{{ 'label.validate_basket'|trans }}</h2>
         {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}

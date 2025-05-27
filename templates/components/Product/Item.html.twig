@@ -8,7 +8,7 @@
         {% endif %}
         <div class="card-data">
             <p>{{ productItem.description }}</p>
-            <p class="price">{{ (productItem.price / 100)|format_currency(productItem.currency) }}</p>
+            <p class="price">{{ productItem.price == 0 ? 'label.free'|trans({}, 'shop') : (productItem.price / 100)|format_currency(productItem.currency) }}</p>
             <twig:c975LShop:Item:Type item="{{ productItem }}"/>
             <twig:c975LShop:Item:Quantity id="{{ productItem.id }}"/>
         </div>

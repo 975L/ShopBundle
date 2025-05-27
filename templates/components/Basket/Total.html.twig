@@ -6,6 +6,6 @@
         TVA : {{ totalVat|format_currency(item.currency) }}<br>
         <strong>Prix TTC : {{ (total / 100)|format_currency(item.currency) }}</strong>
     {% else %}
-        <strong><span data-basket-target="itemTotal" data-item-id="{{ type }}-{{ item.id }}">{{ (total / 100)|format_currency(item.currency) }}</span></strong>
+        <strong><span data-basket-target="itemTotal" data-item-id="{{ type }}-{{ item.id }}">{{ total == 0 ? 'label.free'|trans({}, 'shop') : (total / 100)|format_currency(item.currency) }}</span></strong>
     {% endif %}
 </div>
