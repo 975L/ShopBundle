@@ -82,6 +82,13 @@ c975_l_shop:
     prefix:   /
 ```
 
+```yaml
+# config/routes/easyadmin.yaml
+easyadmin:
+    resource: .
+    type: easyadmin.routes
+```
+
 ## Configure the webhook in Stripe dashboard
 
 Create a Stripe account if not: https://stripe.com
