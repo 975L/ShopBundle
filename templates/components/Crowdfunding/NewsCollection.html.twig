@@ -5,7 +5,7 @@
         {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
             {{ form_widget(form) }}
             <div>
-                <input type="submit" name="submit" class="btn btn-primary" value="{{ 'label.add_news'|trans }}">
+                <input type="submit" name="submit" class="btn btn-primary" value="{{ 'label.add_news'|trans({}, 'shop') }}">
             </div>
             {# Champ obligatoire #}
             <p class="text-muted">
