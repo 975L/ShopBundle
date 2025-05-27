@@ -12,7 +12,7 @@
 {% endif %}
 <twig:c975LSite:Card:Card id="prize-{{ prize.id }}" title="#{{ prize.rank }} - {{ prize.title }}">
     <div class="card-data" data-prize-rank="{{ prize.rank }}">
-        <p>{{ prize.description|raw|nl2br }}</p>
+        <p class="text-left">{{ prize.description|raw|nl2br }}</p>
         <h3>{{ 'label.winner_ticket'|trans({}, 'shop') }}</h3>
         <p class="ticket-number {{ class }}" data-lottery-target="winnerNumber">{{ number }}</p>
         <p data-lottery-target="winnerName">{{ name|raw }}</p>

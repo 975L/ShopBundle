@@ -751,6 +751,10 @@
                 <source>label.unavailable</source>
                 <target>Unavailable</target>
             </trans-unit>
+            <trans-unit id="188">
+                <source>label.youtube_or_upload</source>
+                <target>EITHER a Youtube ID OR a video file below</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

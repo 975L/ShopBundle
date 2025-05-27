@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1
+
+- Corrected text alignment for lottery's prizes (27/05/2025)
+- Emphasized limited quantity display (27/05/2025)
+- Added possibility to add a YouTube video for crowdfunding (27/05/2025)
+
 ## v1.0.1
 
 - Corrected english translations (23/05/2025)

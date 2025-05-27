@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Entity;
 
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use c975L\ShopBundle\Entity\Media;
 use c975L\ShopBundle\Entity\Crowdfunding;
@@ -27,6 +28,9 @@ class CrowdfundingVideo extends Media
     #[ORM\JoinColumn(nullable: true)]
     private ?Crowdfunding $crowdfunding = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $youtubeUrl = null;
+
     public function getMappingName(): string
     {
         return 'crowdfundingVideos';
@@ -40,6 +44,23 @@ class CrowdfundingVideo extends Media
     public function setCrowdfunding(?Crowdfunding $crowdfunding): static
     {
         $this->crowdfunding = $crowdfunding;
+
+        return $this;
+    }
+
+    public function getYoutubeUrl(): ?string
+    {
+        return $this->youtubeUrl;
+    }
+
+    public function setYoutubeUrl(?string $youtubeUrl): static
+    {
+        $this->youtubeUrl = $youtubeUrl;
+
+        if (!empty($youtubeUrl)) {
+            $this->setUpdatedAt(new DateTimeImmutable());
+            $this->setName('YouTube (' . $youtubeUrl . ')');
+        }
 
         return $this;
     }

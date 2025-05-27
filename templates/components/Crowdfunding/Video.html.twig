@@ -1,3 +1,7 @@
 {% if null != video %}
-    <twig:c975LSite:Video:Video src="{{ video.name }}" type="video/mp4" width="600"/>
+    {% if video.youtubeUrl != "" %}
+        <twig:c975LSite:Video:Iframe src="https://www.youtube-nocookie.com/embed/{{ video.youtubeUrl }}" width="600"/>
+    {% else %}
+        <twig:c975LSite:Video:Video src="{{ video.name }}" type="video/mp4" width="600"/>
+    {% endif %}
 {% endif %}
