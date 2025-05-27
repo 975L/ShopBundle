@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2
+
+- Corrected possibility when basket total is 0 (27/05/2025)
+
 ## v1.1.1
 
 - Corrected label.add_news (27/05/2025)

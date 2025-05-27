@@ -6,6 +6,6 @@
         TVA : {{ item.vatAmount|format_currency(item.currency) }}<br>
         Prix TTC : {{ (item.price / 100)|format_currency(item.currency) }}
     {% else %}
-        {{ (item.price / 100)|format_currency(item.currency) }}
+        {{ item.price == 0 ? 'label.free'|trans({}, 'shop') : (item.price / 100)|format_currency(item.currency) }}
     {% endif %}
 </div>

@@ -181,6 +181,21 @@ class BasketService implements BasketServiceInterface
         $this->basket->setSecurityToken($this->generateSecurityToken());
         $this->entityManager->persist($this->basket);
 
+        // If total = 0
+        if (0 === $this->basket->getTotal()) {
+            $url = $this->urlGenerator->generate(
+                'basket_paid',
+                [
+                    'number' => $this->basket->getNumber(),
+                    'securityToken' => $this->basket->getSecurityToken()
+                ],
+                $this->urlGenerator::ABSOLUTE_URL
+            );
+            $this->entityManager->flush();
+
+            return $url;
+        }
+
         // Creates payment
         $data = $this->createStripeSession();
         $this->createPayment();

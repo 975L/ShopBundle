@@ -754,6 +754,10 @@
                 <source>label.youtube_or_upload</source>
                 <target>SOIT un identifiant Youtube, SOIT un fichier vidéo ci-dessous</target>
             </trans-unit>
+            <trans-unit id="189">
+                <source>label.free</source>
+                <target>Gratuit</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

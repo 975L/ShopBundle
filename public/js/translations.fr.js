@@ -4,6 +4,7 @@ export default {
     "product.delete.error": "Impossible de supprimer le produit.",
     "basket.add.error": "Une erreur est survenue lors de l'ajout au panier.",
     "basket.offered": "Offert",
+    "label.free": "Gratuit",
     "label.pay": "Payer",
     "name": "Nom",
     "anonymous": "Anonyme",

@@ -1,6 +1,6 @@
 {# <twig:c975LShop:Basket:Items basket="{{ basket }}" [kind="simple|complex"]" readonly="true"/> #}
 {% trans_default_domain 'shop' %}
-{% if basket.total > 0 %}
+{% if basket.quantity > 0 %}
     {# Items (Product and Crowdfunding) #}
     {% for type, items in basket.items %}
         {% set title = "label.items" %}

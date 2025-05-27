@@ -184,7 +184,7 @@ export default class extends Controller {
 
     // Updates the visibility of the basket button
     updateBasketButtonDisplay(basketButton, data) {
-        const isEmpty = !data.basket || data.basket.total === 0;
+        const isEmpty = !data.basket || data.basket.quantity === 0;
         basketButton.style.display = isEmpty ? "none" : "block";
     }
 
@@ -193,7 +193,7 @@ export default class extends Controller {
         if (!data.basket) {return;}
 
         if (this.hasTotalTarget) {
-            this.totalTarget.textContent = (data.basket.total / 100).toFixed(2) + Handlers.getCurrencySymbol(data.basket.currency);
+            this.totalTarget.textContent = ((data.basket.total + data.basket.shipping) / 100).toFixed(2) + Handlers.getCurrencySymbol(data.basket.currency);
         }
 
         if (this.hasQuantityTarget) {
@@ -208,8 +208,8 @@ export default class extends Controller {
             return;
         }
 
-        // Display empty basket template if total is 0
-        if (data.basket.total === 0) {
+        // Display empty basket template if quantity is 0
+        if (data.basket.quantity === 0) {
             const template = document.getElementById("empty-basket-template");
             const templateContent = template.content.cloneNode(true);
             basketPage.innerHTML = "";
@@ -330,7 +330,7 @@ export default class extends Controller {
             (target) => target.dataset.itemId === combinedId
         );
         if (itemTotalElement) {
-            itemTotalElement.textContent = (itemData.total / 100).toFixed(2) + Handlers.getCurrencySymbol(itemData.item.currency);
+            itemTotalElement.textContent = itemData.total == 0 ? Handlers.translate("label.free") : (itemData.total / 100).toFixed(2) + Handlers.getCurrencySymbol(itemData.item.currency);
         }
     }
 
@@ -386,7 +386,7 @@ export default class extends Controller {
         const basketNavbar = document.getElementById("basket-navbar");
 
         if (basketNavbar) {
-            const isEmpty = !data.basket || data.basket.total === 0;
+            const isEmpty = !data.basket || data.basket.quantity === 0;
             if (isEmpty) {
                 basketNavbar.classList.add("d-none");
                 document.body.classList.remove("has-basket-navbar");
