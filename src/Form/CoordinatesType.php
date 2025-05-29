@@ -84,6 +84,15 @@ class CoordinatesType extends AbstractType
                         'class' => 'form-section-title',
                     ],
                 ])
+                ->add('helpText', FormType::class, [
+                    'label' => false,
+                    'required' => false,
+                    'mapped' => false,
+                    'help' => 'label.contributor_help',
+                    'help_attr' => [
+                        'class' => 'alert alert-info',
+                    ],
+                ])
                 ->add('contributorMessage', TextAreaType::class, [
                     'label' => 'label.support_message',
                     'required' => false,
