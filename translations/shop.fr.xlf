@@ -758,6 +758,10 @@
                 <source>label.free</source>
                 <target>Gratuit</target>
             </trans-unit>
+            <trans-unit id="190">
+                <source>label.contributor_help</source>
+                <target>Laissez un message de soutien si vous le désirez, il apparaîtra sur le site web. La signature sera utilisée en cas de publication.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -17,6 +17,7 @@ use c975L\ShopBundle\Entity\Crowdfunding;
 use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -25,6 +26,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 #[IsGranted('ROLE_ADMIN')]
 class ShopDashboardController extends AbstractDashboardController
 {
+    public function __construct(
+        private readonly ConfigServiceInterface $configService,
+
+    ) {
+    }
+
     public function index(): Response
     {
         return $this->render('@c975LShop/management/index.html.twig');
@@ -33,7 +40,7 @@ class ShopDashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('<img src="/favicon.ico"> Papa Câlin')
+            ->setTitle('<img src="/favicon.ico"> '. $this->configService->getParameter('c975LShop.name'))
             ->setFaviconPath('/favicon.ico')
             ->setTranslationDomain('shop');
         ;

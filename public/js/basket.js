@@ -330,7 +330,7 @@ export default class extends Controller {
             (target) => target.dataset.itemId === combinedId
         );
         if (itemTotalElement) {
-            itemTotalElement.textContent = itemData.total == 0 ? Handlers.translate("label.free") : (itemData.total / 100).toFixed(2) + Handlers.getCurrencySymbol(itemData.item.currency);
+            itemTotalElement.textContent = itemData.total === 0 ? Handlers.translate("label.free") : (itemData.total / 100).toFixed(2) + Handlers.getCurrencySymbol(itemData.item.currency);
         }
     }
 

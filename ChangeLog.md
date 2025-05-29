@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.1
+
+- Corrected site name in Dashboard (29/05/2025)
+- Added possibility to have html in counterpart (29/05/2025)
+- Added help message at top form for Counterpart (29/05/2025)
+
 ## v1.2
 
 - Corrected possibility when basket total is 0 (27/05/2025)
