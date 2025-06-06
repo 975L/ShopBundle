@@ -1,0 +1,16 @@
+{# <twig:c975LShop:Button:Button [type="primary"] label="Label" url="{{ path('your_route') }}" [target=""] [inline="false"]/> #}
+{% set type = type | default('primary') %}
+{% set target = target | default('') %}
+{% set inline = inline | default(false) %}
+{% if inline == false %}
+    <p class="text-center">
+{% endif %}
+    <a href="{{ url }}" target="{{ target }}" role="button">
+        <button class="btn btn-{{ type }}">
+            <twig:c975LSite:Image:Icon src="{{ asset('bundles/c975lshop/images/people-group.svg') }}" width="48" height="48" class="white icon-big animation bounce-horizontal"/>
+            <br>
+            {{ label }}
+        </button></a>
+{% if inline == false %}
+    </p>
+{% endif %}

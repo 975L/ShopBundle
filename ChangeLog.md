@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3
+
+- Added button cta for crowdfunding (06/06/2025)
+
 ## v1.2.1
 
 - Corrected site name in Dashboard (29/05/2025)
