@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3.1
+
+- Modified CTA button to allow other icon (09/06/2025)
+
 ## v1.3
 
 - Added button cta for crowdfunding (06/06/2025)
