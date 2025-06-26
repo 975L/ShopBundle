@@ -31,7 +31,7 @@ class ShopService implements ShopServiceInterface
         return $this->paginator->paginate(
             $this->productRepository->findAllSorted(),
             $query->getInt('p', 1),
-            9
+            $query->getInt('s', 12),
         );
     }
 }
