@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.4
+
+- Added missing pagination for shop (26/06/2025)
+- Modified default number of products to 12 (26/06/2025)
+
 ## v1.3.1
 
 - Modified CTA button to allow other icon (09/06/2025)
