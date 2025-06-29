@@ -147,8 +147,10 @@ class BasketService implements BasketServiceInterface
 
                 // Defines flags for items
                 if ($type === 'product') {
-                    if ($itemContent['item']['file'] !== null) {
+                    if (null !== $itemContent['item']['file']) {
                         $contentFlags |= Basket::CONTENT_FLAG_DIGITAL;
+                    } elseif (true === $itemContent['item']['service']) {
+                        $contentFlags |= Basket::CONTENT_FLAG_SERVICE;
                     } else {
                         $contentFlags |= Basket::CONTENT_FLAG_PHYSICAL;
                     }

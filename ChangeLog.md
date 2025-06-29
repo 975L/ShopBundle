@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.5.1
+
+- Added user's message to email and basket display (29/06/2025)
+- Added possibility to flag a ProductItem as a service with no shipping (29/06/2025)
+
 ## v1.5
 
 - Added message field on basket (29/06/2025)

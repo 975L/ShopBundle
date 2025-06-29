@@ -17,10 +17,11 @@ use c975L\ShopBundle\Form\ProductItemMediaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 
 class ProductItemType extends AbstractType
 {
@@ -88,6 +89,11 @@ class ProductItemType extends AbstractType
             ->add('media', ProductItemMediaType::class, [
                 'label' => false,
                 'required' => false,
+            ])
+            ->add('service', CheckboxType::class, [
+                'label' => 'label.service',
+                'required' => false,
+                'help' => 'label.product_item_service_help',
             ])
             ->add('file', ProductItemFileType::class, [
                 'label' => false,

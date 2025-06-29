@@ -53,6 +53,9 @@ class ProductItem
     #[ORM\Column(nullable: true, type: 'smallint')]
     private ?int $orderedQuantity = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $service = null;
+
     #[ORM\OneToOne(inversedBy: 'productItem', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
     private ?ProductItemFile $file = null;
@@ -205,6 +208,18 @@ class ProductItem
     public function setOrderedQuantity(?int $orderedQuantity): static
     {
         $this->orderedQuantity = $orderedQuantity;
+
+        return $this;
+    }
+
+    public function isService(): ?bool
+    {
+        return $this->service;
+    }
+
+    public function setService(?bool $service): static
+    {
+        $this->service = $service;
 
         return $this;
     }

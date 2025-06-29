@@ -96,8 +96,8 @@ Create a Stripe account if not: https://stripe.com
 1. Sign in to your [Stripe Dashboard](https://dashboard.stripe.com/)
 2. Navigate to Developers > Webhooks
 3. Click "Add endpoint"
-4. Enter your webhook URL (https://your-website.com/shop/stripe/webhook)
-5. Select the event `checkout.session.completed`
+4. Select the event `checkout.session.completed`
+5. Enter your webhook URL (https://your-website.com/shop/stripe/webhook)
 6. Copy the webhook signing secret and add it to your environment variables `config/config_bundles.yaml` -> `stripeWebhookSecret`
 7. Test the endpoint to ensure proper configuration
 

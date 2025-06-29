@@ -112,7 +112,7 @@ export default class extends Controller {
             // Force refresh cache after deletion
             this.constructor.basketDataPromise = null;
 
-            const message = `${target.dataset.title} ${target.dataset.text}`;
+            const message = `"${target.dataset.title}" ${target.dataset.text}`;
             Handlers.displayMessage(message, "alert-" + target.dataset.alert);
             this.update(data);
         })
@@ -147,7 +147,7 @@ export default class extends Controller {
             if (data.error) {
                 Handlers.displayMessage(data.error, "alert-danger");
             } else {
-                const message = `${target.dataset.title} ${target.dataset.text}`;
+                const message = `"${target.dataset.title}" ${target.dataset.text}`;
                 Handlers.displayMessage(message, "alert-" + target.dataset.alert);
                 this.update(data);
             }
