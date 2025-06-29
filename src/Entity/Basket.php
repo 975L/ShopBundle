@@ -112,6 +112,9 @@ class Basket
     #[ORM\ManyToOne(inversedBy: 'baskets')]
     private ?User $user = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $message = null;
+
     public function toArray(): array
     {
         return get_object_vars($this);
@@ -387,6 +390,18 @@ class Basket
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(?string $message): static
+    {
+        $this->message = $message;
 
         return $this;
     }

@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.5
+
+- Added message field on basket (29/06/2025)
+
 ## v1.4
 
 - Added missing pagination for shop (26/06/2025)

@@ -69,6 +69,13 @@ class CoordinatesType extends AbstractType
                         'placeholder' => 'placeholder.country',
                     ],
                 ])
+                ->add('message', TextareaType::class, [
+                    'required' => false,
+                    'label' => 'label.message',
+                    'attr' => [
+                        'placeholder' => 'placeholder.message',
+                    ],
+                ])
             ;
         }
 
