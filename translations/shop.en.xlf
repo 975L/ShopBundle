@@ -541,7 +541,7 @@
             </trans-unit>
             <trans-unit id="135">
                 <source>label.shipping_free_from</source>
-                <target>Free shipping on purchases over %amount% (digital items not concerned)</target>
+                <target>Free shipping on purchases over %amount% (digital items and services not concerned)</target>
             </trans-unit>
             <trans-unit id="136">
                 <source>label.shipping_france_only</source>
@@ -770,6 +770,18 @@
             <trans-unit id="192">
                 <source>placeholder.message</source>
                 <target>Use this space if you wish to leave us a message</target>
+            </trans-unit>
+            <trans-unit id="193">
+                <source>label.message_user</source>
+                <target>User's message</target>
+            </trans-unit>
+            <trans-unit id="194">
+                <source>label.service</source>
+                <target>Service</target>
+            </trans-unit>
+            <trans-unit id="195">
+                <source>label.product_item_service_help</source>
+                <target>Check if there is no physical or digital product</target>
             </trans-unit>
         </body>
     </file>

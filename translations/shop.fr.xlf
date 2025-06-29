@@ -540,7 +540,7 @@
             </trans-unit>
             <trans-unit id="135">
                 <source>label.shipping_free_from</source>
-                <target>Frais de port offerts à partir de %amount% d'achats (articles numériques non concernés)</target>
+                <target>Frais de port offerts à partir de %amount% d'achats (articles numériques et services non concernés)</target>
             </trans-unit>
             <trans-unit id="136">
                 <source>label.shipping_france_only</source>
@@ -769,6 +769,18 @@
             <trans-unit id="192">
                 <source>placeholder.message</source>
                 <target>Utilisez cet espace si vous souhaitez nous laisser un message</target>
+            </trans-unit>
+            <trans-unit id="193">
+                <source>label.message_user</source>
+                <target>Message de l'utilisateur</target>
+            </trans-unit>
+            <trans-unit id="194">
+                <source>label.service</source>
+                <target>Service</target>
+            </trans-unit>
+            <trans-unit id="195">
+                <source>label.product_item_service_help</source>
+                <target>Cocher s'il n'y a ni produit physique ni numérique</target>
             </trans-unit>
         </body>
     </file>

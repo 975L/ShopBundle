@@ -27,13 +27,16 @@ class Basket
     public const CONTENT_FLAG_PHYSICAL = 2;
     public const CONTENT_FLAG_CF_SHIPPING = 4;
     public const CONTENT_FLAG_CF_DIGITAL = 8;
+    public const CONTENT_FLAG_SERVICE = 16;
 
     // Pre-defined flags
     public const FLAG_PRODUCT_MIXED = self::CONTENT_FLAG_DIGITAL | self::CONTENT_FLAG_PHYSICAL; // 3
     public const FLAG_CF_MIXED = self::CONTENT_FLAG_CF_DIGITAL | self::CONTENT_FLAG_CF_SHIPPING; // 12
     public const FLAG_DIGITAL_ONLY = self::CONTENT_FLAG_DIGITAL | self::CONTENT_FLAG_CF_DIGITAL; // 9
     public const FLAG_NEEDS_SHIPPING = self::CONTENT_FLAG_PHYSICAL | self::CONTENT_FLAG_CF_SHIPPING; // 6
-    public const FLAG_MIXED = self::FLAG_DIGITAL_ONLY | self::FLAG_NEEDS_SHIPPING; // 15
+    public const FLAG_SERVICE_ONLY = self::CONTENT_FLAG_SERVICE; // 16
+    public const FLAG_NO_SHIPPING = self::FLAG_DIGITAL_ONLY | self::FLAG_SERVICE_ONLY; // 25
+    public const FLAG_MIXED = self::FLAG_DIGITAL_ONLY | self::FLAG_NEEDS_SHIPPING | self::FLAG_SERVICE_ONLY; // 31
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
