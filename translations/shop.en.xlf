@@ -763,6 +763,14 @@
                 <source>label.contributor_help</source>
                 <target>Please leave a message of support if you wish; it will appear on the website. Your signature will be used if published.</target>
             </trans-unit>
+            <trans-unit id="191">
+                <source>label.message</source>
+                <target>Message</target>
+            </trans-unit>
+            <trans-unit id="192">
+                <source>placeholder.message</source>
+                <target>Use this space if you wish to leave us a message</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
