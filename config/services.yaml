@@ -27,3 +27,6 @@ services:
 
     c975L\ShopBundle\Service\:
         resource: '../src/Service/*'
+
+    c975L\ShopBundle\Twig\:
+        resource: '../src/Twig/*'

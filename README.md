@@ -154,6 +154,10 @@ You should be able to use your shop + Management with the following urls:
 - Shop https://example.com/shop
 - Management: https://example.com/shop/management
 
+## Components
+
+You can use `<twig:c975LShop:Slider:Slider slug="{{ object.slug }}" />` to display a slider using `product.medias`.
+
 ## Useful Commands
 
 The `basket.contentflags` has multiples values depending on its content.
