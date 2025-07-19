@@ -1,6 +1,10 @@
 # Changelog
 
-## v1.5.1
+## v1.6
+
+- Increased width for resized image and quality (19/07/2025)
+
+## v1.5.1
 
 - Added user's message to email and basket display (29/06/2025)
 - Added possibility to flag a ProductItem as a service with no shipping (29/06/2025)

@@ -39,7 +39,7 @@ class VichImageResizeListener implements EventSubscriberInterface
         $this->filesystem = new Filesystem();
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::POST_UPLOAD => 'onPostUpload',
@@ -87,8 +87,10 @@ class VichImageResizeListener implements EventSubscriberInterface
 
         $media
             ->resize(new Box($width, $height))
-            ->save($absolutePath, ['format' => $format])
-        ;
+            ->save($absolutePath, [
+                'format' => $format,
+                'webp_quality' => 90,
+            ]);
 
         $this->updateEntitySize($entity, $absolutePath);
     }
@@ -96,15 +98,11 @@ class VichImageResizeListener implements EventSubscriberInterface
     // Gets the width for the entity
     private function getWidthForEntity($entity): int
     {
-        if ($entity instanceof ProductMedia || $entity instanceof CrowdfundingMedia) {
-            return 400;
-        }
-
         if ($entity instanceof ProductItemMedia || $entity instanceof CrowdfundingCounterpartMedia) {
-            return 200;
+            return 300;
         }
 
-        return 400;
+        return 600;
     }
 
     // Updates the size of the entity
