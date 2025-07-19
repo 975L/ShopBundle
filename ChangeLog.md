@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.6.1
+
+- Added a Slider component to be reused using product.medias (19/07/2025)
+
 ## v1.6
 
 - Increased width for resized image and quality (19/07/2025)
