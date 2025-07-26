@@ -1,0 +1,4 @@
+{% if product is not defined and this.product is defined %}
+    {% set product = this.product %}
+{% endif %}
+<twig:c975LSite:Button:Button type="primary" label="{{ product.title }}" url="{{ url('product_display', {'slug': product.slug}) }}"/>

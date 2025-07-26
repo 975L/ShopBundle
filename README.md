@@ -156,7 +156,9 @@ You should be able to use your shop + Management with the following urls:
 
 ## Components
 
-You can use `<twig:c975LShop:Slider:Slider slug="{{ object.slug }}" />` to display a slider using `product.medias`.
+You can use `<twig:c975LShop:Slider:Slider slug="{{ product.slug }}" />` to display a slider using `product.medias`.
+
+You can use `<twig:c975LShop:Product:Card slug="{{ product.slug }}" />` to display a card using `product` data.
 
 ## Useful Commands
 
