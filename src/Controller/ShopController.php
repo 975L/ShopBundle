@@ -27,12 +27,12 @@ class ShopController extends AbstractController
         '/shop',
         name: 'shop_index',
         methods: ['GET']
-        )]
-        public function index(Request $request): Response
-        {
-            return $this->render(
-                '@c975LShop/shop/index.html.twig',
-                ['products' => $this->shopService->findAllProductsPaginated($request->query)]
-                )->setMaxAge(3600);
-        }
+    )]
+    public function index(Request $request): Response
+    {
+        return $this->render(
+            '@c975LShop/shop/index.html.twig',
+            ['products' => $this->shopService->findAllProductsPaginated($request->query)]
+            )->setMaxAge(3600);
+    }
 }

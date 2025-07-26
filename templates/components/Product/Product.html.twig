@@ -1,3 +1,6 @@
+{% if product is not defined and this.product is defined %}
+    {% set product = this.product %}
+{% endif %}
 {% set class = class | default('') %}
 <a href="{{ url('product_display', {'slug': product.slug}) }}" class="product-link">
     <article class="product {{ class }}" id="product-{{ product.id }}">
