@@ -51,6 +51,10 @@ class Lottery
     #[ORM\OrderBy(['number' => 'ASC'])]
     private Collection $tickets;
 
+    #[ORM\OneToMany(targetEntity: LotteryVideo::class, mappedBy: 'lottery', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $videos;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $creation = null;
 
@@ -64,6 +68,7 @@ class Lottery
     {
         $this->prizes = new ArrayCollection();
         $this->tickets = new ArrayCollection();
+        $this->videos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -164,6 +169,30 @@ class Lottery
         if ($this->tickets->removeElement($ticket)) {
             if ($ticket->getLottery() === $this) {
                 $ticket->setLottery(null);
+            }
+        }
+        return $this;
+    }
+
+    public function getVideos(): Collection
+    {
+        return $this->videos;
+    }
+
+    public function addVideo(LotteryVideo $video): self
+    {
+        if (!$this->videos->contains($video)) {
+            $this->videos->add($video);
+            $video->setLottery($this);
+        }
+        return $this;
+    }
+
+    public function removeVideo(LotteryVideo $video): self
+    {
+        if ($this->videos->removeElement($video)) {
+            if ($video->getLottery() === $this) {
+                $video->setLottery(null);
             }
         }
         return $this;

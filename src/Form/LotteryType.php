@@ -13,6 +13,7 @@ namespace c975L\ShopBundle\Form;
 use c975L\ShopBundle\Entity\Lottery;
 use Symfony\Component\Form\AbstractType;
 use c975L\ShopBundle\Form\LotteryPrizeType;
+use c975L\ShopBundle\Form\LotteryVideoType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -40,6 +41,14 @@ class LotteryType extends AbstractType
                 'label' => 'label.draw_date',
                 'required' => false,
                 'widget' => 'single_text'
+            ])
+            ->add('videos', CollectionType::class, [
+                'entry_type' => LotteryVideoType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => 'label.videos',
+                'required' => false
             ])
             ->add('prizes', CollectionType::class, [
                 'entry_type' => LotteryPrizeType::class,

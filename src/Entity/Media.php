@@ -13,6 +13,7 @@ namespace c975L\ShopBundle\Entity;
 use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use c975L\ShopBundle\Entity\LotteryVideo;
 use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Entity\ProductItemFile;
 use c975L\ShopBundle\Entity\ProductItemMedia;
@@ -33,6 +34,7 @@ use c975L\ShopBundle\Entity\CrowdfundingCounterpartMedia;
     'crowdfunding' => CrowdfundingMedia::class,
     'crowdfunding_counterpart' => CrowdfundingCounterpartMedia::class,
     'crowdfunding_video' => CrowdfundingVideo::class,
+    'lottery_video' => LotteryVideo::class,
 ])]
 
 abstract class Media
