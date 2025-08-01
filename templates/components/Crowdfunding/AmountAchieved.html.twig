@@ -1,9 +1,21 @@
-{% set progressPercent = (amountAchieved / amount * 100)|round %}
+{% set type = type | default('primary') %}
+{% set label = 'label.next_smiley'|trans({}, 'shop') %}
+
+{% set isStarted = date()|date("Y-m-d H:i:s") > crowdfunding.beginDate|date("Y-m-d 00:00:00") %}
+{% set endOfDay = date(crowdfunding.endDate|date("Y-m-d 23:59:59")) %}
+{% set isEnded = date() > endOfDay %}
+{% set progressPercent = (crowdfunding.amountAchieved / crowdfunding.amountGoal * 100)|round %}
 <section id="funding">
     <h2>{{ 'label.funding'|trans({}, 'shop') }}</h2>
-    <p><strong>{{ (amountAchieved / 100)|format_currency(currency, {fraction_digit: 0}) }}</strong> {{ 'label.outof'|trans({}, 'shop') }} <strong>{{ (amount / 100)|format_currency(currency, {fraction_digit: 0}) }}</strong></p>
+    <p><strong>{{ (crowdfunding.amountAchieved / 100)|format_currency(crowdfunding.currency, {fraction_digit: 0}) }}</strong> {{ 'label.outof'|trans({}, 'shop') }} <strong>{{ (crowdfunding.amountGoal / 100)|format_currency(crowdfunding.currency, {fraction_digit: 0}) }}</strong></p>
     <twig:c975LSite:Progress:Bar progressPercent="{{ progressPercent }}" text="true"/>
-    <twig:c975LShop:Crowdfunding:ContributorsNumber contributorsLength="{{ contributorsLength }}"/>
+    <twig:c975LShop:Crowdfunding:ContributorsNumber contributorsLength="{{ crowdfunding.contributors|length }}"/>
     <twig:c975LShop:Crowdfunding:Smileys progressPercent="{{ progressPercent }}"/>
-    <twig:c975LSite:Button:Button label="{{ 'label.next_smiley'|trans({}, 'shop') }}" url="{{ app.request.uri }}#counterparts"/>
+    {% if false == isStarted %}
+        <twig:c975LShop:CrowdfundingCounterpart:AddButtonNotStarted type="{{ type }}" beginDate="{{ crowdfunding.beginDate }}"/>
+    {% elseif isEnded %}
+        <twig:c975LShop:CrowdfundingCounterpart:AddButtonIsEnded type="{{ type }}"/>
+    {% else %}
+        <twig:c975LSite:Button:Button label="{{ 'label.next_smiley'|trans({}, 'shop') }}" url="{{ app.request.uri }}#counterparts"/>
+    {% endif %}
 </section>

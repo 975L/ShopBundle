@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.6.3
+
+- Modified button under AmountAchieved when crowdfunding is not started or ended (01/08/2025)
+- Added the possibility to upload a video for the lottery's draw (01/08/2025)
+
 ## v1.6.2
 
 - Added Product:Card component (26/07/2025)

@@ -12,6 +12,7 @@
         <p class="text text-center">{{ 'label.draw_date'|trans({}, 'shop') }} : <strong>{{ lottery.drawDate|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</strong></p>
         <twig:c975LShop:Lottery:Prizes prizes="{{ lottery.prizes }}"/>
         <twig:c975LShop:Lottery:SpinWheel/>
+        <twig:c975LShop:Lottery:Videos videos="{{ lottery.videos }}"/>
         <twig:c975LShop:Lottery:TicketsNumber tickets="{{ lottery.tickets }}" prizes="{{ lottery.prizes }}"/>
     </div>
 {% endblock %}

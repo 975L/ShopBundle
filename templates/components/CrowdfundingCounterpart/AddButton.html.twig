@@ -8,13 +8,9 @@
 {% set isEnded = date() > endOfDay %}
 
 {% if false == isStarted %}
-    <button disabled class="btn btn-large btn-{{ type }}">
-        <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-smile-wink.svg" width="24" height="24"/> {{ 'label.crowdfunding_not_started'|trans({}, 'shop') }}<br>{{ 'label.come_back_on'|trans({}, 'shop')|capitalize }} {{ crowdfundingCounterpart.crowdfunding.beginDate|date('d/m/Y') }}
-    </button>
+    <twig:c975LShop:CrowdfundingCounterpart:AddButtonNotStarted type="{{ type }}" beginDate="{{ crowdfundingCounterpart.crowdfunding.beginDate }}"/>
 {% elseif isEnded %}
-    <button disabled class="btn btn-large btn-{{ type }}">
-        <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/face-smile-wink.svg" width="24" height="24"/> {{ 'label.crowdfunding_ended'|trans({}, 'shop') }}
-    </button>
+    <twig:c975LShop:CrowdfundingCounterpart:AddButtonIsEnded type="{{ type }}"/>
 {% else %}
     {% set disabled = "" %}
     {% if crowdfundingCounterpart.limitedQuantity is same as 0 %}

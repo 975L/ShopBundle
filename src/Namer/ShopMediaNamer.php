@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Namer;
 
 use RuntimeException;
+use c975L\ShopBundle\Entity\LotteryVideo;
 use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Entity\ProductItemFile;
 use Symfony\Component\Filesystem\Filesystem;
@@ -93,6 +94,10 @@ class ShopMediaNamer implements NamerInterface
 
         if ($entity instanceof CrowdfundingMedia || $entity instanceof CrowdfundingVideo) {
             return '/crowdfundings/' . $entity->getCrowdfunding()->getSlug();
+        }
+
+        if ($entity instanceof LotteryVideo) {
+            return '/crowdfundings/' . $entity->getLottery()->getCrowdfunding()->getSlug() . '-lottery-' . $entity->getLottery()->getId();
         }
 
         if ($entity instanceof CrowdfundingCounterpartMedia) {
