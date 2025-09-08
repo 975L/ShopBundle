@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.6.6
+
+- Removed paragraph tags linked to textarea in easyadmin (08/09/2025)
+
 ## v1.6.5
 
 - Added style for crowdfunding div (08/09/2025)
