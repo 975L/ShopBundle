@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.6.5
+
+- Added style for crowdfunding div (08/09/2025)
+
 ## v1.6.4
 
 - Added raw to button to allw html content (08/09/2025)
