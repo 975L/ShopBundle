@@ -320,6 +320,10 @@ body.has-basket-navbar {
     background-position: 0 0;
 }
 
+.crowdfunding div {
+    text-align: left;
+}
+
 .crowdfunding video {
     margin: 1em auto;
 }
