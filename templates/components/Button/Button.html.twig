@@ -10,7 +10,7 @@
         <button class="btn btn-{{ type }}">
             <twig:c975LSite:Image:Icon src="{{ asset(icon) }}" width="48" height="48" class="white icon-big animation bounce-horizontal"/>
             <br>
-            {{ label }}
+            {{ label|raw }}
         </button></a>
 {% if inline == false %}
     </p>
