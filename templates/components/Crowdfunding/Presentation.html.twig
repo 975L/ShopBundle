@@ -2,7 +2,7 @@
     <h2>{{ 'label.presentation'|trans({}, 'shop') }}</h2>
     <twig:c975LShop:Crowdfunding:Videos videos="{{ crowdfunding.videos }}"/>
     <h3>{{ 'label.project'|trans({}, 'shop') }}</h3>
-    <p class="text-center">{{ crowdfunding.description|raw }}</p>
+    {{ crowdfunding.description|raw }}
     <h3>{{ 'label.use'|trans({}, 'shop') }}</h3>
-    <p class="text-center">{{ crowdfunding.useFor|raw }}</p>
+    {{ crowdfunding.useFor|raw }}
 </section>
