@@ -55,6 +55,10 @@
 }
 
 /* PRODUCTS */
+div {
+    text-align: left;
+}
+
 .products {
     display: flex;
     flex-wrap: wrap;

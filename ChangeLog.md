@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.6.7
+
+- Added description title to product (11/09/2025)
+- Aligned to left the product description (11/09/2025)
+
 ## v1.6.6
 
 - Removed paragraph tags linked to textarea in easyadmin (08/09/2025)
