@@ -5,6 +5,7 @@
         <h1>{{ ('label.management'|trans({}, 'shop')) }}</h1>
         <p>{{ ('label.management_interface'|trans({}, 'shop')) }}</p>
         <p>
+            <a href="{{ path('shop_management_product_category_index') }}" class="btn btn-primary">{{ ('label.categories'|trans({}, 'shop')) }}</a>
             <a href="{{ path('shop_management_product_index') }}" class="btn btn-primary">{{ ('label.products'|trans({}, 'shop')) }}</a>
             <a href="{{ path('shop_management_basket_index') }}" class="btn btn-primary">{{ ('label.baskets'|trans({}, 'shop')) }}</a>
             <a href="{{ path('shop_management_payment_index') }}" class="btn btn-primary">{{ ('label.payments'|trans({}, 'shop')) }}</a>

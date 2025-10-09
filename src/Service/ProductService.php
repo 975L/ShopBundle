@@ -14,6 +14,7 @@ use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Repository\ProductRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use \Doctrine\ORM\EntityManagerInterface;
+
 class ProductService implements ProductServiceInterface
 {
     public function __construct(
