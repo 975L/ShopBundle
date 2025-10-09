@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.8.1
+
+- Added ProductCategory to sitemaps (09/10/2025)
+
 ## v1.8
 
 - Added ProductCategory entity to classify products (09/10/2025) **Needs migration**
