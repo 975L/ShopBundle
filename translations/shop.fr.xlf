@@ -782,6 +782,14 @@
                 <source>label.product_item_service_help</source>
                 <target>Cocher s'il n'y a ni produit physique ni numérique</target>
             </trans-unit>
+            <trans-unit id="196">
+                <source>label.categories</source>
+                <target>Catégories</target>
+            </trans-unit>
+            <trans-unit id="197">
+                <source>label.category</source>
+                <target>Catégorie</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

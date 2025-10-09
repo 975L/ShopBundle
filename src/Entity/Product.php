@@ -60,6 +60,10 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?User $user = null;
 
+    #[ORM\ManyToOne(targetEntity: ProductCategory::class, inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?ProductCategory $category = null;
+
     public function __construct()
     {
         $this->items = new ArrayCollection();
@@ -217,6 +221,18 @@ class Product
                 $item->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?ProductCategory
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?ProductCategory $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

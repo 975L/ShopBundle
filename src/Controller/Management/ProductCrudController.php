@@ -26,6 +26,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 #[IsGranted('ROLE_ADMIN')]
@@ -46,6 +47,9 @@ class ProductCrudController extends AbstractCrudController
             SlugField::new('slug')
                 ->setTargetFieldName('title')
                 ->hideOnIndex(),
+            AssociationField::new('category')
+                ->setLabel('label.category')
+                ->setRequired(false),
             IntegerField::new('position')
                 ->setLabel('label.position')
                 ->setRequired(false),

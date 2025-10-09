@@ -783,6 +783,14 @@
                 <source>label.product_item_service_help</source>
                 <target>Check if there is no physical or digital product</target>
             </trans-unit>
+            <trans-unit id="196">
+                <source>label.categories</source>
+                <target>Categories</target>
+            </trans-unit>
+            <trans-unit id="197">
+                <source>label.category</source>
+                <target>Category</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

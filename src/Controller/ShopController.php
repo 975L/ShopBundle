@@ -32,7 +32,9 @@ class ShopController extends AbstractController
     {
         return $this->render(
             '@c975LShop/shop/index.html.twig',
-            ['products' => $this->shopService->findAllProductsPaginated($request->query)]
+            [
+                'products' => $this->shopService->findAllProductsPaginated($request->query)
+            ]
             )->setMaxAge(3600);
     }
 }

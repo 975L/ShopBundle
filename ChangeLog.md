@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.8
+
+- Added ProductCategory entity to classify products (09/10/2025) **Needs migration**
+
 ## v1.7
 
 - Replaced Symfony\Component\Routing\Annotation\Route by Symfony\Component\Routing\Attribute\Route (09/10/2025)

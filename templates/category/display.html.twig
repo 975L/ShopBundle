@@ -1,0 +1,16 @@
+{% extends 'layout.html.twig' %}
+{% trans_default_domain 'shop' %}
+
+{# Defines specific variables #}
+{% set title = 'label.category'|trans({}, 'shop') ~ ' : ' ~ category.name %}
+
+{% block content %}
+    <twig:c975LShop:Shop:TestMode/>
+    <div data-controller="basket">
+        <twig:c975LShop:Shop:Shipping/>
+        <twig:c975LShop:Shop:Information/>
+        <twig:c975LShop:Product:Products products="{{ category.products }}"/>
+        <twig:c975LShop:Shop:NavbarBasket/>
+        <twig:c975LShop:Basket:Message/>
+    </div>
+{% endblock %}
