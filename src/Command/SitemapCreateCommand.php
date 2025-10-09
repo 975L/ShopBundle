@@ -18,6 +18,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use c975L\ShopBundle\Service\ProductServiceInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ShopBundle\Service\ProductCategoryServiceInterface;
 
 /**
  * Console command to create sitemap of pages, executed with 'pageedit:createSitemap'
@@ -33,6 +34,7 @@ class SitemapCreateCommand extends Command
     public function __construct(
         private readonly ConfigServiceInterface $configService,
         private readonly ProductServiceInterface $productService,
+        private readonly ProductCategoryServiceInterface $productCategoryService,
         private readonly Environment $environment
 
     )
@@ -56,6 +58,7 @@ class SitemapCreateCommand extends Command
         $root = $this->configService->getContainerParameter('kernel.project_dir');
         $urlRoot = $this->configService->getParameter('c975LShop.sitemapBaseUrl');
 
+        $categories = $this->productCategoryService->findAll();
         $products = $this->productService->findAll();
         $urls = [];
 
@@ -74,6 +77,16 @@ class SitemapCreateCommand extends Command
                 'lastmod' => date('Y-m-d', strtotime($product->getModification()->format('Y-m-d H:i:s'))),
                 'changefreq' => 'weekly',
                 'priority' => 0.8,
+            ];
+        }
+
+        // Urls for categories
+        foreach ($categories as $category) {
+            $urls[] = [
+                'loc' => $urlRoot . '/shop/categories/' . $category->getSlug(),
+                'lastmod' => date('Y-m-d'),
+                'changefreq' => 'weekly',
+                'priority' => 0.7,
             ];
         }
 
