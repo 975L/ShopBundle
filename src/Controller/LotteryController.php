@@ -5,7 +5,7 @@ namespace c975L\ShopBundle\Controller;
 use c975L\ShopBundle\Entity\Lottery;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use c975L\ShopBundle\Service\LotteryServiceInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;

@@ -12,7 +12,7 @@ namespace c975L\ShopBundle\Controller;
 
 use c975L\ShopBundle\Entity\Product;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use c975L\ShopBundle\Service\ProductServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

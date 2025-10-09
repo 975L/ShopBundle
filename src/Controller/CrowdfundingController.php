@@ -14,7 +14,7 @@ use c975L\ShopBundle\Entity\Crowdfunding;
 use c975L\ShopBundle\Entity\CrowdfundingNews;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use c975L\ShopBundle\Service\CrowdfundingServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
