@@ -14,7 +14,7 @@ use Stripe\Stripe;
 use Stripe\Webhook;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use c975L\ShopBundle\Service\BasketServiceInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

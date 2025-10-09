@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.7
+
+- Replaced Symfony\Component\Routing\Annotation\Route by Symfony\Component\Routing\Attribute\Route (09/10/2025)
+
 ## v1.6.7
 
 - Added description title to product (11/09/2025)
