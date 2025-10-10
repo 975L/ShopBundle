@@ -71,23 +71,27 @@ class SitemapCreateCommand extends Command
         ];
 
         // Urls for products
-        foreach ($products as $product) {
-            $urls[] = [
-                'loc' => $urlRoot . '/shop/products/' . $product->getSlug(),
-                'lastmod' => date('Y-m-d', strtotime($product->getModification()->format('Y-m-d H:i:s'))),
-                'changefreq' => 'weekly',
-                'priority' => 0.8,
-            ];
+        if (null !== $products) {
+            foreach ($products as $product) {
+                $urls[] = [
+                    'loc' => $urlRoot . '/shop/products/' . $product->getSlug(),
+                    'lastmod' => date('Y-m-d', strtotime($product->getModification()->format('Y-m-d H:i:s'))),
+                    'changefreq' => 'weekly',
+                    'priority' => 0.8,
+                ];
+            }
         }
 
         // Urls for categories
-        foreach ($categories as $category) {
-            $urls[] = [
-                'loc' => $urlRoot . '/shop/categories/' . $category->getSlug(),
-                'lastmod' => date('Y-m-d'),
-                'changefreq' => 'weekly',
-                'priority' => 0.7,
-            ];
+        if (null !== $categories) {
+            foreach ($categories as $category) {
+                $urls[] = [
+                    'loc' => $urlRoot . '/shop/categories/' . $category->getSlug(),
+                    'lastmod' => date('Y-m-d'),
+                    'changefreq' => 'weekly',
+                    'priority' => 0.7,
+                ];
+            }
         }
 
         //Writes file

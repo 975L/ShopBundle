@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.8.2
+
+- Removed category display on product page if null (10/10/2025)
+- Corrected sitemap (10/10/2025)
+- Removed text left for crowdfunding div (10/10/2025)
+
 ## v1.8.1
 
 - Added ProductCategory to sitemaps (09/10/2025)
