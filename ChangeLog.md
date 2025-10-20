@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.8.3
+
+- Corrected sitemap command for categories (20/10/2025)
+
 ## v1.8.2
 
 - Removed category display on product page if null (10/10/2025)
