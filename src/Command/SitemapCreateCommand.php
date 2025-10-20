@@ -86,7 +86,7 @@ class SitemapCreateCommand extends Command
         if (null !== $categories) {
             foreach ($categories as $category) {
                 $urls[] = [
-                    'loc' => $urlRoot . '/shop/categories/' . $category->getSlug(),
+                    'loc' => $urlRoot . '/shop/category/' . $category->getSlug(),
                     'lastmod' => date('Y-m-d'),
                     'changefreq' => 'weekly',
                     'priority' => 0.7,
