@@ -105,6 +105,20 @@ class LotteryService implements LotteryServiceInterface
             $winnerIndex = array_rand($tickets);
             $winningTicket = $tickets[$winnerIndex];
 
+            // Checks if ticket has not already won a prize in this lottery
+            $hasAlreadyWon = false;
+            foreach ($lottery->getPrizes() as $existingPrize) {
+                if ($existingPrize->getWinningTicket() && $existingPrize->getWinningTicket()->getId() === $winningTicket->getId()) {
+                    $hasAlreadyWon = true;
+                    break;
+                }
+            }
+
+            // If already won, redraws
+            if ($hasAlreadyWon) {
+                return $this->drawWinner($lottery, $prizeRank);
+            }
+
             // Defines the winning ticket for the prize
             if ($prize) {
                 $prize->setWinningTicket($winningTicket);
