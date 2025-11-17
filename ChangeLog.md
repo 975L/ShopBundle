@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.8.4
+
+- Corrected missing a in translation (17/11/2025)
+- Corrected Lottery Draw Prize (17/11/2025)
+
 ## v1.8.3
 
 - Corrected sitemap command for categories (20/10/2025)

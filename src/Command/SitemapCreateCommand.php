@@ -48,7 +48,7 @@ class SitemapCreateCommand extends Command
 
         $this->createSitemap();
 
-        $io->success('Sitemap created.');
+        $io->success('Sitemaps created.');
 
         return Command::SUCCESS;
     }

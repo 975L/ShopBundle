@@ -724,7 +724,7 @@
             </trans-unit>
             <trans-unit id="181">
                 <source>label.tickets_used</source>
-                <target>Seuls certains tickets apparissent dans l'animation, mais, évidemment, tous sont utilisés pour le tirage au sort.</target>
+                <target>Seuls certains tickets apparaissent dans l'animation, mais, évidemment, tous sont utilisés pour le tirage au sort.</target>
             </trans-unit>
             <trans-unit id="182">
                 <source>label.crowdfunding_not_started</source>
