@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.9
+
+- Replaced Vich\UploaderBundle\Mapping\Annotation by Vich\UploaderBundle\Mapping\Attribute (14/01/2026)
+- Added product.availableAt property (18/01/2026)
+
 ## v1.8.4
 
 - Corrected missing a in translation (17/11/2025)

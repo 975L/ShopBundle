@@ -790,6 +790,14 @@
                 <source>label.category</source>
                 <target>Catégorie</target>
             </trans-unit>
+            <trans-unit id="198">
+                <source>label.available_at</source>
+                <target>Disponible le</target>
+            </trans-unit>
+            <trans-unit id="199">
+                <source>label.product_not_yet_available</source>
+                <target>Ce produit n'est pas encore disponible. Il le sera le :</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

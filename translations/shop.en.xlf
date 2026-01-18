@@ -791,6 +791,14 @@
                 <source>label.category</source>
                 <target>Category</target>
             </trans-unit>
+            <trans-unit id="198">
+                <source>label.available_at</source>
+                <target>Available At</target>
+            </trans-unit>
+            <trans-unit id="199">
+                <source>label.product_not_yet_available</source>
+                <target>This product is not yet available. It will be on:</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -13,7 +13,7 @@ namespace c975L\ShopBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use c975L\ShopBundle\Entity\Media;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 use c975L\ShopBundle\Entity\CrowdfundingCounterpart;
 
 #[ORM\Entity]

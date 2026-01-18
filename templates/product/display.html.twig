@@ -17,11 +17,17 @@
         <twig:c975LShop:Product:Category category="{{ product.category }}"/>
         <twig:c975LShop:Product:Description description="{{ product.description }}"/>
         <h2 id="items">{{ 'label.items'|trans }}</h2>
-        <div data-controller="basket">
-            <twig:c975LShop:Product:Items items="{{ product.items }}"/>
-            <twig:c975LShop:Basket:Message/>
-            <twig:c975LShop:Shop:NavbarBasket/>
-        </div>
+        {% if product.availableAt == null or product.availableAt|date('Ymd') <= "now"|date("Ymd") %}
+            <div data-controller="basket">
+                <twig:c975LShop:Product:Items items="{{ product.items }}"/>
+                <twig:c975LShop:Basket:Message/>
+                <twig:c975LShop:Shop:NavbarBasket/>
+            </div>
+        {% else %}
+            <twig:c975LSite:Alert:Alert type="warning">
+                {{ 'label.product_not_yet_available'|trans({}, 'shop') }} {{ product.availableAt|date('d/m/Y') }}.
+            </twig:c975LSite:Alert:Alert>
+        {% endif %}
         <twig:c975LShop:Basket:ContinueShoppingButton/>
     </section>
 {% endblock %}
