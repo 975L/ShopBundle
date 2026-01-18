@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.9.2
+
+- Corrected query for product (18/01/2026)
+
 ## v1.9.1
 
 - Corrected ProductCrudController for availableAt property (18/01/2026)
