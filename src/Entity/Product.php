@@ -40,6 +40,9 @@ class Product
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $availableAt = null;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?DateTimeInterface $creation = null;
 
@@ -146,6 +149,18 @@ class Product
                 $media->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAvailableAt(): ?DateTimeInterface
+    {
+        return $this->availableAt;
+    }
+
+    public function setAvailableAt(DateTimeInterface $availableAt): static
+    {
+        $this->availableAt = $availableAt;
 
         return $this;
     }

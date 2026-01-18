@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -56,6 +57,11 @@ class ProductCrudController extends AbstractCrudController
             TextEditorField::new('description')
                 ->setLabel('label.description')
                 ->hideOnIndex(),
+            DateField::new('availableAt')
+                ->setLabel('label.available_at')
+                ->hideOnIndex()
+                ->setFormTypeOption('disabled', 'disabled')
+                ->onlyOnDetail(),
 
             // Media management
             FormField::addFieldset('Media')
