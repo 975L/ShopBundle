@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.9.3
+
+- Corrected missing ? in setter (18/01/2026)
+
 ## v1.9.2
 
 - Corrected query for product (18/01/2026)

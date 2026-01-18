@@ -158,7 +158,7 @@ class Product
         return $this->availableAt;
     }
 
-    public function setAvailableAt(DateTimeInterface $availableAt): static
+    public function setAvailableAt(?DateTimeInterface $availableAt): static
     {
         $this->availableAt = $availableAt;
 
