@@ -58,10 +58,7 @@ class ProductCrudController extends AbstractCrudController
                 ->setLabel('label.description')
                 ->hideOnIndex(),
             DateField::new('availableAt')
-                ->setLabel('label.available_at')
-                ->hideOnIndex()
-                ->setFormTypeOption('disabled', 'disabled')
-                ->onlyOnDetail(),
+                ->setLabel('label.available_at'),
 
             // Media management
             FormField::addFieldset('Media')

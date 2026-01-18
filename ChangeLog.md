@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.9.1
+
+- Corrected ProductCrudController for availableAt property (18/01/2026)
+
 ## v1.9
 
 - Replaced Vich\UploaderBundle\Mapping\Annotation by Vich\UploaderBundle\Mapping\Attribute (14/01/2026)
