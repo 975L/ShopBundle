@@ -33,7 +33,7 @@ class ProductRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder('p')
             ->andWhere('p.title LIKE :query')
-            ->andWhere('p.availableAt > :now OR p.availableAt IS NULL')
+            ->andWhere('p.availableAt < :now OR p.availableAt IS NULL')
             ->setParameter('now', new \DateTime())
             ->setParameter('query', '%' . $query . '%')
             ->orderBy('p.title', 'DESC')
@@ -54,7 +54,7 @@ class ProductRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->select('p, m')
             ->leftJoin('p.medias', 'm')
-            ->andWhere('p.availableAt > :now OR p.availableAt IS NULL')
+            ->andWhere('p.availableAt < :now OR p.availableAt IS NULL')
             ->setParameter('now', new \DateTime())
             ->orderBy('p.position', 'ASC')
             ->addOrderBy('m.position', 'ASC')
