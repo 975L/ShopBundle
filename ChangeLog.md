@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.9.5
+
+- Replaced linkToCrud by linkTo for EasyAdmin (17/03/2026)
+
 ## v1.9.4
 
 - Corrected product queries (21/01/2026)

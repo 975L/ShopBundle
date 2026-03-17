@@ -10,18 +10,24 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ShopBundle\Controller\Management\BasketCrudController;
+use c975L\ShopBundle\Controller\Management\CrowdfundingCrudController;
+use c975L\ShopBundle\Controller\Management\PaymentCrudController;
+use c975L\ShopBundle\Controller\Management\ProductCategoryCrudController;
+use c975L\ShopBundle\Controller\Management\ProductCrudController;
 use c975L\ShopBundle\Entity\Basket;
+use c975L\ShopBundle\Entity\Crowdfunding;
 use c975L\ShopBundle\Entity\Payment;
 use c975L\ShopBundle\Entity\Product;
-use c975L\ShopBundle\Entity\Crowdfunding;
 use c975L\ShopBundle\Entity\ProductCategory;
-use Symfony\Component\HttpFoundation\Response;
-use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
-use c975L\ConfigBundle\Service\ConfigServiceInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AdminDashboard(routePath: '/shop/management', routeName: 'shop_management')]
 #[IsGranted('ROLE_ADMIN')]
@@ -52,12 +58,11 @@ class ShopDashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('label.dashboard', 'fa fa-home')->setPermission('ROLE_ADMIN');
 
         yield MenuItem::section('label.management');
-        yield MenuItem::linkToCrud('label.categories', 'fas fa-shop', ProductCategory::class)->setPermission('ROLE_ADMIN');
-        yield MenuItem::linkToCrud('label.products', 'fas fa-shop', Product::class)->setPermission('ROLE_ADMIN');
-        yield MenuItem::linkToCrud('label.crowdfundings', 'fas fa-money-bill', Crowdfunding::class)->setPermission('ROLE_ADMIN');
-        yield MenuItem::linkToCrud('label.baskets', 'fas fa-basket-shopping', Basket::class)->setPermission('ROLE_ADMIN');
-        yield MenuItem::linkToCrud('label.payments', 'fas fa-money-bill-wave', Payment::class)->setPermission('ROLE_ADMIN');
-
+        yield MenuItem::linkTo(ProductCategoryCrudController::class, 'label.categories', 'fas fa-shop', ProductCategory::class)->setPermission('ROLE_ADMIN')->setAction(Crud::PAGE_INDEX);
+        yield MenuItem::linkTo(ProductCrudController::class, 'label.products', 'fas fa-shop', Product::class)->setPermission('ROLE_ADMIN')->setAction(Crud::PAGE_INDEX);
+        yield MenuItem::linkTo(CrowdfundingCrudController::class, 'label.crowdfundings', 'fas fa-money-bill', Crowdfunding::class)->setPermission('ROLE_ADMIN')->setAction(Crud::PAGE_INDEX);
+        yield MenuItem::linkTo(BasketCrudController::class, 'label.baskets', 'fas fa-basket-shopping', Basket::class)->setPermission('ROLE_ADMIN')->setAction(Crud::PAGE_INDEX);
+        yield MenuItem::linkTo(PaymentCrudController::class, 'label.payments', 'fas fa-money-bill-wave', Payment::class)->setPermission('ROLE_ADMIN')->setAction(Crud::PAGE_INDEX);
         yield MenuItem::section('label.links');
         yield MenuItem::linkToUrl('label.shop', 'fas fa-shop', $this->generateUrl('shop_index'));
         yield MenuItem::linkToUrl('label.crowdfundings', 'fas fa-money-bill', $this->generateUrl('crowdfunding_index'));
@@ -66,3 +71,6 @@ class ShopDashboardController extends AbstractDashboardController
         yield MenuItem::linkToLogout('label.signout', 'fa fa-exit');
     }
 }
+
+
+
