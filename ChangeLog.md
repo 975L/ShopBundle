@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.9.6
+
+- Added ProductSearch (19/03/2026)
+- Added spanish translations (19/03/2026)
+
 ## v1.9.5
 
 - Replaced linkToCrud by linkTo for EasyAdmin (17/03/2026)

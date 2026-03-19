@@ -799,6 +799,22 @@
                 <source>label.product_not_yet_available</source>
                 <target>This product is not yet available. It will be on:</target>
             </trans-unit>
+            <trans-unit id="200">
+                <source>label.search_products</source>
+                <target>Search products</target>
+            </trans-unit>
+            <trans-unit id="201">
+                <source>placeholder.search_products</source>
+                <target>Enter characters to search</target>
+            </trans-unit>
+            <trans-unit id="202">
+                <source>label.no_search_result</source>
+                <target>No results found for your search.</target>
+            </trans-unit>
+            <trans-unit id="203">
+                <source>label.search_products_title</source>
+                <target>Search for an article</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
