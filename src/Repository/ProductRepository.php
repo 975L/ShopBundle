@@ -32,7 +32,7 @@ class ProductRepository extends ServiceEntityRepository
         }
 
         return $this->createQueryBuilder('p')
-            ->andWhere('p.title LIKE :query')
+            ->andWhere('p.title LIKE :query OR p.description LIKE :query')
             ->andWhere('p.availableAt < :now OR p.availableAt IS NULL')
             ->setParameter('now', new \DateTime())
             ->setParameter('query', '%' . $query . '%')

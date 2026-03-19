@@ -1,0 +1,20 @@
+{# for the Live Component to work, there must be a single root element (e.g. a <div>) where the attributes are applied to #}
+<div {{ attributes }}>
+    <input
+        type="search"
+        data-model="query"
+        aria-label="{{ 'label.search_products'|trans({}, 'shop') }}"
+        placeholder="{{ 'placeholder.search_products'|trans({}, 'shop') }}"
+        class="img-500"
+    >
+
+    <p class="text text-center">&nbsp;</p>
+    <div class="flex-center flex-start">
+        {% set products = this.products %}
+        {% if products is not null and products is empty %}
+            <p class="text text-center">{{ 'label.no_search_result'|trans({}, 'shop') }}</p>
+        {% elseif products is not empty %}
+            <twig:c975LShop:Product:Products :products="products"/>
+        {% endif %}
+    </div>
+</div>
