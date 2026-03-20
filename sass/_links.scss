@@ -1,12 +1,8 @@
+/* LINKS */
 a,
 h1 a {
     text-decoration: none;
     color: var(--primary);
-}
-
-h1 a:active,
-a:hover h1 a:hover {
-    text-decoration: underline;
 }
 
 a,
@@ -14,5 +10,10 @@ a:visited,
 a:hover,
 a:visited:hover {
     color: var(--link-color);
+    text-decoration: underline;
+}
+
+h1 a:active,
+a:hover h1 a:hover {
     text-decoration: underline;
 }

@@ -5,9 +5,14 @@
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
-/* GENERAL */
+/* VARIABLLES */
 :root {
   --product-background-color: #fff;
+}
+
+/* GENERAL */
+div {
+  text-align: left;
 }
 
 .card-data {
@@ -374,10 +379,6 @@ body.has-basket-navbar {
 }
 
 /* PRODUCTS */
-div {
-  text-align: left;
-}
-
 .products {
   display: flex;
   flex-wrap: wrap;
@@ -592,6 +593,43 @@ a.product-link:hover {
   margin: 0 6px;
 }
 
+/* RECOMMENDATIONS */
+.recommendations {
+  margin: 1em auto;
+  padding: 5px;
+  background-color: var(--secondary);
+  border-radius: 10px;
+  max-width: 800px;
+  color: #000;
+}
+
+.recommendations h2 {
+  color: #000;
+}
+
+.recommendations a {
+  text-decoration: none;
+}
+
+.recommendations h3 {
+  margin-top: 0;
+  font-size: 1em;
+}
+
+.recommendation {
+  transition: all 0.3s ease;
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation:hover {
+  transform: scale(1.05);
+  transition: all 0.3s;
+}
+
 /* TYPOGRAPHY */
 .delete-link {
   color: rgb(86, 86, 86);
@@ -601,15 +639,6 @@ a.product-link:hover {
 
 .delete-link img {
   filter: invert(33%) sepia(0%) saturate(0%) hue-rotate(198deg) brightness(90%) contrast(79%);
-}
-
-/* GENERAL */
-:root {
-  --product-background-color: #fff;
-}
-
-.card-data {
-  text-align: center;
 }
 
 /* ANIMATIONS */

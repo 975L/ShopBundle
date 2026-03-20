@@ -176,6 +176,8 @@ Run this Command `php bin/console shop:baskets:delete` once a day to delete unva
 
 Run this Command `php bin/console shop:media:delete` once a day to remove physical ProdutItemMedia not deleted when the ProductItem is deleted (see TODO below)
 
+Run this Command `php bin/console shop:affinity:calculate` once a day to calculate product affinities
+
 For creating the sitemap, you can run `php bin/console shop:sitemaps:create` thath will give a `public/sitemap-shop.xml` that you can add to your `sitemap-index.xml` file or run the following:
 
 ```php

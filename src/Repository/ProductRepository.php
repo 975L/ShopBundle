@@ -93,6 +93,74 @@ class ProductRepository extends ServiceEntityRepository
     ;
     }
 
+    // Finds available products excluding certain IDs (used for recommendations to exclude products already in the basket)
+    public function findAvailableProductsExcluding(array $excludeIds = []): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p, c, i')
+            ->leftJoin('p.categories', 'c')
+            ->leftJoin('p.items', 'i')
+            ->andWhere('p.availableAt < :now OR p.availableAt IS NULL')
+            ->setParameter('now', new \DateTime())
+            ->orderBy('p.position', 'ASC');
+
+        if (!empty($excludeIds)) {
+            $qb->andWhere('p.id NOT IN (:excludeIds)')
+                ->setParameter('excludeIds', $excludeIds);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    // Find products by categories excluding certain product IDs (used for category-based recommendations)
+    public function findByCategoriesExcluding(array $categoryIds, array $excludeProductIds = []): array
+    {
+        if (empty($categoryIds)) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('p')
+            ->select('p, c, i')
+            ->leftJoin('p.categories', 'c')
+            ->leftJoin('p.items', 'i')
+            ->andWhere('c.id IN (:categoryIds)')
+            ->andWhere('p.availableAt < :now OR p.availableAt IS NULL')
+            ->setParameter('categoryIds', $categoryIds)
+            ->setParameter('now', new \DateTime())
+            ->orderBy('p.position', 'ASC');
+
+        if (!empty($excludeProductIds)) {
+            $qb->andWhere('p.id NOT IN (:excludeIds)')
+                ->setParameter('excludeIds', $excludeProductIds);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    // Find random products for default recommendations
+    public function findRandomProducts(int $limit = 4, array $excludeIds = []): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p, i')
+            ->leftJoin('p.items', 'i')
+            ->andWhere('p.availableAt < :now OR p.availableAt IS NULL')
+            ->setParameter('now', new \DateTime());
+
+        if (!empty($excludeIds)) {
+            $qb->andWhere('p.id NOT IN (:excludeIds)')
+                ->setParameter('excludeIds', $excludeIds);
+        }
+
+        // Utilise RAND() pour MySQL/MariaDB, RANDOM() pour PostgreSQL
+        $platform = $this->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
+        $randomFunction = ($platform === 'postgresql') ? 'RANDOM()' : 'RAND()';
+
+        return $qb->orderBy($randomFunction)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */

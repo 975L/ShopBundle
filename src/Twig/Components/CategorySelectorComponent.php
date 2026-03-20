@@ -36,7 +36,7 @@ class CategorySelectorComponent extends AbstractController
     ) {
     }
 
-    public function mount(array $categories = []): void
+    public function mount(): void
     {
         $this->categories = $this->productCategoryService->findAll();
     }

@@ -11,12 +11,13 @@
 namespace c975L\ShopBundle\Controller;
 
 use c975L\ShopBundle\Entity\Basket;
+use c975L\ShopBundle\Service\BasketServiceInterface;
+use c975L\ShopBundle\Service\ProductRecommendationServiceInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
-use c975L\ShopBundle\Service\BasketServiceInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * Main Controller class
@@ -26,7 +27,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class BasketController extends AbstractController
 {
     public function __construct(
-        private readonly BasketServiceInterface $basketService
+        private readonly BasketServiceInterface $basketService,
+        private readonly ProductRecommendationServiceInterface $recommendationService,
     ) {
     }
 
@@ -51,10 +53,17 @@ class BasketController extends AbstractController
     {
         $basket = $this->basketService->get();
 
+        $recommendations = [];
+
+        if ($basket && !empty($basket->getItems())) {
+            $recommendations = $this->recommendationService->getRecommendationsForBasket($basket, 4);
+        }
+
         //Renders the page
         return $this->render('@c975LShop/basket/display.html.twig', [
             'action' => 'display',
             'basket' => $basket,
+            'recommendations' => $recommendations,
         ]);
     }
 

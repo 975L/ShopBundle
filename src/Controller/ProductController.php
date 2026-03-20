@@ -11,16 +11,17 @@
 namespace c975L\ShopBundle\Controller;
 
 use c975L\ShopBundle\Entity\Product;
+use c975L\ShopBundle\Service\ProductRecommendationServiceInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use c975L\ShopBundle\Service\ProductServiceInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProductController extends AbstractController
 {
-    public function __construct(private readonly ProductServiceInterface $productService)
-    {
+    public function __construct(
+        private readonly ProductRecommendationServiceInterface $recommendationService,
+    ) {
     }
 
     // DISPLAY
@@ -35,11 +36,11 @@ class ProductController extends AbstractController
         Product $product
     ): Response
     {
-        return $this->render(
-            '@c975LShop/product/display.html.twig',
-            [
-                'product' => $product,
-            ]
-        )->setMaxAge(3600);
+        $similarProducts = $this->recommendationService->getSimilarProducts($product, 4);
+
+        return $this->render('@c975LShop/product/display.html.twig', [
+            'product' => $product,
+            'similarProducts' => $similarProducts,
+        ])->setMaxAge(3600);
     }
 }
