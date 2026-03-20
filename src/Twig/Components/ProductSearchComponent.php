@@ -11,15 +11,19 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
     name: 'c975LShop:ProductSearch',
     template: '@c975LShop/components/ProductSearch.html.twig'
 )]
-class ProductSearch
+class ProductSearchComponent
 {
     use DefaultActionTrait;
 
     #[LiveProp(writable: true)]
     public string $query = '';
 
-    public function __construct(private ProductServiceInterface $productService)
-    {
+    #[LiveProp]
+    public ?string $categorySlug = null;
+
+    public function __construct(
+        private ProductServiceInterface $productService
+    ) {
     }
 
     public function getProducts(): ?array
@@ -28,6 +32,6 @@ class ProductSearch
             return null;
         }
 
-        return $this->productService->search($this->query);
+        return $this->productService->search($this->query, $this->categorySlug);
     }
 }

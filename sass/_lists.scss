@@ -1,0 +1,38 @@
+/* LISTS */
+.circle-numbers {
+    counter-reset: item;
+    list-style-type: none;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 10px;
+    box-shadow: var(--box-shadow);
+}
+
+.circle-numbers li {
+    position: relative;
+    padding-left: 45px;
+    margin-bottom: 25px;
+    counter-increment: item;
+    display: flex;
+    align-items: center;
+}
+
+.circle-numbers li::before {
+    content: counter(item);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--primary, #007bff);
+    color: white;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.circle-numbers li.disabled::before {
+    background-color: grey;
+}

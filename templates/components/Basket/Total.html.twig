@@ -1,5 +1,5 @@
 {# <twig:c975LShop:Basket:Total item="{{ item }}" kind="simple|complex"/> #}
-<div>
+<div class="text-center big">
     {% if kind == "complex" %}
         Prix HT : {{ (total / 100 - totalVat)|format_currency(item.currency) }}<br>
         Taux TVA : {{ item.vat|format_currency(item.currency) }} %<br>

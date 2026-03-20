@@ -10,7 +10,6 @@
 
 namespace c975L\ShopBundle\Service;
 
-use \Doctrine\ORM\EntityManagerInterface;
 use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
 
@@ -18,7 +17,6 @@ class ProductCategoryService implements ProductCategoryServiceInterface
 {
     public function __construct(
         private readonly ProductCategoryRepository $productCategoryRepository,
-        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

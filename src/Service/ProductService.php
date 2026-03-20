@@ -53,9 +53,9 @@ class ProductService implements ProductServiceInterface
     }
 
     // Searches for product
-    public function search(string $query)
+    public function search(string $query, ?string $categorySlug = null)
     {
-        return $this->productRepository->search($query);
+        return $this->productRepository->search($query, $categorySlug);
     }
 
     // Saves the product

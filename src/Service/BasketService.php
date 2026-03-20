@@ -435,9 +435,6 @@ class BasketService implements BasketServiceInterface
     {
         // Removes values not needed in basket
         $itemData = $item->toArray();
-        if ('crowdfunding' !== $type) {
-            unset($itemData['description']);
-        }
         unset($itemData['product']);
         unset($itemData['creation']);
         unset($itemData['position']);

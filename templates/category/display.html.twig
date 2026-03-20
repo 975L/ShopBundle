@@ -9,8 +9,12 @@
     <div data-controller="basket">
         <twig:c975LShop:Shop:Shipping/>
         <twig:c975LShop:Shop:Information/>
+        <twig:c975LShop:Product:CategoriesSelect/>
+        <h3>{{ category.name }}</h3>
+        <twig:c975LShop:Product:Search categorySlug="{{ category.slug }}"/>
         <twig:c975LShop:Product:Products products="{{ category.products }}"/>
         <twig:c975LShop:Shop:NavbarBasket/>
         <twig:c975LShop:Basket:Message/>
+        <twig:c975LShop:Shop:ViewButton/>
     </div>
 {% endblock %}
