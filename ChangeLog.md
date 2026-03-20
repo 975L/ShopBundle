@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.10.2
+
+- Changed size for product/recommendation cards to have 2 aside in smartphone (20/03/2026)
+
 ## v1.10.1
 
 - Added alphabetical order for categories in ProductCrudController (20/03/2026)

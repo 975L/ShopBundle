@@ -5,7 +5,7 @@
 <a href="{{ url('product_display', {'slug': product.slug}) }}" class="product-link">
     <article class="product {{ class }}" id="product-{{ product.slug }}">
         {% set imageSrc = product.medias|first != false ? product.medias|first : "bundles/c975lshop/images/no-product-image.webp" %}
-        <twig:c975LSite:Image:Image src="{{ absolute_url(asset(imageSrc)) }}" class="img-shadow img-product" width="150" height="auto"/>
+        <twig:c975LSite:Image:Image src="{{ absolute_url(asset(imageSrc)) }}" class="img-shadow img-product" width="140" height="auto"/>
         <h2>{{ product.title }}</h2>
     </article>
 </a>

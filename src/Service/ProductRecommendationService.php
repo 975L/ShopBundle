@@ -15,7 +15,6 @@ use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Repository\ProductAffinityRepository;
 use c975L\ShopBundle\Repository\ProductItemRepository;
-use Dom\Document;
 
 class ProductRecommendationService implements ProductRecommendationServiceInterface
 {
