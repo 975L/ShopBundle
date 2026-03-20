@@ -1,0 +1,72 @@
+/* LOTTERY */
+#tickets div{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.ticket-number,
+.lottery-ticket {
+    font-family: monospace;
+    font-size: 20px;
+    font-weight: bold;
+    background: #f9f9f9;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: inline-block;
+    margin: 10px 0;
+    border: 1px dashed var(--primary);
+    box-shadow: var(--box-shadow);
+}
+
+.lottery-ticket {
+    position: absolute;
+    transition: all 0.5s;
+    opacity: 0;
+}
+
+.ticket-number.not-drawn {
+    background-color: lightgrey;
+}
+
+.ticket-number.winner {
+    background-color: gold;
+}
+
+.lottery-drum {
+    background:
+        repeating-conic-gradient(
+            from 0deg,
+            rgba(255, 255, 255, 0.8) 0deg,
+            rgba(255, 255, 255, 0.2) 20deg,
+            rgba(255, 255, 255, 0.8) 30deg
+        ),
+        radial-gradient(circle, white 0%, var(--primary) 70%, var(--primary-dark, #0056b3) 100%);
+    border-radius: 50%;
+    width: 350px;
+    height: 350px;
+    margin: 1em auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 0 15px rgba(0,0,0,0.2),
+        inset 0 0 40px rgba(255,255,255,0.6);
+    overflow: hidden;
+    transition: transform 0.3s;
+    border: 8px solid rgba(255,255,255,0.8);
+}
+
+.lottery-drum.spinning {
+    animation-name: spin;
+    animation-timing-function: cubic-bezier(0.1, 0.7, 0.5, 1);
+    animation-fill-mode: forwards;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(540deg); }
+    100% { transform: rotate(1080deg); }
+}

@@ -1,0 +1,20 @@
+{% if categories is not empty %}
+    <section class="categories" id="categories">
+        <h2>{{ 'label.categories'|trans({}, 'shop') }}</h2>
+        <div {{ attributes }} class="flex-center">
+            <select
+                class="category-select"
+                data-model="on(change)|selectedCategory"
+                data-action="live#action"
+                data-live-action-param="changeCategory"
+            >
+                <option value="">{{ 'label.select_category'|trans({}, 'shop') }}</option>
+                <option value="all" {% if not selectedCategory or selectedCategory == 'all' %}selected{% endif %}>{{ 'label.shop'|trans({}, 'shop') }}</option>
+                <option disabled>──────────</option>
+                {% for category in categories %}
+                    <option value="{{ category.slug }}" {% if category.slug == selectedCategory %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </section>
+{% endif %}

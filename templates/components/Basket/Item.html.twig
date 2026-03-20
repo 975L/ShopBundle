@@ -9,6 +9,7 @@
     </td>
     {# Price and Quantity #}
     <td>
+        <p>{{ (item.item.description|striptags|slice(0, 50)) ~ (item.item.description|striptags|length > 50 ? '...' : '') }}</p>
         <twig:c975LShop:Basket:Price item="{{ item.item }}" type="{{ type }}"/>
         <twig:c975LShop:Item:Type item="{{ item }}"/>
         <twig:c975LShop:Item:LimitedQuantity limitedQuantity="{{ item.item.limitedQuantity }}"/>

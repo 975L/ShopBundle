@@ -35,7 +35,7 @@ class ProductCategory
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category')]
+    #[ORM\ManyToMany(targetEntity: Product::class, mappedBy: 'categories')]
     private Collection $products;
 
     public function __construct()
@@ -101,7 +101,7 @@ class ProductCategory
     {
         if (!$this->products->contains($product)) {
             $this->products->add($product);
-            $product->setCategory($this);
+            $product->addCategory($this);
         }
 
         return $this;
@@ -110,10 +110,7 @@ class ProductCategory
     public function removeProduct(Product $product): static
     {
         if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getCategory() === $this) {
-                $product->setCategory(null);
-            }
+            $product->removeCategory($this);
         }
 
         return $this;

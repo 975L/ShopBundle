@@ -814,6 +814,10 @@
                 <source>label.search_products_title</source>
                 <target>Búsqueda de un artículo</target>
             </trans-unit>
+            <trans-unit id="204">
+                <source>label.select_category</source>
+                <target>Seleccionar una categoría</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

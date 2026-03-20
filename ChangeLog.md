@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.10
+
+- Added description to basket (20/03/2026)
+- Changed style for Basket add/remove buttons (20/03/2026)
+- Added categories select in shop (20/03/2026)
+- Added category information and shop button to category display (20/03/2026)
+- Renamed ProductSearch to ProductSearchComponent (20/03/2026)
+- Conversion de ProductCategory to ManyToMany (20/03/2026) **Needs db migration** see [UPGRADE.md](UPGRADE.md)
+- Split css in multiple files (20/03/2026)
+
 ## v1.9.6
 
 - Added ProductSearch (19/03/2026)

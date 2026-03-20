@@ -48,8 +48,8 @@ class ProductCrudController extends AbstractCrudController
             SlugField::new('slug')
                 ->setTargetFieldName('title')
                 ->hideOnIndex(),
-            AssociationField::new('category')
-                ->setLabel('label.category')
+            AssociationField::new('categories')
+                ->setLabel('label.categories')
                 ->setRequired(false),
             IntegerField::new('position')
                 ->setLabel('label.position')

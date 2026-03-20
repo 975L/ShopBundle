@@ -1,2 +1,2 @@
 <h3>{{ 'label.search_products_title'|trans({}, 'shop') }}</h3>
-{{ component('c975LShop:ProductSearch') }}
+{{ component('c975LShop:ProductSearch', { categorySlug: categorySlug|default(null) }) }}

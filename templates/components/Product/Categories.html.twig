@@ -1,0 +1,9 @@
+{% if categories is not empty %}
+    <h2 id="category">{{ 'label.categories'|trans({}, 'shop') }}</h2>
+    <div class="flex-center categories">
+        {% for category in categories %}
+            <p><a href="{{ path('category_display', {'slug': category.slug}) }}" class="btn btn-small white">{{ category.name }}</a></p>
+            {# <twig:c975LSite:Button:Button type="small" label="{{ category }}" url="{{ path('category_display', {'slug': category.slug}) }}" /> #}
+        {% endfor %}
+    </div>
+{% endif %}

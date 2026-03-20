@@ -63,14 +63,15 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: ProductCategory::class, inversedBy: 'products')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?ProductCategory $category = null;
+    #[ORM\ManyToMany(targetEntity: ProductCategory::class, inversedBy: 'products')]
+    #[ORM\JoinTable(name: 'shop_product_category_link')]
+    private Collection $categories;
 
     public function __construct()
     {
         $this->items = new ArrayCollection();
         $this->medias = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -240,14 +241,26 @@ class Product
         return $this;
     }
 
-    public function getCategory(): ?ProductCategory
+    /**
+     * @return Collection<int, ProductCategory>
+     */
+    public function getCategories(): Collection
     {
-        return $this->category;
+        return $this->categories;
     }
 
-    public function setCategory(?ProductCategory $category): static
+    public function addCategory(ProductCategory $category): static
     {
-        $this->category = $category;
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(ProductCategory $category): static
+    {
+        $this->categories->removeElement($category);
 
         return $this;
     }

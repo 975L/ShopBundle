@@ -1,0 +1,10 @@
+/* TYPOGRAPHY */
+.delete-link {
+    color: rgb(86, 86, 86);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.delete-link img {
+    filter: invert(33%) sepia(0%) saturate(0%) hue-rotate(198deg) brightness(90%) contrast(79%);
+}

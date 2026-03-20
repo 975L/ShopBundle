@@ -19,24 +19,36 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ProductRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly ProductCategoryRepository $categoryRepository
+    ) {
         parent::__construct($registry, Product::class);
     }
 
     // Finds products based on search
-    public function search(string $query): array
+    public function search(string $query, ?string $categorySlug = null): array
     {
         if (empty($query)) {
             return [];
         }
 
-        return $this->createQueryBuilder('p')
+        $qb = $this->createQueryBuilder('p')
             ->andWhere('p.title LIKE :query OR p.description LIKE :query')
             ->andWhere('p.availableAt < :now OR p.availableAt IS NULL')
             ->setParameter('now', new \DateTime())
-            ->setParameter('query', '%' . $query . '%')
-            ->orderBy('p.title', 'DESC')
+            ->setParameter('query', '%' . $query . '%');
+
+        if ($categorySlug) {
+            $category = $this->categoryRepository->findOneBySlug($categorySlug);
+            if ($category) {
+                $qb->join('p.categories', 'c')
+                    ->andWhere('c = :category')
+                    ->setParameter('category', $category);
+            }
+        }
+
+        return $qb->orderBy('p.title', 'DESC')
             ->getQuery()
             ->getResult()
         ;

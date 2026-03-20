@@ -1,0 +1,131 @@
+/* PRODUCTS */
+div {
+    text-align: left;
+}
+
+.products {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+}
+
+.products a {
+    margin: 5px 0;
+}
+
+.product {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 5px;
+    padding: 10px;
+    width: 150px;
+    text-align: center;
+    border-radius: 5px;
+    background-color: var(--product-background-color);
+    box-shadow: var(--box-shadow);
+}
+
+article.product {
+    height: 100%;
+    width: 175px;
+    display: flex;
+    flex-direction: column;
+}
+
+.product:hover {
+    transform: scale(1.05);
+    transition: all 0.3s;
+}
+
+.product h2 {
+    margin-top: 0;
+    font-size: 1em;
+}
+
+a.product-link {
+    text-decoration: none;
+}
+
+a.product-link:hover {
+    text-decoration: none;
+}
+
+.product form {
+    width: auto;
+}
+
+.price {
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9em;
+    margin: 0 auto 0.5em auto;
+    font-family: var(--font-family-body);
+}
+
+.product-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0;
+}
+
+.product-item .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.product-item .card-body div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-item .card-body .limited-quantity {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin: 10px auto;
+}
+
+.product-item .card-body .limited-quantity p {
+    margin: 0 auto;
+}
+
+.product-item .card-img {
+    max-width: 100px;
+    position: relative;
+}
+
+.product-item .icon-wrapper {
+    background: #fff;
+    width: 40px;
+    height: 40px;
+    z-index: 10;
+    border-radius: 4px;
+    position: absolute;
+    right: -10px;
+    bottom: 10px;
+    border: 3px solid var(--primary);
+    padding: 6px;
+    box-shadow: var(--box-shadow);
+}
+
+.product-item button:hover,
+.product-item .card-img img:hover {
+    transform: scale(1.05);
+    transition: all 0.3s;
+}
+
+.product-item .card-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 100%;
+    margin: 10px;
+}
