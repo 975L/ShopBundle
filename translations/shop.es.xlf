@@ -818,6 +818,10 @@
                 <source>label.select_category</source>
                 <target>Seleccionar una categoría</target>
             </trans-unit>
+            <trans-unit id="205">
+                <source>label.you_might_also_like</source>
+                <target>También te puede gustar</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

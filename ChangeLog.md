@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.10.1
+
+- Added alphabetical order for categories in ProductCrudController (20/03/2026)
+- Added recommended products on basket and product pages (20/03/2026)
+
 ## v1.10
 
 - Added description to basket (20/03/2026)
@@ -27,7 +32,7 @@
 
 - Corrected missing ? in setter (18/01/2026)
 
-## v1.9.2
+## v1.9.2
 
 - Corrected query for product (18/01/2026)
 

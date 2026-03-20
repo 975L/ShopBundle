@@ -14,6 +14,7 @@
                 <twig:c975LShop:Basket:Display basket="{{ basket }}" readonly="false"/>
                 <twig:c975LShop:Basket:Message/>
                 <twig:c975LShop:Basket:Buttons basket="{{ basket }}"/>
+                <twig:c975LShop:Product:Recommendations recommendations="{{ recommendations }}"/>
             </div>
         {% elseif "validate" == action %}
             <div data-controller="basket" id="basket-page">

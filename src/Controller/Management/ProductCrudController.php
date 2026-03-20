@@ -50,7 +50,10 @@ class ProductCrudController extends AbstractCrudController
                 ->hideOnIndex(),
             AssociationField::new('categories')
                 ->setLabel('label.categories')
-                ->setRequired(false),
+                ->setRequired(false)
+                ->setQueryBuilder(
+                    fn ($queryBuilder) => $queryBuilder->orderBy('entity.name', 'ASC')
+                ),
             IntegerField::new('position')
                 ->setLabel('label.position')
                 ->setRequired(false),

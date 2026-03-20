@@ -1,0 +1,36 @@
+/* RECOMMENDATIONS */
+.recommendations {
+    margin: 1em auto;
+    padding: 5px;
+    background-color: var(--secondary);
+    border-radius: 10px;
+    max-width: 800px;
+    color: #000;
+}
+
+.recommendations h2 {
+    color: #000;
+}
+
+.recommendations a {
+    text-decoration: none;
+}
+
+.recommendations h3 {
+    margin-top: 0;
+    font-size: 1em;
+}
+
+.recommendation {
+    transition: all 0.3s ease;
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation:hover {
+    transform: scale(1.05);
+    transition: all 0.3s;
+}

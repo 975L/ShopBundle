@@ -1,0 +1,10 @@
+{% if recommendations is defined and recommendations is not empty %}
+    <section class="recommendations" id="recommendations">
+        <h2>{{ 'label.you_might_also_like'|trans({}, 'shop') }}</h2>
+        <div class="cards recommendations">
+            {% for recommendation in recommendations %}
+                <twig:c975LShop:Product:Recommendation recommendation="{{ recommendation }}"/>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
