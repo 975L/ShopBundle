@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.10.3
+
+- Corrected findRandomProducts() (20/03/2026)
+
 ## v1.10.2
 
 - Changed size for product/recommendation cards to have 2 aside in smartphone (20/03/2026)

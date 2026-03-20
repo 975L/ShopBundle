@@ -151,14 +151,12 @@ class ProductRepository extends ServiceEntityRepository
                 ->setParameter('excludeIds', $excludeIds);
         }
 
-        // Utilise RAND() pour MySQL/MariaDB, RANDOM() pour PostgreSQL
-        $platform = $this->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
-        $randomFunction = ($platform === 'postgresql') ? 'RANDOM()' : 'RAND()';
+        $products = $qb->getQuery()->getResult();
 
-        return $qb->orderBy($randomFunction)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+        // Shuffle products in PHP for random selection
+        shuffle($products);
+
+        return array_slice($products, 0, $limit);
     }
 
     //    /**
