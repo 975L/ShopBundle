@@ -1,4 +1,13 @@
 /* CROWDFUNDING */
+.crowdfundings {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+}
+
 .crowdfunding {
     display: flex;
     flex-direction: column;
@@ -15,6 +24,11 @@
 
 .crowdfunding h2.card-header {
     margin: 0 auto;
+}
+
+.crowdfunding h3 {
+    margin-top: 0;
+    font-size: 1em;
 }
 
 .crowdfunding section {

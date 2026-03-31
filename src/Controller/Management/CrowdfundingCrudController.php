@@ -54,7 +54,7 @@ class CrowdfundingCrudController extends AbstractCrudController
                 ->setStoredAsCents(true),
             TextField::new('currency')
                 ->setLabel('label.currency'),
-             MoneyField::new('amountAchieved')
+            MoneyField::new('amountAchieved')
                 ->setLabel('label.amount_achieved')
                 ->setCurrency('EUR')
                 ->setStoredAsCents(true)

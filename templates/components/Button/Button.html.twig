@@ -1,17 +1,15 @@
-{# <twig:c975LShop:Button:Button [type="primary"] label="Label" url="{{ path('your_route') }}" [icon="bundles/c975lshop/images/people-group.svg"] [target=""] [inline="false"]/> #}
-{% set type = type | default('primary') %}
-{% set target = target | default('') %}
+{# <twig:c975LShop:Button:Button [type="primary"] label="Label" url="{{ path("your_route") }}" [icon="bundles/c975lshop/images/people-group.svg"] [target=""] [inline="false"]/> #}
+{% set type = type | default("primary") %}
 {% set inline = inline | default(false) %}
-{% set icon = icon | default('bundles/c975lshop/images/people-group.svg') %}
+{% set icon = icon | default("bundles/c975lshop/images/people-group.svg") %}
 {% if inline == false %}
     <p class="text-center">
 {% endif %}
-    <a href="{{ url }}" target="{{ target }}" role="button">
-        <button class="btn btn-{{ type }}">
-            <twig:c975LSite:Image:Icon src="{{ asset(icon) }}" width="48" height="48" class="white icon-big animation bounce-horizontal"/>
-            <br>
-            {{ label|raw }}
-        </button></a>
+    <a href="{{ url }}" {% if target is defined and target != "" %}target="{{ target }}" {% endif %} role="button" class="btn btn-{{ type }}">
+        <twig:c975LSite:Image:Icon src="{{ asset(icon) }}" width="48" height="48" class="white icon-big animation bounce-horizontal"/>
+        <br>
+        {{ label|raw }}
+    </a>
 {% if inline == false %}
     </p>
 {% endif %}
