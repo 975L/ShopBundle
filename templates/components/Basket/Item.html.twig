@@ -5,7 +5,7 @@
         {% set imageSrc = item.item.media != null ? item.item.media : "bundles/c975lshop/images/no-product-image.webp" %}
         {% set imageSrc = item.parent.image != false ? item.parent.image : imageSrc %}
         {% set urlItem = item.type ~ "_display"%}
-        <twig:c975LSite:Image:Link src="{{ asset(imageSrc) }}" url="{{ url(urlItem, {'slug': item.parent.slug}) }}#{{ item.item.slug }}" label="{{ item.parent.title }} ({{ item.item.title }})" class="img-shadow img-product" width="100" height="auto"/>
+        <twig:c975LSite:Image:Link src="{{ asset(imageSrc) }}" url="{{ url(urlItem, {'slug': item.parent.slug}) }}#{{ item.item.slug }}" label="{{ item.parent.title }} ({{ item.item.title }})" class="img-shadow img-product" width="100"/>
     </td>
     {# Price and Quantity #}
     <td>

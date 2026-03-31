@@ -4,7 +4,7 @@
         {% set imageSrc = counterpart.item.media != null ? counterpart.item.media : "bundles/c975lshop/images/no-product-image.webp" %}
         {% set imageSrc = counterpart.parent.image != false ? counterpart.parent.image : imageSrc %}
         {% set urlItem = counterpart.type ~ "_display"%}
-        <twig:c975LSite:Image:Link src="{{ asset(imageSrc) }}" url="{{ url(urlItem, {'slug': counterpart.parent.slug}) }}#{{ counterpart.item.slug }}" label="{{ counterpart.parent.title }} ({{ counterpart.item.title }})" class="img-shadow img-product" width="100" height="auto"/>
+        <twig:c975LSite:Image:Link src="{{ asset(imageSrc) }}" url="{{ url(urlItem, {'slug': counterpart.parent.slug}) }}#{{ counterpart.item.slug }}" label="{{ counterpart.parent.title }} ({{ counterpart.item.title }})" class="img-shadow img-product" width="100"/>
     </td>
     <td>
         {{ 'label.expected_delivery'|trans({}, 'shop') }}

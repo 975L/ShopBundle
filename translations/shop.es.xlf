@@ -822,6 +822,10 @@
                 <source>label.you_might_also_like</source>
                 <target>También te puede gustar</target>
             </trans-unit>
+            <trans-unit id="206">
+                <source>label.our_crowdfundings</source>
+                <target>Nuestros financiamientos colectivos</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

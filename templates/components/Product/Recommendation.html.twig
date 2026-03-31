@@ -1,7 +1,7 @@
 <a href="{{ url('product_display', {'slug': recommendation.slug}) }}" class="recommendation-link">
     <article class="product" id="recommendation-{{ recommendation.slug }}">
         {% set imageSrc = recommendation.medias|first != false ? recommendation.medias|first : "bundles/c975lshop/images/no-recommendation-image.webp" %}
-        <twig:c975LSite:Image:Image src="{{ absolute_url(asset(imageSrc)) }}" class="img-shadow img-recommendation" width="125" height="auto"/>
+        <twig:c975LSite:Image:Image src="{{ absolute_url(asset(imageSrc)) }}" class="img-shadow img-recommendation" width="125"/>
         <h3>{{ recommendation.title }}</h3>
     </article>
 </a>

@@ -6,13 +6,11 @@
 {% if inline == false %}
     <p class="text-center" id="basket-button">
 {% endif %}
-    <a href="{{ path('basket_display') }}" role="button">
-        <button class="btn btn-{{ type }}">
-            {% if icon == "true" %}
-                <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/eye.svg" width="24" height="24" class="{{ class }}"/>
-            {% endif %}
-            {{ 'label.basket'|trans({}, 'shop') }} : <span data-basket-target="total"></span> (<twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24"/> <span data-basket-target="quantity"></span>)
-        </button>
+    <a href="{{ path('basket_display') }}" role="button" class="btn btn-{{ type }}">
+        {% if icon == "true" %}
+            <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/eye.svg" width="24" height="24" class="{{ class }}"/>
+        {% endif %}
+        {{ 'label.basket'|trans({}, 'shop') }} : <span data-basket-target="total"></span> (<twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24"/> <span data-basket-target="quantity"></span>)
     </a>
 {% if inline == false %}
     </p>

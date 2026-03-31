@@ -161,6 +161,15 @@ div {
   }
 }
 /* CROWDFUNDING */
+.crowdfundings {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+}
+
 .crowdfunding {
   display: flex;
   flex-direction: column;
@@ -177,6 +186,11 @@ div {
 
 .crowdfunding h2.card-header {
   margin: 0 auto;
+}
+
+.crowdfunding h3 {
+  margin-top: 0;
+  font-size: 1em;
 }
 
 .crowdfunding section {
@@ -381,6 +395,7 @@ body.has-basket-navbar {
 /* PRODUCTS */
 .products {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
   justify-content: center;
@@ -404,8 +419,7 @@ body.has-basket-navbar {
 }
 
 article.product {
-  height: 100%;
-  width: 160px;
+  width: 170px;
   display: flex;
   flex-direction: column;
 }
@@ -415,7 +429,7 @@ article.product {
   transition: all 0.3s;
 }
 
-.product h2 {
+.product h3 {
   margin-top: 0;
   font-size: 1em;
 }

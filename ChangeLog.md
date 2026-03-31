@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.11
+
+- Removed height="auto" in Components calls (31/03/2026)
+- Added title for sections (31/03/2026)
+
 ## v1.10.3
 
 - Corrected findRandomProducts() (20/03/2026)

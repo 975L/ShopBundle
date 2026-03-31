@@ -1,8 +1,11 @@
-<section class="crowdfundings" id="crowdfundings">
+<section id="crowdfundings">
     {% if crowdfundings is not empty %}
-        {% for crowdfunding in crowdfundings %}
-            <twig:c975LShop:Crowdfunding:Crowdfunding crowdfunding="{{ crowdfunding }}"/>
-        {% endfor %}
+        <h2>{{ 'label.our_crowdfundings'|trans({}, 'shop') }}</h2>
+        <div class="crowdfundings">
+            {% for crowdfunding in crowdfundings %}
+                <twig:c975LShop:Crowdfunding:Crowdfunding crowdfunding="{{ crowdfunding }}"/>
+            {% endfor %}
+        </div>
     {% else %}
         <p class="text text-center lead">{{ 'label.no_crowdfunding'|trans({}, 'shop') }}</p>
     {% endif %}
