@@ -1,10 +1,12 @@
 import translationsEn from "./translations.en.js";
 import translationsFr from "./translations.fr.js";
+import translationsEs from "./translations.es.js";
 
 export default {
     translations: {
         "en": translationsEn,
-        "fr": translationsFr
+        "fr": translationsFr,
+        "es": translationsEs
     },
 
     // Gets the language from the HTML document or browser
