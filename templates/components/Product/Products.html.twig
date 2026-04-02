@@ -1,6 +1,6 @@
 <section id="products">
     {% if products is not empty %}
-        <h2>{{ 'label.our_items'|trans({}, 'shop') }}</h2>
+        <h2>{{ 'label.all_our_items'|trans({}, 'shop') }}</h2>
         <div class="products">
             {% for product in products %}
                 <twig:c975LShop:Product:Product product="{{ product }}"/>
