@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.11.1.1
+
+- Corrected missing translation (02/04/2026)
+
 ## v1.11.1
 
 - Added javascript translations for javascript (02/04/2026)
