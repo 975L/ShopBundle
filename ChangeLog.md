@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.11.1.2
+
+- Added javascript copyrights (16/05/2026)
+
 ## v1.11.1.1
 
 - Corrected missing translation (02/04/2026)
