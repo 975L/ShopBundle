@@ -136,8 +136,8 @@ class CoordinatesType extends AbstractType
                 'required' => true,
                 'mapped' => false
                 ])
-                // Terms of sales
-                ->add('cgv', CheckboxType::class, [
+            // Terms of sales
+            ->add('cgv', CheckboxType::class, [
                 'label' => $options['config']['tosUrl'],
                 'label_html' => true,
                 'required' => true,

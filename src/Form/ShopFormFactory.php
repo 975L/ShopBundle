@@ -11,7 +11,6 @@
 namespace c975L\ShopBundle\Form;
 
 use Symfony\Component\Form\Form;
-use c975L\ShopBundle\Entity\Basket;
 use c975L\ShopBundle\Form\CoordinatesType;
 use c975L\ShopBundle\Form\CrowdfundingNewsType;
 use Symfony\Component\Form\FormFactoryInterface;
