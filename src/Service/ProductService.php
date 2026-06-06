@@ -41,7 +41,7 @@ class ProductService implements ProductServiceInterface
     {
         return $this->paginator->paginate(
             $this->findAllSorted(),
-            $query->getInt('p', 1),
+            (int) $query->get('p', 1) > 0 ? (int) $query->get('p') : 1,
             9
         );
     }

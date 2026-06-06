@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.11.2
+
+- Corrected problem on invalid pagination parameter p value (06/06/2026)
+
 ## v1.11.1.2
 
 - Added javascript copyrights (16/05/2026)

@@ -26,8 +26,8 @@ class ShopService implements ShopServiceInterface
     {
         return $this->paginator->paginate(
             $this->productRepository->findAllSorted(),
-            $query->getInt('p', 1),
-            $query->getInt('s', 12),
+            (int) $query->get('p', 1) > 0 ? (int) $query->get('p') : 1,
+            12
         );
     }
 }
