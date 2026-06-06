@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.11.3
+
+- Corrected error for pagination parameter null value (06/06/2026)
+
 ## v1.11.2
 
 - Corrected problem on invalid pagination parameter p value (06/06/2026)
