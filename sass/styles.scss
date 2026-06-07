@@ -5,18 +5,17 @@
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
-@import '_variables.scss';
-@import '_general.scss';
-@import '_typography.scss';
-@import '_alerts.scss';
-@import '_components.scss';
-@import '_lists.scss';
-@import '_lottery.scss';
-@import '_crowdfunding.scss';
-@import '_basket.scss';
-@import '_products.scss';
-@import '_categories.scss';
-@import '_quantity.scss';
-@import '_recommendations.scss';
-@import '_typography.scss';
-@import '_animations.scss';
+@use '_variables.scss';
+@use '_general.scss';
+@use '_typography.scss';
+@use '_alerts.scss';
+@use '_components.scss';
+@use '_lists.scss';
+@use '_lottery.scss';
+@use '_crowdfunding.scss';
+@use '_basket.scss';
+@use '_products.scss';
+@use '_categories.scss';
+@use '_quantity.scss';
+@use '_recommendations.scss';
+@use '_animations.scss';

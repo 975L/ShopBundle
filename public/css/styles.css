@@ -406,12 +406,9 @@ body.has-basket-navbar {
 }
 
 .product {
-  display: flex;
-  flex-direction: column;
   justify-content: space-between;
   margin: 5px;
   padding: 10px;
-  width: 150px;
   text-align: center;
   border-radius: 5px;
   background-color: var(--product-background-color);
@@ -420,6 +417,7 @@ body.has-basket-navbar {
 
 article.product {
   width: 170px;
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -642,17 +640,6 @@ a.product-link:hover {
 .recommendation:hover {
   transform: scale(1.05);
   transition: all 0.3s;
-}
-
-/* TYPOGRAPHY */
-.delete-link {
-  color: rgb(86, 86, 86);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.delete-link img {
-  filter: invert(33%) sepia(0%) saturate(0%) hue-rotate(198deg) brightness(90%) contrast(79%);
 }
 
 /* ANIMATIONS */
