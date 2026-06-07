@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.11.4
+
+- Made the whole product card a link (07/06/2026)
+- Added automatic slider display (07/06/2026)
+
 ## v1.11.3
 
 - Corrected error for pagination parameter null value (06/06/2026)
