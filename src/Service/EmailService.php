@@ -30,20 +30,20 @@ class EmailService implements EmailServiceInterface
         private readonly Environment $twig,
 
     ) {
-        $this->subjectPrefix = $this->translator->trans('label.shop', [], 'shop') . ' ' . $this->configService->getParameter('c975LShop.name') . ' - ';
+        $this->subjectPrefix = $this->translator->trans('label.shop', [], 'shop') . ' ' . $this->configService->get('shop-name') . ' - ';
     }
 
     // Retrieves the email configuration
     public function getConfig(): array
     {
         return [
-            'name' => $this->configService->getParameter('c975LShop.name'),
-            'from' => $this->configService->getParameter('c975LShop.from'),
-            'fromName' => $this->configService->hasParameter('c975LShop.fromName') ? $this->configService->getParameter('c975LShop.fromName') : '',
-            'replyTo' => $this->configService->getParameter('c975LShop.replyTo'),
-            'replyToName' => $this->configService->hasParameter('c975LShop.replyToName') ? $this->configService->getParameter('c975LShop.replyToName') : '',
-            'bcc' => $this->configService->getParameter('c975LShop.replyTo'),
-            'bccName' => $this->configService->hasParameter('c975LShop.replyToName') ? $this->configService->getParameter('c975LShop.replyToName') : '',
+            'name' => $this->configService->get('shop-name'),
+            'from' => $this->configService->get('shop-email-from'),
+            'fromName' => $this->configService->has('shop-email-from-name') ? $this->configService->get('shop-email-from-name') : '',
+            'replyTo' => $this->configService->get('shop-email-reply-to'),
+            'replyToName' => $this->configService->has('shop-email-reply-to-name') ? $this->configService->get('shop-email-reply-to-name') : '',
+            'bcc' => $this->configService->get('shop-email-bcc'),
+            'bccName' => $this->configService->has('shop-email-bcc-name') ? $this->configService->get('shop-email-bcc-name') : '',
         ];
     }
 
@@ -63,7 +63,7 @@ class EmailService implements EmailServiceInterface
     // Sends the email
     public function send($email)
     {
-        // for debug: echo $this->twig->render($email->getHtmlTemplate(), ['form' => $email->getContext()]); dd();
+        // echo $this->twig->render($email->getHtmlTemplate(), ['form' => $email->getContext()]); dd(); // For debug
         $this->mailer->send($email);
     }
 
@@ -164,7 +164,7 @@ class EmailService implements EmailServiceInterface
     public function stripeErrorMessage(Basket $basket, array $context): void
     {
         $email = $this->create();
-        $email->to(new Address($this->configService->getParameter('c975LShop.replyTo')));
+        $email->to(new Address($this->configService->get('shop-email-reply-to')));
         $email->subject($this->subjectPrefix . 'Stripe Error !');
         $email->htmlTemplate('@c975LShop/emails/stripe_error.html.twig');
         $email->context([

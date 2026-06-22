@@ -13,9 +13,15 @@ First, launch `composer require c975l/shop-bundle` to install the bundle.
 Create database tables : `php bin/console make:migration` and `php bin/console doctrine:migrations:migrate`.
 
 Create folders `public/medias/`, `public/downloads/` and `private` at your root level and add them to your `.gitignore` file.
+
+### Load config values
+
+This bundles relies on [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) to manage its configuration values. So, you have to install it and then load the default data using `php bin/console c975l:config:load 'vendor/c975l/shop-bundle/config/configs.json'` to add data in the database, then use the dashboard route of ConfigBundle to set values for the keys.
+
 ## Upgrading
 
 When upgrading between major versions, please refer to the [UPGRADE.md](UPGRADE.md) guide for detailed migration instructions and breaking changes.
+
 ## Configuration
 
 The bundle relies on the use of `App\Entity\User`. If you haven't, create it with `php bin/console make:user`. Then add one and give it `ROLE_ADMIN`. You can use `php bin/console security:hash-password` to hash the password.

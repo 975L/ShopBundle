@@ -17,7 +17,7 @@
         <p class="ticket-number {{ class }}" data-lottery-target="winnerNumber">{{ number }}</p>
         <p data-lottery-target="winnerName">{{ name|raw }}</p>
         {# Draw #}
-        {% if prize.lottery.tickets is not empty and false == winner and is_granted('ROLE_ADMIN') %}
+        {% if prize.lottery.tickets is not empty and false == winner and is_granted(config('site-role-needed')) %}
             {% set disabled = "" %}
             {% if date() < prize.lottery.drawDate %}
                 {% set disabled = "disabled" %}

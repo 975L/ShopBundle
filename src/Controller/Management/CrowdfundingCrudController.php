@@ -10,29 +10,36 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
-use c975L\ShopBundle\Form\LotteryType;
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ShopBundle\Entity\Crowdfunding;
+use c975L\ShopBundle\Form\CrowdfundingCounterpartType;
 use c975L\ShopBundle\Form\CrowdfundingMediaType;
 use c975L\ShopBundle\Form\CrowdfundingVideoType;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use c975L\ShopBundle\Form\LotteryType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use c975L\ShopBundle\Form\CrowdfundingCounterpartType;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[IsGranted('ROLE_ADMIN')]
 class CrowdfundingCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly ConfigServiceInterface $configService,
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Crowdfunding::class;
@@ -44,45 +51,45 @@ class CrowdfundingCrudController extends AbstractCrudController
             IdField::new('id')
                 ->setFormTypeOption('disabled', 'disabled'),
             TextField::new('title')
-                ->setLabel('label.title'),
+                ->setLabel(new TranslatableMessage('label.title', [], 'shop')),
             SlugField::new('slug')
                 ->setTargetFieldName('title')
                 ->hideOnIndex(),
             MoneyField::new('amountGoal')
-                ->setLabel('label.goal')
+                ->setLabel(new TranslatableMessage('label.goal', [], 'shop'))
                 ->setCurrency('EUR')
                 ->setStoredAsCents(true),
             TextField::new('currency')
-                ->setLabel('label.currency'),
+                ->setLabel(new TranslatableMessage('label.currency', [], 'shop')),
             MoneyField::new('amountAchieved')
-                ->setLabel('label.amount_achieved')
+                ->setLabel(new TranslatableMessage('label.amount_achieved', [], 'shop'))
                 ->setCurrency('EUR')
                 ->setStoredAsCents(true)
                 ->hideOnForm(),
             DateField::new('beginDate')
-                ->setLabel('label.begin_date'),
+                ->setLabel(new TranslatableMessage('label.begin_date', [], 'shop')),
             DateField::new('endDate')
-                ->setLabel('label.end_date'),
+                ->setLabel(new TranslatableMessage('label.end_date', [], 'shop')),
             TextEditorField::new('description')
-                ->setLabel('label.description')
+                ->setLabel(new TranslatableMessage('label.description', [], 'shop'))
                 ->hideOnIndex(),
 
             // Author
-            FormField::addFieldset('label.author')
+            FormField::addFieldset(new TranslatableMessage('label.author', [], 'shop'))
                 ->hideOnIndex(),
             TextField::new('authorName')
-                ->setLabel('label.author'),
+                ->setLabel(new TranslatableMessage('label.author', [], 'shop')),
             TextEditorField::new('authorPresentation')
-                ->setLabel('label.author_presentation')
+                ->setLabel(new TranslatableMessage('label.author_presentation', [], 'shop'))
                 ->hideOnIndex(),
             TextField::new('authorWebsite')
-                ->setLabel('label.website'),
+                ->setLabel(new TranslatableMessage('label.website', [], 'shop')),
             TextEditorField::new('useFor')
-                ->setLabel('label.use_for')
+                ->setLabel(new TranslatableMessage('label.use_for', [], 'shop'))
                 ->hideOnIndex(),
 
             // Media management
-            FormField::addFieldset('Media')
+            FormField::addFieldset(new TranslatableMessage('label.media', [], 'shop'))
                 ->hideOnIndex(),
             CollectionField::new('medias')
                 ->hideOnIndex()
@@ -92,15 +99,15 @@ class CrowdfundingCrudController extends AbstractCrudController
                 ->setEntryType(CrowdfundingVideoType::class),
 
             // Counterpart management
-            FormField::addFieldset('label.counterparts')
-                ->setHelp('text.items_management')
+            FormField::addFieldset(new TranslatableMessage('label.counterparts', [], 'shop'))
+                ->setHelp(new TranslatableMessage('text.items_management', [], 'shop'))
                 ->hideOnIndex(),
             CollectionField::new('counterparts')
                 ->hideOnIndex()
                 ->setEntryType(CrowdfundingCounterpartType::class),
 
             // Lottery management
-            FormField::addFieldset('label.lottery')
+            FormField::addFieldset(new TranslatableMessage('label.lottery', [], 'shop'))
                 ->hideOnIndex(),
             CollectionField::new('lotteries')
                 ->hideOnIndex()
@@ -108,12 +115,12 @@ class CrowdfundingCrudController extends AbstractCrudController
 
             // Dates
             DateTimeField::new('creation')
-                ->setLabel('label.creation')
+                ->setLabel(new TranslatableMessage('label.creation', [], 'shop'))
                 ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled')
                 ->onlyOnDetail(),
             DateTimeField::new('modification')
-                ->setLabel('label.modification')
+                ->setLabel(new TranslatableMessage('label.modification', [], 'shop'))
                 ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled')
                 ->onlyOnDetail(),
@@ -124,7 +131,7 @@ class CrowdfundingCrudController extends AbstractCrudController
     {
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
-            ->setPermission(Action::NEW, 'ROLE_ADMIN')
+            ->setPermission(Action::NEW, $this->configService->get('site-role-needed'))
         ;
     }
 
@@ -132,7 +139,7 @@ class CrowdfundingCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
-            ->setEntityPermission('ROLE_ADMIN')
+            ->setEntityPermission($this->configService->get('site-role-needed'))
             ->setDefaultSort(['endDate' => 'DESC'])
         ;
     }

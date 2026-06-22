@@ -10,19 +10,22 @@
 
 namespace c975L\ShopBundle\Controller;
 
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ShopBundle\Entity\Crowdfunding;
 use c975L\ShopBundle\Entity\CrowdfundingNews;
+use c975L\ShopBundle\Service\CrowdfundingServiceInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use c975L\ShopBundle\Service\CrowdfundingServiceInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CrowdfundingController extends AbstractController
 {
-    public function __construct(private readonly CrowdfundingServiceInterface $crowdfundingService)
-    {
+    public function __construct(
+        private readonly CrowdfundingServiceInterface $crowdfundingService,
+        private readonly ConfigServiceInterface $configService
+    ) {
     }
 
     // INDEX
@@ -56,7 +59,7 @@ class CrowdfundingController extends AbstractController
     {
         //Defines form
         $form = null;
-        if (null !== $this->getUser() && ($this->getUser()->getId() === $crowdfunding->getUser()->getId() || $this->isGranted('ROLE_ADMIN'))) {
+        if (null !== $this->getUser() && ($this->getUser()->getId() === $crowdfunding->getUser()->getId() || $this->isGranted($this->configService->get('site-role-needed')))) {
             $news = new CrowdfundingNews();
             $form = $this->crowdfundingService->createForm('news', $news);
             $form->handleRequest($request);

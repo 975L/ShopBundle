@@ -826,6 +826,10 @@
                 <source>label.our_crowdfundings</source>
                 <target>Nos financements participatifs</target>
             </trans-unit>
+            <trans-unit id="207">
+                <source>label.stripe_token</source>
+                <target>Token Stripe</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

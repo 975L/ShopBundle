@@ -827,6 +827,10 @@
                 <source>label.our_crowdfundings</source>
                 <target>Our Crowdfundings</target>
             </trans-unit>
+            <trans-unit id="207">
+                <source>label.stripe_token</source>
+                <target>Stripe Token</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

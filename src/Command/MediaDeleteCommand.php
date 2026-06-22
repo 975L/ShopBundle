@@ -116,13 +116,13 @@ class MediaDeleteCommand extends Command
         if (count($inexistingFiles) > 0) {
             // Checks if the file exists in the public or private directory
             foreach ($inexistingFiles as $key => $file) {
-                // Check if the file exists in the public directory
+                // Check if the file exists in the private directory
                 if (strpos($file, '/private/') !== false) {
                     $file = str_replace($this->privateDir, $this->publicDir, $file);
                     if (file_exists($file)) {
                         unset($inexistingFiles[$key]);
                     }
-                // Check if the file exists in the private directory
+                // Check if the file exists in the public directory
                 } elseif (strpos($file, '/public/') !== false) {
                     $file = str_replace($this->publicDir, $this->privateDir, $file);
                     if (file_exists($file)) {
