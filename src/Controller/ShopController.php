@@ -38,4 +38,15 @@ class ShopController extends AbstractController
             ]
             )->setMaxAge(3600);
     }
+
+    // REDIRECT
+    #[Route(
+        '/shop/management',
+        name: 'shop_management_redirect',
+        methods: ['GET']
+    )]
+    public function managementRedirect(): Response
+    {
+        return $this->redirectToRoute('management');
+    }
 }

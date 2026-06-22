@@ -30,8 +30,8 @@ class StripeWebhookController extends AbstractController
     #[Route('/shop/stripe/webhook', name: 'stripe_webhook', methods: ['POST'])]
     public function handleWebhook(Request $request): Response
     {
-        $stripeSecret = $this->configService->getParameter('c975LShop.stripeSecret');
-        $webhookSecret = $this->configService->getParameter('c975LShop.stripeWebhookSecret');
+        $stripeSecret = $this->configService->get('stripe-secret');
+        $webhookSecret = $this->configService->get('stripe-webhook-secret');
 
         Stripe::setApiKey($stripeSecret);
 

@@ -41,12 +41,12 @@ class ShopFormFactory implements ShopFormFactoryInterface
             case 'coordinates':
                 $touUrl = new TranslatableMessage(
                     'label.accept_tou',
-                    ['%touUrl%' => $this->configService->getParameter('c975LShop.touUrl')],
+                    ['%touUrl%' => $this->configService->get('url-terms-of-use')],
                     'site',
                 );
                 $tosUrl = new TranslatableMessage(
                     'label.accept_tos',
-                    ['%tosUrl%' => $this->configService->getParameter('c975LShop.tosUrl')],
+                    ['%tosUrl%' => $this->configService->get('url-terms-of-sales')],
                     'site',
                 );
                 $config = [

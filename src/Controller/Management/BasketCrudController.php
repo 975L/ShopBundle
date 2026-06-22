@@ -10,24 +10,32 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ShopBundle\Entity\Basket;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[IsGranted('ROLE_ADMIN')]
 class BasketCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly ConfigServiceInterface $configService
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Basket::class;
@@ -40,16 +48,16 @@ class BasketCrudController extends AbstractCrudController
                 ->setFormTypeOption('disabled', 'disabled')
                 ->setFormTypeOption('disabled', 'disabled'),
             TextField::new('number')
-                ->setLabel('label.order_number')
+                ->setLabel(new TranslatableMessage('label.order_number', [], 'shop'))
                 ->setFormTypeOption('disabled', 'disabled'),
             AssociationField::new('payment')
-                ->setLabel('label.payment')
+                ->setLabel(new TranslatableMessage('label.payment', [], 'shop'))
                 ->setFormTypeOption('disabled','disabled'),
             TextField::new('status')
-                ->setLabel('label.status')
+                ->setLabel(new TranslatableMessage('label.status', [], 'shop'))
                 ->setFormTypeOption('disabled', 'disabled'),
             ChoiceField::new('contentFlags')
-                ->setLabel('label.content')
+                ->setLabel(new TranslatableMessage('label.content', [], 'shop'))
                 ->setFormTypeOption('disabled', 'disabled')
                 ->setChoices([
                     'label.digital' => Basket::CONTENT_FLAG_DIGITAL,
@@ -59,7 +67,7 @@ class BasketCrudController extends AbstractCrudController
                     'label.crowdfunding_shipping' => Basket::CONTENT_FLAG_CF_SHIPPING,
                     'label.crowdfunding_mixed' => Basket::FLAG_CF_MIXED,
                     'label.all_mixed' => Basket::FLAG_MIXED,
-                    ])
+                ])
                 ->formatValue(function ($value, $entity) {
                     if ($value == Basket::FLAG_MIXED) {
                         return 'Mixed (Digital + Physical + Crowdfunding)';
@@ -80,46 +88,46 @@ class BasketCrudController extends AbstractCrudController
                     return 'Unknown (' . $value . ')';
                 }),
             IntegerField::new('total')
-                ->setLabel('label.total')
+                ->setLabel(new TranslatableMessage('label.total', [], 'shop'))
                 ->setFormTypeOption('disabled', 'disabled'),
             IntegerField::new('shipping')
-                ->setLabel('label.shipping')
+                ->setLabel(new TranslatableMessage('label.shipping', [], 'shop'))
                 ->setFormTypeOption('disabled', 'disabled'),
             TextField::new('currency')
-                ->setLabel('label.currency')
+                ->setLabel(new TranslatableMessage('label.currency', [], 'shop'))
                 ->setFormTypeOption('disabled', 'disabled'),
             IntegerField::new('quantity')
-                ->setLabel('label.quantity')
+                ->setLabel(new TranslatableMessage('label.quantity', [], 'shop'))
                 ->setFormTypeOption('disabled', 'disabled'),
             EmailField::new('email')
-                ->setLabel('label.email')
+                ->setLabel(new TranslatableMessage('label.email', [], 'shop'))
                 ->setFormTypeOption('disabled', 'disabled'),
             TextField::new('name')
-                ->setLabel('label.name')
+                ->setLabel(new TranslatableMessage('label.name', [], 'shop'))
                 ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled'),
             TextField::new('address')
-                ->setLabel('label.address')
+                ->setLabel(new TranslatableMessage('label.address', [], 'shop'))
                 ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled'),
             TextField::new('zip')
-                ->setLabel('label.zip')
+                ->setLabel(new TranslatableMessage('label.zip', [], 'shop'))
                 ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled'),
             TextField::new('city')
-                ->setLabel('label.city')
+                ->setLabel(new TranslatableMessage('label.city', [], 'shop'))
                 ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled'),
             TextField::new('country')
-                ->setLabel('label.country')
+                ->setLabel(new TranslatableMessage('label.country', [], 'shop'))
                 ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled'),
             DateTimeField::new('creation')
-                ->setLabel('label.creation')
+                ->setLabel(new TranslatableMessage('label.creation', [], 'shop'))
                 ->setFormTypeOption('disabled', 'disabled')
                 ->setFormTypeOption('disabled', 'disabled'),
             DateTimeField::new('modification')
-                ->setLabel('label.modification')
+                ->setLabel(new TranslatableMessage('label.modification', [], 'shop'))
                 ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled')
                 ->onlyOnDetail()
@@ -133,8 +141,7 @@ class BasketCrudController extends AbstractCrudController
         $filterPaid = Action::new('filterPaid', 'Paid', 'fa fa-filter')
             ->createAsGlobalAction()
             ->linkToUrl(function () {
-                $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-                return $adminUrlGenerator
+                return $this->adminUrlGenerator
                     ->setController(self::class)
                     ->setAction(Action::INDEX)
                     ->set('filters[status][value]', 'paid')
@@ -146,8 +153,7 @@ class BasketCrudController extends AbstractCrudController
         $filterValidated = Action::new('filterValidated', 'Validated', 'fa fa-filter')
             ->createAsGlobalAction()
             ->linkToUrl(function () {
-                $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-                return $adminUrlGenerator
+                return $this->adminUrlGenerator
                     ->setController(self::class)
                     ->setAction(Action::INDEX)
                     ->set('filters[status][value]', 'validated')
@@ -159,8 +165,7 @@ class BasketCrudController extends AbstractCrudController
         $filterNew = Action::new('filterNew', 'New', 'fa fa-filter')
             ->createAsGlobalAction()
             ->linkToUrl(function () {
-                $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-                return $adminUrlGenerator
+                return $this->adminUrlGenerator
                     ->setController(self::class)
                     ->setAction(Action::INDEX)
                     ->set('filters[status][value]', 'new')
@@ -213,11 +218,11 @@ class BasketCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, $filterNew)
             ->add(Crud::PAGE_INDEX, $sendPhysicalItems)
             ->add(Crud::PAGE_INDEX, $sendCounterparts)
-            ->setPermission(Action::DELETE, 'ROLE_ADMIN')
-            ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
-            ->setPermission('filterPaid', 'ROLE_ADMIN')
-            ->setPermission('filterValidated', 'ROLE_ADMIN')
-            ->setPermission('filterNew', 'ROLE_ADMIN')
+            ->setPermission(Action::DELETE, $this->configService->get('site-role-needed'))
+            ->setPermission(Action::DETAIL, $this->configService->get('site-role-needed'))
+            ->setPermission('filterPaid', $this->configService->get('site-role-needed'))
+            ->setPermission('filterValidated', $this->configService->get('site-role-needed'))
+            ->setPermission('filterNew', $this->configService->get('site-role-needed'))
         ;
     }
 
@@ -225,7 +230,7 @@ class BasketCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
-            ->setEntityPermission('ROLE_ADMIN')
+            ->setEntityPermission($this->configService->get('site-role-needed'))
             ->setDefaultSort(['id' => 'DESC'])
         ;
     }

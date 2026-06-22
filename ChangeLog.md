@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.12
+
+- Removed shop dashboard and moved it to use the one of ConfigBundle (07/06/2026)
+- Made use of new naming scheme of ConfigBundle (22/06/2026)
+
 ## v1.11.4
 
 - Made the whole product card a link (07/06/2026)

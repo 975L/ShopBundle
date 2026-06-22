@@ -37,8 +37,7 @@ class SitemapCreateCommand extends Command
         private readonly ProductCategoryServiceInterface $productCategoryService,
         private readonly Environment $environment
 
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -56,7 +55,7 @@ class SitemapCreateCommand extends Command
     private function createSitemap(): void
     {
         $root = $this->configService->getContainerParameter('kernel.project_dir');
-        $urlRoot = $this->configService->getParameter('c975LShop.sitemapBaseUrl');
+        $urlRoot = $this->configService->get('site-url');
 
         $categories = $this->productCategoryService->findAll();
         $products = $this->productService->findAll();

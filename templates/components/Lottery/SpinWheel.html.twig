@@ -1,4 +1,4 @@
-{% if is_granted('ROLE_ADMIN') %}
+{% if is_granted(config('site-role-needed')) %}
     <div class="lottery-drum" data-lottery-target="drum">
         <div id="ticket-placeholder" class="ticket-number not-drawn" data-lottery-target="ticketPlaceholder">XX-0000-YYY</div>
     </div>

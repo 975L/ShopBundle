@@ -11,22 +11,29 @@
 namespace c975L\ShopBundle\Controller\Management;
 
 use c975L\ShopBundle\Entity\Payment;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[IsGranted('ROLE_ADMIN')]
 class PaymentCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly ConfigServiceInterface $configService,
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Payment::class;
@@ -36,16 +43,16 @@ class PaymentCrudController extends AbstractCrudController
     {
         return [
             AssociationField::new('basket')
-                ->setLabel('label.basket')
+                ->setLabel(new TranslatableMessage('label.basket', [], 'shop'))
                 ->setFormTypeOption('disabled','disabled'),
             BooleanField::new('isFinished')
-                ->setLabel('label.is_finished'),
+                ->setLabel(new TranslatableMessage('label.is_finished', [], 'shop')),
             IntegerField::new('amount')
-                ->setLabel('label.amount'),
+                ->setLabel(new TranslatableMessage('label.amount', [], 'shop')),
             TextField::new('currency')
-                ->setLabel('label.currency'),
+                ->setLabel(new TranslatableMessage('label.currency', [], 'shop')),
             TextField::new('stripe_token')
-                ->setLabel('label.stripe_token')
+                ->setLabel(new TranslatableMessage('label.stripe_token', [], 'shop'))
                 ->formatValue(function ($value, $payment) {
                     if (!$value) {
                         return null;
@@ -58,14 +65,14 @@ class PaymentCrudController extends AbstractCrudController
                     );
                 }),
             TextField::new('stripe_method')
-                ->setLabel('label.stripe_method'),
+                ->setLabel(new TranslatableMessage('label.stripe_method', [], 'shop')),
             DateTimeField::new('creation')
-                ->setLabel('label.creation')
+                ->setLabel(new TranslatableMessage('label.creation', [], 'shop'))
                 ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled')
                 ->onlyOnDetail(),
             DateTimeField::new('modification')
-                ->setLabel('label.modification')
+                ->setLabel(new TranslatableMessage('label.modification', [], 'shop'))
                 ->hideOnIndex()
                 ->setFormTypeOption('disabled', 'disabled')
                 ->onlyOnDetail(),
@@ -84,9 +91,9 @@ class PaymentCrudController extends AbstractCrudController
             ->disable(Action::NEW, Action::EDIT)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $viewStripeInvoice)
-            ->setPermission(Action::DELETE, 'ROLE_ADMIN')
-            ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
-            ->setPermission('viewStripeInvoice', 'ROLE_ADMIN')
+            ->setPermission(Action::DELETE, $this->configService->get('site-role-needed'))
+            ->setPermission(Action::DETAIL, $this->configService->get('site-role-needed'))
+            ->setPermission('viewStripeInvoice', $this->configService->get('site-role-needed'))
         ;
     }
 
@@ -94,7 +101,7 @@ class PaymentCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
-            ->setEntityPermission('ROLE_ADMIN')
+            ->setEntityPermission($this->configService->get('site-role-needed'))
         ;
     }
 

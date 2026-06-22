@@ -71,7 +71,7 @@ class BasketService implements BasketServiceInterface
         } catch (\LogicException $e) {
             $this->session = null;
         }
-        $this->stripeSecret = $this->configService->getParameter('c975LShop.stripeSecret');
+        $this->stripeSecret = $this->configService->get('stripe-secret');
         $this->getUser();
     }
 
@@ -81,8 +81,8 @@ class BasketService implements BasketServiceInterface
         $basket = new Basket();
         $basket->setTotal(0);
         $basket->setQuantity(0);
-        $basket->setCurrency($this->configService->getParameter('c975LShop.currency'));
-        $basket->setShipping($this->configService->getParameter('c975LShop.shipping'));
+        $basket->setCurrency($this->configService->get('shop-currency'));
+        $basket->setShipping($this->configService->get('shop-shipping'));
         $basket->setCreation(new DateTime());
         $basket->setModification(new DateTime());
         $basket->setStatus('new');
@@ -131,8 +131,8 @@ class BasketService implements BasketServiceInterface
     // Updates total
     public function updateTotals(): void
     {
-        $shipping = $this->configService->getParameter('c975LShop.shipping');
-        $shippingFree = $this->configService->getParameter('c975LShop.shippingFree');
+        $shipping = $this->configService->get('shop-shipping');
+        $shippingFree = $this->configService->get('shop-shipping-free');
 
         $items = $this->basket->getItems();
 
