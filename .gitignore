@@ -1,11 +1,15 @@
 *.bak
 .php_cs.cache
 .phpunit.result.cache
+.phpunit.cache
 coverage
 composer.lock
 vendor
 
-#Ignore vscode AI rules
+### Outillage local (IA / IDE) ###
+/.claude/
+/.idea/
+/.vscode/*
+!/.vscode/settings.json
+!/.vscode/extensions.json
 .github/instructions/codacy.instructions.md
-.claude
-.codacy
