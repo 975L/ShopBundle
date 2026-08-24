@@ -1,2 +1,2 @@
-<h3>{{ 'label.search_products_title'|trans({}, 'shop') }}</h3>
+{# The heading is dropped: the input sits in the shop's filter row, where a title above it would break the row #}
 {{ component('c975LShop:ProductSearch', { categorySlug: categorySlug|default(null) }) }}

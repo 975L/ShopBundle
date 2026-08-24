@@ -3,20 +3,64 @@
 
 {# Defines specific variables #}
 {% set title = 'label.shop'|trans %}
-{% set description = 'label.all_our_items'|trans %}
+{% set summarySocialNetwork = 'label.all_our_items'|trans %}
+
+{% set perPage = products.getItemNumberPerPage %}
+{% set total = products.getTotalItemCount %}
+
+{# Editor-only: the hover button's controller is mounted on the page rather than left to UiBundle's Blocks component, which a shop holding no block never renders - each card carries the url of the product it stands for (see components/Product/Product.html.twig) #}
+{% set canEdit = is_granted(config('site-role-editor')) %}
 
 {% block content %}
     <twig:c975LShop:Shop:TestMode/>
-    <div data-controller="basket">
-        <twig:c975LShop:Shop:Shipping/>
-        <twig:c975LShop:Shop:Information/>
-        <twig:c975LShop:Product:CategoriesSelect/>
+    <div data-controller="basket{{ canEdit ? ' blockEditOverlay' : '' }}" class="shop"{% if canEdit %} data-edit-label="{{ 'label.edit'|trans({}, 'ui') }}"{% endif %}>
+        {# What the shop says above its listing - delivery, welcome message, arguments - composed in the back-office with UiBundle's kinds, nothing to add here when the shop holds no block #}
+        <twig:c975LUi:Blocks:Blocks blocks="{{ shopBlocks }}"/>
+
+        {# The search first and alone: naming what one came for is the shortest way through a shop, and it is the only control worth a full row of a phone screen #}
         <twig:c975LShop:Product:Search/>
-        <twig:c975LSite:Pagination:Pagination paginate="{{ products }}"/>
-        <twig:c975LShop:Product:Products products="{{ products }}"/>
-        <twig:c975LSite:Pagination:Pagination paginate="{{ products }}"/>
+
+        {# Everything that narrows the listing under one folded panel - category, price, format, availability, order. See components/Product/Refine.html.twig for why it is folded #}
+        <twig:c975LShop:Product:Refine order="{{ order }}" filters="{{ filters }}" priceBrackets="{{ priceBrackets }}"/>
+
+        {# What the listing below holds, read as its caption rather than as a figure standing above the filters: filtering changes it, and it has to be next to what it counts #}
+        <p class="shop-counters">
+            <strong>{{ total }}</strong> {{ 'label.products'|trans|lower }}
+            {% if categoriesCount > 0 %}
+                <span class="shop-counters-separator">·</span>
+                <strong>{{ categoriesCount }}</strong> {{ 'label.categories'|trans|lower }}
+            {% endif %}
+        </p>
+
+        {# The listing grows instead of turning pages: UiBundle's controller fetches the page the link below already points to and appends its cards. Nothing here is written for it alone - without javascript, and for a crawler, that link is the ordinary link to the next page it looks like #}
+        <div data-controller="infiniteScroll">
+            <twig:c975LShop:Product:Products products="{{ products }}" editable="{{ canEdit }}" infinite="true" rating="true"/>
+
+            <div class="shop-list-footer">
+                {% if total > perPage %}
+                    {# What has been shown so far and not what this page holds: the "next" link below is a real link, so a visitor - or a crawler - can land straight on page 3, where the cards of that page alone say nothing of where the listing stands #}
+                    <p class="shop-range" aria-live="polite">{{ 'label.products'|trans }} <span data-infiniteScroll-target="count">{{ (products.getCurrentPageNumber - 1) * perPage + products|length }}</span> / {{ total }}</p>
+                {% endif %}
+                {% if products.getCurrentPageNumber < products.getPageCount %}
+                    {# The paginator's own query is reused rather than rebuilt: the order, the category and the search the visitor came with are in it, and would be lost on the next page otherwise #}
+                    <a
+                        href="{{ path(products.route, products.query({'p': products.getCurrentPageNumber + 1})) }}#products"
+                        rel="next"
+                        class="btn btn-secondary shop-load-more"
+                        data-infiniteScroll-target="next"
+                        data-action="click->infiniteScroll#load"
+                    >{{ 'label.load_more'|trans }}</a>
+                {% endif %}
+            </div>
+        </div>
+
         <twig:c975LShop:Shop:NavbarBasket/>
-        <twig:c975LShop:Basket:Message/>
-        <twig:c975LShop:Shop:Footer/>
+        <twig:c975LPayment:Basket:Message/>
     </div>
+
+    {# The cards this page prints, as the list a search engine reads a catalog through - the sheets it points at carry the prices, so nothing is published twice. The offset is the paginator's own: the second page numbers its cards from where the first stopped #}
+    {% set productsJsonLd = shop_products_json_ld(products, (products.getCurrentPageNumber - 1) * perPage) %}
+    {% if productsJsonLd %}
+        <script type="application/ld+json">{{ productsJsonLd }}</script>
+    {% endif %}
 {% endblock %}

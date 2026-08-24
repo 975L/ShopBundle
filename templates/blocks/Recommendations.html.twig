@@ -1,0 +1,5 @@
+{# Adapter for the dynamic Block system - the affinities are read live (see ShopBlockExtension), so a block placed today shows what the last c975l:shop:affinity:calculate computed #}
+{% set recommendations = shop_block_recommendations(productSlug|default(null), max|default(4)) %}
+{% if recommendations is not empty %}
+    <twig:c975LShop:Product:Recommendations recommendations="{{ recommendations }}" title="{{ title|default('') }}"/>
+{% endif %}

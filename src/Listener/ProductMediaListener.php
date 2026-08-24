@@ -10,12 +10,12 @@
 
 namespace c975L\ShopBundle\Listener;
 
-use Doctrine\ORM\Events;
 use c975L\ShopBundle\Entity\ProductMedia;
-use Doctrine\ORM\Event\PreFlushEventArgs;
 use c975L\ShopBundle\Listener\Traits\UserTrait;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\Events;
 use Symfony\Bundle\SecurityBundle\Security;
 
 #[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: ProductMedia::class)]

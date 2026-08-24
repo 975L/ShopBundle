@@ -1,125 +1,274 @@
 /* PRODUCTS */
+// Mobile first throughout: the single column is the default, the grid widening on its own through auto-fill, and the two media queries below only raise what a phone cannot hold
 .products {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
+    gap: 12px;
     width: 100%;
-    justify-content: center;
 }
 
 .products a {
-    margin: 5px 0;
+    text-decoration: none;
+}
+
+.products a:hover {
+    text-decoration: none;
 }
 
 .product {
-    justify-content: space-between;
-    margin: 5px;
-    padding: 10px;
-    text-align: center;
-    border-radius: 5px;
-    background-color: var(--product-background-color);
-    box-shadow: var(--box-shadow);
-}
-
-article.product {
-    width: 170px;
+    // The card is what the heart is placed against, and not the visual: the heart sits outside the link the visual is inside of (see components/Product/Product.html.twig)
+    position: relative;
+    display: flex;
+    flex-direction: column;
     height: 100%;
+    overflow: hidden;
+    border: 1px solid var(--shop-border);
+    border-radius: var(--shop-radius-card);
+    background-color: var(--product-background-color);
+    color: var(--text);
+    text-align: left;
+}
+
+// The clickable part of the card, which is all of it but the score at the bottom (see components/Product/Product.html.twig). A column that takes what is left of the card, so the price still sits on the card's own baseline
+.product-link {
     display: flex;
+    flex: 1;
     flex-direction: column;
+    color: inherit;
 }
 
-.product:hover {
-    transform: scale(1.05);
-    transition: all 0.3s;
+// Only where there is a pointer to hover with: the scale the card used to grow by was also triggered by a tap
+@media (hover: hover) {
+    .product:hover {
+        border-color: var(--primary);
+    }
 }
 
-.product h3 {
-    margin-top: 0;
-    font-size: 1em;
+.product-visual {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background-color: var(--surface-alt);
 }
 
-a.product-link {
-    text-decoration: none;
-}
-
-a.product-link:hover {
-    text-decoration: none;
-}
-
-.product form {
-    width: auto;
-}
-
-.price {
-    text-align: center;
-    font-weight: bold;
-    font-size: 0.9em;
-    margin: 0 auto 0.5em auto;
-    font-family: var(--font-family-body);
-}
-
-.product-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+// The Image component wraps its picture in a centered paragraph, which the visual takes over as its own frame
+.product-visual p {
+    height: 100%;
     margin: 0;
 }
 
-.product-item .card-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.product-visual img {
+    display: block;
+    width: 100%;
     height: 100%;
+    object-fit: cover;
 }
 
-.product-item .card-body div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.product-sold-out .product-visual {
+    opacity: 0.72;
 }
 
-.product-item .card-body .limited-quantity {
+.product-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 4px 8px;
+    border-radius: var(--shop-radius-badge);
+    background-color: var(--surface-alt);
+    color: var(--shop-text-muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.product-badge-new {
+    background-color: var(--surface-accent);
+    color: var(--primary);
+}
+
+.product-badge-limited-quantity {
+    background-color: var(--alert-warning-background);
+    color: var(--alert-color);
+}
+
+.product-badge-free {
+    background-color: var(--alert-success-background);
+    color: var(--alert-color);
+}
+
+// The one badge the shop puts its own brand behind: a price cut is what the visitor came for, and the neutral flat of the others reads as another mention rather than as an offer
+.product-badge-discount {
+    background-color: var(--primary);
+    color: var(--background);
+}
+
+.product-body {
     display: flex;
-    justify-content: center;
+    flex: 1;
     flex-direction: column;
-    align-items: center;
+    gap: 6px;
+    padding: 12px;
+}
+
+.product-category {
+    color: var(--shop-text-subtle);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.product h3 {
+    margin: 0;
+    font-family: var(--font-family-title);
+    font-size: 0.95rem;
+    line-height: 1.25;
+}
+
+.product-excerpt {
+    margin: 0;
+    color: var(--shop-text-muted);
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.product-formats {
+    display: flex;
+    flex-wrap: wrap;
     gap: 4px;
-    margin: 10px auto;
+    margin: 0;
 }
 
-.product-item .card-body .limited-quantity p {
-    margin: 0 auto;
+.product-format {
+    padding: 2px 6px;
+    border: 1px solid var(--shop-border);
+    border-radius: var(--shop-radius-badge);
+    color: var(--shop-text-muted);
+    font-size: 0.68rem;
 }
 
-.product-item .card-img {
-    max-width: 100px;
-    position: relative;
+// Pushed to the bottom of the card so the price sits on the same line whatever the length of the titles above it
+.product-footer {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid var(--shop-border);
 }
 
-.product-item .icon-wrapper {
-    background: #fff;
+.product-price {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-price-label {
+    color: var(--shop-text-subtle);
+    font-size: 0.68rem;
+}
+
+// Beside the current price and not above it: the two read as one figure corrected, which is what the strikethrough says. The line is drawn by the "s" element itself, so nothing here restates it
+.product-price-before {
+    color: var(--shop-text-subtle);
+    font-size: 0.8rem;
+}
+
+.product-price strong {
+    font-family: var(--font-family-title);
+    font-size: 1.05rem;
+}
+
+.product-view {
+    color: var(--primary);
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+// Set apart from the body by the same rule as the price, being the second thing the card offers to do rather than a line of its description
+.product-rating {
+    padding: 8px 12px 12px;
+    border-top: 1px solid var(--shop-border);
+}
+
+// Over the picture and opposite the badge, where a shop's heart is always found - and where it costs the card no row of its own, which on a phone is a row taken from the next card
+// The backdrop is on the wrapper and not on the button: the button is a shape masked out of "background-color", so a flat set on it would paint the heart instead of the disc behind it
+.product-favorite {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 40px;
     height: 40px;
-    z-index: 10;
-    border-radius: 4px;
-    position: absolute;
-    right: -10px;
-    bottom: 10px;
-    border: 3px solid var(--primary);
-    padding: 6px;
-    box-shadow: var(--box-shadow);
+    border-radius: 50%;
+    background-color: color-mix(in srgb, var(--background) 78%, transparent);
 }
 
-.product-item button:hover,
-.product-item .card-img img:hover {
-    transform: scale(1.05);
-    transition: all 0.3s;
+// The product sheet: one column on a phone, picture beside the decision from the width where both hold their own
+// The two regions part by the site's own step and not by a fixed value: stacked, this gap is what separates the pictures from everything the visitor decides on, which is the same kind of break as the one before the recommendations
+.product-sheet-main {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: var(--section-space, 40px);
 }
 
-.product-item .card-data {
+// Held to the column it is put in: a slider is laid out on the page's reading measure, and its controller sets it a height, from which its own "aspect-ratio" derived a width - 825px inside a 681px column, spilling over the text beside it. A stated width leaves nothing to derive. The room it keeps above and below is dropped too, the picture being the column here and not a block inserted in a text
+.product-sheet-gallery .slider,
+.product-sheet-gallery .slider-single {
+    width: 100%;
+    margin-block: 0;
+}
+
+// The score and the heart on one row, centred: two controls the visitor acts on rather than reads, which a column of left-aligned text would leave looking like another line of it
+.product-sheet-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.product-sheet-info {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    width: 100%;
-    margin: 10px;
+    gap: 14px;
+}
+
+.product-sheet-info h2 {
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+@media (min-width: 700px) {
+    .products {
+        grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+        gap: 20px;
+    }
+
+    .product-visual {
+        aspect-ratio: 4 / 3;
+    }
+
+    .product-body {
+        padding: 14px 14px 16px;
+    }
+
+    .product h3 {
+        font-size: 1.03rem;
+    }
+}
+
+@media (min-width: 900px) {
+    // Side by side the gap is a gutter and no longer a break between two regions, so it keeps its own value, wider than the page's step
+    .product-sheet-main {
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 48px;
+    }
+
+    // The pictures follow the column of items rather than scrolling away above it
+    .product-sheet-gallery {
+        position: sticky;
+        top: 24px;
+    }
 }

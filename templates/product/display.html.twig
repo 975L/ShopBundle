@@ -5,30 +5,108 @@
 {% set title = product.title %}
 {% if product.medias is not empty %}
     {% set ogImage = absolute_url(asset(product.medias[0].name)) %}
+    {# The template setting the share image is the only one that knows what it shows, so it says it here rather than leaving the layout to read a media column this bundle's own medias do not have #}
+    {% set ogImageAlt = product.medias[0].alt ?: product.title %}
 {% endif %}
 
-{% set description = product.description %}
+{% set summarySocialNetwork = product.description %}
+
+{# The three sections a block of this bundle can take over: placed on the sheet, the block is where the editor put it, and the hardcoded section below steps aside rather than showing it twice #}
+{% set sheetKinds = shop_block_sheet_kinds(product.blocks) %}
+
+{# Editor-only: the sheet leads to the product's own edit screen, and each of the sections below to the very field it is printed from - the blocks composed on it carry their own row's url already, UiBundle resolving it through ShopBlockEditUrlProvider. The hover button being the one of UiBundle, its controller is mounted on the sheet rather than left to the Blocks component, which a product without any block never renders #}
+{% set canEdit = is_granted(config('site-role-editor')) %}
+{% set editUrl = canEdit ? shop_product_edit_url(product) : null %}
+
+{# Read once and used twice: the widget below and the graph at the bottom of the page have to agree, a rich result showing stars nobody can find on the sheet being worse than none #}
+{% set showsRating = config('shop-rating')|to_bool %}
 
 {% block content %}
+    {# An editor reading a draft before it goes online (see ProductController::preview()) - the sheet is otherwise the public one, so it says which of the two this is #}
+    {% if isPreview|default(false) and not product.isPublished %}
+        <twig:c975LUi:Alert:Alert type="warning" message="{{ 'label.preview_mode'|trans }}" />
+    {% endif %}
     <twig:c975LShop:Shop:TestMode/>
-    <section class="text-center">
-        <twig:c975LShop:Shop:ViewButton/>
-        <twig:c975LSite:Slider:Slider slides="{{ product.medias }}" id="slider" class="img-500" duration="3500"/>
-        <twig:c975LShop:Product:Categories categories="{{ product.categories }}"/>
-        <twig:c975LShop:Product:Description description="{{ product.description }}"/>
-        <h2 id="items">{{ 'label.items'|trans }}</h2>
-        {% if product.availableAt == null or product.availableAt|date('Ymd') <= "now"|date("Ymd") %}
-            <div data-controller="basket">
-                <twig:c975LShop:Product:Items items="{{ product.items }}"/>
-                <twig:c975LShop:Basket:Message/>
-                <twig:c975LShop:Shop:NavbarBasket/>
+    {# One "basket" controller for the whole sheet: the items, the messages and the basket bar are all part of the same purchase #}
+    <div data-controller="basket{{ canEdit ? ' blockEditOverlay' : '' }}" class="product-sheet"{% if editUrl %} data-edit-label="{{ 'label.edit'|trans({}, 'ui') }}" data-block-edit-url="{{ editUrl }}"{% endif %}>
+        <twig:c975LShop:Shop:Breadcrumb subject="{{ product }}"/>
+
+        {# Picture on one side, everything the visitor decides on together on the other - a single column below 900px, the grid folding on its own #}
+        <div class="product-sheet-main">
+            {# The column is only written when there is something to put in it: an empty one would still hold half the row #}
+            {% if 'shop_product_slider' not in sheetKinds and product.medias is not empty %}
+                <div class="product-sheet-gallery"{% if editUrl %} data-block-edit-url="{{ shop_product_edit_url(product, 'medias') }}"{% endif %}>
+                    <twig:c975LUi:Slider:Slider media="{{ product.medias }}" id="slider" duration="3500"/>
+                </div>
+            {% endif %}
+
+            <div class="product-sheet-info">
+                <twig:c975LShop:Product:Categories categories="{{ product.categories }}"/>
+                {# Between the categories and the description, where a sheet is read from the top: what others thought comes before what the shop says about it, and putting the product aside is what a visitor not buying today came to do #}
+                {# The two on one centred row rather than the heart laid over the picture as a card does it: the gallery is only written when the product carries medias and no slider block took it over, so a heart placed on it would be gone from the sheets that have neither #}
+                {% set showsFavorite = config('shop-favorites')|to_bool %}
+                {% if showsRating or showsFavorite %}
+                    <div class="product-sheet-actions">
+                        {# Off unless the site turned it on, an update having no business making every sheet ask for a vote - the icon and the scale are UiBundle's own settings #}
+                        {% if showsRating %}
+                            <twig:c975LUi:Rating:Rating ownerType="shop_product" ownerId="{{ product.id }}"/>
+                        {% endif %}
+                        {% if showsFavorite %}
+                            <twig:c975LUi:Favorite:Button ownerType="shop_product" ownerId="{{ product.id }}"/>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {# UiBundle's own wrapper class: display:contents, so it hosts the hover button's attributes while the heading and its text stay the two items the column lays out #}
+                <div class="block-editable"{% if editUrl %} data-block-edit-url="{{ shop_product_edit_url(product, 'description') }}"{% endif %}>
+                    <twig:c975LShop:Product:Description description="{{ product.description }}"/>
+                </div>
+
+                {# What the sheet says around its items - composed in the back-office, nothing to add here when the product has no block #}
+                <twig:c975LUi:Blocks:Blocks blocks="{{ product.blocks }}"/>
+
+                {% if 'shop_product_items' not in sheetKinds %}
+                    <div class="block-editable"{% if editUrl %} data-block-edit-url="{{ shop_product_edit_url(product, 'items') }}"{% endif %}>
+                        <h2 id="items">{{ 'label.items'|trans }}</h2>
+                        {% if product.availableAt == null or product.availableAt|date('Ymd') <= "now"|date("Ymd") %}
+                            <twig:c975LShop:Product:Items items="{{ product.publishedItems }}"/>
+                        {% else %}
+                            <twig:c975LUi:Alert:Alert type="warning">
+                                {{ 'label.product_not_yet_available'|trans({}, 'shop') }} {{ product.availableAt|date('d/m/Y') }}.
+                            </twig:c975LUi:Alert:Alert>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
-        {% else %}
-            <twig:c975LSite:Alert:Alert type="warning">
-                {{ 'label.product_not_yet_available'|trans({}, 'shop') }} {{ product.availableAt|date('d/m/Y') }}.
-            </twig:c975LSite:Alert:Alert>
+        </div>
+
+        {# Ce que les acheteurs ont écrit sur ce produit, avant les recommandations : celles-ci font rebondir vers autre chose, où les avis parlent encore de la fiche qu'on lit #}
+        {# Rien du tout tant que le site n'a pas activé "ui-enable-reviews" : la fonction répond une liste vide et la section ne s'affiche pas #}
+        {% if ui_reviews_enabled() %}
+            {% include '@c975LUi/components/Review/List.html.twig' with {
+                reviews: ui_reviews('shop_product', product.id),
+                ownerType: 'shop_product',
+                ownerId: product.id,
+            } only %}
         {% endif %}
-        <twig:c975LShop:Basket:ContinueShoppingButton/>
-    </section>
-    <twig:c975LShop:Product:Recommendations recommendations="{{ similarProducts }}" />
+
+        {% if 'shop_recommendations' not in sheetKinds %}
+            <twig:c975LShop:Product:Recommendations recommendations="{{ similarProducts }}" />
+        {% endif %}
+
+        <twig:c975LPayment:Basket:ContinueShoppingButton/>
+        <twig:c975LPayment:Basket:Message/>
+        <twig:c975LShop:Shop:NavbarBasket/>
+    </div>
+
+    {# The product's structured data, built by ProductSnippetBuilder from the very fields displayed above - the only "offers" node of the ecosystem, see BookSnippetBuilder #}
+    {% set jsonLd = product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug}), showsRating) %}
+    {% if jsonLd %}
+        <script type="application/ld+json">{{ jsonLd }}</script>
+    {% endif %}
+
+    {# The trail printed above the sheet, said again where a search engine reads it - it is what Google shows in its results in place of the url #}
+    {% set breadcrumbJsonLd = shop_breadcrumb_json_ld(product) %}
+    {% if breadcrumbJsonLd %}
+        <script type="application/ld+json">{{ breadcrumbJsonLd }}</script>
+    {% endif %}
 {% endblock %}

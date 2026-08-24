@@ -27,7 +27,7 @@ class ProductCategoryService implements ProductCategoryServiceInterface
     }
 
     // Finds one by slug
-    public function findOneBySlug(string $slug): ProductCategory
+    public function findOneBySlug(string $slug): ?ProductCategory
     {
         return $this->productCategoryRepository->findOneBySlug($slug);
     }

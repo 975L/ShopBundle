@@ -1,0 +1,26 @@
+{# <twig:c975LShop:Product:Sort order="{{ order }}" filters="{{ filters }}"/> #}
+{# Links and not a form: the order is a query parameter, so an ordered listing keeps an address to share and a page to come back to #}
+{# "order" and not "sort": KnpPaginator reserves that name for its own sorting, and would take the listing over on its way through it #}
+{% set current = order|default(null) %}
+{# The filters the visitor came with are carried into every one of these links: reordering a listing is not a request to widen it back to the whole catalogue #}
+{% set kept = {} %}
+{% for name, value in filters|default({}) %}
+    {% if value %}
+        {% set kept = kept|merge({(name): value}) %}
+    {% endif %}
+{% endfor %}
+{% set orders = { '': 'label.sort_default', 'newest': 'label.sort_newest', 'price_asc': 'label.sort_price_asc', 'price_desc': 'label.sort_price_desc' } %}
+<nav class="product-sort" aria-label="{{ 'label.sort'|trans({}, 'shop') }}">
+    {# Named above its row like the selects above it, so the panel reads as one set of controls and not as a stray row of buttons #}
+    <span class="product-filter-label">{{ 'label.sort'|trans({}, 'shop') }}</span>
+    <div class="product-sort-links">
+        {% for key, label in orders %}
+            {% set selected = current == (key is empty ? null : key) %}
+            <a
+                href="{{ path('shop_index', kept|merge(key is empty ? {} : {'order': key})) }}#products"
+                class="product-sort-link{{ selected ? ' product-sort-current' : '' }}"
+                {% if selected %}aria-current="true"{% endif %}
+            >{{ label|trans({}, 'shop') }}</a>
+        {% endfor %}
+    </div>
+</nav>

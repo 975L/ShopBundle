@@ -1,5 +1,6 @@
-{% if "test" in config('stripe-secret') %}
-    <twig:c975LSite:Alert:Alert type="warning">
-        {{ 'label.test_mode'|trans({}, 'shop'    ) }}
-    </twig:c975LSite:Alert:Alert>
+{# <twig:c975LShop:Shop:TestMode/> - speaks for the catalog only, the charge being announced by PaymentBundle's own banner in the basket, where the payment actually happens #}
+{% if config('shop-test-mode') %}
+    <twig:c975LUi:Alert:Alert type="warning">
+        {{ 'label.test_mode'|trans({}, 'shop') }}
+    </twig:c975LUi:Alert:Alert>
 {% endif %}

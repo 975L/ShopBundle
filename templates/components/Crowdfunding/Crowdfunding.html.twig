@@ -1,5 +1,0 @@
-<article class="crowdfunding {{ class|default("") }}" id="crowdfunding-{{ crowdfunding.id }}">
-    {% set imageSrc = crowdfunding.medias|first != false ? crowdfunding.medias|first : "bundles/c975lshop/images/no-product-image.webp" %}
-    <twig:c975LSite:Image:Link src="{{ absolute_url(asset(imageSrc)) }}" url="{{ path('crowdfunding_display', {'slug': crowdfunding.slug}) }}" class="img-shadow img-crowdfunding" width="150"/>
-    <h3>{{ crowdfunding.title }}</h3>
-</article>

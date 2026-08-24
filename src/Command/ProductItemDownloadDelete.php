@@ -10,48 +10,30 @@
 
 namespace c975L\ShopBundle\Command;
 
-use DateTimeImmutable;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use c975L\ShopBundle\Service\ProductItemDownloadServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use c975L\ShopBundle\Repository\ProductItemDownloadRepository;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'shop:downloads:delete',
-    description: 'Deletes download files after their expiry date',
+    name: 'c975l:shop:downloads:delete',
+    description: 'Deletes download copies after their expiry date',
 )]
 class ProductItemDownloadDelete extends Command
 {
-    private string $downloadDir;
-
     public function __construct(
-        private readonly ProductItemDownloadRepository $downloadRepository,
-        private readonly ParameterBagInterface $parameterBag,
-        private readonly Filesystem $filesystem,
+        private readonly ProductItemDownloadServiceInterface $productItemDownloadService,
     ) {
         parent::__construct();
-        $this->downloadDir = $this->parameterBag->get('kernel.project_dir') . '/public/downloads/';
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        $expirationDate = new DateTimeImmutable();
-        $expiredDownloads = $this->downloadRepository->findExpired($expirationDate);
-
-        foreach ($expiredDownloads as $download) {
-            $filePath = $this->downloadDir . $download->getFilename();
-            if ($this->filesystem->exists($filePath)) {
-                $this->filesystem->remove($filePath);
-            }
-        }
-
-        $io->success('Unused medias deleted.');
+        $io->success(sprintf('%d expired download(s) deleted.', $this->productItemDownloadService->purgeExpired()));
 
         return Command::SUCCESS;
     }

@@ -1,36 +1,97 @@
 /* RECOMMENDATIONS */
+// Rows and not cards: what follows a product sheet is a reminder, read in one glance, and it must not compete with the sheet's own items
+// Each row carries the color and the section takes the page's own ground: what is picked out is what can be clicked, where a full-width flat painted the reminder louder than the sheet it follows
+// The room above only, as UiBundle's page sections do, and read through the same token so a site retuning its rhythm moves this band with the rest
 .recommendations {
-    margin: 1em auto;
-    padding: 5px;
-    background-color: var(--secondary);
-    border-radius: 10px;
-    max-width: 800px;
-    color: #000;
+    margin-block-start: var(--section-space, 40px);
 }
 
-.recommendations h2 {
-    color: #000;
+.recommendations-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px;
+    padding-bottom: 14px;
+    // Mixed out of the page's own ink, the header being read on the page's ground now and no longer on a flat
+    border-bottom: 1px solid color-mix(in srgb, var(--text) 25%, transparent);
 }
 
-.recommendations a {
+.recommendations-header h2 {
+    flex: 1;
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+// Flex and not grid: a row left alone at the end of a grid stays in its first column, and an auto-fill track nobody fills leaves the whole set hanging on the left of a wide screen
+.recommendations-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    padding-top: 16px;
+}
+
+.recommendation-link {
+    flex: 1 1 230px;
+    max-width: 340px;
     text-decoration: none;
 }
 
-.recommendations h3 {
-    margin-top: 0;
-    font-size: 1em;
+.recommendation-link:hover {
+    text-decoration: none;
 }
 
+// The colored flat is here, on the row itself: it is the row that is clicked, so it is the row that is picked out of the page
 .recommendation {
-    transition: all 0.3s ease;
-    position: relative;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 100%;
+    padding: 10px;
+    border: 1px solid transparent;
+    border-radius: var(--shop-radius-row);
+    background-color: var(--shop-recommendations-background);
+    color: var(--shop-recommendations-color);
 }
 
-.recommendation:hover {
-    transform: scale(1.05);
-    transition: all 0.3s;
+// The row's own ink for the ring: on the flat it now carries, the page's border color reads as nothing
+@media (hover: hover) {
+    .recommendation:hover {
+        border-color: var(--shop-recommendations-color);
+    }
+}
+
+.recommendation p {
+    margin: 0;
+}
+
+.recommendation img {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.recommendation-data {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.recommendation-data strong {
+    font-family: var(--font-family-title);
+    font-size: 0.9rem;
+}
+
+// Mixed out of the row's own ink and not the page's quiet grey, which was mixed for the page's ground and not for this flat
+.recommendation-price {
+    color: color-mix(in srgb, var(--shop-recommendations-color) 75%, transparent);
+    font-size: 0.8rem;
+}
+
+// Faded further into the band it sits on rather than given a colour of its own: the row is already painted with --primary, where a second ink would read as a third element
+.recommendation-price-before {
+    color: color-mix(in srgb, var(--shop-recommendations-color) 55%, transparent);
+    margin-right: 4px;
 }

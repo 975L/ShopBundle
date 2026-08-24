@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="fr" datatype="plaintext" original="site_config.fr.xlf">
+        <body>
+            <trans-unit id="v7.3IEh">
+                <source>description.shop_favorites</source>
+                <target>Affiche sur la fiche d'un produit, et sur chaque vignette de la boutique, un cœur pour le mettre de côté. La liste se retrouve sur /favorites, et suit le client d'un appareil à l'autre s'il est connecté</target>
+            </trans-unit>
+            <trans-unit id="L4uaR7U">
+                <source>description.shop_rating</source>
+                <target>Affiche sur la fiche d'un produit, et sur chaque vignette de la boutique, de quoi le noter. L'icône et l'échelle se règlent dans les réglages généraux</target>
+            </trans-unit>
+            <trans-unit id="kbgSvT0">
+                <source>description.shop_test_mode</source>
+                <target>Mettre à true pour prévenir chaque visiteur que la boutique est en cours d'installation : rien n'est réellement vendu ni expédié</target>
+            </trans-unit>
+            <trans-unit id="qCudWQK">
+                <source>label.shop_favorites</source>
+                <target>Liste d'envies</target>
+            </trans-unit>
+            <trans-unit id="gGpasr_">
+                <source>label.shop_rating</source>
+                <target>Notes des clients</target>
+            </trans-unit>
+            <trans-unit id="uGkJUfp">
+                <source>label.shop_test_mode</source>
+                <target>Mode test de la boutique</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

@@ -10,24 +10,19 @@
 
 namespace c975L\ShopBundle\Service;
 
-use DateTimeImmutable;
 use c975L\ShopBundle\Entity\ProductItem;
-use Doctrine\ORM\EntityManagerInterface;
 use c975L\ShopBundle\Repository\ProductItemRepository;
-use c975L\ShopBundle\Repository\ProductItemMediaRepository;
 
 class ProductItemService implements ProductItemServiceInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
         private readonly ProductItemRepository $productItemRepository,
-        private readonly ProductItemMediaRepository $productItemMediaRepository
     ) {
     }
 
     // Finds one by id
-    public function findOneById(int $id): ProductItem
+    public function findOneById(int $id): ?ProductItem
     {
-        return $this->productItemRepository->findOneById($id);
+        return $this->productItemRepository->find($id);
     }
 }

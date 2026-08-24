@@ -1,8 +1,11 @@
-<section class="items cards">
+<section class="items">
     {% if items is not empty %}
-        {% for item in items %}
-            <twig:c975LShop:Product:Item productItem="{{ item }}"/>
-        {% endfor %}
+        <div class="product-items">
+            {% for item in items %}
+                {# The first row opens on arrival, so the sheet never lands on a list of closed drawers #}
+                <twig:c975LShop:Product:Item productItem="{{ item }}" open="{{ loop.first }}"/>
+            {% endfor %}
+        </div>
     {% else %}
         <p class="text text-center lead">{{ 'label.no_item'|trans({}, 'shop') }}</p>
     {% endif %}

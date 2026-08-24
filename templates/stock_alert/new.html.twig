@@ -1,0 +1,24 @@
+{% extends 'layout.html.twig' %}
+{% trans_default_domain 'shop' %}
+
+{# Defines specific variables #}
+{% set title = 'label.stock_alert_title'|trans({'%name%': productItem.title}) %}
+
+{# Nothing here is worth finding through a search engine, and the page carries a session-bound form #}
+{% set robots = 'noindex, follow' %}
+
+{% block content %}
+    <p class="text lead">{{ 'label.stock_alert_intro'|trans({'%product%': product.title, '%item%': productItem.title}) }}</p>
+
+    {{ form_start(form) }}
+        {# The errors bound to no field - an expired token, say - without which the page redisplays saying nothing #}
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">{{ 'label.stock_alert_submit'|trans }}</button>
+        </div>
+    {{ form_end(form) }}
+
+    {# The visitor has to be told what the address is kept for, and how they get out of it, before they type it #}
+    <p class="text text-muted">{{ 'text.stock_alert_privacy'|trans }}</p>
+{% endblock %}

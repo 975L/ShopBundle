@@ -10,54 +10,62 @@
 
 namespace c975L\ShopBundle\MessageHandler;
 
+use c975L\PaymentBundle\Email\BasketEmailSender;
+use c975L\PaymentBundle\Repository\BasketRepository;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
-use c975L\ShopBundle\Repository\BasketRepository;
+use c975L\ShopBundle\Service\ProductItemDownloadService;
 use c975L\ShopBundle\Service\ProductItemDownloadServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use c975L\ShopBundle\Service\EmailServiceInterface;
 
 #[AsMessageHandler]
 class ProductItemDownloadMessageHandler
 {
     public function __construct(
         private readonly BasketRepository $basketRepository,
-        private readonly EmailServiceInterface $emailService,
-        private readonly ProductItemDownloadServiceInterface $itemDownloadService
-    ) {}
+        private readonly BasketEmailSender $basketEmailSender,
+        private readonly ProductItemDownloadServiceInterface $itemDownloadService,
+    ) {
+    }
 
     public function __invoke(ProductItemDownloadMessage $message): void
     {
-        $basket = $this->basketRepository->findOneById($message->getBasketId());
+        $basket = $this->basketRepository->find($message->getBasketId());
 
         if (!$basket) {
             return;
         }
 
         // Process all product items in the basket
+        $live = $this->itemDownloadService->liveByItem((int) $basket->getId());
         $downloadLinks = [];
-        foreach ($basket->getItems() as $type => $items) {
-            if ('product' === $type) {
-                foreach ($items as $id => $item) {
-                    if (false === empty($item['item']['file'])) {
-                        $token = $this->itemDownloadService->prepareFileForDownload(
-                            $basket->getId(),
-                            $id,
-                            $item['item']['file']
-                        );
+        foreach ($this->itemDownloadService->getFileItems($basket->getItems()) as $id => $fileItem) {
+            // A copy still valid is reused rather than made again, and the customer area hands out these very links, so the page and the email never promise two different things (see ProductBasketDownloadProvider)
+            $token = isset($live[$id])
+                ? $live[$id]->getToken()
+                : $this->itemDownloadService->prepareFileForDownload((int) $basket->getId(), $id, $fileItem['file']);
 
-                        $downloadLinks[$id] = [
-                            'title' => $item['parent']['title'] . ' (' . $item['item']['title'] . ')',
-                            'token' => $token,
-                            'size' => $item['item']['size'],
-                        ];
-                    }
-                }
+            // The file is gone from the private directory: skip that item rather than emailing a link to a copy that was never made
+            if (null === $token) {
+                continue;
             }
+
+            $downloadLinks[$id] = [
+                'title' => $fileItem['title'],
+                'token' => $token,
+                'size' => $fileItem['size'],
+            ];
         }
 
-        // Sends the email with download links
+        // Sends the email with download links, throwing on failure so Messenger retries it: the copies are already made and the buyer has no other way of reaching them
         if (!empty($downloadLinks)) {
-            $this->emailService->downloadInformation($basket, $downloadLinks);
+            $sent = $this->basketEmailSender->send($basket, 'label.download_information', 'download_information', [
+                'downloadLinks' => $downloadLinks,
+                'expiration_days' => ProductItemDownloadService::VALIDITY_DAYS,
+            ]);
+
+            if (!$sent) {
+                throw new \RuntimeException(sprintf('Could not send the download links of basket "%s": %s', $basket->getNumber(), $this->basketEmailSender->getLastError() ?? 'unknown error'));
+            }
         }
     }
 }

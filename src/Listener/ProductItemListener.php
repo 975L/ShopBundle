@@ -10,18 +10,17 @@
 
 namespace c975L\ShopBundle\Listener;
 
-use DateTimeImmutable;
-use Doctrine\ORM\Events;
 use c975L\ShopBundle\Entity\ProductItem;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\PreFlushEventArgs;
-use Doctrine\ORM\Event\PrePersistEventArgs;
-use Symfony\Bundle\SecurityBundle\Security;
 use c975L\ShopBundle\Entity\ProductItemFile;
 use c975L\ShopBundle\Entity\ProductItemMedia;
 use c975L\ShopBundle\Listener\Traits\UserTrait;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Events;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: ProductItem::class)]
 #[AsEntityListener(event: Events::prePersist, method: 'prePersist', entity: ProductItem::class)]
@@ -46,7 +45,7 @@ class ProductItemListener
             $entity->setPosition($maxPosition + 5);
         }
         $entity->setSlug($this->slugger->slug($entity->getTitle())->lower());
-        $entity->setModification(new DateTimeImmutable());
+        $entity->setModification(new \DateTime());
         $this->setUser($entity);
     }
 
@@ -55,16 +54,14 @@ class ProductItemListener
         // Needs to add empty placeholder and a add contents aftewards because the owner is not yet persisted
         if (null === $entity->getMedia()) {
             $productItemMedia = new ProductItemMedia();
-            $productItemMedia->setUpdatedAt(new DateTimeImmutable());
-            $productItemMedia->setProductItem($entity);
+            $productItemMedia->setUpdatedAt(new \DateTimeImmutable());
             $entity->setMedia($productItemMedia);
         }
         if (null === $entity->getFile()) {
             $productItemFile = new ProductItemFile();
-            $productItemFile->setUpdatedAt(new DateTimeImmutable());
-            $productItemFile->setProductItem($entity);
+            $productItemFile->setUpdatedAt(new \DateTimeImmutable());
             $entity->setFile($productItemFile);
         }
-        $entity->setCreation(new DateTimeImmutable());
+        $entity->setCreation(new \DateTime());
     }
 }

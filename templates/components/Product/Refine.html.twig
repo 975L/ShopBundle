@@ -1,0 +1,19 @@
+{# <twig:c975LShop:Product:Refine order="{{ order }}" filters="{{ filters }}" priceBrackets="{{ priceBrackets }}"/> #}
+{# Everything that narrows the listing under a single button: the category, the three filters read off the items and the order. Folded by default, on a phone as on a desktop - what a visitor comes to a shop for is what it sells, not its filters, and a <details> does it without a line of javascript (the same element as a product's items, see Product/Item.html.twig) #}
+{% props order = null, filters = {}, priceBrackets = [] %}
+
+{# How many filters are active, said on the summary: folded, the panel must still say the listing is not whole. The order is not counted in, sorting narrowing nothing #}
+{% set active = filters|default({})|filter(value => value)|length %}
+{# Open by itself on an already narrowed or already sorted listing: the sort pills are in here, and the visitor who has just clicked one must see which is lit #}
+<details class="shop-refine"{% if active or order is not empty %} open{% endif %}>
+    <summary class="shop-refine-summary">
+        {{ 'label.refine'|trans({}, 'shop') }}
+        {% if active %}<span class="shop-refine-count">{{ active }}</span>{% endif %}
+    </summary>
+
+    <div class="shop-refine-body">
+        <twig:c975LShop:Product:CategoriesSelect/>
+        <twig:c975LShop:Product:Filters filters="{{ filters }}" priceBrackets="{{ priceBrackets }}" order="{{ order }}"/>
+        <twig:c975LShop:Product:Sort order="{{ order }}" filters="{{ filters }}"/>
+    </div>
+</details>

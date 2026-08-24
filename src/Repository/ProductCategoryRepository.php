@@ -38,4 +38,27 @@ class ProductCategoryRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(['slug' => $slug]);
     }
+
+    /**
+     * The categories owning the given blocks, read in one query - what the front-end "Edit this block" button resolves its edit urls from (see ShopBlockEditUrlProvider), the same way ProductRepository does for a sheet.
+     *
+     * @param int[] $blockIds
+     *
+     * @return ProductCategory[]
+     */
+    public function findByBlockIds(array $blockIds): array
+    {
+        if ([] === $blockIds) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('c')
+            ->select('c, b')
+            ->innerJoin('c.blocks', 'b')
+            ->andWhere('b.id IN (:blockIds)')
+            ->setParameter('blockIds', $blockIds)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

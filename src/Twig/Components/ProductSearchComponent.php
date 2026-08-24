@@ -22,13 +22,13 @@ class ProductSearchComponent
     public ?string $categorySlug = null;
 
     public function __construct(
-        private ProductServiceInterface $productService
+        private ProductServiceInterface $productService,
     ) {
     }
 
     public function getProducts(): ?array
     {
-        if (trim($this->query) === '') {
+        if ('' === trim($this->query)) {
             return null;
         }
 

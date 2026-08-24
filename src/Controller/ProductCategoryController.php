@@ -11,15 +11,15 @@
 namespace c975L\ShopBundle\Controller;
 
 use c975L\ShopBundle\Entity\ProductCategory;
+use c975L\ShopBundle\Service\ProductServiceInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use c975L\ShopBundle\Service\ProductCategoryServiceInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProductCategoryController extends AbstractController
 {
-    public function __construct(private readonly ProductCategoryServiceInterface $productCategoryService)
+    public function __construct(private readonly ProductServiceInterface $productService)
     {
     }
 
@@ -32,14 +32,15 @@ class ProductCategoryController extends AbstractController
     )]
     public function display(
         #[MapEntity(expr: 'repository.findOneBySlug(slug)')]
-        ProductCategory $category
-    ): Response
-    {
+        ProductCategory $category,
+    ): Response {
         return $this->render(
             '@c975LShop/category/display.html.twig',
             [
                 'category' => $category,
+                // Read through the repository rather than off the association: a category holds its drafts and its trashed products too, which the page would otherwise card up and link to a 404
+                'products' => $this->productService->findByCategorySlug($category->getSlug()),
             ]
-        )->setMaxAge(3600);
+        );
     }
 }

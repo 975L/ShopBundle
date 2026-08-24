@@ -1,0 +1,16 @@
+{# <twig:c975LShop:Shop:Breadcrumb subject="{{ product }}"/> - the subject being a Product or a ProductCategory, the trail resolved by ShopBreadcrumbBuilder #}
+{# The levels come from the same builder the page's BreadcrumbList is written from, so what a search engine prints and what the visitor reads are never two different trails #}
+{% set trail = shop_breadcrumb(subject) %}
+{% if trail|length > 1 %}
+    <nav class="shop-breadcrumb" aria-label="{{ 'label.breadcrumb'|trans({}, 'shop') }}">
+        {% for level in trail %}
+            {# The page never links to itself: the level it sits on is printed as text, which is also what tells a screen reader where it is #}
+            {% if loop.last %}
+                <span class="shop-breadcrumb-current" aria-current="page">{{ level.name }}</span>
+            {% else %}
+                {# The name and the chevron after it are one item of the row, so a name taking the whole width of a phone takes its chevron down with it instead of leaving it alone on the next line #}
+                <span class="shop-breadcrumb-level"><a href="{{ level.url }}">{{ level.name }}</a><span class="shop-breadcrumb-separator" aria-hidden="true">&rsaquo;</span></span>
+            {% endif %}
+        {% endfor %}
+    </nav>
+{% endif %}

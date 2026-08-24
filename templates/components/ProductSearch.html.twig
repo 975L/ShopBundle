@@ -1,20 +1,23 @@
 {# for the Live Component to work, there must be a single root element (e.g. a <div>) where the attributes are applied to #}
-<div {{ attributes }}>
+<div {{ attributes }} class="product-search">
     <input
         type="search"
         data-model="on(input)|query"
         aria-label="{{ 'label.search_products'|trans({}, 'shop') }}"
         placeholder="{{ 'placeholder.search_products'|trans({}, 'shop') }}"
-        class="img-500"
+        class="product-search-input"
     >
 
-    <p class="text text-center">&nbsp;</p>
-    <div class="flex-center flex-start">
-        {% set products = this.products %}
-        {% if products is not null and products is empty %}
-            <p class="text text-center">{{ 'label.no_search_result'|trans({}, 'shop') }}</p>
-        {% elseif products is not empty %}
-            <twig:c975LShop:Product:Products :products="products"/>
-        {% endif %}
-    </div>
+    <twig:c975LUi:Search:Busy/>
+
+    {# The results take the whole width below the row, the input keeping its place in it #}
+    {% set products = this.products %}
+    {% if products is not null and products is empty %}
+        <p class="product-search-results text text-center">{{ 'label.no_search_result'|trans({}, 'shop') }}</p>
+    {% elseif products is not empty %}
+        <div class="product-search-results">
+            {# Its own heading and no anchor: the listing of the page keeps the "products" id the load-more link and the sort links point at, and what is found says so rather than reading as the whole shop #}
+            <twig:c975LShop:Product:Products :products="products" title="{{ 'label.search_results'|trans({}, 'shop') }}" id=""/>
+        </div>
+    {% endif %}
 </div>

@@ -10,10 +10,9 @@
 
 namespace c975L\ShopBundle\Repository;
 
-use DateTimeImmutable;
-use Doctrine\Persistence\ManagerRegistry;
 use c975L\ShopBundle\Entity\ProductItemDownload;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<ProductItemDownload>
@@ -25,14 +24,38 @@ class ProductItemDownloadRepository extends ServiceEntityRepository
         parent::__construct($registry, ProductItemDownload::class);
     }
 
-    public function findExpired(DateTimeImmutable $expirationDate): array
+    // The links of one basket that have not expired yet, newest first: the customer area hands out the copy already made rather than making another on every visit
+    public function findLiveByBasket(int $basketId, \DateTimeImmutable $now): array
+    {
+        return $this->createQueryBuilder('d')
+            ->andWhere('d.basketId = :basketId')
+            ->andWhere('d.expiresAt > :now')
+            ->setParameter('basketId', $basketId)
+            ->setParameter('now', $now)
+            ->orderBy('d.expiresAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    // Past its expiry date a link is spent, downloaded or not: waiting for a click that may never come would leave its copy on the disk forever
+    public function findExpired(\DateTimeImmutable $expirationDate): array
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.expiresAt < :expirationDate')
-            ->andWhere('d.downloaded = true')
             ->setParameter('expirationDate', $expirationDate)
             ->getQuery()
             ->getResult();
+    }
+
+    // Drops the rows expired long enough that nobody is owed the page explaining why their link no longer works
+    public function deleteExpiredBefore(\DateTimeImmutable $retentionDate): int
+    {
+        return (int) $this->createQueryBuilder('d')
+            ->delete()
+            ->andWhere('d.expiresAt < :retentionDate')
+            ->setParameter('retentionDate', $retentionDate)
+            ->getQuery()
+            ->execute();
     }
 
     //    /**

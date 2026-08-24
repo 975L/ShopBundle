@@ -1,18 +1,61 @@
-<twig:c975LSite:Card:Card id="{{ productItem.slug }}" title="{{ productItem.title }}" class="product-item">
-    <div>
-        {% if productItem.media != null and productItem.media.name != null %}
-            <div class="card-img">
-                <twig:c975LSite:Image:Image src="{{ productItem.media.name }}" class="img-shadow" width="100"s/>
-                <twig:c975LShop:Product:Icon item="{{ productItem }}"/>
-            </div>
+{# One row per item, only one open at a time: the shared "name" is HTML's own exclusive accordion, so the bundle ships no controller for it #}
+{% set limited = productItem.limitedQuantity %}
+{% set ordered = productItem.orderedQuantity ?? 0 %}
+{% set available = limited is null or limited > ordered %}
+{# Out of stock rather than withdrawn: read from the service so the row, the button beside it and the card's own badge never disagree #}
+{% set soldOut = shop_item_sold_out(productItem) %}
+{% set media = productItem.media %}
+{# Read once and used twice: the kind printed next to the title, and the stock line below, which only a physical item has - a download is never short of copies, and a service is not held in a stock #}
+{% set format = shop_item_format(productItem) %}
+<details class="product-item{{ available ? '' : ' product-item-unavailable' }}" name="product-items" id="{{ productItem.slug }}"{% if open|default(false) and available %} open{% endif %}>
+    <summary class="product-item-summary">
+        <span class="product-item-visual">
+            {# A bare img and not the Image component: what the summary of a details element accepts is phrasing content, and the component wraps its picture in a paragraph #}
+            {% if media != null and media.name != null %}
+                <img src="{{ asset(media.name) }}" alt="{{ media.alt|default('') ?: productItem.title }}" class="img" width="52" height="52" loading="lazy">
+            {% endif %}
+        </span>
+        <span class="product-item-data">
+            <span class="product-item-heading">
+                <strong>{{ productItem.title }}</strong>
+                <span class="product-item-kind">{{ format|trans({}, 'shop') }}</span>
+            </span>
+            {% if productItem.description %}
+                <span class="product-item-description">{{ productItem.description }}</span>
+            {% endif %}
+            {% if soldOut %}
+                {# A cap the orders have reached: the shop expects it back, and the button beside offers the alert #}
+                <span class="product-item-stock product-item-stock-none">{{ 'label.out_of_stock'|trans({}, 'shop') }}</span>
+            {% elseif not available %}
+                {# Capped at 0, so withdrawn for good: nothing is promised on it #}
+                <span class="product-item-stock product-item-stock-none">{{ 'label.sold_out'|trans({}, 'shop') }}</span>
+            {% elseif limited > 0 %}
+                <span class="product-item-stock product-item-stock-low">{{ 'label.remaining_quantity'|trans({}, 'shop') }} : {{ limited - ordered }}</span>
+            {% elseif 'label.physical' == format %}
+                {# Only where running out is a possibility: "sold out" and "n left" are said of any kind, a workshop having as many seats as a numbered edition has copies, but "in stock" is a thing on a shelf #}
+                <span class="product-item-stock product-item-stock-ok">{{ 'label.in_stock'|trans({}, 'shop') }}</span>
+            {% endif %}
+        </span>
+        <span class="product-item-price">
+            {% set priceBefore = shop_item_price_before(productItem) %}
+            {% if priceBefore %}
+                <s class="product-item-price-before"><span class="visuallyhidden">{{ 'label.price_before'|trans({}, 'shop') }} </span>{{ (priceBefore / 100)|format_currency(productItem.currency) }}</s>
+            {% endif %}
+            <strong>{{ productItem.price == 0 ? 'label.free'|trans({}, 'shop') : (productItem.price / 100)|format_currency(productItem.currency) }}</strong>
+            {% set discount = shop_item_discount(productItem) %}
+            {% if discount %}
+                <span class="product-item-discount">{{ 'label.discount'|trans({'%discount%': discount}, 'shop') }}</span>
+            {% endif %}
+            {% if productItem.vat > 0 %}
+                <span class="product-item-vat">{{ 'label.vat'|trans({}, 'shop') }} {{ productItem.vat }} %</span>
+            {% endif %}
+        </span>
+    </summary>
+    <div class="product-item-panel">
+        {% set fileFormat = shop_item_file_format(productItem) %}
+        {% if fileFormat %}
+            <span class="product-item-format">{{ fileFormat }}</span>
         {% endif %}
-        <div class="card-data">
-            <p>{{ productItem.description }}</p>
-            <p class="price">{{ productItem.price == 0 ? 'label.free'|trans({}, 'shop') : (productItem.price / 100)|format_currency(productItem.currency) }}</p>
-            <twig:c975LShop:Item:Type item="{{ productItem }}"/>
-            <twig:c975LShop:Item:Quantity id="{{ productItem.id }}"/>
-        </div>
+        <twig:c975LShop:ProductItem:AddButton productItem="{{ productItem }}"/>
     </div>
-    <twig:c975LShop:ProductItem:Quantity limited="{{ productItem.limitedQuantity }}" ordered="{{ productItem.orderedQuantity }}"/>
-    <twig:c975LShop:ProductItem:AddButton productItem="{{ productItem }}"/>
-</twig:c975LSite:Card:Card>
+</details>

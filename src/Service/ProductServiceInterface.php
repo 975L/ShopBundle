@@ -11,18 +11,50 @@
 namespace c975L\ShopBundle\Service;
 
 use c975L\ShopBundle\Entity\Product;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Symfony\Component\HttpFoundation\InputBag;
 
 interface ProductServiceInterface
 {
+    /**
+     * @return Product[] in no particular order
+     */
     public function findAll();
 
+    /**
+     * @return Product[] ordered by their admin-defined position
+     */
     public function findAllSorted();
 
+    /**
+     * The sorted products, 9 per page.
+     *
+     * @param InputBag $query the request's query bag, its "p" parameter holding the 1-based page number
+     *
+     * @return PaginationInterface<int, Product>
+     */
     public function findAllPaginated($query);
 
-    public function findOneById(int $id): Product;
+    /**
+     * @return Product|null null when no product carries that id
+     */
+    public function findOneById(int $id): ?Product;
 
+    /**
+     * @param string $slug the slug of the category
+     *
+     * @return Product[] the published products of that category, ordered by their admin-defined position
+     */
+    public function findByCategorySlug(string $slug);
+
+    /**
+     * @param string      $query        the free-text search terms
+     * @param string|null $categorySlug restricts the search to one category, null searching them all
+     *
+     * @return Product[]
+     */
     public function search(string $query, ?string $categorySlug = null);
 
+    // Persists and flushes the product.
     public function save(Product $product): void;
 }

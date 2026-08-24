@@ -1,0 +1,15 @@
+{% extends '@EasyAdmin/crud/index.html.twig' %}
+
+{% block main %}
+    <p>{{ ('label.info_product'|trans({}, 'shop')) }}</p>
+
+    {{ parent() }}
+{% endblock main %}
+
+{# Opts each row into UiBundle's ea-index-sort.js: the catalogue is ordered by hand, and typing a number in every "position" cell to move one product is the alternative. The recycle bin is left out - nothing is ordered there, and a drop would renumber the catalogue against rows nobody sees #}
+{% block entity_row_attributes %}
+    {% if app.request.query.get('trash') is empty %}
+        data-reorder-url="{{ ea_url().setAction('reorder') }}"
+        data-reorder-token="{{ csrf_token('shop_product_reorder') }}"
+    {% endif %}
+{% endblock %}

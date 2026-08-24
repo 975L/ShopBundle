@@ -1,9 +1,20 @@
-<section id="products">
+{# The heading is a prop so a "shop_products" block can name its own selection ("Nos nouveautés"), the shop's index passing none and keeping its own wording #}
+{% set heading = title|default('') is not empty ? title : 'label.all_our_items'|trans({}, 'shop') %}
+{# "rating": the score under each card, and the icons to set it - only a listing rendered outside the block cache asks for it, the html of a cached block being shared by every visitor and its averages frozen with it, and only where the shop rates its products at all (the setting the product sheet reads, see product/display.html.twig) #}
+{% set rating = rating|default(false) and config('shop-rating')|to_bool %}
+{# One query for the whole page rather than one per card: each card is handed the tally already read for it (see ui_ratings()) #}
+{% set ratings = rating ? ui_ratings('shop_product', products|map(p => p.id)) : [] %}
+{# The listing the shop's index and a block both print, and the one the live search prints under its input: only the first is the page's "products" anchor, so the id is a prop the others empty rather than a second element carrying the same one #}
+{% set sectionId = id is defined ? id : 'products' %}
+<section{% if sectionId %} id="{{ sectionId }}"{% endif %}>
     {% if products is not empty %}
-        <h2>{{ 'label.all_our_items'|trans({}, 'shop') }}</h2>
-        <div class="products">
+        <h2>{{ heading }}</h2>
+        {# "infinite" marks the list for UiBundle's infiniteScroll controller, which reads the page it fetches through this very attribute - only the listing that grows carries it, a block's own selection sitting on the same page would otherwise answer in its place #}
+        <div class="products"{% if infinite|default(false) %} data-infiniteScroll-target="list"{% endif %}>
             {% for product in products %}
-                <twig:c975LShop:Product:Product product="{{ product }}"/>
+                {# The first card is the largest image above the fold on a listing, so it loads eagerly while the others stay lazy #}
+                {# "editable" is forwarded rather than decided here: only a page rendering its listing outside the block cache offers the editor's button (see Product.html.twig) #}
+                <twig:c975LShop:Product:Product product="{{ product }}" priority="{{ loop.first }}" editable="{{ editable|default(false) }}" :rating="rating" :aggregate="rating ? ratings[product.id] : null"/>
             {% endfor %}
         </div>
     {% else %}

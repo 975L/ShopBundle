@@ -4,32 +4,146 @@ services:
         autoconfigure: true
         public: true
 
-    c975L\ShopBundle\Command\:
-        resource: '../src/Command/*'
+    c975L\ShopBundle\:
+        resource: '../src/'
+        exclude: '../src/{Entity,Message}'
 
-    c975L\ShopBundle\Controller\:
-        resource: '../src/Controller/*'
+    c975L\ShopBundle\Service\StylesheetProvider:
+        tags:
+            - { name: 'ui.stylesheet', priority: 10 }
 
-    c975L\ShopBundle\Form\:
-        resource: '../src/Form/*'
+    # Same reading as UiBundle's own limiters: c975LShopBundle prepends "shop_stock_alert" itself, so the public subscription route is never served unlimited, and a site that took the limiter away still gets a controller rather than a container that refuses to compile
+    c975L\ShopBundle\Controller\ProductItemStockAlertController:
+        arguments:
+            $stockAlertLimiterFactory: '@?limiter.shop_stock_alert'
 
-    c975L\ShopBundle\Listener\:
-        resource: '../src/Listener/*'
+    # Block kinds registered in UiBundle - every one of them resolves its content live at render time (see ShopBlockExtension), so they are all cached under the catalog tags ShopBlockCacheTagProvider applies and ShopCacheInvalidationListener drops, rather than left uncached
+    shop.block.products:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: shop_products
+              label: 'label.block_products'
+              description: 'label.block_products_description'
+              translation_domain: 'shop'
+              category: 'label.category_shop'
+              form: 'c975L\ShopBundle\Form\Block\ProductsBlockType'
+              template: '@c975LShop/blocks/Products.html.twig'
+              pickable: true
+              cacheable: true
 
-    c975L\ShopBundle\Management\:
-        resource: '../src/Management/*'
+    shop.block.gift_cards:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: shop_gift_cards
+              label: 'label.block_gift_cards'
+              description: 'label.block_gift_cards_description'
+              translation_domain: 'shop'
+              category: 'label.category_shop'
+              form: 'c975L\ShopBundle\Form\Block\GiftCardsBlockType'
+              template: '@c975LShop/blocks/GiftCards.html.twig'
+              pickable: true
+              cacheable: true
 
-    c975L\ShopBundle\Namer\:
-        resource: '../src/Namer/*'
+    shop.block.categories:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: shop_categories
+              label: 'label.block_categories'
+              description: 'label.block_categories_description'
+              translation_domain: 'shop'
+              category: 'label.category_shop'
+              form: 'c975L\ShopBundle\Form\Block\CategoriesBlockType'
+              template: '@c975LShop/blocks/Categories.html.twig'
+              pickable: true
+              cacheable: true
 
-    c975L\ShopBundle\MessageHandler\:
-        resource: '../src/MessageHandler/*'
+    shop.block.product:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: shop_product
+              label: 'label.block_product_card'
+              description: 'label.block_product_card_description'
+              translation_domain: 'shop'
+              category: 'label.category_shop'
+              form: 'c975L\ShopBundle\Form\Block\ProductBlockType'
+              template: '@c975LShop/blocks/Product.html.twig'
+              pickable: true
+              cacheable: true
 
-    c975L\ShopBundle\Repository\:
-        resource: '../src/Repository/*'
+    shop.block.product_button:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: shop_product_button
+              label: 'label.block_product_button'
+              description: 'label.block_product_button_description'
+              translation_domain: 'shop'
+              category: 'label.category_shop'
+              form: 'c975L\ShopBundle\Form\Block\ProductButtonBlockType'
+              template: '@c975LShop/blocks/ProductButton.html.twig'
+              pickable: true
+              cacheable: true
 
-    c975L\ShopBundle\Service\:
-        resource: '../src/Service/*'
+    shop.block.search:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: shop_search
+              label: 'label.block_search'
+              description: 'label.block_search_description'
+              translation_domain: 'shop'
+              category: 'label.category_shop'
+              form: 'c975L\ShopBundle\Form\Block\ProductSearchBlockType'
+              template: '@c975LShop/blocks/Search.html.twig'
+              pickable: true
+              # The one kind of the eight that is not cached: it renders a Live Component, whose markup carries the props checksum and the csrf token of the current session - the very reason UiBundle's own "form" kind is not cached either
+              cacheable: false
 
-    c975L\ShopBundle\Twig\:
-        resource: '../src/Twig/*'
+    shop.block.recommendations:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: shop_recommendations
+              label: 'label.block_recommendations'
+              description: 'label.block_recommendations_description'
+              translation_domain: 'shop'
+              category: 'label.category_shop'
+              form: 'c975L\ShopBundle\Form\Block\RecommendationsBlockType'
+              template: '@c975LShop/blocks/Recommendations.html.twig'
+              pickable: true
+              cacheable: true
+
+    # The two kinds composing a product sheet rather than a page: left without a slug they show the product of the sheet they sit on, which is what "shop_product" - the context ProductCrudController declares - offers them on. The two slot contexts come with it so the buy table can sit in a column of a "flex_columns" placed on that same sheet
+    shop.block.product_items:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: shop_product_items
+              label: 'label.block_product_items'
+              description: 'label.block_product_items_description'
+              translation_domain: 'shop'
+              category: 'label.category_shop'
+              form: 'c975L\ShopBundle\Form\Block\ProductItemsBlockType'
+              template: '@c975LShop/blocks/ProductItems.html.twig'
+              pickable: true
+              cacheable: true
+              contexts: 'shop_product,flex_slot,flex_slot_nested'
+
+    shop.block.product_slider:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: shop_product_slider
+              label: 'label.block_product_slider'
+              description: 'label.block_product_slider_description'
+              translation_domain: 'shop'
+              category: 'label.category_shop'
+              form: 'c975L\ShopBundle\Form\Block\ProductSliderBlockType'
+              template: '@c975LShop/blocks/ProductSlider.html.twig'
+              pickable: true
+              cacheable: true
+              contexts: 'shop_product,flex_slot,flex_slot_nested'

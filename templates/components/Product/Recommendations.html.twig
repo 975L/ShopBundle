@@ -1,7 +1,11 @@
+{# The heading is a prop, same as the products grid: a "shop_recommendations" block names its own selection, the product sheet passing none #}
+{% set heading = title|default('') is not empty ? title : 'label.you_might_also_like'|trans({}, 'shop') %}
 {% if recommendations is defined and recommendations is not empty %}
     <section class="recommendations" id="recommendations">
-        <h2>{{ 'label.you_might_also_like'|trans({}, 'shop') }}</h2>
-        <div class="cards recommendations">
+        <div class="recommendations-header">
+            <h2>{{ heading }}</h2>
+        </div>
+        <div class="recommendations-list">
             {% for recommendation in recommendations %}
                 <twig:c975LShop:Product:Recommendation recommendation="{{ recommendation }}"/>
             {% endfor %}

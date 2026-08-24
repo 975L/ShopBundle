@@ -14,7 +14,13 @@ use c975L\ShopBundle\Entity\ProductCategory;
 
 interface ProductCategoryServiceInterface
 {
+    /**
+     * @return ProductCategory[]
+     */
     public function findAll();
 
-    public function findOneBySlug(string $slug): ProductCategory;
+    /**
+     * @return ProductCategory|null null when no category carries that slug
+     */
+    public function findOneBySlug(string $slug): ?ProductCategory;
 }

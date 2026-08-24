@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="en" datatype="plaintext" original="site_config.en.xlf">
+        <body>
+            <trans-unit id="v7.3IEh">
+                <source>description.shop_favorites</source>
+                <target>Shows a heart on a product's sheet, and on every card of the shop, to save it for later. The list is read on /favorites, and follows the customer from one device to another once they are signed in</target>
+            </trans-unit>
+            <trans-unit id="L4uaR7U">
+                <source>description.shop_rating</source>
+                <target>Shows a way to rate a product on its own sheet, and on every card of the shop listing. The icon and the scale are set in the general settings</target>
+            </trans-unit>
+            <trans-unit id="kbgSvT0">
+                <source>description.shop_test_mode</source>
+                <target>Set to true to warn every visitor that the shop is being set up: nothing is really sold and nothing will be shipped</target>
+            </trans-unit>
+            <trans-unit id="qCudWQK">
+                <source>label.shop_favorites</source>
+                <target>Wishlist</target>
+            </trans-unit>
+            <trans-unit id="gGpasr_">
+                <source>label.shop_rating</source>
+                <target>Customer ratings</target>
+            </trans-unit>
+            <trans-unit id="uGkJUfp">
+                <source>label.shop_test_mode</source>
+                <target>Shop test mode</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

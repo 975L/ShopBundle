@@ -10,8 +10,8 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use c975L\ShopBundle\Repository\ProductAffinityRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductAffinityRepository::class)]
 #[ORM\Table(name: 'shop_product_affinity')]
@@ -36,7 +36,7 @@ class ProductAffinity
     #[ORM\Column(type: 'integer', options: ['default' => 0])]
     private int $coPurchaseCount = 0;
 
-    #[ORM\Column(type: 'decimal', precision: 5, scale: 2, options: ['default' => 0])]
+    #[ORM\Column(type: 'decimal', precision: 5, scale: 2, options: ['default' => '0.00'])]
     private float $affinityScore = 0.0;
 
     #[ORM\Column(type: 'datetime')]
@@ -85,7 +85,7 @@ class ProductAffinity
 
     public function incrementCoPurchaseCount(): self
     {
-        $this->coPurchaseCount++;
+        ++$this->coPurchaseCount;
 
         return $this;
     }

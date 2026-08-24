@@ -1,4 +1,0 @@
-<h2><a href="{{ absolute_url(path('crowdfunding_display', {'slug': ticket.slug})) }}">{{ 'label.crowdfunding'|trans({}, 'shop') }} : {{ ticket.crowdfunding }}</a></h2>
-<p>{{ 'label.lottery_identifier'|trans({}, 'shop') }} : <strong><a href="{{ absolute_url(path('lottery_display', {'identifier': ticket.lotteryIdentifier})) }}">{{ ticket.lotteryIdentifier }}</a></strong></p>
-<p>{{ 'label.draw_date'|trans({}, 'shop') }} : <strong>{{ ticket.drawDate|date('d/m/Y - H:i', 'Europe/Paris') }}</strong></p>
-<p>{{ 'label.ticket_number'|trans({}, 'shop') }} : <strong>{{ ticket.number }}</strong></p>

@@ -2,14 +2,24 @@
 {% trans_default_domain 'shop' %}
 
 {# Defines specific variables #}
-{% set title = 'label.item_already_downloaded'|trans %}
+{% set title = (productItem.downloadedAt ? 'label.item_already_downloaded' : 'label.download_link_expired')|trans %}
 
 {% block content %}
     <section class="text-center">
-        <twig:c975LSite:Alert:Alert type="info">
-            {{ 'text.item_already_downloaded'|trans({}, 'shop') }}
-            <p>{{ productItem.downloadedAt|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</p>
-            <p><a href="{{ absolute_url(path('contactform_display')) }}" rel="nofollow" class="btn btn-primary">{{ 'label.contact'|trans({}, 'commons') }}</a></p>
-        </twig:c975LSite:Alert:Alert>
+        <twig:c975LUi:Alert:Alert type="info">
+
+            {# A link that was used says when, one that ran out without ever being used has no date to show #}
+            {% if productItem.downloadedAt %}
+                {{ 'text.item_already_downloaded'|trans({}, 'shop') }}
+                <p>{{ productItem.downloadedAt|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</p>
+            {% else %}
+                {{ 'text.download_link_expired'|trans({}, 'shop') }}
+            {% endif %}
+
+            {# ContactFormBundle is optional: a shop installed without it shows the page rather than failing on a route that does not exist #}
+            {% if route_exists('contactform_display') %}
+                <p><a href="{{ absolute_url(path('contactform_display')) }}" rel="nofollow" class="btn btn-primary">{{ 'label.contact'|trans({}, 'commons') }}</a></p>
+            {% endif %}
+        </twig:c975LUi:Alert:Alert>
     </section>
 {% endblock %}

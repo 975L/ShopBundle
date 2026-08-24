@@ -2,19 +2,49 @@
 {% trans_default_domain 'shop' %}
 
 {# Defines specific variables #}
-{% set title = 'label.category'|trans({}, 'shop') ~ ' : ' ~ category.name %}
+{# The name alone, and not "Category: name": the h1 of the layout is built from it, and a prefix says nothing a search engine or a visitor needs #}
+{% set title = category.name %}
+{% set summarySocialNetwork = category.description %}
+
+{# Editor-only: the page leads to the category's own edit screen, its text to the very field it is printed from, and each card to the product it stands for - the same hover button UiBundle draws over a block, mounted here as the shop's index does #}
+{% set canEdit = is_granted(config('site-role-editor')) %}
+{% set editUrl = canEdit ? shop_product_category_edit_url(category) : null %}
 
 {% block content %}
     <twig:c975LShop:Shop:TestMode/>
-    <div data-controller="basket">
-        <twig:c975LShop:Shop:Shipping/>
-        <twig:c975LShop:Shop:Information/>
-        <twig:c975LShop:Product:CategoriesSelect/>
-        <h3>{{ category.name }}</h3>
+    <div data-controller="basket{{ canEdit ? ' blockEditOverlay' : '' }}" class="shop"{% if editUrl %} data-edit-label="{{ 'label.edit'|trans({}, 'ui') }}" data-block-edit-url="{{ editUrl }}"{% endif %}>
+        <twig:c975LShop:Shop:Breadcrumb subject="{{ category }}"/>
+        {# What the category says of itself, the only content of this page that is its own - the shop's welcome message belongs to the shop's index, not here #}
+        {% if category.description %}
+            <div class="text text-center"{% if editUrl %} data-block-edit-url="{{ shop_product_category_edit_url(category, 'description') }}"{% endif %}>
+                {{ category.description|raw }}
+            </div>
+        {% endif %}
+
+        {# What the category page says around its listing - composed in the back-office with UiBundle's kinds, nothing to add here when it holds no block #}
+        <twig:c975LUi:Blocks:Blocks blocks="{{ category.blocks }}"/>
+
+        {# The same two controls as the shop's index, in the same order and with no folded panel: a category page narrows by nothing else, and two controls do not need to be put away #}
+        {# The selector is handed the category being read, so it shows where the visitor is rather than "the whole shop" #}
         <twig:c975LShop:Product:Search categorySlug="{{ category.slug }}"/>
-        <twig:c975LShop:Product:Products products="{{ category.products }}"/>
+        <div class="shop-filters">
+            <twig:c975LShop:Product:CategoriesSelect selectedCategory="{{ category.slug }}"/>
+        </div>
+
+        <twig:c975LShop:Product:Products products="{{ products }}" title="{{ 'label.products_in_category'|trans({'%category%': category.name}, 'shop') }}" editable="{{ canEdit }}"/>
         <twig:c975LShop:Shop:NavbarBasket/>
-        <twig:c975LShop:Basket:Message/>
-        <twig:c975LShop:Shop:ViewButton/>
+        <twig:c975LPayment:Basket:Message/>
     </div>
+
+    {# The products filed under this category, as the list a search engine reads them through - the same summary form as the shop's index, on one page and so numbered from one #}
+    {% set productsJsonLd = shop_products_json_ld(products) %}
+    {% if productsJsonLd %}
+        <script type="application/ld+json">{{ productsJsonLd }}</script>
+    {% endif %}
+
+    {# The trail above the page, which Google prints in place of the url #}
+    {% set breadcrumbJsonLd = shop_breadcrumb_json_ld(category) %}
+    {% if breadcrumbJsonLd %}
+        <script type="application/ld+json">{{ breadcrumbJsonLd }}</script>
+    {% endif %}
 {% endblock %}

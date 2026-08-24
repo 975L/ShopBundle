@@ -10,9 +10,19 @@
 
 namespace c975L\ShopBundle\Service;
 
+use c975L\ShopBundle\Entity\Media;
+
 interface MediaServiceInterface
 {
+    /**
+     * @return Media[]
+     */
     public function findAll(): array;
 
+    /**
+     * Blanks out the row of a media whose file is gone from disk, so the database stops advertising it.
+     *
+     * @param string $file the stored file name to look the media up by
+     */
     public function updateDatabaseByName(string $file): void;
 }

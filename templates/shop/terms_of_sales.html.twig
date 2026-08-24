@@ -1,0 +1,16 @@
+{% extends 'layout.html.twig' %}
+{% trans_default_domain 'shop' %}
+
+{# Defines specific variables #}
+{% set title = 'label.terms_of_sales'|trans %}
+{% set summarySocialNetwork = 'label.terms_of_sales'|trans %}
+
+{% block content %}
+    {# The model opens straight on its first section, a Page's title naming the document on a site holding page management. Laid out on its own ".legal" box rather than written into the model's: the measure is read in "ch" against the font of the element carrying it, and a title font would widen it (see UiBundle's sass/_legal.scss) #}
+    <div class="legal">
+        <h1>{{ title }}</h1>
+        {# The same document as a file: what the law asks a shop to hand its customer is one they keep, not a page that can be rewritten #}
+        <p><a href="{{ path('ui_legal_document_pdf', {'model': 'france/terms-of-sales'}) }}">{{ 'label.terms_of_sales_pdf'|trans }}</a></p>
+    </div>
+    {{ legal_document_html('france/terms-of-sales') }}
+{% endblock %}

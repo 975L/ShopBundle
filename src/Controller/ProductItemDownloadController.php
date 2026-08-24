@@ -10,20 +10,17 @@
 
 namespace c975L\ShopBundle\Controller;
 
-use SplFileInfo;
-use Symfony\Component\Routing\Attribute\Route;
 use c975L\ShopBundle\Entity\ProductItemDownload;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use c975L\ShopBundle\Service\ProductItemDownloadServiceInterface;
+use c975L\UiBundle\Service\PrivateFileResponseFactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ProductItemDownloadController extends AbstractController
 {
     public function __construct(
         private readonly ProductItemDownloadServiceInterface $productItemDownloadService,
-        private readonly ParameterBagInterface $parameterBag
+        private readonly PrivateFileResponseFactoryInterface $privateFileResponseFactory,
     ) {
     }
 
@@ -36,18 +33,14 @@ class ProductItemDownloadController extends AbstractController
     )]
     public function download(ProductItemDownload $productItemDownload)
     {
-        $this->productItemDownloadService->recordDownloaded($productItemDownload);
+        // An expired link, or one whose file the shop has since removed, gets the page saying so rather than a download recorded against nothing
+        $filePath = $this->productItemDownloadService->resolveFilePath($productItemDownload);
+        $response = null === $filePath
+            ? null
+            : $this->privateFileResponseFactory->createDownloadResponse($filePath, basename($filePath));
 
-        // Returns binary file
-        $filename = $this->parameterBag->get('kernel.project_dir') . '/public/downloads/' . $productItemDownload->getFilename();
-        if (file_exists($filename)) {
-            $response = new BinaryFileResponse($filename);
-
-            $fileInfo = new SplFileInfo($productItemDownload->getFilename());
-            $response->setContentDisposition(
-                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $fileInfo->getBasename('.' . $fileInfo->getExtension()) . '.' . $fileInfo->getExtension()
-            );
+        if (null !== $response) {
+            $this->productItemDownloadService->recordDownloaded($productItemDownload);
 
             return $response;
         }
@@ -57,6 +50,6 @@ class ProductItemDownloadController extends AbstractController
             [
                 'productItem' => $productItemDownload,
             ]
-        )->setMaxAge(3600);
+        );
     }
 }

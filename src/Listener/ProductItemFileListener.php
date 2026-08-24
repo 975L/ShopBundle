@@ -10,13 +10,13 @@
 
 namespace c975L\ShopBundle\Listener;
 
-use Doctrine\ORM\Events;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\PreFlushEventArgs;
-use Symfony\Bundle\SecurityBundle\Security;
 use c975L\ShopBundle\Entity\ProductItemFile;
 use c975L\ShopBundle\Listener\Traits\UserTrait;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\Events;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: ProductItemFile::class)]
 class ProductItemFileListener

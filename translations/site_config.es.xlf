@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="es" datatype="plaintext" original="site_config.es.xlf">
+        <body>
+            <trans-unit id="v7.3IEh">
+                <source>description.shop_favorites</source>
+                <target>Muestra en la ficha de un producto, y en cada tarjeta de la tienda, un corazón para guardarlo. La lista se consulta en /favorites y sigue al cliente de un dispositivo a otro si ha iniciado sesión</target>
+            </trans-unit>
+            <trans-unit id="L4uaR7U">
+                <source>description.shop_rating</source>
+                <target>Muestra en la ficha de un producto, y en cada tarjeta de la tienda, con qué valorarlo. El icono y la escala se ajustan en los ajustes generales</target>
+            </trans-unit>
+            <trans-unit id="kbgSvT0">
+                <source>description.shop_test_mode</source>
+                <target>Poner en true para avisar a cada visitante de que la tienda se está configurando: no se vende ni se envía nada realmente</target>
+            </trans-unit>
+            <trans-unit id="qCudWQK">
+                <source>label.shop_favorites</source>
+                <target>Lista de deseos</target>
+            </trans-unit>
+            <trans-unit id="gGpasr_">
+                <source>label.shop_rating</source>
+                <target>Valoraciones de los clientes</target>
+            </trans-unit>
+            <trans-unit id="uGkJUfp">
+                <source>label.shop_test_mode</source>
+                <target>Modo de prueba de la tienda</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

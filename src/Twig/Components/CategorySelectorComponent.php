@@ -44,13 +44,13 @@ class CategorySelectorComponent extends AbstractController
     #[LiveAction]
     public function changeCategory(): Response
     {
-        if ($this->selectedCategory === 'all') {
+        if ('all' === $this->selectedCategory) {
             return $this->redirectToRoute('shop_index');
         }
 
         if ($this->selectedCategory) {
             return $this->redirectToRoute('category_display', [
-                'slug' => $this->selectedCategory
+                'slug' => $this->selectedCategory,
             ]);
         }
 

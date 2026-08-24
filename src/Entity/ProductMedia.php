@@ -10,27 +10,22 @@
 
 namespace c975L\ShopBundle\Entity;
 
+use c975L\UiBundle\Contract\VichImageResizableInterface;
+use c975L\UiBundle\Contract\VichMediaNamableInterface;
 use Doctrine\ORM\Mapping as ORM;
-use c975L\ShopBundle\Entity\Media;
-use c975L\ShopBundle\Entity\Product;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity]
 #[Vich\Uploadable]
-class ProductMedia extends Media
+class ProductMedia extends Media implements VichImageResizableInterface, VichMediaNamableInterface
 {
-    #[Vich\UploadableField(mapping: 'products', fileNameProperty: 'name', size: 'size')]
+    #[Vich\UploadableField(mapping: 'block_media', fileNameProperty: 'name', size: 'size')]
     protected ?File $file = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'medias')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Product $product = null;
-
-    public function getMappingName(): string
-    {
-        return 'products';
-    }
 
     public function getProduct(): ?Product
     {
@@ -42,5 +37,15 @@ class ProductMedia extends Media
         $this->product = $product;
 
         return $this;
+    }
+
+    public function getImageWidth(): int
+    {
+        return 600;
+    }
+
+    public function getVichMediaPath(): string
+    {
+        return 'medias/shop/products/' . $this->getProduct()->getSlug();
     }
 }

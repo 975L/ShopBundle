@@ -1,0 +1,26 @@
+/* This site's ShopBundle tokens, in the c975L theme format: everything ships commented out at the bundle's own default, so the active lines below are, at a glance, exactly what this design decides. The format and how it layers are documented in c975l/site-bundle's readme ("Themes"), the defaults themselves in this bundle's sass/_variables.scss. One file per bundle, each holding what that bundle reads. Shapes, colors, buttons, forms and every token shared with the rest of the ecosystem live in themes/ui.css - only what is ShopBundle's own is here. */
+/* ":root, [data-theme]" and not ":root" alone: the bundle declares its defaults on both, so inside an element carrying data-theme a value set here only on the root would lose to the bundle's default declared on that very element */
+:root, [data-theme] {
+    /* Surface of a product card. Follows the site's own panel, so a catalog is repainted by retuning --card-background in themes/ui.css - set it here only for a catalog meant to read differently from the rest of the site's cards */
+    /* --product-background-color: var(--card-background); */
+
+    /* The two inks under the card's own text: the excerpt and the row labels on the first, the category and the price label - the smallest texts of the card - on the second. Both are mixed out of the palette, so they follow the admin's colors; raise a percentage for a design whose card surface parts from the page background, which is what the mix is measured against */
+    /* --shop-text-muted: color-mix(in srgb, var(--text) 62%, var(--background)); */
+    /* --shop-text-subtle: color-mix(in srgb, var(--text) 58%, var(--background)); */
+
+    /* Ink of the shipping band, whose flat is --primary. Points at the page background, which is the far pole from --primary whichever way round the site is - repaint it for a design whose brand color is neither light nor deep enough for it */
+    /* --shop-shipping-color: var(--background); */
+
+    /* The rules of the shop: the page's own by default, the strong one marking out what a visitor acts on */
+    /* --shop-border: var(--border-color); */
+    /* --shop-border-strong: color-mix(in srgb, var(--text) 25%, var(--background)); */
+
+    /* Shapes - the card follows the site's own --radius-card, the row and the badge keep their own */
+    /* --shop-radius-card: var(--radius-card, 10px); */
+    /* --shop-radius-row: 10px; */
+    /* --shop-radius-badge: 4px; */
+
+    /* A stock level is a status and not a brand color, hence two fixed values rather than a mix out of the palette */
+    /* --shop-stock-ok: #2f5b3a; */
+    /* --shop-stock-low: #7a5320; */
+}

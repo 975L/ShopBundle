@@ -1,0 +1,9 @@
+{# Adapter for the dynamic Block system - the products are resolved live (see ShopBlockExtension), the block itself only storing what to show #}
+{% set products = shop_block_products(categorySlug|default(null), max|default(null), random|default(false)) %}
+{% if products is not empty %}
+    {# No anchor: the page keeps its own "products" id, the one the sort links, the filters and the "load more" link point at #}
+    <twig:c975LShop:Product:Products products="{{ products }}" title="{{ title|default('') }}" id=""/>
+    {% if displayMore|default(false) %}
+        <twig:c975LUi:Button:Button label="{{ 'label.shop'|trans({}, 'shop') }}" url="{{ path('shop_index') }}"/>
+    {% endif %}
+{% endif %}

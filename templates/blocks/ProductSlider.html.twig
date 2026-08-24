@@ -1,0 +1,5 @@
+{# The medias of the product, through UiBundle's own slider - the id is the product's slug, two sliders of two different products on the same page needing two different ones #}
+{% set product = shop_block_product(productSlug|default(null)) %}
+{% if product and product.medias is not empty %}
+    <twig:c975LUi:Slider:Slider media="{{ product.medias }}" id="product-slider-{{ product.slug }}" class="img-500" duration="{{ duration|default(0) }}"/>
+{% endif %}

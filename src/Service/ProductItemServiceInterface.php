@@ -14,5 +14,8 @@ use c975L\ShopBundle\Entity\ProductItem;
 
 interface ProductItemServiceInterface
 {
-    public function findOneById(int $id): ProductItem;
+    /**
+     * @return ProductItem|null null when no product item carries that id
+     */
+    public function findOneById(int $id): ?ProductItem;
 }

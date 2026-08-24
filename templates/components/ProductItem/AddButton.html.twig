@@ -2,14 +2,18 @@
 {% set type = type | default('primary') %}
 {% set quantity = quantity | default(1) %}
 {% set disabled = "" %}
-{% set label = 'label.add'|trans({}, 'shop') %}
+{# The price is on the button rather than only above it: it is the last thing read before the click #}
+{% set label = 'label.add'|trans({}, 'shop') ~ ' — ' ~ (productItem.price == 0 ? 'label.free'|trans({}, 'shop') : (productItem.price / 100)|format_currency(productItem.currency)) %}
+
+{# Out of stock rather than withdrawn: what is expected back is worth waiting for, where an item capped at 0 was taken off sale and promises nothing. Read from the service rather than compared here, the badge and the alerts answering the same question #}
+{% set soldOut = shop_item_sold_out(productItem) %}
 
 {% if productItem.limitedQuantity is same as 0 %}
     {% set disabled = "disabled" %}
     {% set label = 'label.unavailable'|trans({}, 'shop') %}
-{% elseif productItem.limitedQuantity > 0 and productItem.orderedQuantity >= productItem.limitedQuantity %}
+{% elseif soldOut %}
     {% set disabled = "disabled" %}
-    {% set label = 'label.limited_quantity_reached'|trans({}, 'shop') %}
+    {% set label = 'label.out_of_stock'|trans({}, 'shop') %}
 {% endif %}
 <button
     {{ disabled }}
@@ -23,5 +27,12 @@
     data-alert="success"
     data-text="{{ 'label.added'|trans({}, 'shop') }}"
     class="btn btn-large btn-{{ type }}">
-    <twig:c975LSite:Image:Icon src="bundles/c975lshop/images/basket-shopping.svg" width="24" height="24" class="white"/> {{ label }}
+    <twig:c975LUi:Image:Icon src="bundles/c975lshop/icons/basket-shopping.svg" width="24" height="24"/> {{ label }}
 </button>
+
+{# A page of its own rather than a form here: this html is cached per fragment, where a form needs a session and a csrf token #}
+{% if soldOut %}
+    <a href="{{ path('shop_stock_alert_new', {'id': productItem.id}) }}" rel="nofollow" class="btn btn-large btn-secondary">
+        <twig:c975LUi:Image:Icon src="bundles/c975lshop/icons/bell.svg" width="24" height="24"/> {{ 'label.stock_alert_notify_me'|trans({}, 'shop') }}
+    </a>
+{% endif %}

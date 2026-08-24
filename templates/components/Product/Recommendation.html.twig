@@ -1,7 +1,19 @@
+{% set state = shop_product_state(recommendation) %}
 <a href="{{ url('product_display', {'slug': recommendation.slug}) }}" class="recommendation-link">
-    <article class="product" id="recommendation-{{ recommendation.slug }}">
-        {% set imageSrc = recommendation.medias|first != false ? recommendation.medias|first : "bundles/c975lshop/images/no-recommendation-image.webp" %}
-        <twig:c975LSite:Image:Image src="{{ absolute_url(asset(imageSrc)) }}" class="img-shadow img-recommendation" width="125"/>
-        <h3>{{ recommendation.title }}</h3>
+    <article class="recommendation" id="recommendation-{{ recommendation.slug }}">
+        {% set media = recommendation.medias|first %}
+        {% set imageSrc = media != false ? media : "bundles/c975lshop/images/no-product-image.webp" %}
+        <twig:c975LUi:Image:Image src="{{ asset(imageSrc) }}" alt="{{ media.alt|default('') ?: recommendation.title }}" class="img-recommendation" width="56"/>
+        <span class="recommendation-data">
+            <strong>{{ recommendation.title }}</strong>
+            {% if state.price is not null %}
+                <span class="recommendation-price">
+                    {% if state.priceBefore %}
+                        <s class="recommendation-price-before"><span class="visuallyhidden">{{ 'label.price_before'|trans({}, 'shop') }} </span>{{ (state.priceBefore / 100)|format_currency(state.currency) }}</s>
+                    {% endif %}
+                    {{ state.price == 0 ? 'label.free'|trans({}, 'shop') : (state.price / 100)|format_currency(state.currency) }}
+                </span>
+            {% endif %}
+        </span>
     </article>
 </a>

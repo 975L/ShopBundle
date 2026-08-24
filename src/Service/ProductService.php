@@ -12,8 +12,8 @@ namespace c975L\ShopBundle\Service;
 
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Repository\ProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use \Doctrine\ORM\EntityManagerInterface;
 
 class ProductService implements ProductServiceInterface
 {
@@ -47,9 +47,15 @@ class ProductService implements ProductServiceInterface
     }
 
     // Finds one by id
-    public function findOneById(int $id): Product
+    public function findOneById(int $id): ?Product
     {
-        return $this->productRepository->findOneById($id);
+        return $this->productRepository->find($id);
+    }
+
+    // Finds the available products of a category, which is what its page lists
+    public function findByCategorySlug(string $slug)
+    {
+        return $this->productRepository->findByCategorySlug($slug);
     }
 
     // Searches for product

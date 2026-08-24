@@ -1,0 +1,307 @@
+[
+    {
+        "date": "2026-08-23",
+        "description": [
+            {
+                "en": "An item that has run out no longer loses the visitor: a \"Tell me when it is back\" button takes their email address, and the shop writes to them as soon as you raise the stock again. Each message carries its own unsubscribe link, and an item you withdrew from sale offers nothing, since nobody is waiting for it.",
+                "fr": "Un article épuisé ne fait plus perdre le visiteur : un bouton « Prévenez-moi » recueille son adresse email, et la boutique lui écrit dès que vous relevez le stock. Chaque message porte son propre lien de désinscription, et un article que vous avez retiré de la vente ne propose rien, puisque personne ne l'attend.",
+                "es": "Un artículo agotado ya no hace perder al visitante: un botón «Avíseme» recoge su dirección de correo, y la tienda le escribe en cuanto usted repone las existencias. Cada mensaje lleva su propio enlace para darse de baja, y un artículo que usted retiró de la venta no ofrece nada, ya que nadie lo espera."
+            },
+            {
+                "en": "Your gift cards now have a face. Give a product a picture, a line of text and the amounts it is sold for, and the shop shows a real card - your visual, your logo, the format of a bank card - that visitors turn over with a click. Add the new \"Gift cards\" block to any page to put them on sale.",
+                "fr": "Vos cartes cadeaux ont désormais un visuel. Donnez à un produit une image, une phrase et les montants auxquels il se vend, et la boutique affiche une vraie carte - votre visuel, votre logo, le format d'une carte bancaire - que le visiteur retourne d'un clic. Ajoutez le nouveau block « Cartes cadeaux » à n'importe quelle page pour les mettre en vente.",
+                "es": "Sus tarjetas regalo tienen ahora un visual. Dé a un producto una imagen, una frase y los importes por los que se vende, y la tienda muestra una tarjeta de verdad - su visual, su logotipo, el formato de una tarjeta bancaria - que el visitante da la vuelta con un clic. Añada el nuevo bloque «Tarjetas regalo» a cualquier página para ponerlas a la venta."
+            }
+        ]
+    },
+    {
+        "date": "2026-08-22",
+        "description": [
+            {
+                "en": "An item can now be sold as a gift card: fill in what the card is worth, and every unit bought is turned into a card of its own the moment the order is paid - sent by email or printed and posted, exactly like any other item",
+                "fr": "Un article peut désormais être vendu comme une carte cadeau : indiquez ce que vaut la carte, et chaque unité achetée devient une carte à part entière dès que la commande est payée - envoyée par email ou imprimée et postée, exactement comme n’importe quel autre article",
+                "es": "Un artículo puede venderse ahora como una tarjeta regalo: indique lo que vale la tarjeta, y cada unidad comprada se convierte en una tarjeta propia en cuanto se paga el pedido - enviada por correo o impresa y enviada por correo postal, exactamente como cualquier otro artículo"
+            },
+            {
+                "en": "An item can be taken off sale without being deleted: it leaves the product sheet, the price it set and the basket, while keeping its file, its picture and its stock - a format out of print, an edition replaced by another, a file being remade, all of them one checkbox away from coming back",
+                "fr": "Un article peut être retiré de la vente sans être supprimé : il quitte la fiche produit, le prix qu’il fixait et le panier, tout en gardant son fichier, son image et son stock - un format épuisé, une édition remplacée par une autre, un fichier en cours de refonte, tous à une case à cocher de revenir",
+                "es": "Un artículo puede retirarse de la venta sin ser eliminado: sale de la ficha de producto, del precio que fijaba y del carrito, conservando su archivo, su imagen y su stock - un formato agotado, una edición sustituida por otra, un archivo en proceso de rehacerse, todos a una casilla de volver"
+            },
+            {
+                "en": "The shop's index and every category page are composed in the back-office, the same way a product sheet already was: delivery terms, a welcome message or anything else is a block placed where you want it, and no template of the bundle has to be overridden any more",
+                "fr": "La page d’accueil de la boutique et chaque page de catégorie se composent depuis le back-office, comme une fiche produit le faisait déjà : les conditions de livraison, un message d’accueil ou n’importe quoi d’autre sont un block posé où vous voulez, et plus aucun template du bundle n’a à être surchargé",
+                "es": "La página principal de la tienda y cada página de categoría se componen desde el back-office, igual que ya lo hacía una ficha de producto: las condiciones de entrega, un mensaje de bienvenida o cualquier otra cosa son un bloque colocado donde usted quiera, y ningún template del bundle debe ser sobrescrito"
+            },
+            {
+                "en": "A buyer signed in finds the files they bought in their customer area, on the order they paid: the link is minted again when the one emailed has expired, so a file bought months ago is still one click away",
+                "fr": "Un acheteur connecté retrouve les fichiers qu’il a achetés dans son espace client, sur la commande qu’il a payée : le lien est refabriqué quand celui envoyé par email a expiré, si bien qu’un fichier acheté il y a des mois reste à un clic",
+                "es": "Un comprador conectado encuentra los archivos que ha comprado en su área de cliente, en el pedido que ha pagado: el enlace se vuelve a generar cuando el enviado por correo ha caducado, de modo que un archivo comprado hace meses sigue estando a un clic"
+            },
+            {
+                "en": "The health check now reads every product sheet as a search engine does, and says which ones serve no Product structured data or serve some that does not parse - a defect nothing could see until the sheet was supposed to carry it",
+                "fr": "Le health check lit désormais chaque fiche produit comme le fait un moteur de recherche, et dit lesquelles ne servent aucune donnée structurée Product, ou en servent qui ne se lisent pas - un défaut que rien ne voyait tant que la fiche n’était pas censée en porter",
+                "es": "El health check lee ahora cada ficha de producto como lo hace un motor de búsqueda, y dice cuáles no sirven ningún dato estructurado Product, o sirven alguno que no se puede leer - un defecto que nada veía mientras la ficha no debía llevarlo"
+            },
+            {
+                "en": "A category page lists the published products of that category, in the order the catalog was arranged in, where it used to show them as they came",
+                "fr": "La page d’une catégorie liste les produits publiés de cette catégorie, dans l’ordre où le catalogue a été rangé, là où elle les montrait tels qu’ils venaient",
+                "es": "La página de una categoría lista los productos publicados de esa categoría, en el orden en que se ha ordenado el catálogo, donde antes los mostraba tal como venían"
+            },
+            {
+                "en": "Reordering the product index by dragging its rows no longer restamps every product with today’s date and the name of whoever dragged them",
+                "fr": "Réordonner l’index des produits en faisant glisser ses lignes ne réestampille plus chaque produit avec la date du jour et le nom de celui qui les a déplacées",
+                "es": "Reordenar el índice de productos arrastrando sus filas ya no vuelve a sellar cada producto con la fecha de hoy y el nombre de quien las ha arrastrado"
+            },
+            {
+                "en": "The block showcase draws the four product kinds instead of failing on them, and the status report counts a sheet with no description at all among the thin ones",
+                "fr": "La vitrine des blocs dessine les quatre types produit au lieu d’échouer dessus, et le rapport d’état compte une fiche sans aucune description parmi les fiches maigres",
+                "es": "El escaparate de bloques dibuja los cuatro tipos de producto en lugar de fallar en ellos, y el informe de estado cuenta una ficha sin ninguna descripción entre las fichas escasas"
+            },
+            {
+                "en": "Each line of an order now states the tax it holds, so what a customer is charged and what the shop owes on it are read off the same figure",
+                "fr": "Chaque ligne d'une commande indique désormais la taxe qu'elle contient, si bien que ce qui est facturé au client et ce que la boutique doit dessus se lisent sur le même montant",
+                "es": "Cada línea de un pedido indica ahora el impuesto que contiene, de modo que lo que se cobra al cliente y lo que la tienda debe por ello se leen en la misma cifra"
+            },
+            {
+                "en": "Importing an item sold without a limited stock now puts it back on sale, where it used to come back marked as out of stock",
+                "fr": "L'import d'un article vendu sans stock limité le remet désormais en vente, alors qu'il revenait auparavant marqué en rupture de stock",
+                "es": "La importación de un artículo vendido sin stock limitado lo vuelve a poner a la venta, cuando antes volvía marcado como agotado"
+            },
+            {
+                "en": "The test-mode warning is shown once per page: the shop announces its catalog, the basket announces the payment, and the two no longer repeat each other",
+                "fr": "L'avertissement de mode test n'apparaît qu'une fois par page : la boutique annonce son catalogue, le panier annonce le paiement, et les deux ne se répètent plus",
+                "es": "El aviso de modo de prueba se muestra una sola vez por página: la tienda anuncia su catálogo, el carrito anuncia el pago, y ya no se repiten"
+            }
+        ]
+    },
+    {
+        "date": "2026-08-21",
+        "description": [
+            {
+                "en": "The shop's index is read on a phone first: the search sits alone on the first row, and the category, the price, the format, the availability and the order are gathered in one \"Filter and sort\" panel, folded until it is needed and opened by itself on a listing already narrowed. Every filter now says its name above itself, and the counters stand right above the products they count",
+                "fr": "La page de la boutique se lit d'abord sur un téléphone : la recherche occupe seule la première ligne, et la catégorie, le prix, le format, la disponibilité et l'ordre sont réunis dans un panneau « Filtrer et trier », replié tant qu'on n'en a pas besoin et ouvert de lui-même sur une liste déjà restreinte. Chaque filtre porte désormais son nom au-dessus de lui, et les compteurs se trouvent juste au-dessus des articles qu'ils comptent",
+                "es": "La página de la tienda se lee primero en un teléfono: la búsqueda ocupa sola la primera fila, y la categoría, el precio, el formato, la disponibilidad y el orden se reúnen en un panel «Filtrar y ordenar», plegado mientras no se necesita y abierto por sí mismo en una lista ya restringida. Cada filtro indica ahora su nombre encima de él, y los contadores están justo encima de los artículos que cuentan"
+            },
+            {
+                "en": "The copy of a bought file now sits outside the directory the web server publishes: it is handed over by the download link alone, which stops working on its expiry date rather than when the nightly clean-up gets to it",
+                "fr": "La copie d'un fichier acheté se trouve désormais hors du dossier publié par le serveur web : elle n'est remise que par le lien de téléchargement, qui cesse de fonctionner à sa date d'expiration plutôt qu'au passage du nettoyage nocturne",
+                "es": "La copia de un archivo comprado se encuentra ahora fuera de la carpeta publicada por el servidor web: solo se entrega mediante el enlace de descarga, que deja de funcionar en su fecha de caducidad y no cuando pasa la limpieza nocturna"
+            },
+            {
+                "en": "The nightly clean-up no longer waits for a link to have been clicked: the copy of a link nobody ever opened used to stay on the disk for good",
+                "fr": "Le nettoyage nocturne n'attend plus qu'un lien ait été cliqué : la copie d'un lien que personne n'avait ouvert restait sur le disque définitivement",
+                "es": "La limpieza nocturna ya no espera a que se haya hecho clic en un enlace: la copia de un enlace que nadie había abierto se quedaba en el disco para siempre"
+            }
+        ]
+    },
+    {
+        "date": "2026-08-20",
+        "description": [
+            {
+                "en": "An item now takes a previous price: it is struck through beside the current one, and the product wears a discount badge saying how much is off",
+                "fr": "Un article prend désormais un ancien prix : il s'affiche barré à côté du prix actuel, et le produit porte un badge de remise indiquant le pourcentage",
+                "es": "Un artículo acepta ahora un precio anterior: se muestra tachado junto al precio actual, y el producto lleva una insignia de descuento que indica el porcentaje"
+            },
+            {
+                "en": "In the European Union, that previous price must be the lowest price you actually charged over the last 30 days - the field says so, and nothing checks it for you",
+                "fr": "Dans l'Union européenne, cet ancien prix doit être le prix le plus bas que vous avez réellement pratiqué au cours des 30 derniers jours - le champ le rappelle, et rien ne le vérifie à votre place",
+                "es": "En la Unión Europea, ese precio anterior debe ser el precio más bajo que usted haya aplicado realmente en los últimos 30 días - el campo lo recuerda, y nada lo comprueba por usted"
+            },
+            {
+                "en": "Visitors can now narrow the shop by price, by format and to what is in stock, alongside the category, the search and the ordering already there",
+                "fr": "Les visiteurs peuvent désormais filtrer la boutique par prix, par format et sur ce qui est en stock, en plus de la catégorie, de la recherche et du tri déjà présents",
+                "es": "Los visitantes ahora pueden filtrar la tienda por precio, por formato y por lo que está en stock, además de la categoría, la búsqueda y la ordenación ya presentes"
+            },
+            {
+                "en": "Every product sheet and category page now opens with a breadcrumb, which search engines show in their results in place of the address",
+                "fr": "Chaque fiche produit et chaque page de catégorie s'ouvre désormais sur un fil d'Ariane, que les moteurs de recherche affichent dans leurs résultats à la place de l'adresse",
+                "es": "Cada ficha de producto y cada página de categoría se abre ahora con una ruta de navegación, que los buscadores muestran en sus resultados en lugar de la dirección"
+            },
+            {
+                "en": "You can now choose by hand which products go with a product. Your picks replace the recommendations calculated from sales, which say nothing until you have sold something",
+                "fr": "Vous pouvez désormais choisir à la main les produits associés à un produit. Vos choix remplacent les recommandations calculées sur les ventes, muettes tant que vous n'avez rien vendu",
+                "es": "Ahora puede elegir a mano los productos asociados a un producto. Sus elecciones sustituyen a las recomendaciones calculadas a partir de las ventas, mudas mientras no haya vendido nada"
+            },
+            {
+                "en": "A product now takes a brand, and each of its items a reference and a barcode (EAN, or the ISBN of a book) - which is what Google Shopping and the comparison engines need to list your offers",
+                "fr": "Un produit prend désormais une marque, et chacun de ses articles une référence et un code-barres (EAN, ou l'ISBN d'un livre) - ce dont Google Shopping et les comparateurs ont besoin pour référencer vos offres",
+                "es": "Un producto acepta ahora una marca, y cada uno de sus artículos una referencia y un código de barras (EAN, o el ISBN de un libro) - lo que Google Shopping y los comparadores necesitan para listar sus ofertas"
+            },
+            {
+                "en": "The sheet of a product can now carry the ratings your customers give it, between its categories and its description. It is on out of the box, and the \"Customer ratings\" setting turns it off; the symbol they rate with and how many are offered are chosen once for the whole site, in the general settings",
+                "fr": "La fiche d'un produit peut désormais porter les notes que vos clients lui donnent, entre ses catégories et sa description. C'est actif d'emblée, et le réglage « Notes des clients » le désactive ; le symbole avec lequel ils notent et le nombre proposé se choisissent une fois pour tout le site, dans les réglages généraux",
+                "es": "La ficha de un producto puede ahora llevar las valoraciones que le dan sus clientes, entre sus categorías y su descripción. Está activo de entrada, y el ajuste «Valoraciones de los clientes» lo desactiva; el símbolo con el que valoran y cuántos se ofrecen se eligen una sola vez para todo el sitio, en los ajustes generales"
+            },
+            {
+                "en": "A product is now written as a draft: it stays out of the shop until you publish it, and its sheet is read beforehand with the preview button",
+                "fr": "Un produit s'écrit désormais en brouillon : il reste hors de la boutique jusqu'à sa publication, et sa fiche se lit avant avec le bouton de prévisualisation",
+                "es": "Un producto ahora se escribe como borrador: permanece fuera de la tienda hasta su publicación, y su ficha se lee antes con el botón de previsualización"
+            },
+            {
+                "en": "Deleting a product now moves it to a recycle bin, where it keeps everything it holds and can be restored - or removed for good, its url then telling search engines that it is gone",
+                "fr": "Supprimer un produit le met désormais à la corbeille, où il conserve tout ce qu'il contient et peut être restauré - ou supprimé définitivement, son url indiquant alors aux moteurs de recherche qu'il n'existe plus",
+                "es": "Eliminar un producto ahora lo mueve a la papelera, donde conserva todo lo que contiene y puede restaurarse - o eliminarse definitivamente, indicando entonces su url a los buscadores que ya no existe"
+            },
+            {
+                "en": "Renaming a product sends its old address to the new one, so a link shared or indexed elsewhere still leads to it",
+                "fr": "Renommer un produit renvoie son ancienne adresse vers la nouvelle, pour qu'un lien partagé ou indexé ailleurs y mène toujours",
+                "es": "Renombrar un producto envía su antigua dirección a la nueva, para que un enlace compartido o indexado en otro sitio siga llevando a él"
+            },
+            {
+                "en": "A product is duplicated in one click, from its own page or from the list, with its pictures, its items and everything its sheet is composed of - the copy is a draft, to be renamed and priced before it goes online",
+                "fr": "Un produit se duplique en un clic, depuis sa page ou depuis la liste, avec ses images, ses articles et tout ce qui compose sa fiche - la copie est un brouillon, à renommer et à tarifer avant sa mise en ligne",
+                "es": "Un producto se duplica en un clic, desde su página o desde la lista, con sus imágenes, sus artículos y todo lo que compone su ficha - la copia es un borrador, para renombrar y tarifar antes de publicarla"
+            },
+            {
+                "en": "Every product picture now takes an alternative text, which is what search engines and screen readers read of it",
+                "fr": "Chaque image de produit prend désormais un texte alternatif, qui est ce que les moteurs de recherche et les lecteurs d'écran en lisent",
+                "es": "Cada imagen de producto acepta ahora un texto alternativo, que es lo que los buscadores y los lectores de pantalla leen de ella"
+            },
+            {
+                "en": "A category takes a description of its own, shown on its page and used as its meta description",
+                "fr": "Une catégorie prend une description qui lui est propre, affichée sur sa page et utilisée comme meta description",
+                "es": "Una categoría acepta una descripción propia, mostrada en su página y usada como meta descripción"
+            },
+            {
+                "en": "Delivery terms and the link to the return policy are shown on the product sheet, where the visitor decides",
+                "fr": "Les conditions de livraison et le lien vers la politique de retour sont affichés sur la fiche produit, là où le visiteur décide",
+                "es": "Las condiciones de envío y el enlace a la política de devoluciones se muestran en la ficha de producto, donde el visitante decide"
+            },
+            {
+                "en": "The health check reports the sheets with no picture, a description too thin to rank, a picture with no alternative text and the categories with no description",
+                "fr": "Le bilan de santé signale les fiches sans image, les descriptions trop courtes pour être référencées, les images sans texte alternatif et les catégories sans description",
+                "es": "El chequeo de salud informa de las fichas sin imagen, las descripciones demasiado cortas para posicionar, las imágenes sin texto alternativo y las categorías sin descripción"
+            },
+            {
+                "en": "The shop's products, categories, search and recommendations are now blocks, placed on any page of the site from the back-office",
+                "fr": "Les produits, les catégories, la recherche et les recommandations de la boutique sont désormais des blocks, à placer sur n'importe quelle page du site depuis le back-office",
+                "es": "Los productos, las categorías, la búsqueda y las recomendaciones de la tienda ahora son bloques, colocables en cualquier página del sitio desde la administración"
+            },
+            {
+                "en": "Each purchasable item of a product publishes its own description and picture as structured data, alongside its price and availability",
+                "fr": "Chaque article achetable d'un produit publie sa propre description et son image en données structurées, à côté de son prix et de sa disponibilité",
+                "es": "Cada artículo comprable de un producto publica su propia descripción y su imagen como datos estructurados, junto a su precio y su disponibilidad"
+            },
+            {
+                "en": "An item can now state the condition it is sold in - new, used, refurbished or damaged - published to search engines with its price",
+                "fr": "Un article peut désormais indiquer son état - neuf, occasion, reconditionné ou abîmé - publié aux moteurs de recherche avec son prix",
+                "es": "Un artículo ahora puede indicar su estado - nuevo, usado, reacondicionado o dañado - publicado a los buscadores junto a su precio"
+            },
+            {
+                "en": "A product sheet's buy table and slider are blocks too, so the whole sheet is arranged where you want it",
+                "fr": "Le tableau d'achat et le diaporama d'une fiche produit sont aussi des blocks, la fiche entière s'agençant comme vous voulez",
+                "es": "La tabla de compra y el carrusel de una ficha de producto también son bloques, así toda la ficha se ordena como quiera"
+            },
+            {
+                "en": "A shop running without the site foundation now publishes its terms of sales itself, at /shop/terms-of-sales",
+                "fr": "Une boutique tournant sans le socle de site publie désormais elle-même ses conditions générales de vente, sur /shop/terms-of-sales",
+                "es": "Una tienda que funciona sin la base de sitio ahora publica ella misma sus condiciones generales de venta, en /shop/terms-of-sales"
+            },
+            {
+                "en": "The catalog can be exported from the back-office, products and categories alike, as SQL, CSV or JSON",
+                "fr": "Le catalogue s'exporte depuis le back-office, produits comme catégories, en SQL, CSV ou JSON",
+                "es": "El catálogo se exporta desde la administración, tanto productos como categorías, en SQL, CSV o JSON"
+            },
+            {
+                "en": "The shop can be put into test mode from the dashboard, every page then warning the visitor that nothing is really sold",
+                "fr": "La boutique peut être mise en mode test depuis le tableau de bord, chaque page prévenant alors le visiteur que rien n'est réellement vendu",
+                "es": "La tienda puede ponerse en modo de prueba desde el panel, y cada página avisa entonces al visitante de que no se vende nada realmente"
+            },
+            {
+                "en": "The shop and the product sheets have been redesigned, readable on a phone first",
+                "fr": "La boutique et les fiches produit ont été redessinées, lisibles d'abord sur téléphone",
+                "es": "La tienda y las fichas de producto se han rediseñado, legibles primero en el móvil"
+            },
+            {
+                "en": "A product card now shows its category, a short extract, its formats, its price and a badge saying whether it is new, coming soon, running low, free or sold out",
+                "fr": "Une fiche produit en liste affiche désormais sa catégorie, un court extrait, ses formats, son prix et un badge indiquant s'il est nouveau, bientôt disponible, en stock limité, gratuit ou épuisé",
+                "es": "Una tarjeta de producto muestra ahora su categoría, un breve extracto, sus formatos, su precio y una etiqueta que indica si es nuevo, próximamente, con poco stock, gratuito o agotado"
+            },
+            {
+                "en": "The shop listing can be ordered by novelty or by price",
+                "fr": "La liste de la boutique se trie par nouveautés ou par prix",
+                "es": "El listado de la tienda puede ordenarse por novedades o por precio"
+            },
+            {
+                "en": "The shop says how many products and how many categories it holds",
+                "fr": "La boutique annonce combien de produits et de catégories elle contient",
+                "es": "La tienda indica cuántos productos y cuántas categorías contiene"
+            },
+            {
+                "en": "On a wide screen, a product sheet shows its pictures next to its items instead of above them",
+                "fr": "Sur grand écran, la fiche produit affiche ses images à côté de ses articles au lieu de les mettre au-dessus",
+                "es": "En pantalla ancha, la ficha de producto muestra sus imágenes junto a sus artículos en lugar de encima"
+            },
+            {
+                "en": "The items of a product sheet are compact rows, only one opening at a time, each showing its price and its stock at a glance",
+                "fr": "Les articles d'une fiche produit sont des lignes compactes dont une seule s'ouvre à la fois, chacune montrant son prix et son stock d'un coup d'œil",
+                "es": "Los artículos de una ficha de producto son filas compactas de las que solo una se abre a la vez, cada una mostrando su precio y su stock de un vistazo"
+            },
+            {
+                "en": "The search block can carry a heading of its own",
+                "fr": "Le block de recherche peut porter son propre titre",
+                "es": "El bloque de búsqueda puede llevar su propio título"
+            },
+            {
+                "en": "The delivery band and the product surfaces follow the site's dark mode",
+                "fr": "Le bandeau de livraison et les surfaces des produits suivent le mode sombre du site",
+                "es": "La banda de envío y las superficies de los productos siguen el modo oscuro del sitio"
+            },
+            {
+                "en": "The shop now ships its own documentation for the coding assistants working on your site",
+                "fr": "La boutique fournit désormais sa propre documentation pour les assistants de code qui travaillent sur votre site",
+                "es": "La tienda incluye ahora su propia documentación para los asistentes de código que trabajan en su sitio"
+            },
+            {
+                "en": "Your catalogue now travels with the rest of the site: the \"export everything\" tile of the dashboard carries your products, their pictures, their items with the files customers download, their sheet composition and their categories, and the import button puts them back on another site",
+                "fr": "Votre catalogue voyage désormais avec le reste du site : la tuile « Tout exporter » du tableau de bord emporte vos produits, leurs images, leurs articles avec les fichiers que les clients téléchargent, la composition de leurs fiches et leurs catégories, et le bouton d'import les remet en place sur un autre site",
+                "es": "Su catálogo viaja ahora con el resto del sitio: el mosaico «Exportar todo» del panel lleva sus productos, sus imágenes, sus artículos con los archivos que los clientes descargan, la composición de sus fichas y sus categorías, y el botón de importación los restituye en otro sitio"
+            },
+            {
+                "en": "The products and the categories screens also export just what you check, as an archive you upload back through the import button",
+                "fr": "Les écrans des produits et des catégories exportent aussi ce que vous cochez seulement, sous forme d'archive que vous reversez par le bouton d'import",
+                "es": "Las pantallas de productos y de categorías también exportan solo lo que marque, como un archivo que sube de nuevo con el botón de importación"
+            },
+            {
+                "en": "An import never deletes an item you already sell, nor the file it is bought for: what the archive does not carry is left where it is",
+                "fr": "Un import ne supprime jamais un article que vous vendez déjà, ni le fichier pour lequel il est acheté : ce que l'archive ne porte pas reste en place",
+                "es": "Una importación nunca elimina un artículo que ya vende, ni el archivo por el que se compra: lo que el archivo no lleva se queda donde está"
+            },
+            {
+                "en": "The shop's listing now grows as the visitor scrolls, instead of turning pages",
+                "fr": "La liste de la boutique s'allonge désormais au fil du défilement, au lieu de tourner les pages",
+                "es": "El listado de la tienda ahora crece a medida que se desplaza, en lugar de pasar páginas"
+            }
+        ]
+    },
+    {
+        "date": "2026-08-19",
+        "description": [
+            {
+                "en": "A product sheet is now composed in the back-office with blocks - a banner, arguments, a gallery, a FAQ - without a template of your own",
+                "fr": "Une fiche produit se compose désormais au back-office avec des blocks - bandeau, arguments, galerie, FAQ - sans gabarit à écrire",
+                "es": "Una ficha de producto ahora se compone en la administración con bloques - banner, argumentos, galería, preguntas frecuentes - sin plantilla propia"
+            },
+            {
+                "en": "Product pages publish their price, currency and availability as structured data, so search engines can show them directly in their results",
+                "fr": "Les pages produit publient leur prix, leur devise et leur disponibilité en données structurées, que les moteurs de recherche affichent directement dans leurs résultats",
+                "es": "Las páginas de producto publican su precio, su moneda y su disponibilidad como datos estructurados, que los buscadores muestran directamente en sus resultados"
+            },
+            {
+                "en": "The shop's media directories are declared for backup, and the orders left to ship are reported to the site's status report",
+                "fr": "Les dossiers de médias de la boutique sont déclarés à la sauvegarde, et les commandes restant à expédier sont remontées au rapport de statut du site",
+                "es": "Las carpetas de medios de la tienda se declaran para la copia de seguridad, y los pedidos pendientes de envío se incluyen en el informe de estado del sitio"
+            }
+        ]
+    },
+    {
+        "date": "2026-06-07",
+        "description": [
+            {
+                "en": "Access to the shop's admin area now follows the site's general permission setting, for more consistent access control",
+                "fr": "L'accès à la gestion de la boutique suit désormais le réglage général des droits du site, pour un contrôle d'accès plus cohérent",
+                "es": "El acceso a la gestión de la tienda ahora sigue el ajuste general de permisos del sitio, para un control de acceso más coherente"
+            }
+        ]
+    }
+]

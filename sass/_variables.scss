@@ -1,4 +1,26 @@
-/* VARIABLLES */
-:root {
-    --product-background-color: #fff;
+/* VARIABLES */
+// Declared on ":root, [data-theme]" and not on ":root" alone, as UiBundle's own token contract requires: the derived values below read --text and --background, which a section opening its own ambiance redeclares
+// Everything here is mixed out of the palette rather than written as a colour, so a site retuning --primary, --secondary or --c975l-color-text moves the whole shop with it. The two stock colours keep a hue of their own, a stock level being a status and not a brand, but they are mixed against the page's ink like the rest
+:root, [data-theme] {
+    // Pointed at the site's own panel and not written as #fff: dark mode never flipped that white, which left a catalog of white cards carrying the page's own light ink. --card-background is #fff in light mode, so a light site keeps the surface it had, and a site repainting its panels moves its catalog with them
+    --product-background-color: var(--card-background);
+    --shop-border: var(--border-color);
+    --shop-border-strong: color-mix(in srgb, var(--text) 25%, var(--background));
+    --shop-text-muted: color-mix(in srgb, var(--text) 62%, var(--background));
+    // 58% and not 45%: this one carries the smallest texts of the card (the category and the price label, at 0.68rem), which is where WCAG asks for the most contrast, and 45% only held 3.4:1 on the card surface
+    --shop-text-subtle: color-mix(in srgb, var(--text) 58%, var(--background));
+    // Flat and ink of the basket bar fixed at the bottom of the sheet, the same pair as a recommendation row: the bar is one of the shop's own brand surfaces, so it moves with --primary instead of staying on the ecosystem's neutral dark surface, which read as a foreign band on a site that is not black-on-white
+    --shop-navbar-background: var(--primary);
+    --shop-navbar-color: var(--background);
+    // Flat and ink of a recommendation row: --primary is the far pole from --background whichever way round the site is, so the page's own ground is what reads on it. Carried by each row and not by the section around them, so what is picked out of the page is what can be clicked
+    --shop-recommendations-background: var(--primary);
+    --shop-recommendations-color: var(--background);
+    --shop-radius-card: var(--radius-card, 10px);
+    --shop-radius-row: 10px;
+    --shop-radius-badge: 4px;
+    // An icon is an <img>, which paints its file's own black fill instead of inheriting the text color like the words next to it: --input-icon-filter is the ecosystem's own filter flipping with the color mode (none in light, invert(1) in dark, see UiBundle sass/_tokens.scss), which is exactly what a black glyph laid on a surface flipping with it needs
+    --shop-icon-filter: var(--input-icon-filter, none);
+    // Laid on the page's own ink rather than written as a finished colour: the hue alone was a dark green and a dark brown, which on a dark panel sat at the same value as the surface under them. Mixed with --text, the status keeps its hue and lands on the readable side of the surface whichever way round the site is
+    --shop-stock-ok: color-mix(in srgb, #2e9e5b 55%, var(--text));
+    --shop-stock-low: color-mix(in srgb, #c98a2e 55%, var(--text));
 }

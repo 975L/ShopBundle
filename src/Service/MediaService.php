@@ -10,9 +10,8 @@
 
 namespace c975L\ShopBundle\Service;
 
-use DateTimeImmutable;
-use Doctrine\ORM\EntityManagerInterface;
 use c975L\ShopBundle\Repository\MediaRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class MediaService implements MediaServiceInterface
 {
@@ -31,12 +30,12 @@ class MediaService implements MediaServiceInterface
     // Updates database for not existing media
     public function updateDatabaseByName(string $file): void
     {
-        $media = $this->mediaRepository->findOneByName($file);
+        $media = $this->mediaRepository->findOneBy(['name' => $file]);
         $media->setName(null);
         $media->setSize(null);
         $media->setPosition(null);
         $media->setUser(null);
-        $media->setUpdatedAt(new DateTimeImmutable());
+        $media->setUpdatedAt(new \DateTimeImmutable());
 
         $this->entityManager->persist($media);
         $this->entityManager->flush();

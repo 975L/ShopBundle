@@ -10,20 +10,22 @@
 
 namespace c975L\ShopBundle\Listener\Traits;
 
+use c975L\ConfigBundle\Contract\UserInterface;
+
 trait UserTrait
 {
     // Sets the user
     public function setUser($entity): void
     {
+        // Security only guarantees its own UserInterface, the entities relate to the c975L one the application's User entity implements
         $currentUser = $this->security->getUser();
 
-        if ($currentUser !== null) {
-            // New entity
-            if ($entity->getUser() === null) {
+        if ($currentUser instanceof UserInterface) {
+            if (null === $entity->getUser()) {
+                // New entity
                 $entity->setUser($currentUser);
-            }
-            // Updated entity
-            elseif (method_exists($entity, 'getModification') && $entity->getModification() !== null && $entity->getModification() > $entity->getCreation()) {
+            } elseif (method_exists($entity, 'getModification') && null !== $entity->getModification() && $entity->getModification() > $entity->getCreation()) {
+                // Updated entity
                 $entity->setUser($currentUser);
             }
 

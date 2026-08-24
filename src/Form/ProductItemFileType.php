@@ -10,12 +10,12 @@
 
 namespace c975L\ShopBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
 use c975L\ShopBundle\Entity\ProductItemFile;
-use Vich\UploaderBundle\Form\Type\VichFileType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
+use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class ProductItemFileType extends AbstractType
 {
@@ -23,15 +23,13 @@ class ProductItemFileType extends AbstractType
     {
         $builder
             ->add('file', VichFileType::class, [
-                'label' => 'File',
+                'label' => 'label.file',
                 'required' => false,
                 'allow_delete' => true,
                 'download_uri' => true,
                 'asset_helper' => true,
                 'constraints' => [
-                    new File([
-                        'maxSize' => '200M',
-                    ])
+                    new File(maxSize: '200M'),
                 ],
             ])
         ;
@@ -41,6 +39,7 @@ class ProductItemFileType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ProductItemFile::class,
+            'translation_domain' => 'shop',
         ]);
     }
 }

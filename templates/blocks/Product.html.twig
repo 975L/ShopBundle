@@ -1,0 +1,7 @@
+{# Renders nothing at all when the product it points at no longer exists, rather than half a card #}
+{% set product = shop_block_product(productSlug|default(null)) %}
+{% if product %}
+    <div class="products">
+        <twig:c975LShop:Product:Product product="{{ product }}"/>
+    </div>
+{% endif %}

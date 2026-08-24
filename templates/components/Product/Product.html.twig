@@ -1,10 +1,68 @@
 {% if product is not defined and this.product is defined %}
     {% set product = this.product %}
 {% endif %}
-<a href="{{ path('product_display', {'slug': product.slug}) }}">
-    <article class="product product-link {{ class|default("") }}" id="product-{{ product.slug }}">
-        {% set imageSrc = product.medias|first != false ? product.medias|first : "bundles/c975lshop/images/no-product-image.webp" %}
-        <twig:c975LSite:Image:Image src="{{ absolute_url(asset(imageSrc)) }}" class="img-shadow img-product" width="140"/>
-        <h3>{{ product.title }}</h3>
-    </article>
-</a>
+{% set media = product.medias|first %}
+{# Badge, price, currency and formats all read the items, so they are resolved once by ProductStateService rather than recomputed line by line here #}
+{% set state = shop_product_state(product) %}
+{% set category = product.categories|first %}
+{% set excerpt = product.description|default('')|striptags|trim %}
+{# Editor-only, and only where the listing asks for it: the html of a card rendered inside a block kind is stored in the block cache (see UiBundle's BlockExtension), which is shared by every visitor - whoever warmed it would decide what the others get. A card in a block is reached through the block's own button, drawn outside that cache, so nothing is lost by leaving it out here #}
+{% set editUrl = editable|default(false) and is_granted(config('site-role-editor')) ? shop_product_edit_url(product) : null %}
+{# The card is an article holding a link, and not a link holding an article: the score at the bottom is made of buttons, and a button inside a link is invalid html a click would answer by navigating instead of voting #}
+{# The edit url moves up with it, so the pencil follows the whole card and not only its clickable part - UiBundle's overlay reads the nearest ancestor carrying it #}
+<article class="product{{ state.soldOut ? ' product-sold-out' : '' }} {{ class|default("") }}" id="product-{{ product.slug }}"{% if editUrl %} data-block-edit-url="{{ editUrl }}"{% endif %}>
+    <a class="product-link" href="{{ path('product_display', {'slug': product.slug}) }}">
+        {% set imageSrc = media != false ? media : "bundles/c975lshop/images/no-product-image.webp" %}
+        <div class="product-visual">
+            {# The media's own alternative text, the product's title when it carries none: the whole card is a link, and a link whose only content is an image with no alternative says nothing #}
+            {# "priority" is set by the listing on its first card only, which is the element the page is measured on #}
+            <twig:c975LUi:Image:Image src="{{ asset(imageSrc) }}" alt="{{ media.alt|default('') ?: product.title }}" class="img-product" width="140" priority="{{ priority|default(false) }}"/>
+            {% if state.badge %}
+                {# The discount badge is the only one carrying a figure, and passing the placeholder to every other key costs nothing rather than branching the markup in two #}
+                <span class="product-badge product-badge-{{ state.badge|replace({'label.': '', '_': '-'}) }}">
+                    {{ state.badge|trans({'%discount%': state.discount}, 'shop') }}{% if state.availableAt %} — {{ state.availableAt|date('d/m/Y') }}{% endif %}
+                </span>
+            {% endif %}
+        </div>
+        <div class="product-body">
+            {% if category %}
+                <span class="product-category">{{ category.name }}</span>
+            {% endif %}
+            <h3>{{ product.title }}</h3>
+            {% if excerpt %}
+                <p class="product-excerpt">{{ excerpt|length > 100 ? excerpt|slice(0, 100) ~ '…' : excerpt }}</p>
+            {% endif %}
+            {% if state.formats is not empty %}
+                <p class="product-formats">
+                    {% for format in state.formats %}
+                        <span class="product-format">{{ format|trans({}, 'shop') }}</span>
+                    {% endfor %}
+                </p>
+            {% endif %}
+            <div class="product-footer">
+                {% if state.price is not null %}
+                    <span class="product-price">
+                        {# "From" only when the items differ: a product sold at a single price says that price, not a range it does not have #}
+                        <span class="product-price-label">{{ (state.singlePrice ? 'label.price' : 'label.from_price')|trans({}, 'shop') }}</span>
+                        {# Struck through rather than merely greyed: what an "s" element means is a figure that no longer holds, which is the whole point of printing it #}
+                        {% if state.priceBefore %}
+                            <s class="product-price-before"><span class="visuallyhidden">{{ 'label.price_before'|trans({}, 'shop') }} </span>{{ (state.priceBefore / 100)|format_currency(state.currency) }}</s>
+                        {% endif %}
+                        <strong>{{ state.price == 0 ? 'label.free'|trans({}, 'shop') : (state.price / 100)|format_currency(state.currency) }}</strong>
+                    </span>
+                {% endif %}
+                <span class="product-view">{{ 'label.view'|trans({}, 'shop') }} →</span>
+            </div>
+        </div>
+    </a>
+    {# Outside the link on purpose (see above), and only where the listing asks for it: the score the visitor sets without leaving the shop, without how many voted - the product's own page is where the tally is spelled out #}
+    {% if rating|default(false) %}
+        <div class="product-rating">
+            <twig:c975LUi:Rating:Rating ownerType="shop_product" ownerId="{{ product.id }}" compact="true" :aggregate="aggregate|default(null)"/>
+        </div>
+    {% endif %}
+    {# Outside the link too, and for the same reason: a button inside a link is invalid html a click would answer by navigating instead of putting the product aside. Nothing personal is printed here - the heart is painted by assets/js/favorite.js from the visitor's own browser, so a card sitting in the block cache stays shareable #}
+    {% if config('shop-favorites')|to_bool %}
+        <twig:c975LUi:Favorite:Button ownerType="shop_product" ownerId="{{ product.id }}" class="product-favorite"/>
+    {% endif %}
+</article>

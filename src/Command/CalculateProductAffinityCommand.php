@@ -10,10 +10,11 @@
 
 namespace c975L\ShopBundle\Command;
 
+use c975L\PaymentBundle\Repository\BasketRepository;
 use c975L\ShopBundle\Entity\ProductAffinity;
-use c975L\ShopBundle\Repository\BasketRepository;
 use c975L\ShopBundle\Repository\ProductAffinityRepository;
 use c975L\ShopBundle\Repository\ProductItemRepository;
+use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -22,7 +23,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'shop:affinity:calculate',
+    name: 'c975l:shop:affinity:calculate',
     description: 'Calculates product affinity scores based on completed baskets (paid/shipped) - co-purchase analysis'
 )]
 class CalculateProductAffinityCommand extends Command
@@ -31,7 +32,8 @@ class CalculateProductAffinityCommand extends Command
         private readonly BasketRepository $basketRepository,
         private readonly ProductAffinityRepository $affinityRepository,
         private readonly ProductItemRepository $productItemRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ShopBlockCacheInvalidator $cacheInvalidator,
     ) {
         parent::__construct();
     }
@@ -59,8 +61,9 @@ class CalculateProductAffinityCommand extends Command
         $baskets = $this->fetchCompletedBaskets($days);
         $basketCount = count($baskets);
 
-        if ($basketCount === 0) {
+        if (0 === $basketCount) {
             $output->writeln('[INFO] No completed baskets found.');
+
             return Command::SUCCESS;
         }
 
@@ -88,7 +91,7 @@ class CalculateProductAffinityCommand extends Command
                 $productPairs[$key] = [
                     'product1' => $pair[0],
                     'product2' => $pair[1],
-                    'count' => ($productPairs[$key]['count'] ?? 0) + 1
+                    'count' => ($productPairs[$key]['count'] ?? 0) + 1,
                 ];
             }
         }
@@ -111,7 +114,7 @@ class CalculateProductAffinityCommand extends Command
             // Find or create ProductAffinity entity
             $affinity = $this->affinityRepository->findOneBy([
                 'product1' => $product1Id,
-                'product2' => $product2Id
+                'product2' => $product2Id,
             ]);
 
             if (!$affinity) {
@@ -128,13 +131,16 @@ class CalculateProductAffinityCommand extends Command
 
             $this->entityManager->persist($affinity);
 
-            $processed++;
-            if ($processed % 50 === 0) {
+            ++$processed;
+            if (0 === $processed % 50) {
                 $this->entityManager->flush();
             }
         }
 
         $this->entityManager->flush();
+
+        // The recommendations blocks read those scores at render time, and neither the bulk DELETE above nor a run finding no pair at all fires the Doctrine event ShopCacheInvalidationListener listens on
+        $this->cacheInvalidator->invalidateProducts();
 
         // Summary
         $output->writeln(sprintf('[SUCCESS] Analyzed %d baskets, processed %d pairs, updated %d records', $basketCount, $pairCount, $processed));
@@ -142,15 +148,13 @@ class CalculateProductAffinityCommand extends Command
         return Command::SUCCESS;
     }
 
-    /**
-     * Fetches completed baskets (status: 'paid' or 'shipped')
-     */
+    // Fetches completed baskets (status: 'paid' or 'shipped').
     private function fetchCompletedBaskets(?int $days): array
     {
         $qb = $this->basketRepository->createQueryBuilder('b')
             ->where("b.status IN ('paid', 'shipped')");
 
-        if ($days !== null) {
+        if (null !== $days) {
             $since = new \DateTime(sprintf('-%d days', $days));
             $qb->andWhere('b.creation >= :since')
                 ->setParameter('since', $since);
@@ -180,7 +184,7 @@ class CalculateProductAffinityCommand extends Command
         foreach ($productItems as $productItem) {
             $product = $productItem->getProduct();
             // Ensure ProductItem has a valid Product (not null, not Crowdfunding)
-            if ($product !== null) {
+            if (null !== $product) {
                 $productIds[] = $product->getId();
             }
         }
@@ -193,12 +197,12 @@ class CalculateProductAffinityCommand extends Command
         $pairs = [];
         $count = count($productIds);
 
-        for ($i = 0; $i < $count - 1; $i++) {
-            for ($j = $i + 1; $j < $count; $j++) {
+        for ($i = 0; $i < $count - 1; ++$i) {
+            for ($j = $i + 1; $j < $count; ++$j) {
                 // Always store pairs with smaller ID first for consistency
                 $pairs[] = [
                     min($productIds[$i], $productIds[$j]),
-                    max($productIds[$i], $productIds[$j])
+                    max($productIds[$i], $productIds[$j]),
                 ];
             }
         }
@@ -211,6 +215,7 @@ class CalculateProductAffinityCommand extends Command
         // Ensure consistent ordering (smaller ID first)
         $min = min($product1Id, $product2Id);
         $max = max($product1Id, $product2Id);
+
         return "{$min}_{$max}";
     }
 }

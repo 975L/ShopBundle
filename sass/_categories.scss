@@ -1,34 +1,323 @@
-/* CATEGORIES */
-.category-select {
-    padding: 12px 40px 12px 20px;
-    border: 3px solid var(--primary);
-    border-radius: 10px;
-    background-color: #fff;
-    color: var(--primary);
-    font-size: 1em;
+/* CATEGORIES AND FILTERS */
+// Written for a phone first: the search takes a row of its own, everything else holds folded, and the first item is two gestures from the top of the page
+.product-search {
+    padding: 16px 0 12px;
+}
+
+// The results are written under the field, which keeps its place above them
+.product-search-results {
+    padding-top: 14px;
+}
+
+// The only control of a category page, where nothing warrants putting it under a panel
+.shop-filters {
+    padding: 0 0 20px;
+}
+
+// Everything that narrows the listing under a single panel: category, price, format, availability and order. Folded, it holds on one row, which is what leaves the room for the items on a phone screen
+.shop-refine {
+    margin-bottom: 16px;
+    border: 1px solid var(--shop-border);
+    // A card's radius and not a button's: on a theme whose buttons are pills, "--radius-btn" turned the panel into an ellipse
+    border-radius: var(--shop-radius-card);
+    background-color: var(--surface-alt);
+}
+
+.shop-refine-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 14px;
+    color: var(--text);
     font-family: var(--font-family-body);
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    list-style: none;
+}
+
+// The triangle the browser draws by itself, replaced by the chevron below: the original one cannot be placed
+.shop-refine-summary::-webkit-details-marker {
+    display: none;
+}
+
+// The chevron says which way the click goes, and it sits at the far end of the row, where the thumb finds it
+.shop-refine-summary::after {
+    content: "▾";
+    margin-left: auto;
+    font-size: 0.9rem;
+}
+
+.shop-refine[open] .shop-refine-summary::after {
+    content: "▴";
+}
+
+.shop-refine-summary:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+// How many filters are active: folded, the panel must still say the listing is not whole
+.shop-refine-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background-color: var(--primary);
+    color: var(--button-color);
+    font-size: 0.75rem;
+}
+
+.shop-refine-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 4px 14px 16px;
+}
+
+// A field = its name above it, never side by side: on a phone, the column is the only one leaving the select its whole width
+.category-selector,
+.product-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+}
+
+.product-filter-label {
+    color: var(--shop-text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+// The three filters read off the items - price, format, availability - stacked on a phone, in columns as soon as there is the room
+.product-filters {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+    margin: 0;
+}
+
+// The button takes the width of the panel rather than the end of a row: it is the one validating everything above it
+.product-filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    grid-column: 1 / -1;
+    margin: 0;
+}
+
+// Full width on a phone, where a button is aimed at with the thumb, and the width of its word as soon as there is the room (see below)
+.btn.product-filter-submit {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+}
+
+.product-filter-reset {
+    color: var(--shop-text-subtle);
+    font-size: 0.8rem;
+}
+
+// The same control throughout, arrow included, so the panel reads as one set of fields and not as two families of widgets
+.category-select,
+.product-search-input,
+.product-filter-select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--shop-border-strong);
+    border-radius: var(--radius-btn);
+    background-color: var(--product-background-color);
+    color: var(--text);
+    font-family: var(--font-family-body);
+    font-size: 0.9rem;
+}
+
+.category-select,
+.product-filter-select {
+    padding-right: 36px;
+    cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='currentColor' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 15px center;
-    outline: none;
-    box-shadow: var(--box-shadow);
+    background-position: right 12px center;
 }
 
-.category-select:hover {
-    border-width: 4px;
-    padding: 11px 39px 11px 19px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.category-select:focus {
+.category-select:focus,
+.product-search-input:focus,
+.product-filter-select:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+// The order is named above its row like the fields above theirs
+.product-sort {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+// A row of pills that scrolls on a phone, the row never folding into a wall of buttons
+.product-sort-links {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.product-sort-links::-webkit-scrollbar {
+    display: none;
+}
+
+.product-sort-link {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    min-height: 40px;
+    padding: 10px 14px;
+    border: 1px solid var(--shop-border);
+    border-radius: 999px;
+    background-color: var(--surface-alt);
+    color: var(--text);
+    font-size: 0.8rem;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.product-sort-link:hover {
+    text-decoration: none;
+}
+
+.product-sort-current {
+    border-color: var(--primary);
+    background-color: var(--primary);
+    color: var(--button-color);
+}
+
+// The trail above a product sheet or a category page, quieter than everything following it: it says where the visitor is, and it is the page itself they came to read
+// A row of levels rather than a line of text: on a phone the trail folds between two levels instead of anywhere the words allow, which is what used to leave a chevron alone at the start of a line
+.shop-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 0.4em;
+    padding: 4px 0 12px;
+    color: var(--shop-text-subtle);
+    font-size: 0.8rem;
+}
+
+.shop-breadcrumb a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.shop-breadcrumb-separator {
+    margin-left: 0.4em;
+}
+
+// The one level long enough to need a line of its own, being a product title: a flex item sits at the width of its longest line unless it is allowed to shrink under it, and a title held on one line runs off a narrow screen
+.shop-breadcrumb-current {
+    min-width: 0;
+    color: var(--shop-text-muted);
+}
+
+// What the listing just below holds: the grid's caption, and not a figure dropped at the top of the page
+.shop-counters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 8px;
+    color: var(--shop-text-muted);
+    font-size: 0.85rem;
+}
+
+// The same colour as the counts it stands between: a border colour is drawn to be barely there, which on a text node is a contrast failure
+.shop-counters-separator {
+    color: var(--shop-text-muted);
+}
+
+.shop-list-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-top: 24px;
+}
+
+.shop-range {
+    margin: 0;
+    color: var(--shop-text-muted);
+    font-size: 0.85rem;
+}
+
+.shop-list-footer .navigation {
+    margin: 0;
+}
+
+// The link widening the listing takes its place in the row, where "a.btn"'s automatic margins would float it in whatever the count leaves - class doubled to outweigh that one, as UiBundle's button rules do
+.btn.shop-load-more {
+    margin: 0;
+}
+
+// It is also the element the observer watches, so it stays in the flow while a page arrives rather than leaving it
+.shop-load-more[aria-busy="true"] {
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 .categories p:has(.btn) {
     margin: 0;
+}
+
+@media (min-width: 560px) {
+    .product-filters {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 700px) {
+    // As soon as there is the room, the category and the three filters read on a single row, the order under them
+    .shop-refine-body {
+        display: grid;
+        grid-template-columns: minmax(180px, 1fr) 3fr;
+        align-items: start;
+        gap: 16px 20px;
+    }
+
+    .product-filters {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .product-sort {
+        grid-column: 1 / -1;
+    }
+
+    // A category's listing has one selector only: it keeps the width of a field and not that of the page
+    .shop-filters .category-selector {
+        max-width: 320px;
+    }
+
+    // The button no longer has to bar the row: the link clearing the filters takes its place next to it
+    .btn.product-filter-submit {
+        width: fit-content;
+        min-width: 140px;
+    }
+
+    .product-sort-link {
+        border-radius: var(--radius-btn);
+    }
+
+    .shop-list-footer {
+        flex-direction: row;
+        justify-content: space-between;
+    }
 }

@@ -1,122 +1,35 @@
 [
     {
-        "label": "Shop Name",
-        "slug": "shop-name",
+        "label": "label.shop_favorites",
+        "slug": "shop-favorites",
         "sensitive": false,
-        "value": null,
-        "kind": "text",
-        "description": "Name of the shop: i.e. Example Shop"
+        "restricted": false,
+        "value": "true",
+        "kind": "bool",
+        "group": "shop",
+        "severity": null,
+        "description": "description.shop_favorites"
     },
     {
-        "label": "Site URL",
-        "slug": "site-url",
+        "label": "label.shop_rating",
+        "slug": "shop-rating",
         "sensitive": false,
-        "value": null,
-        "kind": "text",
-        "description": "URL of the web site: i.e. https://example.com"
+        "restricted": false,
+        "value": "true",
+        "kind": "bool",
+        "group": "shop",
+        "severity": null,
+        "description": "description.shop_rating"
     },
     {
-        "label": "URL Terms of use",
-        "slug": "url-terms-of-use",
+        "label": "label.shop_test_mode",
+        "slug": "shop-test-mode",
         "sensitive": false,
-        "value": null,
-        "kind": "text",
-        "description": "URL of the terms of use page i.e. https://example.com/terms-of-use"
-    },
-    {
-        "label": "URL Terms of sales",
-        "slug": "url-terms-of-sales",
-        "sensitive": false,
-        "value": null,
-        "kind": "text",
-        "description": "URL of the terms of sales page i.e. https://example.com/terms-of-sales"
-    },
-    {
-        "label": "Shop email (from)",
-        "slug": "shop-email-from",
-        "sensitive": false,
-        "value": null,
-        "kind": "text",
-        "description": "Email address from which the emails are sent"
-    },
-    {
-        "label": "Shop email (from) Name",
-        "slug": "shop-email-from-name",
-        "sensitive": false,
-        "value": null,
-        "kind": "text",
-        "description": "Name for the Email address From"
-    },
-    {
-        "label": "Shop email (replyTo)",
-        "slug": "shop-email-reply-to",
-        "sensitive": false,
-        "value": null,
-        "kind": "text",
-        "description": "Email address for replies"
-    },
-    {
-        "label": "Shop email (replyTo) Name",
-        "slug": "shop-email-reply-to-name",
-        "sensitive": false,
-        "value": null,
-        "kind": "text",
-        "description": "Name for the Email address for replies"
-    },
-    {
-        "label": "Shop email (bcc)",
-        "slug": "shop-email-bcc",
-        "sensitive": false,
-        "value": null,
-        "kind": "text",
-        "description": "Email address for BCC, used to send a blind copy to your site"
-    },
-    {
-        "label": "Shop email (bcc) Name",
-        "slug": "shop-email-bcc-name",
-        "sensitive": false,
-        "value": null,
-        "kind": "text",
-        "description": "Name for the Email address for BCC, used to send a blind copy to your site"
-    },
-    {
-        "label": "Shop currency",
-        "slug": "shop-currency",
-        "sensitive": true,
-        "value": null,
-        "kind": "text",
-        "description": "ISO on 3 letters for currency, i.e. EUR"
-    },
-    {
-        "label": "Shop Shipping",
-        "slug": "shop-shipping",
-        "sensitive": true,
-        "value": null,
-        "kind": "int",
-        "description": "Shipping amount in cents for the shop"
-    },
-    {
-        "label": "Shop shipping free",
-        "slug": "shop-shipping-free",
-        "sensitive": true,
-        "value": null,
-        "kind": "int",
-        "description": "Amount in cents at which shipping is offered"
-    },
-    {
-        "label": "Stripe secret",
-        "slug": "stripe-secret",
-        "sensitive": true,
-        "value": null,
-        "kind": "text",
-        "description": "Your Stripe Secret Key (test|live)"
-    },
-    {
-        "label": "Stripe Webhook Secret",
-        "slug": "stripe-webhook-secret",
-        "sensitive": true,
-        "value": null,
-        "kind": "text",
-        "description": "Your Stripe Webhook Secret Key (test|live)"
+        "restricted": false,
+        "value": "false",
+        "kind": "bool",
+        "group": "shop",
+        "severity": "warning",
+        "description": "description.shop_test_mode"
     }
 ]

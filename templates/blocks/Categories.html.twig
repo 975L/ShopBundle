@@ -1,0 +1,5 @@
+{# Adapter for the dynamic Block system - renders nothing at all when the shop has no category yet, rather than an empty row #}
+{% set categories = shop_block_categories(max|default(null)) %}
+{% if categories is not empty %}
+    <twig:c975LShop:Product:Categories categories="{{ categories }}" title="{{ title|default('') }}"/>
+{% endif %}

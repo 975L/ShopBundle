@@ -13,8 +13,9 @@ namespace c975L\ShopBundle\Message;
 class ProductItemDownloadMessage
 {
     public function __construct(
-        private int $basketId
-    ) {}
+        private readonly int $basketId,
+    ) {
+    }
 
     public function getBasketId(): int
     {

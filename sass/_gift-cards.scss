@@ -1,0 +1,30 @@
+/* GIFT CARDS BLOCK */
+// One visual per column, the amounts it can be bought for under it: the card itself is PaymentBundle's (sass/_gift-card.scss), and what is laid out here is the offer around it
+.gift-card-offer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+    // Same measure as the card it holds, so a row of offers lines up on the cards rather than on the longest list of amounts under one of them
+    width: min(var(--gift-card-width), 90vw);
+}
+
+.gift-card-offer-title {
+    font-family: var(--font-family-title);
+    font-weight: var(--font-title-weight);
+    margin: 0;
+    text-align: center;
+}
+
+// The amounts stack rather than sitting side by side: each is a button carrying its own price, and two of them on a line are read as one sentence
+.gift-card-offer-amounts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+    width: 100%;
+}
+
+.gift-card-offer-amounts .btn {
+    width: 100%;
+    margin: 0;
+}

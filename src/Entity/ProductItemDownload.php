@@ -10,7 +10,6 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -25,6 +24,10 @@ class ProductItemDownload
     #[ORM\Column]
     private int $basketId;
 
+    // Which item of the basket this copy was made for, so the customer area hands out the link already minted rather than copying the file again on every visit. Nullable: the rows made before the column existed carry none, so a fresh copy is made for that item and the old one waits for the nightly clean-up
+    #[ORM\Column(nullable: true)]
+    private ?int $productItemId = null;
+
     #[ORM\Column(length: 16)]
     private string $token;
 
@@ -32,13 +35,13 @@ class ProductItemDownload
     private string $filename;
 
     #[ORM\Column]
-    private ?DateTimeImmutable $expiresAt;
+    private ?\DateTimeImmutable $expiresAt = null;
 
     #[ORM\Column]
     private bool $downloaded = false;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTimeImmutable $downloadedAt = null;
+    private ?\DateTimeImmutable $downloadedAt = null;
 
     public function getId(): ?int
     {
@@ -57,6 +60,18 @@ class ProductItemDownload
         return $this;
     }
 
+    public function getProductItemId(): ?int
+    {
+        return $this->productItemId;
+    }
+
+    public function setProductItemId(?int $productItemId): self
+    {
+        $this->productItemId = $productItemId;
+
+        return $this;
+    }
+
     public function getToken(): string
     {
         return $this->token;
@@ -65,6 +80,7 @@ class ProductItemDownload
     public function setToken(string $token): self
     {
         $this->token = $token;
+
         return $this;
     }
 
@@ -76,17 +92,19 @@ class ProductItemDownload
     public function setFilename(string $filename): self
     {
         $this->filename = $filename;
+
         return $this;
     }
 
-    public function getExpiresAt(): DateTimeImmutable
+    public function getExpiresAt(): \DateTimeImmutable
     {
         return $this->expiresAt;
     }
 
-    public function setExpiresAt(DateTimeImmutable $expiresAt): self
+    public function setExpiresAt(\DateTimeImmutable $expiresAt): self
     {
         $this->expiresAt = $expiresAt;
+
         return $this;
     }
 
@@ -98,17 +116,19 @@ class ProductItemDownload
     public function setDownloaded(bool $downloaded): self
     {
         $this->downloaded = $downloaded;
+
         return $this;
     }
 
-    public function getDownloadedAt(): ?DateTimeImmutable
+    public function getDownloadedAt(): ?\DateTimeImmutable
     {
         return $this->downloadedAt;
     }
 
-    public function setDownloadedAt(?DateTimeImmutable $downloadedAt): self
+    public function setDownloadedAt(?\DateTimeImmutable $downloadedAt): self
     {
         $this->downloadedAt = $downloadedAt;
+
         return $this;
     }
 }

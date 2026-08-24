@@ -10,19 +10,11 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use App\Entity\User;
-use DateTimeImmutable;
-use Doctrine\ORM\Mapping as ORM;
-use c975L\ShopBundle\Entity\LotteryVideo;
-use c975L\ShopBundle\Entity\ProductMedia;
-use c975L\ShopBundle\Entity\ProductItemFile;
-use c975L\ShopBundle\Entity\ProductItemMedia;
-use c975L\ShopBundle\Entity\CrowdfundingMedia;
-use c975L\ShopBundle\Entity\CrowdfundingVideo;
-use Symfony\Component\HttpFoundation\File\File;
 use c975L\ShopBundle\Repository\MediaRepository;
-use c975L\ShopBundle\Entity\CrowdfundingCounterpartMedia;
+use c975L\UiBundle\Entity\Trait\VichMediaTrait;
+use Doctrine\ORM\Mapping as ORM;
 
+// Its own SINGLE_TABLE hierarchy, sharing only the trait with the other bundles' Media, never the table
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 #[ORM\Table(name: 'shop_media')]
 #[ORM\InheritanceType('SINGLE_TABLE')]
@@ -31,142 +23,74 @@ use c975L\ShopBundle\Entity\CrowdfundingCounterpartMedia;
     'product' => ProductMedia::class,
     'product_item' => ProductItemMedia::class,
     'product_item_file' => ProductItemFile::class,
-    'crowdfunding' => CrowdfundingMedia::class,
-    'crowdfunding_counterpart' => CrowdfundingCounterpartMedia::class,
-    'crowdfunding_video' => CrowdfundingVideo::class,
-    'lottery_video' => LotteryVideo::class,
 ])]
-
 abstract class Media
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use VichMediaTrait;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $position = null;
+    // The alternative text of the picture, the one field of a product media a search engine and a screen reader both read - the trait carries what the file is, never what it shows
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $alt = null;
 
-    #[ORM\Column(length: 255, nullable: true, unique: true)]
-    private ?string $name = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $size = null;
-
-    protected ?File $file = null;
-
-    #[ORM\Column]
-    private ?DateTimeImmutable $updatedAt = null;
-
-    #[ORM\ManyToOne()]
-    private ?User $user = null;
-
-    public function __toString(): string
+    public function getAlt(): ?string
     {
-        return (string) $this->getName();
+        return $this->alt;
     }
 
-    // Critical for preventing duplicates - overrides default Doctrine behavior
-    public function equals(object $other): bool
+    public function setAlt(?string $alt): static
     {
-        if (!$other instanceof Media) {
-            return false;
-        }
+        $this->alt = $alt;
 
-        // If both entities have IDs, compare by ID
-        if ($this->getId() !== null && $other->getId() !== null) {
-            return $this->getId() === $other->getId();
-        }
+        return $this;
+    }
 
-        // If one doesn't have an ID but both have names, compare by name
-        if ($this->getName() && $other->getName()) {
-            return $this->getName() === $other->getName();
-        }
+    // What UiBundle's Image and Slider components read on a media besides its file, answered here rather than stored: a product picture has no caption, no credits and no css of its own to set, and duplicating the media library's columns to say "nothing" would be a schema for no content
+    public function getMimeType(): string
+    {
+        $extension = strtolower(pathinfo((string) $this->getName(), \PATHINFO_EXTENSION));
 
-        // Otherwise, they're not equal
+        // Videos are named rather than prefixed: an ".ogv" file is "video/ogg", and a source element typed with a mime type that does not exist is skipped by the browser
+        $videos = ['mp4' => 'video/mp4', 'webm' => 'video/webm', 'ogv' => 'video/ogg'];
+
+        return $videos[$extension] ?? 'image/' . $extension;
+    }
+
+    public function getLabel(): ?string
+    {
+        return null;
+    }
+
+    // Left unset so the component prints no width/height attribute: the file is resized on upload and the stylesheet sizes it, a hardcoded pair would fight it
+    public function getWidth(): ?string
+    {
+        return null;
+    }
+
+    public function getHeight(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getCssClasses(): array
+    {
+        return [];
+    }
+
+    public function isAbove(): bool
+    {
         return false;
     }
 
-    abstract public function getMappingName(): string;
-
-    public function getId(): ?int
+    public function getCredits(): ?string
     {
-        return $this->id;
+        return null;
     }
 
-    public function getPosition(): ?int
+    public function isRightsReserved(): bool
     {
-        return $this->position;
-    }
-
-    public function setPosition(?int $position): static
-    {
-        $this->position = $position;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(?string $name): static
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getSize(): ?int
-    {
-        return $this->size;
-    }
-
-    public function setSize(?int $size): static
-    {
-        $this->size = $size;
-
-        return $this;
-    }
-
-    public function getFile(): ?File
-    {
-        return $this->file;
-    }
-
-    public function setFile(?File $file): static
-    {
-        $this->file = $file;
-
-        if ($file) {
-            $this->updatedAt = new DateTimeImmutable();
-        }
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(DateTimeImmutable $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-
-        return $this;
+        return false;
     }
 }

@@ -10,16 +10,14 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use App\Entity\User;
-use DateTimeImmutable;
-use DateTimeInterface;
+use c975L\ConfigBundle\Contract\UserInterface;
+use c975L\ShopBundle\Repository\ProductItemRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use c975L\ShopBundle\Repository\ProductItemRepository;
 
 #[ORM\Entity(repositoryClass: ProductItemRepository::class)]
 #[ORM\Table(name: 'shop_product_item')]
-class ProductItem
+class ProductItem implements \Stringable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -41,20 +39,45 @@ class ProductItem
     #[ORM\Column]
     private ?int $price = null;
 
+    // What the item was sold for before the current price, struck through beside it - null when it is not on offer. Read by ProductStateService, which ignores anything not above the price, so a leftover value never publishes a discount of zero or less
+    #[ORM\Column(nullable: true)]
+    private ?int $priceBefore = null;
+
     #[ORM\Column(length: 3)]
-    private ?string $currency = 'eur';
+    private string $currency = 'eur';
+
+    // The shop's own reference for this item, published as the offer's sku - the slug stands in for it when it is left empty, which is what the graph did for every item before this column existed
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $sku = null;
+
+    // The item's barcode number, 8 to 14 digits - an EAN-13 for a shelf product, an ISBN-13 for a book. Left empty on anything made in-house, which carries none and must not claim one
+    #[ORM\Column(length: 14, nullable: true)]
+    private ?string $gtin = null;
 
     #[ORM\Column]
-    private ?float $vat = 0;
+    private float $vat = 0;
 
+    // Three states in one column: null is an unlimited stock, a cap the orders have not reached is what is left to sell, a cap they have reached is a shortage the shop expects to end, and 0 is an item withdrawn for good. Null by default, so a shop publishing without touching the field is not read as having withdrawn everything
     #[ORM\Column(nullable: true, type: 'smallint')]
-    private ?int $limitedQuantity = 0;
+    private ?int $limitedQuantity = null;
 
     #[ORM\Column(nullable: true, type: 'smallint')]
     private ?int $orderedQuantity = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $service = null;
+
+    // Whether the item is offered for sale, an item taken offline keeping its file and its stock rather than being deleted - no recycle bin beside it, unlike Product: what has no url of its own has no address to answer 410 for
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
+    private bool $isPublished = true;
+
+    // What a card bought through this item is worth, in cents, null on everything that is not a gift card - stated here rather than read off the price, a 50 € card being free to sell for 45
+    #[ORM\Column(nullable: true)]
+    private ?int $giftCardValue = null;
+
+    // One of ProductSnippetBuilder::CONDITIONS, or null when the shop does not state it - null publishes nothing rather than claiming the item is new
+    #[ORM\Column(length: 16, nullable: true)]
+    private ?string $itemCondition = null;
 
     #[ORM\OneToOne(inversedBy: 'productItem', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
@@ -69,17 +92,17 @@ class ProductItem
     private ?Product $product = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?DateTimeInterface $creation = null;
+    private ?\DateTimeInterface $creation = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?DateTimeInterface $modification = null;
+    private ?\DateTimeInterface $modification = null;
 
-    #[ORM\ManyToOne(inversedBy: 'productItems')]
-    private ?User $user = null;
+    #[ORM\ManyToOne]
+    private ?UserInterface $user = null;
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->title;
+        return (string) $this->title;
     }
 
     public function toArray()
@@ -99,6 +122,7 @@ class ProductItem
 
     public function setPosition(?int $position): self
     {
+        // Keeps null, as the listener uses it to place the item at the end of the list
         $this->position = $position;
 
         return $this;
@@ -112,6 +136,11 @@ class ProductItem
     public function setFile(?ProductItemFile $file): static
     {
         $this->file = $file;
+
+        // Keeps the owning side in sync, as getVichMediaPath() walks back to the product through it
+        if (null !== $file) {
+            $file->setProductItem($this);
+        }
 
         return $this;
     }
@@ -164,6 +193,18 @@ class ProductItem
         return $this;
     }
 
+    public function getPriceBefore(): ?int
+    {
+        return $this->priceBefore;
+    }
+
+    public function setPriceBefore(?int $priceBefore): static
+    {
+        $this->priceBefore = $priceBefore;
+
+        return $this;
+    }
+
     public function getCurrency(): ?string
     {
         return $this->currency;
@@ -172,6 +213,30 @@ class ProductItem
     public function setCurrency(string $currency): static
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    public function getSku(): ?string
+    {
+        return $this->sku;
+    }
+
+    public function setSku(?string $sku): static
+    {
+        $this->sku = $sku;
+
+        return $this;
+    }
+
+    public function getGtin(): ?string
+    {
+        return $this->gtin;
+    }
+
+    public function setGtin(?string $gtin): static
+    {
+        $this->gtin = $gtin;
 
         return $this;
     }
@@ -224,6 +289,30 @@ class ProductItem
         return $this;
     }
 
+    public function isPublished(): bool
+    {
+        return $this->isPublished;
+    }
+
+    public function setIsPublished(bool $isPublished): static
+    {
+        $this->isPublished = $isPublished;
+
+        return $this;
+    }
+
+    public function getItemCondition(): ?string
+    {
+        return $this->itemCondition;
+    }
+
+    public function setItemCondition(?string $itemCondition): static
+    {
+        $this->itemCondition = $itemCondition;
+
+        return $this;
+    }
+
     public function getMedia(): ?ProductItemMedia
     {
         return $this->media;
@@ -233,32 +322,38 @@ class ProductItem
     {
         $this->media = $media;
 
+        // Keeps the owning side in sync, as getVichMediaPath() walks back to the product through it
+        if (null !== $media) {
+            $media->setProductItem($this);
+        }
+
         return $this;
     }
 
-    public function getCreation(): ?DateTimeInterface
+    public function getCreation(): ?\DateTimeInterface
     {
         return $this->creation;
     }
 
-    public function setCreation(DateTimeInterface $creation): static
+    public function setCreation(\DateTimeInterface $creation): static
     {
         $this->creation = $creation;
 
         return $this;
     }
 
-    public function getModification(): ?DateTimeInterface
+    public function getModification(): ?\DateTimeInterface
     {
         return $this->modification;
     }
 
-    public function setModification(DateTimeInterface $modification): static
+    public function setModification(\DateTimeInterface $modification): static
     {
         $this->modification = $modification;
 
         return $this;
     }
+
     public function getProduct(): ?Product
     {
         return $this->product;
@@ -271,15 +366,33 @@ class ProductItem
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getUser(): ?UserInterface
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(?UserInterface $user): static
     {
         $this->user = $user;
 
         return $this;
+    }
+
+    public function getGiftCardValue(): ?int
+    {
+        return $this->giftCardValue;
+    }
+
+    public function setGiftCardValue(?int $giftCardValue): static
+    {
+        $this->giftCardValue = null === $giftCardValue || $giftCardValue <= 0 ? null : $giftCardValue;
+
+        return $this;
+    }
+
+    // What tells the checkout this item is money bought in advance rather than something to deliver (see Basket::CONTENT_FLAG_GIFT_CARD)
+    public function isGiftCard(): bool
+    {
+        return null !== $this->giftCardValue && $this->giftCardValue > 0;
     }
 }

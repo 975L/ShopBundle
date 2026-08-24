@@ -10,12 +10,13 @@
 
 namespace c975L\ShopBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
 use c975L\ShopBundle\Entity\ProductItemMedia;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Vich\UploaderBundle\Form\Type\VichImageType;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ProductItemMediaType extends AbstractType
 {
@@ -23,16 +24,19 @@ class ProductItemMediaType extends AbstractType
     {
         $builder
             ->add('file', VichImageType::class, [
-                'label' => 'Media',
+                'label' => 'label.media',
                 'required' => false,
                 'allow_delete' => true,
                 'download_uri' => true,
                 'asset_helper' => true,
                 'constraints' => [
-                    new File([
-                        'maxSize' => '20M',
-                    ])
+                    new File(maxSize: '20M'),
                 ],
+            ])
+            ->add('alt', TextType::class, [
+                'label' => 'label.alt',
+                'required' => false,
+                'help' => 'text.alt_help',
             ])
         ;
     }
@@ -41,6 +45,7 @@ class ProductItemMediaType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ProductItemMedia::class,
+            'translation_domain' => 'shop',
         ]);
     }
 }

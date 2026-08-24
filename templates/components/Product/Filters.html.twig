@@ -1,0 +1,59 @@
+{# <twig:c975LShop:Product:Filters filters="{{ filters }}" priceBrackets="{{ priceBrackets }}" order="{{ order }}"/> #}
+{# A plain GET form with a submit button, and no controller of its own: this bundle ships no javascript, and a form that only narrows on change would leave whoever has none unable to filter at all #}
+{# The three of them travel as query parameters, like "order" already does, so a filtered listing keeps an address to share and a page to come back to #}
+{% set price = filters.price|default(null) %}
+{% set format = filters.format|default(null) %}
+{% set stock = filters.stock|default(null) %}
+{% set brackets = priceBrackets|default([]) %}
+<form class="product-filters" method="get" action="{{ path('shop_index') }}#products">
+    {# The order the visitor came with is carried through rather than reset by filtering, which is not a request to reorder anything #}
+    {% if order is not empty %}
+        <input type="hidden" name="order" value="{{ order }}">
+    {% endif %}
+
+    {# Every field says its name above itself, and its first option says "all" rather than repeating that name: the name written in the option only is lost the moment a value is picked #}
+    {% if brackets is not empty %}
+        <div class="product-filter-field">
+            <label class="product-filter-label" for="filter-price">{{ 'label.filter_price'|trans({}, 'shop') }}</label>
+            <select id="filter-price" name="price" class="product-filter-select">
+                <option value="">{{ 'label.filter_all'|trans({}, 'shop') }}</option>
+                {% for bracket in brackets %}
+                    <option value="{{ bracket.value }}" {% if bracket.value == price %}selected{% endif %}>
+                        {# The open-ended last band is worded as a floor rather than as a range it has no upper end for #}
+                        {% if bracket.max is null %}
+                            {{ 'label.filter_price_from'|trans({'%price%': (bracket.min / 100)|format_currency('eur')}, 'shop') }}
+                        {% else %}
+                            {{ (bracket.min / 100)|format_currency('eur') }} – {{ (bracket.max / 100)|format_currency('eur') }}
+                        {% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+
+    <div class="product-filter-field">
+        <label class="product-filter-label" for="filter-format">{{ 'label.filter_format'|trans({}, 'shop') }}</label>
+        <select id="filter-format" name="format" class="product-filter-select">
+            <option value="">{{ 'label.filter_all'|trans({}, 'shop') }}</option>
+            {% for value in ['physical', 'digital', 'service'] %}
+                <option value="{{ value }}" {% if value == format %}selected{% endif %}>{{ ('label.' ~ value)|trans({}, 'shop') }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="product-filter-field">
+        <label class="product-filter-label" for="filter-stock">{{ 'label.filter_stock'|trans({}, 'shop') }}</label>
+        <select id="filter-stock" name="stock" class="product-filter-select">
+            <option value="">{{ 'label.filter_all'|trans({}, 'shop') }}</option>
+            <option value="available" {% if stock %}selected{% endif %}>{{ 'label.filter_stock_available'|trans({}, 'shop') }}</option>
+        </select>
+    </div>
+
+    <div class="product-filter-actions">
+        <button type="submit" class="btn btn-secondary product-filter-submit">{{ 'label.filter'|trans({}, 'shop') }}</button>
+        {# Offered only once something is actually narrowed, an always-present "clear" reading as a filter of its own #}
+        {% if price or format or stock %}
+            <a href="{{ path('shop_index', order is not empty ? {'order': order} : {}) }}#products" class="product-filter-reset">{{ 'label.filter_reset'|trans({}, 'shop') }}</a>
+        {% endif %}
+    </div>
+</form>

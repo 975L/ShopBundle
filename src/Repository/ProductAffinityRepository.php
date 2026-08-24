@@ -10,11 +10,13 @@
 
 namespace c975L\ShopBundle\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use c975L\ShopBundle\Entity\ProductAffinity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository<\c975L\ShopBundle\Entity\ProductAffinity>
+ */
 class ProductAffinityRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

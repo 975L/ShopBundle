@@ -10,24 +10,31 @@
 
 namespace c975L\ShopBundle\Service;
 
-use c975L\ShopBundle\Entity\Basket;
+use c975L\PaymentBundle\Contract\BasketRecommendationProviderInterface;
+use c975L\PaymentBundle\Entity\Basket;
 use c975L\ShopBundle\Entity\Product;
-use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Repository\ProductAffinityRepository;
 use c975L\ShopBundle\Repository\ProductItemRepository;
+use c975L\ShopBundle\Repository\ProductRepository;
 
-class ProductRecommendationService implements ProductRecommendationServiceInterface
+class ProductRecommendationService implements ProductRecommendationServiceInterface, BasketRecommendationProviderInterface
 {
-    private const WEIGHT_CATEGORY = 45;
-    private const WEIGHT_PRICE = 20;
-    private const WEIGHT_CO_PURCHASE = 35;
-    private const PRICE_SIMILARITY_TOLERANCE = 0.30;
+    private const int WEIGHT_CATEGORY = 45;
+    private const int WEIGHT_PRICE = 20;
+    private const int WEIGHT_CO_PURCHASE = 35;
+    private const float PRICE_SIMILARITY_TOLERANCE = 0.30;
 
     public function __construct(
         private readonly ProductRepository $productRepository,
         private readonly ProductAffinityRepository $affinityRepository,
         private readonly ProductItemRepository $productItemRepository,
     ) {
+    }
+
+    // Satisfies PaymentBundle's BasketRecommendationProviderInterface
+    public function getRecommendations(Basket $basket, int $limit): array
+    {
+        return $this->getRecommendationsForBasket($basket, $limit);
     }
 
     public function getRecommendationsForBasket(Basket $basket, int $limit = 4): array
@@ -47,28 +54,31 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
             if ($score > 0) {
                 $scoredProducts[] = [
                     'product' => $product,
-                    'score' => $score
+                    'score' => $score,
                 ];
             }
         }
 
         // Sort by descending score
-        usort($scoredProducts, fn($a, $b) => $b['score'] <=> $a['score']);
+        usort($scoredProducts, fn ($a, $b) => $b['score'] <=> $a['score']);
 
         return array_map(
-            fn($item) => $item['product'],
+            fn ($item) => $item['product'],
             array_slice($scoredProducts, 0, $limit)
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSimilarProducts(Product $product, int $limit = 4): array
     {
+        // What an editor picked comes before what the affinities computed, and replaces it rather than being merged into it: the calculation reads a sales history, which is exactly what a catalogue just filled in does not have yet
+        $picked = $this->getPickedProducts($product, $limit);
+        if ([] !== $picked) {
+            return $picked;
+        }
+
         // Get candidates from the same category
         $categoryIds = array_map(
-            fn($cat) => $cat->getId(),
+            fn ($cat) => $cat->getId(),
             $product->getCategories()->toArray()
         );
 
@@ -88,16 +98,16 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
             if ($score > 0) {
                 $scoredProducts[] = [
                     'product' => $candidate,
-                    'score' => $score
+                    'score' => $score,
                 ];
             }
         }
 
         // Sort and limit
-        usort($scoredProducts, fn($a, $b) => $b['score'] <=> $a['score']);
+        usort($scoredProducts, fn ($a, $b) => $b['score'] <=> $a['score']);
 
         return array_map(
-            fn($item) => $item['product'],
+            fn ($item) => $item['product'],
             array_slice($scoredProducts, 0, $limit)
         );
     }
@@ -116,6 +126,20 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         $score += $this->scoreByCoPurchase($product, $referenceProducts);
 
         return round($score, 2);
+    }
+
+    // The products the editor attached to this one, minus the ones the shop is not standing behind - a draft has never been online and a trashed product answers 410, and neither belongs in a block naming it
+    private function getPickedProducts(Product $product, int $limit): array
+    {
+        $picked = [];
+
+        foreach ($product->getRelatedProducts() as $related) {
+            if ($related->isPublished() && !$related->isDeleted()) {
+                $picked[] = $related;
+            }
+        }
+
+        return array_slice($picked, 0, $limit);
     }
 
     private function getProductIdsFromBasket(Basket $basket): array
@@ -138,7 +162,7 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         foreach ($productItems as $productItem) {
             $product = $productItem->getProduct();
             // Ensure ProductItem has a valid Product (not null, not Crowdfunding)
-            if ($product !== null) {
+            if (null !== $product) {
                 $productIds[] = $product->getId();
             }
         }
@@ -159,7 +183,7 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         }
 
         $productCategoryIds = array_map(
-            fn($cat) => $cat->getId(),
+            fn ($cat) => $cat->getId(),
             $product->getCategories()->toArray()
         );
 
@@ -171,13 +195,13 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         $matchCount = 0;
         foreach ($referenceProducts as $refProduct) {
             $refCategoryIds = array_map(
-                fn($cat) => $cat->getId(),
+                fn ($cat) => $cat->getId(),
                 $refProduct->getCategories()->toArray()
             );
 
             // Is there an intersection?
             if (!empty(array_intersect($productCategoryIds, $refCategoryIds))) {
-                $matchCount++;
+                ++$matchCount;
             }
         }
 
@@ -196,13 +220,13 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         // Calculate the average price of product items
         $productPrice = $this->getAverageProductPrice($product);
 
-        if ($productPrice === 0) {
+        if (0.0 === $productPrice) {
             return 0;
         }
 
         // Calculate the average price of reference products
         $referencePrices = array_map(
-            fn($p) => $this->getAverageProductPrice($p),
+            $this->getAverageProductPrice(...),
             $referenceProducts
         );
 
@@ -243,16 +267,12 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
                 $product->getId()
             );
 
-            if ($affinityScore !== null) {
+            if (null !== $affinityScore) {
                 // Affinity score is between 0 and 100
                 $totalAffinityScore += $affinityScore;
             }
 
             $maxPossibleScore += 100; // Max affinity score
-        }
-
-        if ($maxPossibleScore === 0) {
-            return 0;
         }
 
         // Normalize: ratio of total score over max possible
@@ -263,7 +283,7 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
 
     private function getAverageProductPrice(Product $product): float
     {
-        $items = $product->getItems();
+        $items = $product->getPublishedItems();
 
         if ($items->isEmpty()) {
             return 0;
