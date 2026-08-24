@@ -62,7 +62,8 @@
         </div>
     {% endif %}
     {# Outside the link too, and for the same reason: a button inside a link is invalid html a click would answer by navigating instead of putting the product aside. Nothing personal is printed here - the heart is painted by assets/js/favorite.js from the visitor's own browser, so a card sitting in the block cache stays shareable #}
-    {% if config('shop-favorites')|to_bool %}
+    {# The id is what the heart is filed under, so a card standing for no stored product at all (see ShopShowcaseProvider) simply goes without one rather than pointing at a route it has no argument for #}
+    {% if config('shop-favorites')|to_bool and product.id %}
         <twig:c975LUi:Favorite:Button ownerType="shop_product" ownerId="{{ product.id }}" class="product-favorite"/>
     {% endif %}
 </article>

@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.1.3
+
+The favorite heart is left off a card standing for no stored product
+
+- `Product.html.twig` draws the favorite button only on a product carrying an id (24/08/2026)
+- `ShopShowcaseProvider` states why its stand-ins go without one (24/08/2026)
+
 ## v2.1.2
 
 UPGRADE.md entries are filed under the version they shipped in

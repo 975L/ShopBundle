@@ -99,7 +99,7 @@ class ShopShowcaseProvider implements GalleryShowcaseProviderInterface
         ];
     }
 
-    // Stand-ins are real Product entities, never persisted: the components resolve their badge, price and formats through shop_product_state(), typed on Product, where an array only gets as far as a TypeError. Carrying no id costs nothing here - shop_product_edit_url() answers null on an in-memory one, and the cards keep their own path
+    // Stand-ins are real Product entities, never persisted: the components resolve their badge, price and formats through shop_product_state(), typed on Product, where an array only gets as far as a TypeError. Carrying no id costs nothing here - shop_product_edit_url() answers null on an in-memory one, the cards keep their own path, and the one thing filed under an id, the favorite heart, is left out of a card standing for no stored product (see Product.html.twig)
     /**
      * @param list<string> $images
      *
