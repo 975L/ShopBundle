@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Entity;
 
 use c975L\ShopBundle\Repository\ProductAffinityRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductAffinityRepository::class)]
@@ -36,7 +37,8 @@ class ProductAffinity
     #[ORM\Column(type: 'integer', options: ['default' => 0])]
     private int $coPurchaseCount = 0;
 
-    #[ORM\Column(type: 'decimal', precision: 5, scale: 2, options: ['default' => '0.00'])]
+    // Held as float: a decimal column reads back as a string
+    #[ORM\Column(type: Types::FLOAT, options: ['default' => 0])]
     private float $affinityScore = 0.0;
 
     #[ORM\Column(type: 'datetime')]

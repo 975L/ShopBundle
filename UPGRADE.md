@@ -4,6 +4,19 @@ This document describes breaking changes and how to upgrade between major versio
 
 ### Unreleased
 
+**The affinity score is a float column now, which needs a migration.** `ProductAffinity::$affinityScore` was
+mapped as `decimal(5, 2)` while the property is typed `float`: Doctrine hands a decimal back as a string, so
+`doctrine:schema:validate` reported the mapping as invalid and every reader coerced the value on its way through.
+The column becomes a float, the property and the accessors are unchanged, and nothing in your own code has to move:
+
+```bash
+php bin/console doctrine:migrations:diff
+php bin/console doctrine:migrations:migrate
+```
+
+The scores themselves survive the change - they are percentages `c975l:shop:affinity:calculate` rounds to two
+decimals, and the command rewrites them all on its next run anyway.
+
 **One new table, which needs a migration.** `shop_product_item_stock_alert` holds the visitors waiting on a
 sold-out item: the item, an address, the language they asked in, an unsubscribe token and the date they were told.
 Nothing else changes, but the table has to be created:

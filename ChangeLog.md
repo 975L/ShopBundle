@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.1.1
+
+The affinity score is held as the number it is read back as
+
+- `ProductAffinity::$affinityScore` is mapped `Types::FLOAT` rather than `decimal(5, 2)` (24/08/2026)
+- `doctrine:schema:validate` no longer reports the mapping as invalid (24/08/2026)
+- `UPGRADE.md` states the migration the column change asks for (24/08/2026)
+
 ## v2.1.0
 
 Weekly integrity checks on the catalogue and the deliveries
