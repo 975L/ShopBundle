@@ -84,19 +84,18 @@ class ProductRatingTest extends TestCase
     {
         $sheet = $this->read(self::SHEET);
 
-        $this->assertStringContainsString("ui_reviews('shop_product', product.id)", $sheet);
-        $this->assertStringContainsString('@c975LUi/components/Review/List.html.twig', $sheet);
+        $this->assertStringContainsString("ui_reviews_section('shop_product', product.id)", $sheet);
         $this->assertLessThan(
             strpos($sheet, 'Product:Recommendations'),
-            strpos($sheet, 'ui_reviews('),
+            strpos($sheet, 'ui_reviews_section('),
             'The recommendations send the reader to another product, so what is said about this one comes first'
         );
     }
 
-    // A site that collects no reviews draws no section and asks no query for it
+    // A site that collects no reviews draws no section and asks no query for it - the switch is read by the function itself, which answers an empty string, so the sheet carries no condition of its own
     public function testTheReviewsSectionIsGatedOnTheFeatureSwitch(): void
     {
-        $this->assertStringContainsString('{% if ui_reviews_enabled() %}', $this->read(self::SHEET));
+        $this->assertStringNotContainsString('{% if ui_reviews_enabled() %}', $this->read(self::SHEET));
     }
 
     private function read(string $relativePath): string

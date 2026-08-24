@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-checkout
-description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, c975l:shop:stock-alerts:send, isItemSoldOut, isItemAvailable, shop_stock_alert."
+description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, c975l:shop:stock-alerts:send, isItemSoldOut, isItemAvailable, shop_stock_alert, ShopIntegrityHealthCheckProvider, ShopIntegrityHealthCheckAdviceProvider, shop-integrity, undelivered-downloads, missing-files, oversold-items, free-items, findSellable, findDeliveredBasketIds."
 ---
 
 # c975L ShopBundle — buying, paying, delivering
@@ -10,7 +10,7 @@ description: "Use this skill when working on buying, paying for or delivering a 
 **Package:** `c975l/shop-bundle` · **Bundle:** `c975L\ShopBundle\` · **Twig namespace:** `@c975LShop` · **Translation domain:** `shop`
 
 **Key source paths:**
-`src/Service/ProductBasketItemProvider.php`, `src/Service/ProductItemDownloadService.php`, `src/Service/ProductBasketDownloadProvider.php`, `src/MessageHandler/ProductItemDownloadMessageHandler.php`, `src/Message/ProductItemDownloadMessage.php`, `src/Entity/ProductItemDownload.php`, `src/Entity/ProductItemFile.php`, `src/Controller/ProductItemDownloadController.php`, `src/Repository/ProductItemDownloadRepository.php`, `src/Command/ProductItemDownloadDelete.php`, `src/Scheduler/ShopMaintenanceTaskProvider.php`, `templates/components/ProductItem/`, `templates/components/Shop/`
+`src/Service/ProductBasketItemProvider.php`, `src/Service/ProductItemDownloadService.php`, `src/Service/ProductBasketDownloadProvider.php`, `src/MessageHandler/ProductItemDownloadMessageHandler.php`, `src/Message/ProductItemDownloadMessage.php`, `src/Entity/ProductItemDownload.php`, `src/Entity/ProductItemFile.php`, `src/Controller/ProductItemDownloadController.php`, `src/Repository/ProductItemDownloadRepository.php`, `src/Command/ProductItemDownloadDelete.php`, `src/Scheduler/ShopMaintenanceTaskProvider.php`, `src/Management/ShopIntegrityHealthCheckProvider.php`, `src/Management/ShopIntegrityHealthCheckAdviceProvider.php`, `templates/components/ProductItem/`, `templates/components/Shop/`
 
 **Related skills:** `c975l-shop-catalog`, `c975l-shop-blocks`, `c975l-shop-seo` in this same bundle, `c975l-payment-checkout`, `c975l-payment-items` in `c975l/payment-bundle`, and `c975l-config`, `c975l-operations` in ConfigBundle beside it.
 
@@ -185,6 +185,24 @@ installing the shop gets them without a system crontab entry, and a site removin
 
 **Do not ask a consuming app to add these to its own schedule.**
 
+## What is checked weekly
+
+`ShopIntegrityHealthCheckProvider` (kind `shop-integrity`) runs four checks, one dashboard row each — the
+catalogue-side counterpart of PaymentBundle's `basket-integrity`, which reads the orders themselves.
+
+| Row | Reads |
+|---|---|
+| `#undelivered-downloads` | a paid order holding a file with no `ProductItemDownload` ever written for it — read no further back than `VALIDITY_DAYS`, the purge taking older copies away, and an hour's grace for the message handler |
+| `#missing-files` | a sellable `ProductItemFile` whose file is not under `private/` — the sheet still sells it and the delivery skips the item rather than failing |
+| `#oversold-items` | `orderedQuantity` past `limitedQuantity` |
+| `#free-items` | a sellable item priced at zero — a warning, and reported only where it is the exception: a catalogue giving away half or more of what it lists has the row skipped |
+
+Each check is guarded on its own: `HealthCheckRunner` drops **every** row of a provider that throws, and no rows
+at all reads as "nothing to report".
+
+`ShopIntegrityHealthCheckAdviceProvider` turns each count into the articles or the orders behind it, one link
+apiece — a product to its edit screen, an order to its own read-only detail.
+
 ## Do not
 
 - **Do not implement a basket, an order or a payment here** — they are PaymentBundle's.
@@ -209,3 +227,5 @@ installing the shop gets them without a system crontab entry, and a site removin
 - **Do not read a card's worth off the price** — `giftCardValue` is its face value, sold at whatever the item costs.
 - **Do not hand `issue()` a design read off the product** — read it off the basket entry, which copied it when the card was bought.
 - **Do not read test mode from a Stripe key.**
+- **Do not report a free article as an error** — a story given away is a business decision, and `#free-items` skips itself on a catalogue giving away more than it sells.
+- **Do not read the undelivered check further back than a link lives** — the purge has taken the copies of older orders away, so every one of them would report as never delivered.

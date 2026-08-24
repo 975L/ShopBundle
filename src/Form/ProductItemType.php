@@ -35,9 +35,6 @@ class ProductItemType extends AbstractType
             ->add('title', TextType::class, [
                 'required' => true,
                 'label' => 'label.title',
-                'attr' => [
-                    'placeholder' => 'label.title',
-                ],
             ])
             ->add('slug', TextType::class, [
                 'required' => false,
@@ -49,26 +46,17 @@ class ProductItemType extends AbstractType
             ->add('description', TextareaType::class, [
                 'required' => true,
                 'label' => 'label.description',
-                'attr' => [
-                    'placeholder' => 'label.description',
-                ],
             ])
             ->add('limitedQuantity', IntegerType::class, [
                 'required' => false,
                 'label' => 'label.limited_quantity',
                 // Left empty is an unlimited stock, and 0 withdraws the item for good: the difference decides whether the sheet says "out of stock" and offers the alert, or says "sold out" and promises nothing
                 'help' => 'label.limited_quantity_help',
-                'attr' => [
-                    'placeholder' => 'label.limited_quantity',
-                ],
             ])
             ->add('price', MoneyType::class, [
                 'required' => true,
                 'label' => 'label.price',
                 'divisor' => 100,
-                'attr' => [
-                    'placeholder' => 'label.price',
-                ],
             ])
             ->add('priceBefore', MoneyType::class, [
                 'required' => false,
@@ -76,16 +64,12 @@ class ProductItemType extends AbstractType
                 // What the "Omnibus" directive requires of a struck-through price in the EU: the lowest price actually charged over the last 30 days, not a figure chosen to make the offer look better
                 'help' => 'label.price_before_help',
                 'divisor' => 100,
-                'attr' => [
-                    'placeholder' => 'label.price_before',
-                ],
             ])
             ->add('currency', TextType::class, [
                 'required' => true,
                 'empty_data' => 'eur',
                 'label' => 'label.currency',
                 'attr' => [
-                    'placeholder' => 'label.currency',
                     'value' => 'eur',
                 ],
             ])
@@ -93,7 +77,6 @@ class ProductItemType extends AbstractType
                 'label' => 'label.vat',
                 'empty_data' => 0,
                 'attr' => [
-                    'placeholder' => 'label.vat',
                     'value' => 0,
                 ],
             ])
@@ -101,17 +84,11 @@ class ProductItemType extends AbstractType
                 'required' => false,
                 'label' => 'label.sku',
                 'help' => 'label.sku_help',
-                'attr' => [
-                    'placeholder' => 'label.sku',
-                ],
             ])
             ->add('gtin', TextType::class, [
                 'required' => false,
                 'label' => 'label.gtin',
                 'help' => 'label.gtin_help',
-                'attr' => [
-                    'placeholder' => 'label.gtin',
-                ],
             ])
             ->add('itemCondition', ChoiceType::class, [
                 'required' => false,

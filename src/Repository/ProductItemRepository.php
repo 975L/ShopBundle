@@ -48,4 +48,25 @@ class ProductItemRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    /**
+     * Every item a customer can be shown and charged for right now, its product and its file loaded with it.
+     *
+     * @return list<ProductItem>
+     */
+    public function findSellable(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->innerJoin('i.product', 'p')
+            ->addSelect('p')
+            ->leftJoin('i.file', 'f')
+            ->addSelect('f')
+            ->andWhere('i.isPublished = true')
+            ->andWhere('p.isPublished = true')
+            ->andWhere('p.isDeleted = false')
+            ->orderBy('p.title', 'ASC')
+            ->addOrderBy('i.position', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

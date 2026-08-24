@@ -82,4 +82,28 @@ class ProductItemDownloadRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    /**
+     * Of those baskets, the ones a copy was ever made for - expiry not read, a basket whose links ran out having been delivered all the same.
+     *
+     * @param list<int> $basketIds
+     *
+     * @return list<int>
+     */
+    public function findDeliveredBasketIds(array $basketIds): array
+    {
+        if ([] === $basketIds) {
+            return [];
+        }
+
+        return array_map(
+            static fn (array $row) => (int) $row['basketId'],
+            $this->createQueryBuilder('d')
+                ->select('DISTINCT d.basketId')
+                ->andWhere('d.basketId IN (:basketIds)')
+                ->setParameter('basketIds', $basketIds)
+                ->getQuery()
+                ->getScalarResult()
+        );
+    }
 }

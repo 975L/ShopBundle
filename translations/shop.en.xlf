@@ -758,6 +758,14 @@
                 <source>label.guided_step_shop_test_mode_open</source>
                 <target>Back to the dashboard</target>
             </trans-unit>
+            <trans-unit id="i0R_Ccz">
+                <source>label.health_check_advice_shop_offender</source>
+                <target>%item% - %info%</target>
+            </trans-unit>
+            <trans-unit id="oRug2g0">
+                <source>label.health_check_advice_shop_offenders</source>
+                <target>The %count% article(s) or order(s) concerned</target>
+            </trans-unit>
             <trans-unit id="szrFxJp">
                 <source>label.health_check_product_json_ld_call_failed</source>
                 <target>The product sheet could not be read: %message%</target>
@@ -781,6 +789,62 @@
             <trans-unit id="9GvdsG5">
                 <source>label.health_check_product_not_served</source>
                 <target>The product sheet does not answer - nothing could be read on it</target>
+            </trans-unit>
+            <trans-unit id="xRdjOuQ">
+                <source>label.health_check_shop_check_failed</source>
+                <target>The check could not run: %message%</target>
+            </trans-unit>
+            <trans-unit id="bNPHxzr">
+                <source>label.health_check_shop_free_items</source>
+                <target>Articles on sale for nothing</target>
+            </trans-unit>
+            <trans-unit id="aSacsVA">
+                <source>label.health_check_shop_free_items_ko</source>
+                <target>%count% article(s) on sale for nothing - deliberate, or a price cleared by an edit</target>
+            </trans-unit>
+            <trans-unit id="NStsOv5">
+                <source>label.health_check_shop_free_items_ok</source>
+                <target>Every article on sale carries a price</target>
+            </trans-unit>
+            <trans-unit id="7IVzSaj">
+                <source>label.health_check_shop_free_items_skipped</source>
+                <target>Free is this catalogue's own model, not the exception - nothing is reported</target>
+            </trans-unit>
+            <trans-unit id="bQhAsZt">
+                <source>label.health_check_shop_missing_files</source>
+                <target>Files on sale missing from the server</target>
+            </trans-unit>
+            <trans-unit id="nT51XO4">
+                <source>label.health_check_shop_missing_files_ko</source>
+                <target>%count% article(s) on sale whose file is no longer on the server</target>
+            </trans-unit>
+            <trans-unit id="ACBBKl4">
+                <source>label.health_check_shop_missing_files_ok</source>
+                <target>Every file on sale is where it is read from</target>
+            </trans-unit>
+            <trans-unit id="Itd3h6w">
+                <source>label.health_check_shop_oversold_items</source>
+                <target>Articles sold past their stock</target>
+            </trans-unit>
+            <trans-unit id="pR8rRwm">
+                <source>label.health_check_shop_oversold_items_ko</source>
+                <target>%count% article(s) ordered more times than the stock declared</target>
+            </trans-unit>
+            <trans-unit id="P6GVvVg">
+                <source>label.health_check_shop_oversold_items_ok</source>
+                <target>No article was sold past what was declared</target>
+            </trans-unit>
+            <trans-unit id="ZdGNSXY">
+                <source>label.health_check_shop_undelivered_downloads</source>
+                <target>Files paid for and never handed over</target>
+            </trans-unit>
+            <trans-unit id="ubtWEl4">
+                <source>label.health_check_shop_undelivered_downloads_ko</source>
+                <target>%count% paid order(s) whose files were never copied nor sent</target>
+            </trans-unit>
+            <trans-unit id=".5Y0OQS">
+                <source>label.health_check_shop_undelivered_downloads_ok</source>
+                <target>Every recent order holding a file was delivered</target>
             </trans-unit>
             <trans-unit id="cBE2pj8">
                 <source>label.in_stock</source>

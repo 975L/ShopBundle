@@ -48,6 +48,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - Breadcrumb above every sheet and category page, published as `BreadcrumbList` structured data
 - Product affinity calculation and recommendations, overridden by the products an editor picks by hand
 - Sitemap, `llms.txt` section and health check, all from one provider
+- Catalogue and deliveries checked on their own weekly, `shop-integrity`: a file paid for and never handed over, a file on sale that left the server, an article sold past its stock
 - Shop pages selectable as SiteBundle menu targets
 - Products and categories exported/imported as a zip (pictures, items with their paid files, sheet blocks and categories bundled in), plugging into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen
 - Media directories declared for backup, order backlog and catalog gaps reported to the status report
@@ -504,6 +505,22 @@ about a site whose own template stopped calling `product_json_ld()`:
 ```bash
 php bin/console c975l:health-check:run --kind=product-json-ld
 ```
+
+A third one, `shop-integrity`, looks for what a shop cannot see about itself — the counterpart of PaymentBundle's
+`basket-integrity`, which reads the orders themselves where these four need the catalogue resolved:
+
+| Row | What it reports |
+|---|---|
+| `#undelivered-downloads` | a paid order holding a file whose copy was never made nor sent - read only as far back as a link lives, the nightly purge taking the copies of older orders away |
+| `#missing-files` | a file on sale that is no longer on the server: the sheet still offers it, the checkout still takes the money, and the delivery skips the item rather than failing |
+| `#oversold-items` | an article ordered more times than the stock declared |
+| `#free-items` | an article on sale for nothing - a warning and never an error, and reported only where it is the exception: a catalogue giving away more than it sells has that row skipped |
+
+```bash
+php bin/console c975l:health-check:run --kind=shop-integrity
+```
+
+Each row lists the articles or the orders behind its count, one link apiece, on the Health check page.
 
 ---
 

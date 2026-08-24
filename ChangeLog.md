@@ -1,5 +1,23 @@
 # Changelog
 
+## v2.1.0
+
+Weekly integrity checks on the catalogue and the deliveries
+
+- Added `ShopIntegrityHealthCheckProvider`, four weekly checks under the `shop-integrity` kind (24/08/2026)
+- They report a paid order whose files were never copied nor sent, a file on sale missing from the server, an article ordered past its stock, and an article on sale for nothing (24/08/2026)
+- The free-article check is a warning, and skips itself on a catalogue giving away more than it sells (24/08/2026)
+- Each check is guarded on its own, `HealthCheckRunner` dropping every row of a provider that throws (24/08/2026)
+- Orders are read no further back than a download link lives, and one settled within the hour is left alone (24/08/2026)
+- Added `ShopIntegrityHealthCheckAdviceProvider`, listing the articles and the orders behind each count, one link apiece (24/08/2026)
+- Added `ProductItemRepository::findSellable()` and `ProductItemDownloadRepository::findDeliveredBasketIds()` (24/08/2026)
+- Added the `label.health_check_shop_*` and `label.health_check_advice_shop_*` keys to the `shop` catalogs (24/08/2026)
+- Requires `c975l/payment-bundle` `^6.2`, which `BasketRepository::findOrdersSince()` comes from (24/08/2026)
+- Requires `c975l/core-bundle` `^1.16`, which `ui_reviews_section()` comes from (24/08/2026)
+- The product sheet's reviews are drawn by `ui_reviews_section()`, cached with the sheet's blocks (24/08/2026)
+- The product sheet's gallery is capped at 420px and centred (24/08/2026)
+- An item's fields no longer carry a `placeholder`, their label saying what is asked (`ProductItemType`) (24/08/2026)
+
 ## v2.0.0
 
 Extract checkout, crowdfunding and lottery into their own bundles

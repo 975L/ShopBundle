@@ -79,15 +79,10 @@
             </div>
         </div>
 
-        {# Ce que les acheteurs ont écrit sur ce produit, avant les recommandations : celles-ci font rebondir vers autre chose, où les avis parlent encore de la fiche qu'on lit #}
-        {# Rien du tout tant que le site n'a pas activé "ui-enable-reviews" : la fonction répond une liste vide et la section ne s'affiche pas #}
-        {% if ui_reviews_enabled() %}
-            {% include '@c975LUi/components/Review/List.html.twig' with {
-                reviews: ui_reviews('shop_product', product.id),
-                ownerType: 'shop_product',
-                ownerId: product.id,
-            } only %}
-        {% endif %}
+        {# What buyers wrote about this product, before the recommendations: those send the reader to something else, where the reviews still speak of the sheet being read #}
+        {# Nothing at all until the site turns "ui-enable-reviews" on: the function answers an empty string and the section is not drawn #}
+        {# Held in the very cache the sheet's blocks are held in, tagged to be cleared as soon as a review is published - nothing in it belongs to a visitor (see ReviewRuntime::section()) #}
+        {{ ui_reviews_section('shop_product', product.id) }}
 
         {% if 'shop_recommendations' not in sheetKinds %}
             <twig:c975LShop:Product:Recommendations recommendations="{{ similarProducts }}" />

@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-08-24",
+        "description": [
+            {
+                "en": "Your shop is now checked every week too, and the Health check dashboard says what it found: a file your customer paid for and never received, a file on sale that is no longer on the server, an article ordered more times than the stock you declared, an article left on sale for nothing. Each line lists the articles or the orders concerned, with a link to open each of them.",
+                "fr": "Votre boutique est elle aussi vérifiée chaque semaine, et le tableau de bord Contrôle de santé vous dit ce qu'il a trouvé : un fichier que votre client a payé et n'a jamais reçu, un fichier en vente qui n'est plus sur le serveur, un article commandé plus de fois que le stock que vous avez déclaré, un article resté en vente à prix nul. Chaque ligne liste les articles ou les commandes concernés, avec un lien pour ouvrir chacun.",
+                "es": "Su tienda también se comprueba cada semana, y el panel Comprobación de estado le dice lo que ha encontrado: un archivo que su cliente pagó y nunca recibió, un archivo a la venta que ya no está en el servidor, un artículo pedido más veces que el stock que declaró, un artículo que sigue a la venta a precio cero. Cada línea enumera los artículos o los pedidos afectados, con un enlace para abrir cada uno."
+            },
+            {
+                "en": "The picture of a product is held to a readable width and centred instead of filling its whole column, so a tall cover no longer pushes the reviews and the recommendations two screens down the page.",
+                "fr": "L'image d'un produit est ramenée à une largeur lisible et centrée au lieu d'occuper toute sa colonne, si bien qu'une couverture haute ne repousse plus les avis et les recommandations deux écrans plus bas.",
+                "es": "La imagen de un producto se limita a un ancho legible y se centra en lugar de ocupar toda su columna, de modo que una portada alta ya no empuja las reseñas y las recomendaciones dos pantallas más abajo."
+            }
+        ]
+    },
+    {
         "date": "2026-08-23",
         "description": [
             {

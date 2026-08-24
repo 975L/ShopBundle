@@ -758,6 +758,14 @@
                 <source>label.guided_step_shop_test_mode_open</source>
                 <target>Revenir au tableau de bord</target>
             </trans-unit>
+            <trans-unit id="i0R_Ccz">
+                <source>label.health_check_advice_shop_offender</source>
+                <target>%item% - %info%</target>
+            </trans-unit>
+            <trans-unit id="oRug2g0">
+                <source>label.health_check_advice_shop_offenders</source>
+                <target>Les %count% article(s) ou commande(s) concerné(s)</target>
+            </trans-unit>
             <trans-unit id="szrFxJp">
                 <source>label.health_check_product_json_ld_call_failed</source>
                 <target>La fiche du produit n'a pas pu être lue : %message%</target>
@@ -781,6 +789,62 @@
             <trans-unit id="9GvdsG5">
                 <source>label.health_check_product_not_served</source>
                 <target>La fiche du produit ne répond pas - rien n'a pu y être lu</target>
+            </trans-unit>
+            <trans-unit id="xRdjOuQ">
+                <source>label.health_check_shop_check_failed</source>
+                <target>Le contrôle n'a pas pu s'exécuter : %message%</target>
+            </trans-unit>
+            <trans-unit id="bNPHxzr">
+                <source>label.health_check_shop_free_items</source>
+                <target>Articles en vente à prix nul</target>
+            </trans-unit>
+            <trans-unit id="aSacsVA">
+                <source>label.health_check_shop_free_items_ko</source>
+                <target>%count% article(s) en vente à prix nul - volontaire, ou prix effacé par une modification</target>
+            </trans-unit>
+            <trans-unit id="NStsOv5">
+                <source>label.health_check_shop_free_items_ok</source>
+                <target>Chaque article en vente porte un prix</target>
+            </trans-unit>
+            <trans-unit id="7IVzSaj">
+                <source>label.health_check_shop_free_items_skipped</source>
+                <target>La gratuité est le modèle de ce catalogue, pas l'exception - rien n'est signalé</target>
+            </trans-unit>
+            <trans-unit id="bQhAsZt">
+                <source>label.health_check_shop_missing_files</source>
+                <target>Fichiers en vente absents du serveur</target>
+            </trans-unit>
+            <trans-unit id="nT51XO4">
+                <source>label.health_check_shop_missing_files_ko</source>
+                <target>%count% article(s) en vente dont le fichier n'est plus sur le serveur</target>
+            </trans-unit>
+            <trans-unit id="ACBBKl4">
+                <source>label.health_check_shop_missing_files_ok</source>
+                <target>Chaque fichier en vente est bien là où il est lu</target>
+            </trans-unit>
+            <trans-unit id="Itd3h6w">
+                <source>label.health_check_shop_oversold_items</source>
+                <target>Articles vendus au-delà de leur stock</target>
+            </trans-unit>
+            <trans-unit id="pR8rRwm">
+                <source>label.health_check_shop_oversold_items_ko</source>
+                <target>%count% article(s) commandé(s) plus de fois que le stock déclaré</target>
+            </trans-unit>
+            <trans-unit id="P6GVvVg">
+                <source>label.health_check_shop_oversold_items_ok</source>
+                <target>Aucun article n'a été vendu au-delà du stock déclaré</target>
+            </trans-unit>
+            <trans-unit id="ZdGNSXY">
+                <source>label.health_check_shop_undelivered_downloads</source>
+                <target>Fichiers payés et jamais livrés</target>
+            </trans-unit>
+            <trans-unit id="ubtWEl4">
+                <source>label.health_check_shop_undelivered_downloads_ko</source>
+                <target>%count% commande(s) payée(s) dont les fichiers n'ont jamais été copiés ni envoyés</target>
+            </trans-unit>
+            <trans-unit id=".5Y0OQS">
+                <source>label.health_check_shop_undelivered_downloads_ok</source>
+                <target>Chaque commande récente contenant un fichier a bien été livrée</target>
             </trans-unit>
             <trans-unit id="cBE2pj8">
                 <source>label.in_stock</source>
