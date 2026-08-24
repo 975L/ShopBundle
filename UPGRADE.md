@@ -2,7 +2,7 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
-### Unreleased
+### v2.1.1
 
 **The affinity score is a float column now, which needs a migration.** `ProductAffinity::$affinityScore` was
 mapped as `decimal(5, 2)` while the property is typed `float`: Doctrine hands a decimal back as a string, so
@@ -16,6 +16,8 @@ php bin/console doctrine:migrations:migrate
 
 The scores themselves survive the change - they are percentages `c975l:shop:affinity:calculate` rounds to two
 decimals, and the command rewrites them all on its next run anyway.
+
+### v2.0.0
 
 **One new table, which needs a migration.** `shop_product_item_stock_alert` holds the visitors waiting on a
 sold-out item: the item, an address, the language they asked in, an unsubscribe token and the date they were told.
@@ -56,8 +58,6 @@ that branch over, or the feature is reachable only by url.
 **`ProductStateServiceInterface` gains two methods.** `isItemAvailable()` and `isItemSoldOut()` state the rule the
 card's badge, the add button and the alerts all read, which lived privately in three places. If you have
 implemented that interface yourself rather than decorated the service, add them.
-
-### v2.0.0
 
 **A gift card now has a visual, which needs a migration too.** `Product` gains `gift_card_text` and
 `gift_card_scratch`, so run `php bin/console doctrine:migrations:diff` then `doctrine:migrations:migrate` after
@@ -263,8 +263,6 @@ php bin/console c975l:config:load-all
 Until now the banner appeared when `stripe-secret` happened to hold the word "test", which said nothing about a
 catalog still being filled in and broke the day a live key held it anywhere. It now follows this entry and
 PaymentBundle's own `payment-test-mode`, either of the two showing it.
-
-### v2.0.0
 
 **Product pictures and categories carry two new columns, which needs a migration.** Every media of this bundle
 (`shop_media`) has a nullable `alt`, the alternative text a search engine and a screen reader read of a picture,

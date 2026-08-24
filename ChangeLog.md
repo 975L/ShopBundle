@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.1.2
+
+UPGRADE.md entries are filed under the version they shipped in
+
+- `UPGRADE.md` names the pending section `### v2.1.1` rather than `### Unreleased` (24/08/2026)
+- `UPGRADE.md` files the entries shipped in v2.0.0 under one `### v2.0.0` heading (24/08/2026)
+
 ## v2.1.1
 
 The affinity score is held as the number it is read back as
