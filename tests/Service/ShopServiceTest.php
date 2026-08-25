@@ -17,15 +17,15 @@ use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductStateService;
 use c975L\ShopBundle\Service\ShopService;
-use Knp\Component\Pager\Pagination\PaginationInterface;
-use Knp\Component\Pager\PaginatorInterface;
+use c975L\UiBundle\Service\Paginator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\InputBag;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 // The order the listing is asked for, and the one thing the repository cannot do itself: ordering on the lowest price of a product's items
 class ShopServiceTest extends TestCase
 {
-    /** @var Product[] the array the paginator was handed, captured by the stub below */
+    /** @var Product[] the page the listing produced, kept by paginate() below */
     private array $paginated = [];
 
     public function testAnOrderTheListingDoesNotOfferFallsBackOnTheShopsOwnPositions(): void
@@ -48,14 +48,14 @@ class ShopServiceTest extends TestCase
 
     public function testTheListingIsOrderedOnTheLowestPriceOfTheItems(): void
     {
-        $this->service($this->products())->findAllProductsPaginated(new InputBag(['order' => 'price_asc']));
+        $this->paginate($this->service($this->products()), new InputBag(['order' => 'price_asc']));
 
         $this->assertSame(['cheap', 'medium', 'dear'], $this->titles());
     }
 
     public function testTheOppositeOrderReversesIt(): void
     {
-        $this->service($this->products())->findAllProductsPaginated(new InputBag(['order' => 'price_desc']));
+        $this->paginate($this->service($this->products()), new InputBag(['order' => 'price_desc']));
 
         $this->assertSame(['dear', 'medium', 'cheap'], $this->titles());
     }
@@ -65,17 +65,17 @@ class ShopServiceTest extends TestCase
     {
         $products = array_merge($this->products(), [$this->product('empty')]);
 
-        $this->service($products)->findAllProductsPaginated(new InputBag(['order' => 'price_asc']));
+        $this->paginate($this->service($products), new InputBag(['order' => 'price_asc']));
         $this->assertSame('empty', $this->titles()[3]);
 
-        $this->service($products)->findAllProductsPaginated(new InputBag(['order' => 'price_desc']));
+        $this->paginate($this->service($products), new InputBag(['order' => 'price_desc']));
         $this->assertSame('empty', $this->titles()[3]);
     }
 
     // Without an order, the listing is handed over exactly as the repository sorted it
     public function testTheRepositoryOrderIsLeftAloneWhenNothingIsAsked(): void
     {
-        $this->service($this->products())->findAllProductsPaginated(new InputBag());
+        $this->paginate($this->service($this->products()), new InputBag());
 
         $this->assertSame(['dear', 'cheap', 'medium'], $this->titles());
     }
@@ -125,7 +125,7 @@ class ShopServiceTest extends TestCase
 
     public function testThePriceFilterNarrowsTheListingOnTheLowestPrice(): void
     {
-        $this->service($this->products())->findAllProductsPaginated(new InputBag(['price' => '1000-4000']));
+        $this->paginate($this->service($this->products()), new InputBag(['price' => '1000-4000']));
 
         $this->assertSame(['medium'], $this->titles());
     }
@@ -133,7 +133,7 @@ class ShopServiceTest extends TestCase
     // The upper bound is exclusive, so two neighbouring bands never both hold the same product
     public function testAPriceBandExcludesItsUpperBound(): void
     {
-        $this->service($this->products())->findAllProductsPaginated(new InputBag(['price' => '900-1900']));
+        $this->paginate($this->service($this->products()), new InputBag(['price' => '900-1900']));
 
         $this->assertSame(['cheap'], $this->titles());
     }
@@ -142,10 +142,10 @@ class ShopServiceTest extends TestCase
     {
         $products = [$this->product('poster', 1900), $this->downloadable('ebook'), $this->serviceProduct('coaching')];
 
-        $this->service($products)->findAllProductsPaginated(new InputBag(['format' => 'digital']));
+        $this->paginate($this->service($products), new InputBag(['format' => 'digital']));
         $this->assertSame(['ebook'], $this->titles());
 
-        $this->service($products)->findAllProductsPaginated(new InputBag(['format' => 'service']));
+        $this->paginate($this->service($products), new InputBag(['format' => 'service']));
         $this->assertSame(['coaching'], $this->titles());
     }
 
@@ -158,14 +158,14 @@ class ShopServiceTest extends TestCase
         $soldOut = $this->product('sold-out', 1900);
         $soldOut->getItems()[0]->setLimitedQuantity(2)->setOrderedQuantity(2);
 
-        $this->service([$available, $soldOut])->findAllProductsPaginated(new InputBag(['stock' => 'available']));
+        $this->paginate($this->service([$available, $soldOut]), new InputBag(['stock' => 'available']));
 
         $this->assertSame(['available'], $this->titles());
     }
 
     public function testAListingAskedForNoFilterIsHandedOverWhole(): void
     {
-        $this->service($this->products())->findAllProductsPaginated(new InputBag());
+        $this->paginate($this->service($this->products()), new InputBag());
 
         $this->assertCount(3, $this->paginated);
     }
@@ -173,30 +173,29 @@ class ShopServiceTest extends TestCase
     // The filters and the order apply together rather than one cancelling the other
     public function testAFilteredListingIsStillOrdered(): void
     {
-        $this->service($this->products())->findAllProductsPaginated(new InputBag(['price' => '0-5000', 'order' => 'price_asc']));
+        $this->paginate($this->service($this->products()), new InputBag(['price' => '0-5000', 'order' => 'price_asc']));
 
         $this->assertSame(['cheap', 'medium', 'dear'], $this->titles());
     }
 
-    // A service whose repository returns the given products and whose paginator only records what it was handed
+    // Runs the listing and keeps the page it produced, which titles() reads. Every case below holds fewer products than a page, so the page is the whole listing and the order asserted on it is the order the service put it in
+    private function paginate(ShopService $service, InputBag $query): void
+    {
+        $this->paginated = iterator_to_array($service->findAllProductsPaginated($query));
+    }
+
+    // A service whose repository returns the given products, paginated for real: the paginator cuts a page out of a plain array and needs nothing from a request to do it
     private function service(array $products = [], ?ProductCategoryRepository $categoryRepository = null, int $maxItemPrice = 0): ShopService
     {
         $productRepository = $this->createStub(ProductRepository::class);
         $productRepository->method('findAllSorted')->willReturn($products);
         $productRepository->method('findMaxLowestItemPrice')->willReturn($maxItemPrice);
 
-        $paginator = $this->createStub(PaginatorInterface::class);
-        $paginator->method('paginate')->willReturnCallback(function (mixed $target): PaginationInterface {
-            $this->paginated = $target;
-
-            return $this->createStub(PaginationInterface::class);
-        });
-
         return new ShopService(
             $productRepository,
             $categoryRepository ?? $this->createStub(ProductCategoryRepository::class),
             new ProductStateService(),
-            $paginator,
+            new Paginator(new RequestStack()),
         );
     }
 

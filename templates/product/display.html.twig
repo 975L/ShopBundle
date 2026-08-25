@@ -93,15 +93,15 @@
         <twig:c975LShop:Shop:NavbarBasket/>
     </div>
 
-    {# The product's structured data, built by ProductSnippetBuilder from the very fields displayed above - the only "offers" node of the ecosystem, see BookSnippetBuilder #}
+    {# The product's structured data, built by ProductSnippetBuilder from the very fields displayed above - the only "offers" node of the ecosystem, see BookSnippetBuilder. "raw" because the payload goes through a variable, which drops the function's own is_safe marking - the builder already escaped every character that could close the tag #}
     {% set jsonLd = product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug}), showsRating) %}
     {% if jsonLd %}
-        <script type="application/ld+json">{{ jsonLd }}</script>
+        <script type="application/ld+json">{{ jsonLd|raw }}</script>
     {% endif %}
 
     {# The trail printed above the sheet, said again where a search engine reads it - it is what Google shows in its results in place of the url #}
     {% set breadcrumbJsonLd = shop_breadcrumb_json_ld(product) %}
     {% if breadcrumbJsonLd %}
-        <script type="application/ld+json">{{ breadcrumbJsonLd }}</script>
+        <script type="application/ld+json">{{ breadcrumbJsonLd|raw }}</script>
     {% endif %}
 {% endblock %}

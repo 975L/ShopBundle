@@ -12,14 +12,14 @@ namespace c975L\ShopBundle\Service;
 
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Repository\ProductRepository;
+use c975L\UiBundle\Service\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
 
 class ProductService implements ProductServiceInterface
 {
     public function __construct(
         private readonly ProductRepository $productRepository,
-        private readonly PaginatorInterface $paginator,
+        private readonly Paginator $paginator,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -41,7 +41,7 @@ class ProductService implements ProductServiceInterface
     {
         return $this->paginator->paginate(
             $this->findAllSorted(),
-            (int) $query->get('p') > 0 ? (int) $query->get('p') : 1,
+            $this->paginator->getPage($query),
             9
         );
     }

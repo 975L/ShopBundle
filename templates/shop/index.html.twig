@@ -58,9 +58,9 @@
         <twig:c975LPayment:Basket:Message/>
     </div>
 
-    {# The cards this page prints, as the list a search engine reads a catalog through - the sheets it points at carry the prices, so nothing is published twice. The offset is the paginator's own: the second page numbers its cards from where the first stopped #}
+    {# The cards this page prints, as the list a search engine reads a catalog through - the sheets it points at carry the prices, so nothing is published twice. The offset is the paginator's own: the second page numbers its cards from where the first stopped. "raw" because the payload goes through a variable, which drops the function's own is_safe marking - the builder already escaped every character that could close the tag #}
     {% set productsJsonLd = shop_products_json_ld(products, (products.getCurrentPageNumber - 1) * perPage) %}
     {% if productsJsonLd %}
-        <script type="application/ld+json">{{ productsJsonLd }}</script>
+        <script type="application/ld+json">{{ productsJsonLd|raw }}</script>
     {% endif %}
 {% endblock %}

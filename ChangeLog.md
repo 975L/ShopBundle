@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.2.0
+
+The shop pages its listing without KnpPaginatorBundle
+
+- `ShopService::findAllProductsPaginated()` and `ProductService::findAllPaginated()` return UiBundle's `Pagination` (25/08/2026) [BC-Break]
+- `knplabs/knp-paginator-bundle` leaves the requirements (25/08/2026) [BC-Break]
+- `composer.json` requires `c975l/core-bundle` `^1.17.2`, the version naming `Paginator` (25/08/2026) [BC-Break]
+- The listing's templates are untouched, `Pagination` answering the figures and the url they read (25/08/2026)
+- `UPGRADE.md` states the type the two services return now (25/08/2026)
+- Every structured data block is printed with `raw`: stored in a variable first, the graph lost the function's own `is_safe` marking and was served escaped, which no parser reads (25/08/2026)
+
 ## v2.1.3
 
 The favorite heart is left off a card standing for no stored product

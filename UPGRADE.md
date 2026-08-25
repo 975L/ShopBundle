@@ -2,6 +2,16 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.2.0
+
+**KnpPaginatorBundle leaves the bundle's dependencies.** `ShopService::findAllProductsPaginated()` and
+`ProductService::findAllPaginated()` return CoreBundle's `c975L\UiBundle\Model\Pagination` where they returned
+Knp's `PaginationInterface`. The two answer the same figures - `getCurrentPageNumber()`, `getPageCount()`,
+`getTotalItemCount()`, `getItemNumberPerPage()`, `route`, `query()` - and are countable and iterable alike, so
+`shop/index.html.twig` is untouched and an override of it goes on working. **An app implementing
+`ShopServiceInterface` or `ProductServiceInterface` itself, or type-hinting `PaginationInterface` on what they
+return, has that type to change.** See CoreBundle's UPGRADE.md for removing the package from the app.
+
 ### v2.1.1
 
 **The affinity score is a float column now, which needs a migration.** `ProductAffinity::$affinityScore` was

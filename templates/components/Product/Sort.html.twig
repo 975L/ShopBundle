@@ -1,6 +1,6 @@
 {# <twig:c975LShop:Product:Sort order="{{ order }}" filters="{{ filters }}"/> #}
 {# Links and not a form: the order is a query parameter, so an ordered listing keeps an address to share and a page to come back to #}
-{# "order" and not "sort": KnpPaginator reserves that name for its own sorting, and would take the listing over on its way through it #}
+{# "order" and not "sort": the name the listing has always been shared and indexed under, kept as it is #}
 {% set current = order|default(null) %}
 {# The filters the visitor came with are carried into every one of these links: reordering a listing is not a request to widen it back to the whole catalogue #}
 {% set kept = {} %}

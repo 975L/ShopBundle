@@ -13,7 +13,7 @@ namespace c975L\ShopBundle\Service;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
-use Knp\Component\Pager\PaginatorInterface;
+use c975L\UiBundle\Service\Paginator;
 
 class ShopService implements ShopServiceInterface
 {
@@ -30,7 +30,7 @@ class ShopService implements ShopServiceInterface
         private readonly ProductRepository $productRepository,
         private readonly ProductCategoryRepository $productCategoryRepository,
         private readonly ProductStateServiceInterface $productStateService,
-        private readonly PaginatorInterface $paginator,
+        private readonly Paginator $paginator,
     ) {
     }
 
@@ -48,12 +48,12 @@ class ShopService implements ShopServiceInterface
 
         return $this->paginator->paginate(
             $products,
-            (int) $query->get('p') > 0 ? (int) $query->get('p') : 1,
+            $this->paginator->getPage($query),
             12
         );
     }
 
-    // Gets the requested order, null when the query asks for one the listing does not offer - read from "order" and not from "sort", KnpPaginator's own reserved parameter
+    // Gets the requested order, null when the query asks for one the listing does not offer
     public function getOrder($query): ?string
     {
         $order = (string) $query->get('order', '');

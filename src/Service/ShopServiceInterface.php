@@ -11,7 +11,7 @@
 namespace c975L\ShopBundle\Service;
 
 use c975L\ShopBundle\Entity\Product;
-use Knp\Component\Pager\Pagination\PaginationInterface;
+use c975L\UiBundle\Model\Pagination;
 use Symfony\Component\HttpFoundation\InputBag;
 
 interface ShopServiceInterface
@@ -21,7 +21,7 @@ interface ShopServiceInterface
      *
      * @param InputBag $query the request's query bag, its "p" parameter holding the 1-based page number
      *
-     * @return PaginationInterface<int, Product>
+     * @return Pagination<Product>
      */
     public function findAllProductsPaginated($query);
 

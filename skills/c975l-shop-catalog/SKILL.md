@@ -113,9 +113,9 @@ button that is or is not disabled, and from the `availability` the structured da
 | `shop_download` | `/shop/download/{token}` — see `c975l-shop-checkout` |
 | `shop_terms_of_sales` | `/shop/terms-of-sales`, unless SiteBundle serves it |
 
-**The order parameter is `order`, not `sort`** — `sort` is KnpPaginator's own reserved parameter and
-would take the listing over on its way through the paginator. An order the listing does not offer falls
-back on the shop's positions rather than erroring.
+**The order parameter is `order`, not `sort`** — that is the name the listing has been shared and
+indexed under since it had page links. An order the listing does not offer falls back on the shop's
+positions rather than erroring.
 
 The listing grows on scroll rather than turning pages: UiBundle's `infiniteScroll` controller fetches
 the `?p=` page the "Voir plus de produits" link points to and appends its cards. That link and the three
@@ -202,7 +202,7 @@ charging one price and displaying another.
 - **Do not compute a badge, a price or a format in a template** — call `shop_product_state()`.
 - **Do not read `product.items` in anything the public sees** — `getPublishedItems()` is the public read.
 - **Do not add an `isDeleted` to `ProductItem`** — it has no url to protect; unpublish it or delete it.
-- **Do not use `?sort=`** for the listing's order; KnpPaginator owns that name.
+- **Do not rename `?order=`** to `?sort=`; shared and indexed urls carry the name it has.
 - **Do not drop the joins from `findAllSorted()`.**
 - **Do not declare a `shop-*` money key here** — they are PaymentBundle's.
 - **Do not add JavaScript for the items accordion** — `<details name>` already does it.

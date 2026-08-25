@@ -71,7 +71,6 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - [c975L/PaymentBundle](https://github.com/975L/PaymentBundle) — Basket/checkout engine
 - Doctrine ORM
 - EasyAdmin
-- KNP Paginator Bundle
 - Imagine
 - symfony/ux-live-component
 - VichUploader Bundle
@@ -750,10 +749,10 @@ vendor/c975l/shop-bundle/skills/
 
 They hold what an agent gets wrong when left to its own habits — that a product carries no price, that
 `limitedQuantity: 0` means withdrawn and not unlimited, that the listing's order parameter is `order`
-because KnpPaginator reserves `sort`, that the money settings are PaymentBundle's and must not be
-redeclared here, that stock moves on payment and never on adding to the basket, that a bought file is
-copied per purchase rather than served from `private/` — alongside the routes, the entities, the config
-slugs, the blocks, the Twig functions and the components, each named as it actually is in the sources.
+and not `sort`, that the money settings are PaymentBundle's and must not be redeclared here, that stock
+moves on payment and never on adding to the basket, that a bought file is copied per purchase rather
+than served from `private/` — alongside the routes, the entities, the config slugs, the blocks, the
+Twig functions and the components, each named as it actually is in the sources.
 
 Nothing is installed, nothing is copied into your project: the files sit in `vendor/` like any other
 part of the package and follow it at each `composer update`. A user of Claude Code wanting one to load
