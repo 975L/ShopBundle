@@ -320,7 +320,8 @@ class ProductCrudController extends AbstractCrudController
                     ->displayIf(static fn (Product $product): bool => !$product->isDeleted()),
                 $this->translator->trans('action.move_to_trash', [], 'shop'),
             ))
-            ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite', 'preview', 'duplicate', 'restore', Action::DELETE, 'deletePermanently'])
+            // reorder() turns priority ordering off page-wide, so "exportSelection" leads the batch bar too - "batchDelete" is left unnamed, as naming it throws where it is disabled
+            ->reorder(Crud::PAGE_INDEX, ['exportSelection', Action::EDIT, 'viewOnSite', 'preview', 'duplicate', 'restore', Action::DELETE, 'deletePermanently'])
             ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'preview', 'duplicate'])
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)

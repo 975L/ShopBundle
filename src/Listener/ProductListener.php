@@ -45,6 +45,9 @@ class ProductListener
 
     public function prePersist(Product $entity, PrePersistEventArgs $event): void
     {
-        $entity->setCreation(new \DateTime());
+        // Only stamped when the entity carries none, so a row built with its own date keeps it
+        if (null === $entity->getCreation()) {
+            $entity->setCreation(new \DateTime());
+        }
     }
 }

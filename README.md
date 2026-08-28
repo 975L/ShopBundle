@@ -28,7 +28,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 ## Contents
 
 - **Setup** — [requirements](#requirements) · [installation](#installation) · [upgrading from v1](#upgrading)
-- **Using it** — [usage](#usage) · [block kinds](#block-kinds) · [composing the shop](#composing-the-shop) · [commands](#commands) · [export / import products](#export--import-products) · [sitemap, llms.txt and health check](#sitemap-llmstxt-and-health-check) · [structured data](#structured-data) · [wish list](#wish-list) · [back-in-stock alerts](#back-in-stock-alerts) · [customer ratings](#customer-ratings) · [test mode](#test-mode) · [what the site's dashboard gets](#what-the-sites-dashboard-gets)
+- **Using it** — [usage](#usage) · [block kinds](#block-kinds) · [composing the shop](#composing-the-shop) · [commands](#commands) · [export / import products](#export--import-products) · [sitemap, llms.txt and health check](#sitemap-llmstxt-and-health-check) · [structured data](#structured-data) · [wish list](#wish-list) · [back-in-stock alerts](#back-in-stock-alerts) · [customer ratings](#customer-ratings) · [test mode](#test-mode) · [the demo catalog](#the-demo-catalog) · [what the site's dashboard gets](#what-the-sites-dashboard-gets)
 
 ## Features
 
@@ -57,6 +57,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - Gift cards sold as an ordinary item, one card issued per unit once the order is paid, its visual built in the
   back-office and copied onto the card (see [gift cards](#gift-cards))
 - Test mode switched from the dashboard, warning every visitor that nothing is really sold
+- Made-up catalog shipped as data, rendering the block showcase and seeding a demo site's shop (see [the demo catalog](#the-demo-catalog))
 - Four skills written for the coding agents of the sites installing this bundle, shipped in the package and read straight from `vendor/`
 
 ---
@@ -708,6 +709,33 @@ sold and nothing will be shipped, which is what a catalog still being filled in 
 It speaks for the catalog alone: PaymentBundle announces its own `payment-test-mode` with its own banner in the
 basket, where the charge actually happens, so a visitor is never warned twice over the same page. Its wording is
 `label.test_mode`, which your site translates its own way in `translations/shop.<locale>.xlf`.
+
+---
+
+## The demo catalog
+
+Alongside the test mode above, this bundle ships a **made-up catalog** — six products over three categories, one on
+sale, one running out of stock, one downloaded, one service — held once in `Service\ShopSampleCatalog` as plain data
+and read by two consumers:
+
+- `Service\ShopShowcaseProvider` turns the first of them into never-persisted entities, which is what the block
+  showcase renders;
+- `Service\ShopDemoFixtureProvider` (UiBundle's `DemoFixtureProviderInterface`) hands the lot over to be
+  persisted, so a demo site's shop is filled with something worth browsing — with its pictures, and with a real
+  file behind the downloadable item. Loading it is that site's own business: this bundle ships no command that
+  writes to a database.
+
+Enriching the catalog therefore shows up in both, which is the whole reason it is not written twice. Everything a
+visitor reads is a key of the `shop` domain rather than a sentence, so a demo site seeded in Spanish reads as a
+Spanish shop.
+
+The pictures and the downloadable file are taken from whatever the site declares through UiBundle's
+`PlaceholderMediaProviderInterface`, **as a temporary copy**: an upload moves the file it is handed, and the
+placeholders belong to the whole site. A site declaring none still gets its catalog, its cards falling back on the
+bundle's own "no picture" image — an empty shop would leave nothing to browse at all.
+
+Only the categories and the products are yielded: their items, pictures and files ride the ORM cascade, so a demo
+site taking a product back has VichUploader's removal listener take the uploaded files off the disk with it.
 
 ---
 

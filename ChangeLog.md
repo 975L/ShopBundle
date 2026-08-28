@@ -1,5 +1,23 @@
 # Changelog
 
+## v2.3.0
+
+A demo site is handed the very catalog the showcase renders
+
+- "Export selection" now leads the products' and the categories' batch bars, delete reading last (28/08/2026)
+- New `ShopSampleCatalog`, the made-up catalog held once as plain data: six products over three categories (28/08/2026)
+- New `ShopDemoFixtureProvider`, implementing `DemoFixtureProviderInterface` for a demo site's own loader (28/08/2026)
+- The demo fixtures yield the categories and the products only, leaving a site's own shop content alone (28/08/2026)
+- Media are seeded from a temporary copy of the site's placeholders, never the placeholders themselves (28/08/2026)
+- The copy is handed to VichUploader as a `ReplacingFile`, a plain `File` being silently ignored (28/08/2026)
+- Each sample product carries a written-down creation date (28/08/2026)
+- `ProductListener` and `ProductItemListener` only stamp a creation date on an entity carrying none (28/08/2026)
+- `ShopShowcaseProvider` reads its stand-ins off `ShopSampleCatalog` instead of numbering them (28/08/2026)
+- The `label.shop_showcase_product_*`, `_category_*` and `_item_*` keys are replaced by `label.shop_sample_*` ones (28/08/2026)
+- Requires `c975l/core-bundle` `^1.18` for `DemoFixtureProviderInterface` (28/08/2026)
+- The `c975l-shop-catalog` and `c975l-shop-blocks` skills cover the sample catalog (28/08/2026)
+- Added `tests/Listener/ProductCreationDateTest.php`, `tests/Service/ShopSampleCatalogTest.php` and `tests/Service/ShopDemoFixtureProviderTest.php` (28/08/2026)
+
 ## v2.2.1
 
 Logo modified

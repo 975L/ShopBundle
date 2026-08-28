@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-08-28",
+        "description": [
+            {
+                "en": "In the products and the categories lists, the \"Export selection\" button now comes before \"Delete\", so the button that erases is no longer the first one under your hand when you tick a few rows.",
+                "fr": "Dans les listes de produits et de catégories, le bouton « Exporter la sélection » passe désormais avant « Supprimer », si bien que le bouton qui efface n'est plus le premier sous votre main quand vous cochez quelques lignes.",
+                "es": "En las listas de productos y de categorías, el botón «Exportar la selección» va ahora antes que «Eliminar», de modo que el botón que borra ya no es el primero bajo su mano cuando marca algunas filas."
+            }
+        ]
+    },
+    {
         "date": "2026-08-24",
         "description": [
             {

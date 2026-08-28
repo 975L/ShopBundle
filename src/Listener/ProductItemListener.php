@@ -62,6 +62,9 @@ class ProductItemListener
             $productItemFile->setUpdatedAt(new \DateTimeImmutable());
             $entity->setFile($productItemFile);
         }
-        $entity->setCreation(new \DateTime());
+        // Only stamped when the entity carries none, so a row built with its own date keeps it
+        if (null === $entity->getCreation()) {
+            $entity->setCreation(new \DateTime());
+        }
     }
 }

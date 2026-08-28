@@ -99,6 +99,9 @@ the same components with stand-in data. **It ships no media of its own**: the im
 the hosting site declares through `PlaceholderMediaProviderInterface`, and a site declaring none simply
 gets no shop showcase.
 
+The stand-ins are built from `ShopSampleCatalog`, the same made-up catalogue a demo site is seeded with
+(see the `c975l-shop-catalog` skill) — enriching it there shows up here, and it is not written twice.
+
 ## Do not
 
 - **Do not store a product's data in a block** — store its slug and resolve it at render time.

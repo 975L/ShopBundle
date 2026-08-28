@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-catalog
-description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, isPublished, isDeleted, getPublishedItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-free."
+description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, isPublished, isDeleted, getPublishedItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-free, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, demo catalogue, ReplacingFile."
 ---
 
 # c975L ShopBundle — catalog
@@ -178,6 +178,25 @@ An import **never deletes what it cannot put back**: a product or an item the ar
 left where it is, its file being what a customer has paid for. Affinities are recomputed rather than
 carried, and the baskets' download links belong to the payments.
 
+## Seeding a demo catalogue
+
+`ShopSampleCatalog` holds a made-up catalogue once as plain data — six products over three categories,
+one on sale, one running out of stock, one downloaded, one service. Two consumers read it:
+`ShopShowcaseProvider` builds never-persisted entities for the block showcase, `ShopDemoFixtureProvider`
+(UiBundle's `DemoFixtureProviderInterface`) hands the lot over to whichever demo site loads it - this
+bundle ships no command that writes to a database.
+Enriching the catalogue therefore shows up in both. Everything a visitor reads is a key of the `shop`
+domain, so a demo site seeded in Spanish reads as a Spanish shop.
+
+Pictures and the downloadable file come from what the site declares through
+`PlaceholderMediaProviderInterface`, **as a temporary copy**: an upload moves the file it is handed. A
+site declaring none still gets its catalogue, cards falling back on the bundle's own "no picture" image.
+
+Only the categories and the products are yielded, their items, pictures and files riding the ORM cascade.
+An item's slug is rewritten from its title by
+`ProductItemListener`, exactly as one typed in the back office is — the catalogue's own item slug is what
+the showcase carries, nothing more.
+
 ## Search and category selector
 
 `ProductSearchComponent` and `CategorySelectorComponent` are Live Components. A Live Component needs a
@@ -196,6 +215,10 @@ charging one price and displaying another.
 
 ## Do not
 
+- **Do not hand VichUploader a plain `File`** when seeding a media — `UploadHandler::hasUploadedFile()`
+  ignores it in silence, writing the row with no file name and nothing on the disk. Hand it a
+  `ReplacingFile`, the way `ProductImportProvider` does.
+- **Do not have a fixture provider empty a table** — a demo site keeps its own content in those very tables.
 - **Do not store a price on `Product`** — it is the lowest of its items, resolved at read time.
 - **Do not store prices as floats**, and do not store a currency per product.
 - **Do not treat `limitedQuantity: 0` as unlimited.**
@@ -208,4 +231,7 @@ charging one price and displaying another.
 - **Do not add JavaScript for the items accordion** — `<details name>` already does it.
 - **Do not hardcode a colour in `sass/`** — every one goes through a token.
 - **Do not remove the root element of a Live Component** when its collection is empty.
+- **Do not leave `exportSelection` out of a `reorder()` call** — `reorder()` turns EasyAdmin's priority
+  ordering off for the whole page, and the batch bar then falls back to the declaration order, which puts
+  delete first. Name the export, never `batchDelete`, which throws where it is disabled.
 - **Do not move a catalogue with the SQL/CSV/JSON dumps** — they carry one table at a time; the zip export carries a product whole.

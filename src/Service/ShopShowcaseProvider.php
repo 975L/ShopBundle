@@ -30,6 +30,7 @@ class ShopShowcaseProvider implements GalleryShowcaseProviderInterface
         private readonly TranslatorInterface $translator,
         private readonly PlaceholderMediaRegistry $placeholderMediaRegistry,
         private readonly BlockFixtureMediaAttacher $mediaAttacher,
+        private readonly ShopSampleCatalog $catalog,
     ) {
     }
 
@@ -107,16 +108,18 @@ class ShopShowcaseProvider implements GalleryShowcaseProviderInterface
      */
     private function products(array $images, int $count): array
     {
+        $specs = \array_slice($this->catalog->getProducts(), 0, $count);
+
         $products = [];
-        foreach (\array_slice($images, 0, $count) as $index => $image) {
-            $number = $index + 1;
+        foreach (\array_slice($images, 0, \count($specs)) as $index => $image) {
+            $spec = $specs[$index];
 
             $product = new Product();
-            $product->setTitle($this->translator->trans('label.shop_showcase_product_title', ['%number%' => $number], 'shop'));
-            $product->setSlug('produit-exemple-' . $number);
+            $product->setTitle($this->label($spec['title']));
+            $product->setSlug($spec['slug']);
             $product->addMedia($this->productMedia($image));
-            // One item, so the card shows the price and the format a real one shows rather than a title over an empty footer
-            $product->addItem($this->item('article-exemple-' . $number, 'label.shop_showcase_item_title', 'label.shop_showcase_item_description', 1500, $image, null));
+            // Its first item only, so the card shows a real price and format rather than a title over an empty footer
+            $product->addItem($this->item($spec['items'][0], $image));
 
             $products[] = $product;
         }
@@ -130,10 +133,10 @@ class ShopShowcaseProvider implements GalleryShowcaseProviderInterface
     private function categories(int $count): array
     {
         $categories = [];
-        for ($number = 1; $number <= $count; ++$number) {
+        foreach (\array_slice($this->catalog->getCategories(), 0, $count, true) as $slug => $nameKey) {
             $categories[] = [
-                'slug' => 'categorie-exemple-' . $number,
-                'name' => $this->translator->trans('label.shop_showcase_category_title', ['%number%' => $number], 'shop'),
+                'slug' => $slug,
+                'name' => $this->label($nameKey),
             ];
         }
 
@@ -150,32 +153,41 @@ class ShopShowcaseProvider implements GalleryShowcaseProviderInterface
     {
         $image = $images[0];
 
-        return [
-            $this->item('article-exemple-1', 'label.shop_showcase_item_title', 'label.shop_showcase_item_description', 1500, $image, null),
-            $this->item('article-exemple-2', 'label.shop_showcase_item_download_title', 'label.shop_showcase_item_download_description', 0, $image, 'exemple.pdf'),
-        ];
+        $specs = [];
+        foreach ($this->catalog->getProducts() as $product) {
+            foreach ($product['items'] as $item) {
+                // The first of each kind and nothing more, two lines being what tells the icon and the type line apart
+                $specs[null === $item['file'] ? 'posted' : 'downloaded'] ??= $item;
+            }
+        }
+
+        return array_values(array_map(fn (array $spec): ProductItem => $this->item($spec, $image), $specs));
     }
 
     // A file name and nothing else tells a downloaded item from a posted one, the same way getItemFormat() reads it. The stock is left unlimited on purpose: the column defaults to 0, which is what an item withdrawn from sale says, and every button of the showcase would render disabled
-    private function item(string $slug, string $titleKey, string $descriptionKey, int $price, string $image, ?string $fileName): ProductItem
+    /**
+     * @param array<string, mixed> $spec
+     */
+    private function item(array $spec, string $image): ProductItem
     {
         $item = new ProductItem();
-        $item->setSlug($slug);
-        $item->setTitle($this->translator->trans($titleKey, [], 'shop'));
-        $item->setDescription($this->translator->trans($descriptionKey, [], 'shop'));
-        $item->setPrice($price);
+        $item->setSlug($spec['slug']);
+        $item->setTitle($this->label($spec['title']));
+        $item->setDescription($this->label($spec['description']));
+        $item->setPrice($spec['price']);
+        $item->setPriceBefore($spec['priceBefore']);
         $item->setCurrency('EUR');
         $item->setLimitedQuantity(null);
         $item->setOrderedQuantity(0);
-        $item->setService(false);
+        $item->setService($spec['service']);
 
         $media = new ProductItemMedia();
         $media->setName($image);
         $item->setMedia($media);
 
-        if (null !== $fileName) {
+        if (null !== $spec['file']) {
             $file = new ProductItemFile();
-            $file->setName($fileName);
+            $file->setName($spec['file']);
             $item->setFile($file);
         }
 

@@ -142,7 +142,8 @@ class ProductCategoryCrudController extends AbstractCrudController
                 $action,
                 $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
             ))
-            ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite', Action::DELETE])
+            // reorder() turns priority ordering off page-wide, so "exportSelection" leads the batch bar too - "batchDelete" is left unnamed, as naming it throws where it is disabled
+            ->reorder(Crud::PAGE_INDEX, ['exportSelection', Action::EDIT, 'viewOnSite', Action::DELETE])
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)

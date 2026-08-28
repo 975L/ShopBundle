@@ -1050,33 +1050,101 @@
                 <source>label.shop_index</source>
                 <target>Shop page</target>
             </trans-unit>
-            <trans-unit id="h4jQg5z">
-                <source>label.shop_showcase_category_title</source>
-                <target>Category %number%</target>
+            <trans-unit id="8PB.r2w">
+                <source>label.shop_sample_category_decoration</source>
+                <target>Decoration</target>
+            </trans-unit>
+            <trans-unit id="iPewn9G">
+                <source>label.shop_sample_category_digital</source>
+                <target>Digital</target>
+            </trans-unit>
+            <trans-unit id="xrWFY_l">
+                <source>label.shop_sample_category_furniture</source>
+                <target>Furniture</target>
+            </trans-unit>
+            <trans-unit id="7g1sVY8">
+                <source>label.shop_sample_item_download_description</source>
+                <target>Downloaded as soon as it is paid</target>
+            </trans-unit>
+            <trans-unit id="gfPFndf">
+                <source>label.shop_sample_item_download_title</source>
+                <target>Digital edition</target>
+            </trans-unit>
+            <trans-unit id="8zryaLY">
+                <source>label.shop_sample_item_printed_description</source>
+                <target>Shipped within 48 hours</target>
+            </trans-unit>
+            <trans-unit id="l3iAhdq">
+                <source>label.shop_sample_item_printed_title</source>
+                <target>Printed edition</target>
+            </trans-unit>
+            <trans-unit id="Bystoz5">
+                <source>label.shop_sample_item_session_description</source>
+                <target>Booked once it is paid</target>
+            </trans-unit>
+            <trans-unit id="21J2sAq">
+                <source>label.shop_sample_item_session_title</source>
+                <target>Two-hour session</target>
+            </trans-unit>
+            <trans-unit id="yNZ5AqW">
+                <source>label.shop_sample_item_standard_description</source>
+                <target>Shipped within 48 hours</target>
+            </trans-unit>
+            <trans-unit id="r2UXqMt">
+                <source>label.shop_sample_item_standard_title</source>
+                <target>Standard model</target>
+            </trans-unit>
+            <trans-unit id="L6HxU2l">
+                <source>label.shop_sample_product_chair_description</source>
+                <target>The one from the Paris terraces, steam-bent. The last pieces of a discontinued run.</target>
+            </trans-unit>
+            <trans-unit id="Io8xwtR">
+                <source>label.shop_sample_product_chair_title</source>
+                <target>Bistro chair</target>
+            </trans-unit>
+            <trans-unit id="ANLveV7">
+                <source>label.shop_sample_product_cushion_description</source>
+                <target>Linen woven and washed in Europe, removable cover. The drape comes with the washing.</target>
+            </trans-unit>
+            <trans-unit id="rjNH1I0">
+                <source>label.shop_sample_product_cushion_title</source>
+                <target>Washed linen cushion</target>
+            </trans-unit>
+            <trans-unit id="7uVc8rZ">
+                <source>label.shop_sample_product_guide_description</source>
+                <target>A hundred pages on reading a plan, measuring a room and choosing your heights. In print or as a PDF.</target>
+            </trans-unit>
+            <trans-unit id="Yc5ejvA">
+                <source>label.shop_sample_product_guide_title</source>
+                <target>The layout guide</target>
+            </trans-unit>
+            <trans-unit id="Yjn06Xc">
+                <source>label.shop_sample_product_lamp_description</source>
+                <target>Articulated arm and enamelled shade on a weighted base. Aimed with one hand.</target>
+            </trans-unit>
+            <trans-unit id="OcPAQzZ">
+                <source>label.shop_sample_product_lamp_title</source>
+                <target>Workshop lamp</target>
+            </trans-unit>
+            <trans-unit id="uvgj_8N">
+                <source>label.shop_sample_product_table_description</source>
+                <target>A solid top on four tapered legs, hand-oiled. Every piece keeps the grain of its own plank.</target>
+            </trans-unit>
+            <trans-unit id="ljUdJwz">
+                <source>label.shop_sample_product_table_title</source>
+                <target>Oak coffee table</target>
+            </trans-unit>
+            <trans-unit id="WesZMdd">
+                <source>label.shop_sample_product_workshop_description</source>
+                <target>Two hours with a decorator, at your place or over video, to take a room from end to end.</target>
+            </trans-unit>
+            <trans-unit id="AqnQ1Ux">
+                <source>label.shop_sample_product_workshop_title</source>
+                <target>Decoration workshop</target>
             </trans-unit>
             <trans-unit id="zQekB1O">
                 <source>label.shop_showcase_gift_card_text</source>
                 <target>Gift voucher</target>
-            </trans-unit>
-            <trans-unit id="QdcLwW.">
-                <source>label.shop_showcase_item_description</source>
-                <target>Shipped within 48 hours</target>
-            </trans-unit>
-            <trans-unit id="9pPi.f8">
-                <source>label.shop_showcase_item_download_description</source>
-                <target>Downloaded as soon as paid</target>
-            </trans-unit>
-            <trans-unit id="75lZxA9">
-                <source>label.shop_showcase_item_download_title</source>
-                <target>Digital edition</target>
-            </trans-unit>
-            <trans-unit id="DQR8_1Q">
-                <source>label.shop_showcase_item_title</source>
-                <target>Standard edition</target>
-            </trans-unit>
-            <trans-unit id="I4S3Akv">
-                <source>label.shop_showcase_product_title</source>
-                <target>Product %number%</target>
             </trans-unit>
             <trans-unit id="0XhcaP1">
                 <source>label.shop_test_mode_disable</source>

@@ -12,6 +12,7 @@ namespace c975L\ShopBundle\Tests\Service;
 
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Service\ShopSampleCatalog;
 use c975L\ShopBundle\Service\ShopShowcaseProvider;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Registry\PlaceholderMediaRegistry;
@@ -95,14 +96,15 @@ class ShopShowcaseProviderTest extends TestCase
         }
     }
 
-    // One physical item and one downloaded one, the two a real sheet tells apart by the file name alone
+    // One physical item and one downloaded one, taken from the catalog so enriching it never silently drops one of the two
     public function testTheItemsShowAPostedOneAndADownloadedOne(): void
     {
         $this->createProvider()->getShowcases();
 
         $items = $this->contextOf('@c975LShop/components/Product/Items.html.twig')['items'];
+        $this->assertCount(2, $items);
         $this->assertNull($items[0]->getFile()?->getName());
-        $this->assertSame('exemple.pdf', $items[1]->getFile()->getName());
+        $this->assertNotNull($items[1]->getFile()?->getName());
     }
 
     // The slider reads its images with vich_uploader_asset(), which needs the entity rather than a path
@@ -142,6 +144,6 @@ class ShopShowcaseProviderTest extends TestCase
         $attacher = $this->createStub(BlockFixtureMediaAttacher::class);
         $attacher->method('nextPlaceholderImage')->willReturnCallback(fn (): Media => new Media());
 
-        return new ShopShowcaseProvider($twig, $translator, $registry, $attacher);
+        return new ShopShowcaseProvider($twig, $translator, $registry, $attacher, new ShopSampleCatalog());
     }
 }
