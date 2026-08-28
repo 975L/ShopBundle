@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.2.1
+
+Logo modified
+
 ## v2.2.0
 
 The shop pages its listing without KnpPaginatorBundle
