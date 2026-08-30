@@ -2,6 +2,34 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.4
+
+**`isPublished` is replaced by `hidden`, on `Product` and on `ProductItem`.** The switch is the one the other
+c975L catalogs carry, and it says the opposite of what the old one did: `hidden = true` is what `isPublished =
+false` used to mean. `isPublished()`/`setIsPublished()` are gone - call `isHidden()`/`setHidden()`; so is
+`Product::getPublishedItems()`, now **`getVisibleItems()`** (`product.visibleItems` in a template), and
+`ProductRepository::findOnePublishedBySlug()`, now **`findOneVisibleBySlug()`** - the lookup every block and every
+component naming a product by its slug goes through.
+
+**The migration is not only structural: the data has to be copied over, or every product an admin had taken
+down goes on sale.** `doctrine:migrations:diff` writes the ADD and the DROP and nothing in between, so add the
+two UPDATEs to the generated migration, in this order:
+
+```sql
+ALTER TABLE shop_product ADD hidden TINYINT(1) DEFAULT 0 NOT NULL;
+ALTER TABLE shop_product_item ADD hidden TINYINT(1) DEFAULT 0 NOT NULL;
+UPDATE shop_product SET hidden = NOT is_published;
+UPDATE shop_product_item SET hidden = NOT is_published;
+ALTER TABLE shop_product DROP is_published;
+ALTER TABLE shop_product_item DROP is_published;
+```
+
+A **new** product now starts hidden, where it used to start unpublished - the same thing said the other way
+round, so nothing changes for an editor.
+
+The archives keep working: `ProductImportProvider` reads `hidden` when the payload carries it and falls back on
+`isPublished` when it doesn't, so an export taken before this version comes back in the state it left.
+
 ### v2.2.0
 
 **KnpPaginatorBundle leaves the bundle's dependencies.** `ShopService::findAllProductsPaginated()` and

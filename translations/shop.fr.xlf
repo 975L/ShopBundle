@@ -186,6 +186,10 @@
                 <source>description.guided_step_shop_product_categories</source>
                 <target>Un produit peut appartenir à plusieurs catégories, et apparaît sous chacune d'elles.</target>
             </trans-unit>
+            <trans-unit id="hvGjmhN">
+                <source>description.guided_step_shop_product_hidden</source>
+                <target>Un produit masqué reste visible ici et nulle part ailleurs.</target>
+            </trans-unit>
             <trans-unit id="vJ_8wza">
                 <source>description.guided_step_shop_product_item_add</source>
                 <target>Un produit sans article n'a pas de prix, ni aucun moyen d'entrer dans le panier.</target>
@@ -206,13 +210,9 @@
                 <source>description.guided_step_shop_product_price</source>
                 <target>Le prix, son taux de TVA et sa devise, et le prix barré seulement s'il a réellement été pratiqué ces trente derniers jours.</target>
             </trans-unit>
-            <trans-unit id="IwN2Tz8">
-                <source>description.guided_step_shop_product_published</source>
-                <target>Un produit non publié reste visible ici et nulle part ailleurs.</target>
-            </trans-unit>
             <trans-unit id="rBwfZj2">
                 <source>description.guided_step_shop_product_save</source>
-                <target>La fiche est en ligne dès qu'elle est enregistrée publiée.</target>
+                <target>La fiche est en ligne dès qu'elle est enregistrée non masquée.</target>
             </trans-unit>
             <trans-unit id="TL1nzmE">
                 <source>description.guided_step_shop_product_title</source>
@@ -710,6 +710,10 @@
                 <source>label.guided_step_shop_product_categories</source>
                 <target>Le classer</target>
             </trans-unit>
+            <trans-unit id=".Yx97JL">
+                <source>label.guided_step_shop_product_hidden</source>
+                <target>Le montrer</target>
+            </trans-unit>
             <trans-unit id="LiJ8rGX">
                 <source>label.guided_step_shop_product_item_add</source>
                 <target>Ajouter le premier article</target>
@@ -729,10 +733,6 @@
             <trans-unit id="vXhca05">
                 <source>label.guided_step_shop_product_price</source>
                 <target>Renseigner son prix</target>
-            </trans-unit>
-            <trans-unit id="URJcqtW">
-                <source>label.guided_step_shop_product_published</source>
-                <target>Le publier</target>
             </trans-unit>
             <trans-unit id="7ozDsTN">
                 <source>label.guided_step_shop_product_save</source>
@@ -845,6 +845,10 @@
             <trans-unit id=".5Y0OQS">
                 <source>label.health_check_shop_undelivered_downloads_ok</source>
                 <target>Chaque commande récente contenant un fichier a bien été livrée</target>
+            </trans-unit>
+            <trans-unit id="w3xdU2K">
+                <source>label.hidden</source>
+                <target>Masqué</target>
             </trans-unit>
             <trans-unit id="cBE2pj8">
                 <source>label.in_stock</source>
@@ -986,9 +990,9 @@
                 <source>label.product_item_file_help</source>
                 <target>Le fichier qui sera envoyé pour téléchargement</target>
             </trans-unit>
-            <trans-unit id="3w3.u.7">
-                <source>label.product_item_published_help</source>
-                <target>Décocher pour retirer cet article de la vente, sans le supprimer ni perdre son fichier</target>
+            <trans-unit id="p2tXQxl">
+                <source>label.product_item_hidden_help</source>
+                <target>Cocher pour retirer cet article de la vente, sans le supprimer ni perdre son fichier</target>
             </trans-unit>
             <trans-unit id="MKGqUz2">
                 <source>label.product_item_service_help</source>
@@ -1005,10 +1009,6 @@
             <trans-unit id="AxJkhgD">
                 <source>label.products_in_category</source>
                 <target>Les articles de la catégorie %category%</target>
-            </trans-unit>
-            <trans-unit id="JNo2Slc">
-                <source>label.published</source>
-                <target>Publié</target>
             </trans-unit>
             <trans-unit id="bPEKjFs">
                 <source>label.refine</source>
@@ -1270,6 +1270,10 @@
                 <source>text.download_link_expired</source>
                 <target>Ce lien de téléchargement a expiré et n'est plus valable.</target>
             </trans-unit>
+            <trans-unit id="8y0K8dr">
+                <source>text.hidden</source>
+                <target>Un produit masqué n'apparaît ni dans la boutique, ni dans la recherche, ni dans le sitemap, ni dans les blocks qui le nomment : sa fiche se lit avec l'action Prévisualiser.</target>
+            </trans-unit>
             <trans-unit id="093PkqA">
                 <source>text.item_already_downloaded</source>
                 <target>Cet article a déjà été téléchargé à la date ci-dessous. Il n'est plus disponible.</target>
@@ -1277,10 +1281,6 @@
             <trans-unit id="8c.LYZW">
                 <source>text.items_management</source>
                 <target>Ajoutez des éléments SANS médias/fichiers, puis ajoutez-les ensuite, sinon cela ne fonctionne pas.</target>
-            </trans-unit>
-            <trans-unit id="IlGRDlM">
-                <source>text.published</source>
-                <target>Un produit non publié n'apparaît ni dans la boutique, ni dans la recherche, ni dans le sitemap, ni dans les blocks qui le nomment : sa fiche se lit avec l'action Prévisualiser.</target>
             </trans-unit>
             <trans-unit id="B.vPyMX">
                 <source>text.shop_blocks_help</source>

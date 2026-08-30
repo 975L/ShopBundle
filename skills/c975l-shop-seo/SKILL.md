@@ -19,8 +19,8 @@ description: "Use this skill when working on how the shop is read from outside i
 A product sheet publishes a schema.org `Product` as JSON-LD, with **one `offers` node per purchasable
 item** carrying its own title, description, picture, sku, gtin, price, list price, currency,
 availability, condition, shipping rate and return link. The product node itself carries a `brand`.
-Purchasable means **published**: both the builder and the extension read `Product::getPublishedItems()`,
-an item taken off sale publishing no offer for something the sheet no longer sells.
+Purchasable means **not set aside**: both the builder and the extension read `Product::getVisibleItems()`,
+an item hidden publishing no offer for something the sheet no longer sells.
 
 ```twig
 {% set jsonLd = product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug})) %}
@@ -70,7 +70,7 @@ The shop's index and a category page each publish an `ItemList` of the cards the
 ```
 
 It lists **the products the page shows**, in the order it shows them, which is the already-filtered set:
-a draft or a trashed product is not on the page and so is not in the list. Each element carries a name
+a hidden or a trashed product is not on the page and so is not in the list. Each element carries a name
 and an url only — the summary form, the full graph living on the sheet the url points at.
 
 `$offset` is what the pages before this one already listed, handed over by the template from the

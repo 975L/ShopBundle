@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-08-30",
+        "description": [
+            {
+                "en": "The \"Published\" switch of a product becomes \"Hidden\", ticked to take the product off the shop instead of unticked. It says the same thing the other way round, and the same word is now used across the whole site - a book, a series, a block and a product are all set aside the same way. A hidden product keeps everything it holds, its sheet answers \"page not found\", and the sitemap drops it at its next run. The recycle bin has not moved: it is still what deletes.",
+                "fr": "L'interrupteur « Publié » d'un produit devient « Masqué », à cocher pour retirer le produit de la boutique au lieu de le décocher. Il dit la même chose à l'envers, et le même mot sert désormais partout sur le site : un livre, une série, un block et un produit se mettent de côté de la même façon. Un produit masqué garde tout ce qu'il contient, sa fiche répond « page introuvable », et le plan du site le retire à sa prochaine génération. La corbeille n'a pas bougé : c'est toujours elle qui supprime.",
+                "es": "El interruptor «Publicado» de un producto pasa a ser «Oculto», que se marca para retirar el producto de la tienda en lugar de desmarcarlo. Dice lo mismo al revés, y la misma palabra se usa ahora en todo el sitio: un libro, una serie, un bloque y un producto se apartan de la misma manera. Un producto oculto conserva todo lo que contiene, su ficha responde «página no encontrada», y el mapa del sitio lo retira en su próxima generación. La papelera no ha cambiado: sigue siendo la que elimina."
+            },
+            {
+                "en": "The products and the categories screens name themselves in your own language, where the English name of the underlying data was showing on their titles and their buttons.",
+                "fr": "Les écrans des produits et des catégories se nomment dans votre langue, là où le nom anglais de la donnée s'affichait sur leurs titres et leurs boutons.",
+                "es": "Las pantallas de productos y de categorías se nombran en su idioma, donde aparecía el nombre inglés del dato en sus títulos y sus botones."
+            }
+        ]
+    },
+    {
         "date": "2026-08-28",
         "description": [
             {

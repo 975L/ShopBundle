@@ -161,6 +161,9 @@ class ProductCategoryCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
+            // Named in the editor's own language: with no label, EasyAdmin falls back on the class name and prints "ProductCategory" on every screen and every button
+            ->setEntityLabelInSingular(t('label.category', [], 'shop'))
+            ->setEntityLabelInPlural(t('label.categories', [], 'shop'))
             ->setEntityPermission($this->configService->get('site-role-admin'))
             ->setDefaultSort(['position' => 'ASC'])
             ->overrideTemplate('crud/index', '@c975LShop/management/product_category_crud_index.html.twig')

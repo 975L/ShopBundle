@@ -59,7 +59,7 @@ class ProductExportProviderTest extends TestCase
         $this->assertSame([['slug' => 'affiches', 'name' => 'Affiches']], $item['categories']);
         $this->assertSame(['cadre-bois'], $item['relatedProducts']);
         $this->assertFalse($item['isDeleted']);
-        $this->assertTrue($item['isPublished']);
+        $this->assertFalse($item['hidden']);
         $this->assertSame('2026-01-15T10:00:00+00:00', $item['creation']);
     }
 
@@ -88,7 +88,7 @@ class ProductExportProviderTest extends TestCase
         $this->assertSame('medias/shop/items/affiche-montagne-a3-1.webp', $exported['items'][0]['media']['name']);
         $this->assertSame('medias/shop/items/affiche-montagne-a3-2.pdf', $exported['items'][0]['file']['name']);
         $this->assertSame(2500, $exported['items'][0]['price']);
-        $this->assertTrue($exported['items'][0]['isPublished']);
+        $this->assertFalse($exported['items'][0]['hidden']);
 
         $files = array_values($data['files']);
         sort($files);
@@ -131,7 +131,7 @@ class ProductExportProviderTest extends TestCase
             ->setTitle('Affiche montagne')
             ->setDescription('Une affiche')
             ->setPosition(5)
-            ->setIsPublished(true)
+            ->setHidden(false)
             ->setCreation(new \DateTime('2026-01-15 10:00:00', new \DateTimeZone('UTC')))
             ->setModification(new \DateTime('2026-01-15 10:00:00', new \DateTimeZone('UTC')));
     }

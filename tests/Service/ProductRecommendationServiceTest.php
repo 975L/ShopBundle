@@ -34,7 +34,7 @@ class ProductRecommendationServiceTest extends TestCase
     // A draft has never been online and a trashed product answers 410: neither belongs in a block naming it, picked by hand or not
     public function testAPickedProductTheShopIsNotStandingBehindIsLeftOut(): void
     {
-        $draft = $this->product('draft')->setIsPublished(false);
+        $draft = $this->product('draft')->setHidden(true);
         $trashed = $this->product('trashed')->setIsDeleted(true);
         $product = $this->product('main')->addRelatedProduct($draft)->addRelatedProduct($trashed);
 
@@ -88,7 +88,7 @@ class ProductRecommendationServiceTest extends TestCase
         return new Product()
             ->setTitle($slug)
             ->setSlug($slug)
-            ->setIsPublished(true)
+            ->setHidden(false)
         ;
     }
 }

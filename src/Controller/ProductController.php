@@ -45,8 +45,8 @@ class ProductController extends AbstractController
             throw new GoneHttpException();
         }
 
-        // A draft has never been online: nothing to say about it beyond that this url leads nowhere yet
-        if (!$product->isPublished()) {
+        // A hidden product has nothing to say beyond that this url leads nowhere for now - 404 and not the 410 of the recycle bin, nothing having been taken away
+        if ($product->isHidden()) {
             throw $this->createNotFoundException();
         }
 

@@ -189,7 +189,7 @@ class ProductSnippetBuilder
     {
         $offers = [];
 
-        foreach ($product->getPublishedItems() as $item) {
+        foreach ($product->getVisibleItems() as $item) {
             $slug = trim((string) $item->getSlug());
             $offers[] = $this->clean([
                 '@type' => 'Offer',

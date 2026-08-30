@@ -128,13 +128,13 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         return round($score, 2);
     }
 
-    // The products the editor attached to this one, minus the ones the shop is not standing behind - a draft has never been online and a trashed product answers 410, and neither belongs in a block naming it
+    // The products the editor attached to this one, minus the ones the shop is not standing behind - a hidden product is not shown and a trashed one answers 410, and neither belongs in a block naming it
     private function getPickedProducts(Product $product, int $limit): array
     {
         $picked = [];
 
         foreach ($product->getRelatedProducts() as $related) {
-            if ($related->isPublished() && !$related->isDeleted()) {
+            if (!$related->isHidden() && !$related->isDeleted()) {
                 $picked[] = $related;
             }
         }
@@ -283,7 +283,7 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
 
     private function getAverageProductPrice(Product $product): float
     {
-        $items = $product->getPublishedItems();
+        $items = $product->getVisibleItems();
 
         if ($items->isEmpty()) {
             return 0;

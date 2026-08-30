@@ -101,7 +101,7 @@ class ProductItemStockAlertService implements ProductItemStockAlertServiceInterf
     // An item is worth writing about only if the visitor who clicks can actually buy it: back in stock, still on sale, and on a product the shop still shows
     private function isBackOnSale(?ProductItem $productItem): bool
     {
-        if (null === $productItem || !$productItem->isPublished() || !$this->productStateService->isItemAvailable($productItem)) {
+        if (null === $productItem || $productItem->isHidden() || !$this->productStateService->isItemAvailable($productItem)) {
             return false;
         }
 
@@ -109,7 +109,7 @@ class ProductItemStockAlertService implements ProductItemStockAlertServiceInterf
         $availableAt = null === $product ? null : $product->getAvailableAt();
 
         return null !== $product
-            && $product->isPublished()
+            && !$product->isHidden()
             && !$product->isDeleted()
             && (null === $availableAt || $availableAt <= new \DateTime());
     }

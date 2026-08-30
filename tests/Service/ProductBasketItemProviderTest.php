@@ -46,9 +46,9 @@ class ProductBasketItemProviderTest extends TestCase
         return [1 => ['quantity' => $quantity]];
     }
 
-    private function item(bool $published, bool $deleted = false): ProductItem
+    private function item(bool $hidden, bool $deleted = false): ProductItem
     {
-        $product = new Product()->setIsPublished($published)->setIsDeleted($deleted);
+        $product = new Product()->setHidden($hidden)->setIsDeleted($deleted);
         $item = new ProductItem()->setLimitedQuantity(null);
         $product->addItem($item);
 
@@ -58,7 +58,7 @@ class ProductBasketItemProviderTest extends TestCase
     // Prices are held VAT included, so a line carries the tax taken out of what it is sold for - never the rate multiplied by a quantity
     public function testALineCarriesTheTaxHeldInItsPrice(): void
     {
-        $item = $this->item(true)->setPrice(1200)->setVat(20.0)->setCurrency('eur');
+        $item = $this->item(false)->setPrice(1200)->setVat(20.0)->setCurrency('eur');
         $item->getProduct()->setTitle('Affiche')->setSlug('affiche');
 
         $data = $this->createProvider()->toBasketData($item, 3);
@@ -67,29 +67,29 @@ class ProductBasketItemProviderTest extends TestCase
         $this->assertSame(600, $data['totalVat']);
     }
 
-    public function testAnItemOfAPublishedProductIsAdded(): void
+    public function testAnItemOfAShownProductIsAdded(): void
     {
-        $this->assertNull($this->createProvider()->validateAddition($this->item(true), 1));
+        $this->assertNull($this->createProvider()->validateAddition($this->item(false), 1));
     }
 
-    public function testAnItemOfADraftIsRefused(): void
+    public function testAnItemOfAHiddenProductIsRefused(): void
     {
-        $this->assertSame('label.unavailable', $this->createProvider()->validateAddition($this->item(false), 1));
+        $this->assertSame('label.unavailable', $this->createProvider()->validateAddition($this->item(true), 1));
     }
 
     public function testAnItemOfATrashedProductIsRefused(): void
     {
-        $this->assertSame('label.unavailable', $this->createProvider()->validateAddition($this->item(true, true), 1));
+        $this->assertSame('label.unavailable', $this->createProvider()->validateAddition($this->item(false, true), 1));
     }
 
     public function testAnItemTakenOfflineIsRefused(): void
     {
-        $this->assertSame('label.unavailable', $this->createProvider()->validateAddition($this->item(true)->setIsPublished(false), 1));
+        $this->assertSame('label.unavailable', $this->createProvider()->validateAddition($this->item(false)->setHidden(true), 1));
     }
 
     public function testAnItemTakenOfflineWhileTheBasketHeldItIsRefusedAtCheckout(): void
     {
-        $item = $this->item(true)->setIsPublished(false);
+        $item = $this->item(false)->setHidden(true);
 
         $this->assertSame('label.unavailable', $this->createProvider($item)->validateCheckout(new Basket(), $this->basketItems(1)));
     }
@@ -97,12 +97,12 @@ class ProductBasketItemProviderTest extends TestCase
     // A basket still holding one from before must be emptiable, whatever became of the product since
     public function testRemovingAnItemIsNeverRefused(): void
     {
-        $this->assertNull($this->createProvider()->validateAddition($this->item(true, true), -1));
+        $this->assertNull($this->createProvider()->validateAddition($this->item(false, true), -1));
     }
 
     public function testABasketWhoseItemsAreStillAvailableChecksOut(): void
     {
-        $item = $this->item(true);
+        $item = $this->item(false);
 
         $this->assertNull($this->createProvider($item)->validateCheckout(new Basket(), $this->basketItems(2)));
     }
@@ -110,7 +110,7 @@ class ProductBasketItemProviderTest extends TestCase
     // The gap validateAddition() cannot see: it is asked one click at a time, so five clicks on an item with one left pass it five times
     public function testABasketHoldingMoreThanIsLeftIsRefused(): void
     {
-        $item = $this->item(true);
+        $item = $this->item(false);
         $item->setLimitedQuantity(3)->setOrderedQuantity(2);
 
         $this->assertSame('label.no_more_items_available', $this->createProvider($item)->validateCheckout(new Basket(), $this->basketItems(2)));
@@ -118,9 +118,9 @@ class ProductBasketItemProviderTest extends TestCase
     }
 
     // A basket sits for days, and what it holds can be taken offline in between
-    public function testABasketHoldingAnItemOfADraftIsRefused(): void
+    public function testABasketHoldingAnItemOfAHiddenProductIsRefused(): void
     {
-        $this->assertSame('label.unavailable', $this->createProvider($this->item(false))->validateCheckout(new Basket(), $this->basketItems(1)));
+        $this->assertSame('label.unavailable', $this->createProvider($this->item(true))->validateCheckout(new Basket(), $this->basketItems(1)));
     }
 
     public function testABasketHoldingAnItemDeletedOutrightIsRefused(): void

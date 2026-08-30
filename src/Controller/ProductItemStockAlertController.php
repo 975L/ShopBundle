@@ -51,7 +51,7 @@ class ProductItemStockAlertController extends AbstractController
         $product = $productItem->getProduct();
 
         // Nothing is offered on what the shop does not show, nor on an item still buyable or withdrawn rather than sold out: a stale link is answered with the sheet, which says what the item's real state is
-        if (null === $product || !$product->isPublished() || $product->isDeleted() || !$productItem->isPublished()) {
+        if (null === $product || $product->isHidden() || $product->isDeleted() || $productItem->isHidden()) {
             throw $this->createNotFoundException();
         }
 

@@ -1,5 +1,29 @@
 # Changelog
 
+## v2.4.0
+
+The published switch is turned round into hidden
+
+- `Product::$isPublished` and `ProductItem::$isPublished` become `hidden`, `isHidden()`/`setHidden()` replacing `isPublished()`/`setIsPublished()` (30/08/2026) [BC-Break] **Needs db migration** see [UPGRADE.md](UPGRADE.md)
+- `Product::getPublishedItems()` becomes `getVisibleItems()`, `product.visibleItems` in Twig (30/08/2026) [BC-Break]
+- `ProductRepository::findOnePublishedBySlug()` becomes `findOneVisibleBySlug()` (30/08/2026) [BC-Break]
+- A new product starts hidden, the column defaulting to false so an existing catalogue stays online (30/08/2026)
+- The sheet of a hidden product answers 404, the recycle bin still answering 410 (30/08/2026)
+- A hidden product leaves the listings, the search, the recommendations, the blocks, the basket, the stock alerts and the sitemap (30/08/2026)
+- A hidden item leaves the sheet, the offers of the structured data and the basket (30/08/2026)
+- `hidden` replaces `isPublished` in the export archives (30/08/2026)
+- An archive carrying `isPublished` is imported the same way (30/08/2026)
+- `label.hidden`, `text.hidden` and `label.product_item_hidden_help` replace their published counterparts in the three locales (30/08/2026)
+- The guided project points at `#Product_hidden`, its two step keys renamed (30/08/2026)
+- The guided step announcing the save no longer says the sheet goes online published (30/08/2026)
+- The comments, the README and the three shop skills say "hidden" where they said "draft", and tell the switch apart from the recycle bin (30/08/2026)
+- The products and the categories screens carry their own EasyAdmin labels, the class name showing otherwise (30/08/2026)
+- `ShopDemoFixtureProvider` seeds a product with the pictures a site declares for it, keyed `shop/<slug>` (28/08/2026)
+- Each seeded picture carries its `position`, the order the sheet's slider leafs through them (28/08/2026)
+- Failing a declared picture, the generic pool is rotated as before (28/08/2026)
+- Requires `c975l/core-bundle` `^1.19` (28/08/2026)
+- Added `tests/Repository/ProductRepositoryTest.php` and `tests/Management/ShopSitemapProviderTest.php` (30/08/2026)
+
 ## v2.3.0
 
 A demo site is handed the very catalog the showcase renders

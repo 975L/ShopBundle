@@ -32,8 +32,8 @@ It is the **entire** contract between the shop and the checkout:
 blocking it would trap an exhausted item in the basket. The stock rules there are the same three
 readings of `limitedQuantity` as everywhere else — see `c975l-shop-catalog`.
 
-It also refuses what has left the sheet while keeping its id: a draft or trashed product, and an item
-whose own `isPublished` was unticked. An open page and a basket filled before that still carry the id.
+It also refuses what has left the sheet while keeping its id: a hidden or trashed product, and an item
+whose own `hidden` was ticked. An open page and a basket filled before that still carry the id.
 
 **`validateCheckout()` is the door, and it is not `validateAddition()` again.** PaymentBundle asks it at
 the very top of `BasketService::validate()`, before the gateway is looked up and before anything is
@@ -41,7 +41,7 @@ numbered, charged or persisted - the free path included. It receives the basket'
 **whole quantity**, which is precisely what the other one cannot see: `validateAddition()` is asked one
 click at a time and knows nothing of what the basket already holds, so five clicks on an item with one
 left pass it five times. It also re-reads each item from the database rather than trusting what the
-basket stored, because a basket sits for days and its product can be unpublished, trashed or deleted in
+basket stored, because a basket sits for days and its product can be hidden, trashed or deleted in
 between. A non-null answer raises `BasketNotOrderableException`, shown as a flash over an untouched
 basket.
 

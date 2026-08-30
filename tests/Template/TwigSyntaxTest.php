@@ -31,7 +31,7 @@ class TwigSyntaxTest extends TestCase
     public function testTheGiftCardsBlockFiltersItsAmountsWithTheFilterFunction(): void
     {
         $this->assertStringContainsString(
-            '{% for item in product.publishedItems|filter(item => item.giftCard) %}',
+            '{% for item in product.visibleItems|filter(item => item.giftCard) %}',
             (string) file_get_contents(\dirname(__DIR__, 2) . '/templates/blocks/GiftCards.html.twig')
         );
     }

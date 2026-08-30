@@ -74,18 +74,19 @@ class ShopDemoFixtureProvider implements DemoFixtureProviderInterface
         $product->setSlug($spec['slug']);
         $product->setDescription($this->trans($spec['description']));
         $product->setPosition($position);
-        $product->setIsPublished(true);
+        $product->setHidden(false);
         $product->setCreation($creation);
 
         if (isset($categories[$spec['category']])) {
             $product->addCategory($categories[$spec['category']]);
         }
 
-        // Rotated, a site rarely declaring as many placeholders as the catalog has products - declaring none still gets a shop, the card falling back on "no-product-image.webp"
-        if ([] !== $images) {
-            $file = $this->temporaryCopy($images[$index % \count($images)]);
+        foreach ($this->pictures($spec['slug'], $images, $index) as $mediaPosition => $picture) {
+            $file = $this->temporaryCopy($picture);
+
+            // Declared and no longer on disk: the product is seeded without that picture rather than not at all
             if (null !== $file) {
-                $product->addMedia(new ProductMedia()->setFile($file));
+                $product->addMedia(new ProductMedia()->setFile($file)->setPosition($mediaPosition + 1));
             }
         }
 
@@ -94,6 +95,23 @@ class ShopDemoFixtureProvider implements DemoFixtureProviderInterface
         }
 
         return $product;
+    }
+
+    // The photographs the site keys "shop/<slug>", in the order the sheet's slider leafs through them - failing those, one of the generic pool, rotated so the cards differ
+    /**
+     * @param list<string> $images
+     *
+     * @return list<string>
+     */
+    private function pictures(string $slug, array $images, int $index): array
+    {
+        $declared = $this->placeholderMediaRegistry->getImagesFor('shop/' . $slug);
+
+        if ([] !== $declared) {
+            return $declared;
+        }
+
+        return [] === $images ? [] : [$images[$index % \count($images)]];
     }
 
     /**
@@ -111,7 +129,7 @@ class ShopDemoFixtureProvider implements DemoFixtureProviderInterface
         $item->setLimitedQuantity($spec['limitedQuantity']);
         $item->setOrderedQuantity(0);
         $item->setService($spec['service']);
-        $item->setIsPublished(true);
+        $item->setHidden(false);
         $item->setCreation($creation);
 
         // A site declaring no placeholder document leaves the item file-less, hence sold as a posted one rather than announced as downloadable with nothing to download

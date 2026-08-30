@@ -220,7 +220,7 @@ class ProductStateServiceTest extends TestCase
     // A product carrying the given items
     public function testAnItemTakenOfflineSetsNeitherThePriceNorTheFormats(): void
     {
-        $offline = $this->item(500)->setIsPublished(false);
+        $offline = $this->item(500)->setHidden(true);
         $product = $this->product([$this->item(1900), $offline]);
         $state = $this->service->getState($product);
 
@@ -231,7 +231,7 @@ class ProductStateServiceTest extends TestCase
 
     public function testAProductWhoseItemsAreAllOfflineReadsLikeOneWithNoItemAtAll(): void
     {
-        $product = $this->product([$this->item(1900)->setIsPublished(false)]);
+        $product = $this->product([$this->item(1900)->setHidden(true)]);
         $state = $this->service->getState($product);
 
         $this->assertNull($state['price']);

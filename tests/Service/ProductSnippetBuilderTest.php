@@ -132,6 +132,25 @@ class ProductSnippetBuilderTest extends TestCase
         $this->assertCount(2, $this->builder->buildProduct($product)['offers']);
     }
 
+    // An item set aside has left the sheet, so it publishes no offer for something the shop no longer sells
+    public function testAHiddenItemPublishesNoOffer(): void
+    {
+        $product = $this->product()->addItem($this->item('a3', 800)->setHidden(true));
+
+        $offers = $this->builder->buildProduct($product)['offers'];
+
+        $this->assertCount(1, $offers);
+        $this->assertSame('A2', $offers[0]['name']);
+    }
+
+    // A product whose every item is set aside publishes no offers node at all rather than an empty one
+    public function testAProductHidingEveryItemPublishesNoOffersNode(): void
+    {
+        $product = new Product()->setTitle('Affiche')->setSlug('affiche')->addItem($this->item('a2', 1250)->setHidden(true));
+
+        $this->assertArrayNotHasKey('offers', $this->builder->buildProduct($product));
+    }
+
     // The very rules AddButton.html.twig disables its button on, so the graph never says "in stock" over a button that cannot be clicked
     public function testAnItemDeclaredAtZeroIsOutOfStock(): void
     {

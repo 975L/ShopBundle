@@ -12,6 +12,7 @@ namespace c975L\ShopBundle\Tests\Service;
 
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductCategory;
+use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Service\ShopDemoFixtureProvider;
 use c975L\ShopBundle\Service\ShopSampleCatalog;
 use c975L\UiBundle\Registry\PlaceholderMediaRegistry;
@@ -44,7 +45,8 @@ class ShopDemoFixtureProviderTest extends TestCase
         new Filesystem()->remove([$this->projectDir, ...$this->temporaryCopies]);
     }
 
-    private function createProvider(array $images = [self::IMAGE], ?string $document = self::DOCUMENT): ShopDemoFixtureProvider
+    /** @param array<string, list<string>> $keyed */
+    private function createProvider(array $images = [self::IMAGE], ?string $document = self::DOCUMENT, array $keyed = []): ShopDemoFixtureProvider
     {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
@@ -52,6 +54,7 @@ class ShopDemoFixtureProviderTest extends TestCase
         $registry = $this->createStub(PlaceholderMediaRegistry::class);
         $registry->method('getImages')->willReturn($images);
         $registry->method('getDocument')->willReturn($document);
+        $registry->method('getImagesFor')->willReturnCallback(static fn (string $key): array => $keyed[$key] ?? []);
 
         return new ShopDemoFixtureProvider(new ShopSampleCatalog(), $translator, $registry, $this->projectDir);
     }
@@ -92,10 +95,10 @@ class ShopDemoFixtureProviderTest extends TestCase
         $this->assertSame(range(0, count($categories) - 1), $categories);
     }
 
-    public function testEveryProductIsPublishedDatedAndFiledUnderItsCategory(): void
+    public function testEveryProductIsShownDatedAndFiledUnderItsCategory(): void
     {
         foreach ($this->products($this->createProvider()) as $product) {
-            $this->assertTrue($product->isPublished(), (string) $product->getSlug());
+            $this->assertFalse($product->isHidden(), (string) $product->getSlug());
             $this->assertNotNull($product->getCreation());
             $this->assertCount(1, $product->getCategories(), (string) $product->getSlug());
         }
@@ -163,5 +166,45 @@ class ShopDemoFixtureProviderTest extends TestCase
         }
 
         return $files;
+    }
+
+    // The photographs a site declares for one product are all attached, in the order its slider leafs through them - which a single rotated placeholder can never stand for
+    public function testADeclaredProductCarriesEveryPictureInOrder(): void
+    {
+        $pictures = ['showcase/chaise-1.webp', 'showcase/chaise-2.webp', 'showcase/chaise-3.webp'];
+
+        foreach ($pictures as $picture) {
+            file_put_contents($this->projectDir . '/public/' . $picture, 'image');
+        }
+
+        $provider = $this->createProvider(keyed: ['shop/chaise-bistrot' => $pictures]);
+
+        foreach ($this->fixtures($provider) as $entity) {
+            if ($entity instanceof Product && 'chaise-bistrot' === $entity->getSlug()) {
+                $positions = array_map(static fn (ProductMedia $media): ?int => $media->getPosition(), $entity->getMedias()->toArray());
+
+                $this->assertSame([1, 2, 3], array_values($positions));
+
+                return;
+            }
+        }
+
+        $this->fail('no product "chaise-bistrot"');
+    }
+
+    // A product the site declares nothing for keeps the rotated placeholder, so a shop is never left with empty cards where it used to have some
+    public function testAProductWithoutADeclaredPictureFallsBackOnThePool(): void
+    {
+        $provider = $this->createProvider(keyed: ['shop/chaise-bistrot' => []]);
+
+        foreach ($this->fixtures($provider) as $entity) {
+            if ($entity instanceof Product && 'table-basse-chene' === $entity->getSlug()) {
+                $this->assertCount(1, $entity->getMedias());
+
+                return;
+            }
+        }
+
+        $this->fail('no product "table-basse-chene"');
     }
 }

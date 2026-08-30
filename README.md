@@ -53,7 +53,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - Products and categories exported/imported as a zip (pictures, items with their paid files, sheet blocks and categories bundled in), plugging into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen
 - Media directories declared for backup, order backlog and catalog gaps reported to the status report
 - Alternative text on every product picture, description of its own on every category
-- EasyAdmin CRUD for products, written as drafts, ordered by dragging the index rows, duplicated with everything they hold, kept in a recycle bin once deleted, and exported as SQL/CSV/JSON from their index
+- EasyAdmin CRUD for products, written hidden, ordered by dragging the index rows, duplicated with everything they hold, kept in a recycle bin once deleted, and exported as SQL/CSV/JSON from their index
 - Gift cards sold as an ordinary item, one card issued per unit once the order is paid, its visual built in the
   back-office and copied onto the card (see [gift cards](#gift-cards))
 - Test mode switched from the dashboard, warning every visitor that nothing is really sold
@@ -141,7 +141,7 @@ This bundle has no Stimulus controllers of its own — the basket add/remove UI 
 | --- | --- |
 | `/shop` | Shop front page, `?order=newest\|price_asc\|price_desc` ordering the listing |
 | `/shop/terms-of-sales` | Terms of sales, unless SiteBundle is installed (see below) |
-| `/shop/products/{slug}/preview` | The sheet of a product not published yet (requires `ROLE_ADMIN`) |
+| `/shop/products/{slug}/preview` | The sheet of a product still hidden (requires `ROLE_ADMIN`) |
 | `/shop/management` | EasyAdmin management (requires `ROLE_ADMIN`) |
 
 The catalogue's own order is set by dragging the rows of the products index by their `position` cell, rather than by
@@ -149,20 +149,26 @@ typing a number into every product it shifts (UiBundle's `ea-index-sort.js`, the
 The index is paginated: a page dropped in a new order takes back its own slots among the whole catalogue, so the pages
 before it keep theirs. A product's own items and pictures reorder the same way, by dragging their rows in its edit form.
 
-A product is a draft until it is published: it stays out of the catalogue, of the search, of the sitemap, of the
-recommendations and of every block naming it, and its own url answers 404. The *preview* action opens its sheet as
-the visitor will read it, uncached and behind the admin role, so a product is written, composed and checked before
-anyone can see it. Publishing is the deliberate act, a switch on the index and on the edit form.
+A product carries a **Hidden** switch (`hidden`), offered on the index as well as on the edit form. Ticked, the
+product stays out of the catalogue, of the search, of the sitemap, of the recommendations and of every block naming
+it, and its own url answers 404 — nothing of it is touched, so unticking the box puts it back exactly as it was.
+A product written from now on starts hidden, so nothing goes on sale merely by being saved; the *preview* action
+opens its sheet as the visitor will read it, uncached and behind the admin role, so a product is written, composed
+and checked before anyone can see it. Showing it is the deliberate act.
 
-An item has one switch of its own: **published**, unticked on the item's row in the product's edit form. An item
-taken off sale leaves the sheet, the price and the formats its card states, the offers of the structured data and
+The switch is not the recycle bin below, and the two answer differently: hidden means "not shown, nothing lost" and
+answers 404, where trashed means "on its way out" and answers 410. The sitemap drops a hidden product at its next
+run (`c975l:sitemaps:create`), the file being written when the command runs rather than on the click.
+
+An item has one switch of its own, the same **Hidden**, ticked on the item's row in the product's edit form. An item
+set aside leaves the sheet, the price and the formats its card states, the offers of the structured data and
 the basket - while keeping its file, its picture and its stock, one tick away from coming back. There is no recycle
 bin beside it: what has no url of its own has no address to answer 410 for, so an item nobody wants back is deleted
 outright, with its picture and its downloadable file.
 
 Deleting a product moves it to the **recycle bin**, reached from the button above the index: it keeps its pictures,
 its items and its blocks, and its url answers 410 for as long as it can still be restored. Restoring brings it back
-as a draft, to be read once before it goes online again. *Delete permanently* is the only thing that actually
+hidden, to be read once before it goes online again. *Delete permanently* is the only thing that actually
 removes it, from that view alone, and takes its pictures and its downloadable files with it.
 
 Both moves leave the urls behind them in order (ConfigBundle's `Redirect`): renaming a product writes a 301 from its
@@ -173,7 +179,7 @@ product becomes a `gone` row too rather than dangling, and a path already covere
 A product is duplicated from its index row or from its own edit screen: the copy takes its pictures, its items with
 their own picture and downloadable file, its categories and the blocks composing its sheet, each file copied on the
 disk under a name of its own rather than shared with the original. Nothing is sold of the copy - the items' ordered
-quantity is reset - and the copy is a draft, opened straight away to be renamed and priced.
+quantity is reset - and the copy is hidden, opened straight away to be renamed and priced.
 
 Restrict access in `config/packages/security.yaml`:
 
@@ -218,8 +224,8 @@ its cards, the footer counting what is on screen out of the whole. No route and 
 it - that link carries the order, the category and the search the visitor came with, and without javascript, or
 for a crawler, it is the ordinary link to the next page it looks like.
 
-Each card states what the product is worth and whether it can be bought, all of it read from its **published**
-items by `ProductStateService` rather than stored on the product:
+Each card states what the product is worth and whether it can be bought, all of it read from the items it is not
+hiding (`Product::getVisibleItems()`) by `ProductStateService` rather than stored on the product:
 
 | Shown | Read from |
 | --- | --- |
@@ -422,7 +428,7 @@ that is exactly when a new catalogue needs cross-selling most.
 
 So a product also carries the products an editor picked for it, chosen in its own CRUD screen. **When it holds
 any, they replace the calculation entirely** rather than being merged into it, and only the ones the shop is
-standing behind are kept - a draft or a trashed pick is dropped, as it is from every other block naming it.
+standing behind are kept - a hidden or a trashed pick is dropped, as it is from every other block naming it.
 The relation is deliberately one-way: a case goes with a phone, where the phone leads on its own.
 
 The sheet and the `shop_recommendations` block both read `ProductRecommendationService::getSimilarProducts()`,
@@ -453,9 +459,10 @@ dashboard shortcut, `ProductCategoryExportProvider` doing the same for the categ
 
 A product travels whole: its pictures, its items with the picture and the **file they are bought for**, its
 [sheet composition](#composing-the-shop) with the medias its blocks hold, its categories and the
-[related products](#related-products) an editor picked. Drafts and the recycle bin travel too, each product
-carrying its own published and trashed flags: a sync mirrors its source rather than publishing what an admin
-had taken down.
+[related products](#related-products) an editor picked. Hidden products and the recycle bin travel too, each product
+carrying its own hidden and trashed flags: a sync mirrors its source rather than showing what an admin
+had taken down. An archive written before the switch was turned round carries `isPublished`, which is read the same
+way rather than landing its whole catalogue on sale.
 
 Unlike the flat SQL/CSV/JSON dumps of the same index, which carry one table at a time, this is the archive
 that carries a product with everything hanging off it.
@@ -583,7 +590,7 @@ taking the products the page shows and, where it paginates, how many the pages b
 ```
 
 Each element carries a name and an url only, the full graph living on the sheet it points at, and the list holds
-exactly what the page shows - a draft or a trashed product is not on the page and so is not in the list. The count
+exactly what the page shows - a hidden or a trashed product is not on the page and so is not in the list. The count
 is that of the page and never that of the whole catalog, which a validator refuses, and a page printing no card
 publishes nothing.
 
@@ -598,8 +605,8 @@ heart is painted from the visitor's own browser, so a card sitting in the block 
 
 The list itself is UiBundle's, on `/favorites`, and follows a signed-in customer from one device to the next.
 What this bundle adds is `ShopFavoriteItemProvider`, which turns the `shop_product` rows the list holds back
-into cards — UiBundle stores a name and an id and nothing else. A product taken offline simply stops showing on
-the lists it was on, and comes back on them the day it is published again.
+into cards — UiBundle stores a name and an id and nothing else. A product set aside simply stops showing on
+the lists it was on, and comes back on them the day it is shown again.
 
 ---
 
@@ -624,7 +631,7 @@ back on the waiting list rather than being refused.
 thousands of subscriptions, and sending them in one pass would hold the mailer for as long as it takes. Each run
 sends at most `--limit` alerts (50 by default) and says how many are still waiting, so a queue that stops going
 down is how a shop finds out its mailer is refusing. A send that failed leaves the row waiting and is tried again
-next run. Nothing is sent on an item that is back but taken offline, on a product unpublished, trashed or not yet
+next run. Nothing is sent on an item that is back but set aside, on a product hidden, trashed or not yet
 on sale — an email the visitor cannot act on is worse than none.
 
 The message itself is an **`EmailTemplate` named `back_in_stock`**, declared by `ShopEmailTemplateProvider` and
@@ -731,8 +738,10 @@ Spanish shop.
 
 The pictures and the downloadable file are taken from whatever the site declares through UiBundle's
 `PlaceholderMediaProviderInterface`, **as a temporary copy**: an upload moves the file it is handed, and the
-placeholders belong to the whole site. A site declaring none still gets its catalog, its cards falling back on the
-bundle's own "no picture" image — an empty shop would leave nothing to browse at all.
+placeholders belong to the whole site. A product takes the photographs the site keys `shop/<slug>` for it, all of
+them, in the order they come back — which is the order its sheet's slider leafs through them. Failing those, one of
+the generic pool, rotated over the catalog so the cards differ. A site declaring neither still gets its catalog, its
+cards falling back on the bundle's own "no picture" image — an empty shop would leave nothing to browse at all.
 
 Only the categories and the products are yielded: their items, pictures and files ride the ORM cascade, so a demo
 site taking a product back has VichUploader's removal listener take the uploaded files off the disk with it.

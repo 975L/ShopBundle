@@ -47,14 +47,14 @@ class ProductBasketItemProvider implements BasketItemProviderInterface
             return null;
         }
 
-        // The sheet of a draft or of a trashed product answers 404 or 410, but its items keep the ids an old page or a stale basket still carries: nothing is bought of a product the shop is not standing behind
+        // The sheet of a hidden or of a trashed product answers 404 or 410, but its items keep the ids an old page or a stale basket still carries: nothing is bought of a product the shop is not standing behind
         $product = $item->getProduct();
-        if (null === $product || !$product->isPublished() || $product->isDeleted()) {
+        if (null === $product || $product->isHidden() || $product->isDeleted()) {
             return $this->translator->trans('label.unavailable', [], 'shop');
         }
 
-        // Same reasoning one level down: an item taken offline has left the sheet, but an open page or a basket filled before it did still carries its id
-        if (!$item->isPublished()) {
+        // Same reasoning one level down: an item set aside has left the sheet, but an open page or a basket filled before it did still carries its id
+        if ($item->isHidden()) {
             return $this->translator->trans('label.unavailable', [], 'shop');
         }
 

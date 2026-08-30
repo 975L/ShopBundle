@@ -48,7 +48,7 @@ class ProductDuplicator
         $this->projectDir = (string) $parameterBag->get('kernel.project_dir');
     }
 
-    // Persists the copy and returns it, as a draft - the position, the dates and the author are left to the listeners, which fill them on the flush as they do for a product created by hand
+    // Persists the copy and returns it, hidden - the position, the dates and the author are left to the listeners, which fill them on the flush as they do for a product created by hand
     public function duplicate(Product $product): Product
     {
         $suffix = ' ' . $this->translator->trans('label.copy_suffix', [], 'shop');
@@ -63,8 +63,8 @@ class ProductDuplicator
             // The wording printed on the card and the way it is revealed: they belong to the offer, not to the one product that carried it
             ->setGiftCardText($product->getGiftCardText())
             ->setGiftCardScratch($product->hasGiftCardScratch())
-            // A copy is a draft, whatever the original was: it carries its title and its prices, and nothing else says it is meant to be sold as it stands
-            ->setIsPublished(false)
+            // A copy is hidden, whatever the original was: it carries its title and its prices, and nothing else says it is meant to be sold as it stands
+            ->setHidden(true)
         ;
 
         // The very same categories, which are shared rather than owned by the product
@@ -138,8 +138,8 @@ class ProductDuplicator
             ->setService($item->isService())
             // Carried like the price: a copy of a gift card is a gift card, and without this value Product::isGiftCard() answers no for the whole copy
             ->setGiftCardValue($item->getGiftCardValue())
-            // Carried as it stands: the copy is a draft as a whole, so an item left offline in the original has no reason to come back on sale in it
-            ->setIsPublished($item->isPublished())
+            // Carried as it stands: the copy is hidden as a whole, so an item set aside in the original has no reason to come back on sale in it
+            ->setHidden($item->isHidden())
             ->setItemCondition($item->getItemCondition())
             ->setPosition($item->getPosition())
         ;

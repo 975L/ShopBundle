@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-catalog
-description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, isPublished, isDeleted, getPublishedItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-free, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, demo catalogue, ReplacingFile."
+description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-free, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, demo catalogue, ReplacingFile, PlaceholderMediaProviderInterface."
 ---
 
 # c975L ShopBundle — catalog
@@ -18,37 +18,39 @@ description: "Use this skill when working with the shop's catalog in a Symfony a
 
 | Entity | Holds | Never holds |
 | --- | --- | --- |
-| `Product` | title, slug, description, `brand`, `availableAt`, position, `isPublished`, `isDeleted`, medias, categories, blocks, `relatedProducts`, `giftCardText`, `giftCardScratch` | a price |
-| `ProductItem` | price and `priceBefore` (**cents**), currency, vat, `sku`, `gtin`, `limitedQuantity`, `orderedQuantity`, `service`, `itemCondition`, `isPublished`, `giftCardValue`, one media, one file | its own page, a recycle bin |
+| `Product` | title, slug, description, `brand`, `availableAt`, position, `hidden`, `isDeleted`, medias, categories, blocks, `relatedProducts`, `giftCardText`, `giftCardScratch` | a price |
+| `ProductItem` | price and `priceBefore` (**cents**), currency, vat, `sku`, `gtin`, `limitedQuantity`, `orderedQuantity`, `service`, `itemCondition`, `hidden`, `giftCardValue`, one media, one file | its own page, a recycle bin |
 | `ProductCategory` | name, slug, description, products (`ManyToMany`) | a price |
 
 `Product` implements `HasBlocksInterface` — its sheet is composed in the back office, see
 `c975l-shop-blocks`. Prices are integers in cents throughout; divide by 100 at display and never store
 a float.
 
-## Draft, recycle bin, and what the public may read
+## Hidden, recycle bin, and what the public may read
 
-`Product` carries two flags, and **every public read honours both**: `isPublished` (a product is a draft until an
-admin publishes it) and `isDeleted` (the recycle bin — `ProductCrudController`'s delete action only sets this).
+`Product` carries two flags, and **every public read honours both**: `hidden` (a product is set aside - a new one
+starts that way, so nothing goes on sale by being saved) and `isDeleted` (the recycle bin — `ProductCrudController`'s
+delete action only sets this). The two are not the same thing: hidden means "not shown, nothing lost" and answers
+404, trashed means "on its way out" and answers 410.
 
 | Read through | Answers |
 | --- | --- |
-| `ProductRepository::findAllSorted()`, `search()`, `findByCategorySlug()`, `findRandomProducts()`, `findAvailableProductsExcluding()`, `findByCategoriesExcluding()` | published, not trashed, past `availableAt` |
-| `ProductRepository::findOnePublishedBySlug()` | published, not trashed — what blocks and components naming a product read |
+| `ProductRepository::findAllSorted()`, `search()`, `findByCategorySlug()`, `findRandomProducts()`, `findAvailableProductsExcluding()`, `findByCategoriesExcluding()` | not hidden, not trashed, past `availableAt` |
+| `ProductRepository::findOneVisibleBySlug()` | not hidden, not trashed — what blocks and components naming a product read |
 | `ProductRepository::findOneBySlug()` | any state — the sheet itself, which then answers 410/404 |
-| `ProductRepository::findNotDeleted()` | drafts included, trash excluded — the back-office pickers (`ShopBlockChoices`) |
+| `ProductRepository::findNotDeleted()` | hidden ones included, trash excluded — the back-office pickers (`ShopBlockChoices`) |
 
-`ProductController::display()` throws `GoneHttpException` for a trashed product and a 404 for a draft;
+`ProductController::display()` throws `GoneHttpException` for a trashed product and a 404 for a hidden one;
 `product_preview` (`/shop/products/{slug}/preview`, admin only) renders the same sheet with the block cache disabled
-and a banner. **A new lookup added anywhere must pick from that table rather than write its own `where`** — a draft
-leaking into a listing, a block, a basket (`ProductBasketItemProvider::validateAddition()` refuses one) or the
+and a banner. **A new lookup added anywhere must pick from that table rather than write its own `where`** — a hidden
+product leaking into a listing, a block, a basket (`ProductBasketItemProvider::validateAddition()` refuses one) or the
 sitemap is the failure mode this split exists to prevent.
 
 Urls are kept in order through ConfigBundle's `Redirect`: renaming a product writes a 301 from `/shop/products/<old>`,
 deleting it for good writes a `gone` row answering 410 there permanently.
 
-`ProductItem` carries **one** flag of its own, `isPublished`: an item taken off sale keeps its file, its picture and
-its stock but leaves everything the public reads. Read it through **`Product::getPublishedItems()`** — the sheet, the
+`ProductItem` carries **one** flag of its own, `hidden`: an item set aside keeps its file, its picture and
+its stock but leaves everything the public reads. Read it through **`Product::getVisibleItems()`** — the sheet, the
 `shop_product_items` block, `ProductStateService`, `ProductSnippetBuilder`, `ProductJsonLdExtension` and
 `ProductRecommendationService` all do, and `ProductBasketItemProvider::validateAddition()` refuses one. `getItems()`
 still holds them all, and is what the back-office form, `ProductExportProvider` and `ProductDuplicator` read.
@@ -66,7 +68,7 @@ the disk under a name of its own**, never shared with the original, which deleti
 otherwise take from the other; and the copy is never handed back to Vich, whose storage *moves* the file
 it is given and would re-run the resizing and the thumbnail generation. A block naming the product it
 sits on (`productSlug`) is repointed at the copy, one naming another product is left alone, the
-items' `orderedQuantity` is reset — nothing has been sold of a copy — and **the copy is a draft**, whatever the
+items' `orderedQuantity` is reset — nothing has been sold of a copy — and **the copy is hidden**, whatever the
 original was.
 
 **`limitedQuantity` has three meanings, and every read must honour all three:** `null` is an unlimited
@@ -190,7 +192,9 @@ domain, so a demo site seeded in Spanish reads as a Spanish shop.
 
 Pictures and the downloadable file come from what the site declares through
 `PlaceholderMediaProviderInterface`, **as a temporary copy**: an upload moves the file it is handed. A
-site declaring none still gets its catalogue, cards falling back on the bundle's own "no picture" image.
+product takes the images keyed **`shop/<slug>`**, all of them, each carrying its `position` - that order
+is the one its slider leafs through. Failing those, one of the generic pool, rotated over the catalogue.
+A site declaring neither still gets its catalogue, cards falling back on the bundle's own "no picture" image.
 
 Only the categories and the products are yielded, their items, pictures and files riding the ORM cascade.
 An item's slug is rewritten from its title by
@@ -223,8 +227,8 @@ charging one price and displaying another.
 - **Do not store prices as floats**, and do not store a currency per product.
 - **Do not treat `limitedQuantity: 0` as unlimited.**
 - **Do not compute a badge, a price or a format in a template** — call `shop_product_state()`.
-- **Do not read `product.items` in anything the public sees** — `getPublishedItems()` is the public read.
-- **Do not add an `isDeleted` to `ProductItem`** — it has no url to protect; unpublish it or delete it.
+- **Do not read `product.items` in anything the public sees** — `getVisibleItems()` is the public read.
+- **Do not add an `isDeleted` to `ProductItem`** — it has no url to protect; hide it or delete it.
 - **Do not rename `?order=`** to `?sort=`; shared and indexed urls carry the name it has.
 - **Do not drop the joins from `findAllSorted()`.**
 - **Do not declare a `shop-*` money key here** — they are PaymentBundle's.

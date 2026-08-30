@@ -23,7 +23,7 @@ use Twig\Attribute\AsTwigFunction;
 // Resolves, at render time, what the block templates of this bundle display - a Block only ever stores what to show (a category slug, a maximum), never the products themselves, so a block never goes stale against the catalog. Same split as BookBundle's BookBlockExtension and GalleryBundle's GalleryBlockExtension
 class ShopBlockExtension implements ResetInterface
 {
-    // The two routes a product sheet is served under, and the ones a block left without a slug reads its product from - the preview joins the public one so a draft's sheet is composed and read before it goes online
+    // The two routes a product sheet is served under, and the ones a block left without a slug reads its product from - the preview joins the public one so a hidden product's sheet is composed and read before it is shown
     private const array PRODUCT_ROUTES = ['product_display', 'product_preview'];
 
     /** @var ?list<Product> */
@@ -100,11 +100,11 @@ class ShopBlockExtension implements ResetInterface
             return null;
         }
 
-        // A product named by a block has to stand on its own, a draft or a trashed one rendering nothing, where the sheet's own product is read whatever its state so a draft's preview shows its blocks - the key says which reading it was, both being cached under the same slug
+        // A product named by a block has to stand on its own, a hidden or a trashed one rendering nothing, where the sheet's own product is read whatever its state so a hidden product's preview shows its blocks - the key says which reading it was, both being cached under the same slug
         $key = ($named ? 'published:' : 'any:') . $slug;
 
         return $this->bySlug[$key] ??= $named
-            ? $this->productRepository->findOnePublishedBySlug($slug)
+            ? $this->productRepository->findOneVisibleBySlug($slug)
             : $this->productRepository->findOneBySlug($slug);
     }
 

@@ -79,7 +79,7 @@ class ProductJsonLdExtension
     {
         $urls = [];
 
-        foreach ($product->getPublishedItems() as $item) {
+        foreach ($product->getVisibleItems() as $item) {
             $media = $item->getMedia();
             if (null !== $media && null !== $media->getName()) {
                 $urls[trim((string) $item->getSlug())] = $this->urlHelper->getAbsoluteUrl($this->packages->getUrl($media->getName()));

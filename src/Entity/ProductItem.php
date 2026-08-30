@@ -67,9 +67,9 @@ class ProductItem implements \Stringable
     #[ORM\Column(nullable: true)]
     private ?bool $service = null;
 
-    // Whether the item is offered for sale, an item taken offline keeping its file and its stock rather than being deleted - no recycle bin beside it, unlike Product: what has no url of its own has no address to answer 410 for
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
-    private bool $isPublished = true;
+    // Whether the item is set aside, one hidden keeping its file and its stock rather than being deleted - no recycle bin beside it, unlike Product: what has no url of its own has no address to answer 410 for
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $hidden = false;
 
     // What a card bought through this item is worth, in cents, null on everything that is not a gift card - stated here rather than read off the price, a 50 € card being free to sell for 45
     #[ORM\Column(nullable: true)]
@@ -289,14 +289,14 @@ class ProductItem implements \Stringable
         return $this;
     }
 
-    public function isPublished(): bool
+    public function isHidden(): bool
     {
-        return $this->isPublished;
+        return $this->hidden;
     }
 
-    public function setIsPublished(bool $isPublished): static
+    public function setHidden(bool $hidden): static
     {
-        $this->isPublished = $isPublished;
+        $this->hidden = $hidden;
 
         return $this;
     }

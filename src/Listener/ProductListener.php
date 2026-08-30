@@ -36,7 +36,7 @@ class ProductListener
     public function preFlush(Product $entity, PreFlushEventArgs $event): void
     {
         if (null === $entity->getPosition()) {
-            // Read as a scalar off the whole table: findAll() only returns what the public may see now that a product can be a draft, and a new one placed after those alone would collide with a draft sitting further down
+            // Read as a scalar off the whole table: findAll() only returns what the public may see now that a product can be hidden, and a new one placed after those alone would collide with a hidden one sitting further down
             $entity->setPosition($this->productRepository->findMaxPosition() + 5);
         }
         $entity->setModification(new \DateTime());

@@ -6,7 +6,7 @@
     {% endif %}
     {% if product.availableAt == null or product.availableAt|date('Ymd') <= "now"|date("Ymd") %}
         <div data-controller="basket">
-            <twig:c975LShop:Product:Items items="{{ product.publishedItems }}"/>
+            <twig:c975LShop:Product:Items items="{{ product.visibleItems }}"/>
             <twig:c975LPayment:Basket:Message/>
         </div>
     {% else %}

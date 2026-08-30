@@ -89,7 +89,7 @@ class ProductRepository extends ServiceEntityRepository
         $rows = $this->available($this->createQueryBuilder('p'))
             ->select('MIN(i.price) AS lowest')
             ->join('p.items', 'i')
-            ->andWhere('i.isPublished = true')
+            ->andWhere('i.hidden = false')
             ->groupBy('p.id')
             ->getQuery()
             ->getScalarResult()
@@ -118,7 +118,7 @@ class ProductRepository extends ServiceEntityRepository
         ;
     }
 
-    // Finds a product by slug with joined data, whatever its state - the sheet itself answers 410 for a trashed product and 404 for a draft, which it can only do once it holds the row (see ProductController)
+    // Finds a product by slug with joined data, whatever its state - the sheet itself answers 410 for a trashed product and 404 for a hidden one, which it can only do once it holds the row (see ProductController)
     public function findOneBySlug(string $slug): ?Product
     {
         return $this->slugQuery($slug)
@@ -127,10 +127,10 @@ class ProductRepository extends ServiceEntityRepository
         ;
     }
 
-    // The same sheet, but only if the shop stands behind it: what every block and every component naming a product by its slug reads, so a draft or a trashed product renders nothing wherever it was named
-    public function findOnePublishedBySlug(string $slug): ?Product
+    // The same sheet, but only if the shop stands behind it: what every block and every component naming a product by its slug reads, so a hidden or a trashed product renders nothing wherever it was named
+    public function findOneVisibleBySlug(string $slug): ?Product
     {
-        return $this->published($this->slugQuery($slug))
+        return $this->visible($this->slugQuery($slug))
             ->getQuery()
             ->getOneOrNullResult()
         ;
@@ -154,7 +154,7 @@ class ProductRepository extends ServiceEntityRepository
     /**
      * The products behind a set of ids, in one query and with their pictures - what a wishlist reads its cards from (see ShopFavoriteItemProvider).
      *
-     * Only what a visitor may still see: a draft, something trashed or something not released yet is left out rather than drawn on a list nobody could buy from.
+     * Only what a visitor may still see: something hidden, trashed or not released yet is left out rather than drawn on a list nobody could buy from.
      *
      * @param int[] $ids
      *
@@ -237,7 +237,7 @@ class ProductRepository extends ServiceEntityRepository
         return array_slice($products, 0, $limit);
     }
 
-    // The whole catalogue as the back-office knows it, drafts included and the recycle bin left out - what the block forms pick from, an editor composing the page of a product that is not online yet being the very reason a draft exists
+    // The whole catalogue as the back-office knows it, hidden products included and the recycle bin left out - what the block forms pick from, an editor composing the page of a product that is not shown yet being the very reason the switch exists
     public function findNotDeleted(): array
     {
         return $this->createQueryBuilder('p')
@@ -248,7 +248,7 @@ class ProductRepository extends ServiceEntityRepository
         ;
     }
 
-    // The last position of the catalogue, drafts and trashed rows included: a new product is placed after all of them, whatever the public sees (see ProductListener)
+    // The last position of the catalogue, hidden and trashed rows included: a new product is placed after all of them, whatever the public sees (see ProductListener)
     public function findMaxPosition(): int
     {
         return (int) $this->createQueryBuilder('p')
@@ -258,19 +258,19 @@ class ProductRepository extends ServiceEntityRepository
         ;
     }
 
-    // Published and not trashed - what the shop stands behind, whether or not it can be bought yet
-    private function published(QueryBuilder $qb, string $alias = 'p'): QueryBuilder
+    // Neither hidden nor trashed - what the shop stands behind, whether or not it can be bought yet
+    private function visible(QueryBuilder $qb, string $alias = 'p'): QueryBuilder
     {
         return $qb
-            ->andWhere($alias . '.isPublished = true')
+            ->andWhere($alias . '.hidden = false')
             ->andWhere($alias . '.isDeleted = false')
         ;
     }
 
-    // What a listing shows: published, not trashed, and past its availability date when it has one
+    // What a listing shows: not hidden, not trashed, and past its availability date when it has one
     private function available(QueryBuilder $qb, string $alias = 'p'): QueryBuilder
     {
-        return $this->published($qb, $alias)
+        return $this->visible($qb, $alias)
             ->andWhere($alias . '.availableAt < :now OR ' . $alias . '.availableAt IS NULL')
             ->setParameter('now', new \DateTime())
         ;

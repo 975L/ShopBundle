@@ -38,7 +38,7 @@ class ProductCategoryController extends AbstractController
             '@c975LShop/category/display.html.twig',
             [
                 'category' => $category,
-                // Read through the repository rather than off the association: a category holds its drafts and its trashed products too, which the page would otherwise card up and link to a 404
+                // Read through the repository rather than off the association: a category holds its hidden and its trashed products too, which the page would otherwise card up and link to a 404
                 'products' => $this->productService->findByCategorySlug($category->getSlug()),
             ]
         );

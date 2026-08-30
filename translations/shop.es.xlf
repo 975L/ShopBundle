@@ -186,6 +186,10 @@
                 <source>description.guided_step_shop_product_categories</source>
                 <target>Un producto puede pertenecer a varias categorías y aparece en cada una de ellas.</target>
             </trans-unit>
+            <trans-unit id="hvGjmhN">
+                <source>description.guided_step_shop_product_hidden</source>
+                <target>Un producto oculto sigue siendo visible aquí y en ningún otro sitio.</target>
+            </trans-unit>
             <trans-unit id="vJ_8wza">
                 <source>description.guided_step_shop_product_item_add</source>
                 <target>Un producto sin artículo no tiene precio ni forma de entrar en la cesta.</target>
@@ -206,13 +210,9 @@
                 <source>description.guided_step_shop_product_price</source>
                 <target>El precio, su tipo de IVA y su moneda, y el precio tachado solo si se aplicó realmente en los últimos treinta días.</target>
             </trans-unit>
-            <trans-unit id="IwN2Tz8">
-                <source>description.guided_step_shop_product_published</source>
-                <target>Un producto no publicado sigue siendo visible aquí y en ningún otro sitio.</target>
-            </trans-unit>
             <trans-unit id="rBwfZj2">
                 <source>description.guided_step_shop_product_save</source>
-                <target>La ficha está en línea en cuanto se guarda publicada.</target>
+                <target>La ficha está en línea en cuanto se guarda sin ocultar.</target>
             </trans-unit>
             <trans-unit id="TL1nzmE">
                 <source>description.guided_step_shop_product_title</source>
@@ -710,6 +710,10 @@
                 <source>label.guided_step_shop_product_categories</source>
                 <target>Clasificarlo</target>
             </trans-unit>
+            <trans-unit id=".Yx97JL">
+                <source>label.guided_step_shop_product_hidden</source>
+                <target>Mostrarlo</target>
+            </trans-unit>
             <trans-unit id="LiJ8rGX">
                 <source>label.guided_step_shop_product_item_add</source>
                 <target>Añadir el primer artículo</target>
@@ -729,10 +733,6 @@
             <trans-unit id="vXhca05">
                 <source>label.guided_step_shop_product_price</source>
                 <target>Rellenar su precio</target>
-            </trans-unit>
-            <trans-unit id="URJcqtW">
-                <source>label.guided_step_shop_product_published</source>
-                <target>Publicarlo</target>
             </trans-unit>
             <trans-unit id="7ozDsTN">
                 <source>label.guided_step_shop_product_save</source>
@@ -845,6 +845,10 @@
             <trans-unit id=".5Y0OQS">
                 <source>label.health_check_shop_undelivered_downloads_ok</source>
                 <target>Cada pedido reciente con un archivo se ha entregado</target>
+            </trans-unit>
+            <trans-unit id="w3xdU2K">
+                <source>label.hidden</source>
+                <target>Oculto</target>
             </trans-unit>
             <trans-unit id="cBE2pj8">
                 <source>label.in_stock</source>
@@ -986,9 +990,9 @@
                 <source>label.product_item_file_help</source>
                 <target>El archivo que se enviará para descargar</target>
             </trans-unit>
-            <trans-unit id="3w3.u.7">
-                <source>label.product_item_published_help</source>
-                <target>Desmarcar para retirar este artículo de la venta, sin eliminarlo ni perder su archivo</target>
+            <trans-unit id="p2tXQxl">
+                <source>label.product_item_hidden_help</source>
+                <target>Marcar para retirar este artículo de la venta, sin eliminarlo ni perder su archivo</target>
             </trans-unit>
             <trans-unit id="MKGqUz2">
                 <source>label.product_item_service_help</source>
@@ -1005,10 +1009,6 @@
             <trans-unit id="AxJkhgD">
                 <source>label.products_in_category</source>
                 <target>Artículos de la categoría %category%</target>
-            </trans-unit>
-            <trans-unit id="JNo2Slc">
-                <source>label.published</source>
-                <target>Publicado</target>
             </trans-unit>
             <trans-unit id="bPEKjFs">
                 <source>label.refine</source>
@@ -1270,6 +1270,10 @@
                 <source>text.download_link_expired</source>
                 <target>Este enlace de descarga ha caducado y ya no es válido.</target>
             </trans-unit>
+            <trans-unit id="8y0K8dr">
+                <source>text.hidden</source>
+                <target>Un producto oculto no aparece ni en la tienda, ni en la búsqueda, ni en el sitemap, ni en los bloques que lo nombran: su ficha se lee con la acción Previsualizar.</target>
+            </trans-unit>
             <trans-unit id="093PkqA">
                 <source>text.item_already_downloaded</source>
                 <target>Este artículo ya fue descargado en la fecha indicada. Ya no está disponible.</target>
@@ -1277,10 +1281,6 @@
             <trans-unit id="8c.LYZW">
                 <source>text.items_management</source>
                 <target>Añada elementos SIN medios/archivos, luego agréguelos después, de lo contrario no funciona.</target>
-            </trans-unit>
-            <trans-unit id="IlGRDlM">
-                <source>text.published</source>
-                <target>Un producto no publicado no aparece ni en la tienda, ni en la búsqueda, ni en el sitemap, ni en los bloques que lo nombran: su ficha se lee con la acción Previsualizar.</target>
             </trans-unit>
             <trans-unit id="B.vPyMX">
                 <source>text.shop_blocks_help</source>

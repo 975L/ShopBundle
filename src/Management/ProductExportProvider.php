@@ -34,7 +34,7 @@ class ProductExportProvider implements ExportProviderInterface
         return ProductImportProvider::KIND;
     }
 
-    // findBy() rather than the repository's own findAll(), which only answers what the shop stands behind (see ProductRepository::findAllSorted): a sync carries the drafts being written and the recycle bin too, both of them work an admin would not expect an export to drop
+    // findBy() rather than the repository's own findAll(), which only answers what the shop stands behind (see ProductRepository::findAllSorted): a sync carries the hidden products being written and the recycle bin too, both of them work an admin would not expect an export to drop
     public function exportAll(): array
     {
         return $this->serialize($this->productRepository->findBy([], ['position' => 'ASC']));
@@ -87,7 +87,7 @@ class ProductExportProvider implements ExportProviderInterface
             'description' => $product->getDescription(),
             'brand' => $product->getBrand(),
             'position' => $product->getPosition(),
-            'isPublished' => $product->isPublished(),
+            'hidden' => $product->isHidden(),
             // The archive is a faithful copy: a product exported out of the recycle bin comes back to the recycle bin, not into the catalogue
             'isDeleted' => $product->isDeleted(),
             'availableAt' => $product->getAvailableAt()?->format(\DateTimeInterface::ATOM),
@@ -125,7 +125,7 @@ class ProductExportProvider implements ExportProviderInterface
             'orderedQuantity' => $item->getOrderedQuantity(),
             'service' => $item->isService(),
             // The archive is a faithful copy here too: an item exported offline comes back offline
-            'isPublished' => $item->isPublished(),
+            'hidden' => $item->isHidden(),
             'itemCondition' => $item->getItemCondition(),
             'giftCardValue' => $item->getGiftCardValue(),
             'position' => $item->getPosition(),

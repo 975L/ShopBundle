@@ -22,8 +22,8 @@
 {% set showsRating = config('shop-rating')|to_bool %}
 
 {% block content %}
-    {# An editor reading a draft before it goes online (see ProductController::preview()) - the sheet is otherwise the public one, so it says which of the two this is #}
-    {% if isPreview|default(false) and not product.isPublished %}
+    {# An editor reading a hidden product before it is shown (see ProductController::preview()) - the sheet is otherwise the public one, so it says which of the two this is #}
+    {% if isPreview|default(false) and product.hidden %}
         <twig:c975LUi:Alert:Alert type="warning" message="{{ 'label.preview_mode'|trans }}" />
     {% endif %}
     <twig:c975LShop:Shop:TestMode/>
@@ -68,7 +68,7 @@
                     <div class="block-editable"{% if editUrl %} data-block-edit-url="{{ shop_product_edit_url(product, 'items') }}"{% endif %}>
                         <h2 id="items">{{ 'label.items'|trans }}</h2>
                         {% if product.availableAt == null or product.availableAt|date('Ymd') <= "now"|date("Ymd") %}
-                            <twig:c975LShop:Product:Items items="{{ product.publishedItems }}"/>
+                            <twig:c975LShop:Product:Items items="{{ product.visibleItems }}"/>
                         {% else %}
                             <twig:c975LUi:Alert:Alert type="warning">
                                 {{ 'label.product_not_yet_available'|trans({}, 'shop') }} {{ product.availableAt|date('d/m/Y') }}.

@@ -114,10 +114,10 @@ class ProductItemType extends AbstractType
                 'required' => false,
                 'help' => 'label.product_item_service_help',
             ])
-            ->add('isPublished', CheckboxType::class, [
-                'label' => 'label.published',
+            ->add('hidden', CheckboxType::class, [
+                'label' => 'label.hidden',
                 'required' => false,
-                'help' => 'label.product_item_published_help',
+                'help' => 'label.product_item_hidden_help',
             ])
             ->add('file', ProductItemFileType::class, [
                 'label' => false,

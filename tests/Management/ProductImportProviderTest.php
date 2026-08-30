@@ -54,7 +54,7 @@ class ProductImportProviderTest extends TestCase
 
         $product = $this->persistedOf(Product::class)[0];
         $this->assertSame('affiche-montagne', $product->getSlug());
-        $this->assertTrue($product->isPublished());
+        $this->assertFalse($product->isHidden());
         // Put back over what ProductListener stamped on the flush, which is what the "new" badge is counted from
         $this->assertSame('2026-01-15', $product->getCreation()->format('Y-m-d'));
 
@@ -180,14 +180,36 @@ class ProductImportProviderTest extends TestCase
 
         $data = $this->productData();
         unset($data['items'][0]['file']);
-        $data['items'][0]['isPublished'] = false;
+        $data['items'][0]['hidden'] = true;
         $data['items'][] = ['slug' => 'a4', 'title' => 'A4', 'description' => 'Format A4', 'price' => 1500, 'currency' => 'eur', 'vat' => 20, 'position' => 1, 'media' => null, 'file' => null];
 
         $this->createProvider($projectDir)->import([$data], $filesDir);
 
         $items = $this->persistedOf(Product::class)[0]->getItems();
-        $this->assertFalse($items->first()->isPublished());
-        $this->assertTrue($items->last()->isPublished());
+        $this->assertTrue($items->first()->isHidden());
+        $this->assertFalse($items->last()->isHidden());
+
+        new Filesystem()->remove([$projectDir, $filesDir]);
+    }
+
+    // An archive taken before the switch was turned round carries "isPublished" and no "hidden": read the other way, a whole catalogue an admin had taken down would land on sale
+    public function testAnArchiveCarryingTheOldPublishedFlagIsReadTheSameWay(): void
+    {
+        $projectDir = $this->createDir();
+        $filesDir = $this->createDir();
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+
+        $data = $this->productData();
+        unset($data['hidden']);
+        $data['isPublished'] = false;
+        unset($data['items'][0]['file']);
+        $data['items'][0]['isPublished'] = false;
+
+        $this->createProvider($projectDir)->import([$data], $filesDir);
+
+        $product = $this->persistedOf(Product::class)[0];
+        $this->assertTrue($product->isHidden());
+        $this->assertTrue($product->getItems()->first()->isHidden());
 
         new Filesystem()->remove([$projectDir, $filesDir]);
     }
@@ -219,7 +241,7 @@ class ProductImportProviderTest extends TestCase
             'title' => 'Affiche montagne',
             'description' => 'Une affiche',
             'position' => 5,
-            'isPublished' => true,
+            'hidden' => false,
             'isDeleted' => false,
             'creation' => '2026-01-15T10:00:00+00:00',
             'categories' => [['slug' => 'affiches', 'name' => 'Affiches']],

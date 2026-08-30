@@ -60,9 +60,9 @@ class Product implements \Stringable, HasBlocksInterface
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
-    // A product is written before it is sold: it stays out of the catalogue, of the sitemap, of the search and of every block until it is published, its sheet answering 404 in the meantime - an editor reads it through the preview action. The column defaults to true so an existing catalogue stays online the day it is created, the property to false so a product written from now on starts as a draft
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
-    private bool $isPublished = false;
+    // A product is written before it is sold: hidden, it stays out of the catalogue, of the sitemap, of the search and of every block, its sheet answering 404 in the meantime - an editor reads it through the preview action. The column defaults to false so an existing catalogue stays online the day it is created, the property to true so a product written from now on starts hidden
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $hidden = true;
 
     // The recycle bin: a trashed product keeps everything it holds and answers 410 on its own url, for as long as it can still be restored (see ProductCrudController)
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
@@ -285,14 +285,14 @@ class Product implements \Stringable, HasBlocksInterface
         return false;
     }
 
-    public function isPublished(): bool
+    public function isHidden(): bool
     {
-        return $this->isPublished;
+        return $this->hidden;
     }
 
-    public function setIsPublished(bool $isPublished): static
+    public function setHidden(bool $hidden): static
     {
-        $this->isPublished = $isPublished;
+        $this->hidden = $hidden;
 
         return $this;
     }
@@ -302,13 +302,13 @@ class Product implements \Stringable, HasBlocksInterface
         return $this->isDeleted;
     }
 
-    // Trashing a product unpublishes it too, the two never disagreeing: a row of the recycle bin is out of the catalogue whatever its own switch said before
+    // Trashing a product hides it too, the two never disagreeing: a row of the recycle bin is out of the catalogue whatever its own switch said before
     public function setIsDeleted(bool $isDeleted): static
     {
         $this->isDeleted = $isDeleted;
 
         if ($isDeleted) {
-            $this->isPublished = false;
+            $this->hidden = true;
         }
 
         return $this;
@@ -339,9 +339,9 @@ class Product implements \Stringable, HasBlocksInterface
      *
      * @return Collection<int, ProductItem>
      */
-    public function getPublishedItems(): Collection
+    public function getVisibleItems(): Collection
     {
-        return $this->items->filter(static fn (ProductItem $item): bool => $item->isPublished());
+        return $this->items->filter(static fn (ProductItem $item): bool => !$item->isHidden());
     }
 
     public function addItem(ProductItem $item): static

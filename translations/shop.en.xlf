@@ -186,6 +186,10 @@
                 <source>description.guided_step_shop_product_categories</source>
                 <target>A product can belong to several categories, and shows up under each of them.</target>
             </trans-unit>
+            <trans-unit id="hvGjmhN">
+                <source>description.guided_step_shop_product_hidden</source>
+                <target>A hidden product stays visible here and nowhere else.</target>
+            </trans-unit>
             <trans-unit id="vJ_8wza">
                 <source>description.guided_step_shop_product_item_add</source>
                 <target>A product with no item has no price, and no way into the basket.</target>
@@ -206,13 +210,9 @@
                 <source>description.guided_step_shop_product_price</source>
                 <target>The price, its VAT rate and its currency, plus the struck-through price only if it really was charged over the last thirty days.</target>
             </trans-unit>
-            <trans-unit id="IwN2Tz8">
-                <source>description.guided_step_shop_product_published</source>
-                <target>An unpublished product stays visible here and nowhere else.</target>
-            </trans-unit>
             <trans-unit id="rBwfZj2">
                 <source>description.guided_step_shop_product_save</source>
-                <target>The sheet is online the moment it is saved published.</target>
+                <target>The sheet is online the moment it is saved not hidden.</target>
             </trans-unit>
             <trans-unit id="TL1nzmE">
                 <source>description.guided_step_shop_product_title</source>
@@ -710,6 +710,10 @@
                 <source>label.guided_step_shop_product_categories</source>
                 <target>Classify it</target>
             </trans-unit>
+            <trans-unit id=".Yx97JL">
+                <source>label.guided_step_shop_product_hidden</source>
+                <target>Show it</target>
+            </trans-unit>
             <trans-unit id="LiJ8rGX">
                 <source>label.guided_step_shop_product_item_add</source>
                 <target>Add the first item</target>
@@ -729,10 +733,6 @@
             <trans-unit id="vXhca05">
                 <source>label.guided_step_shop_product_price</source>
                 <target>Fill in its price</target>
-            </trans-unit>
-            <trans-unit id="URJcqtW">
-                <source>label.guided_step_shop_product_published</source>
-                <target>Publish it</target>
             </trans-unit>
             <trans-unit id="7ozDsTN">
                 <source>label.guided_step_shop_product_save</source>
@@ -845,6 +845,10 @@
             <trans-unit id=".5Y0OQS">
                 <source>label.health_check_shop_undelivered_downloads_ok</source>
                 <target>Every recent order holding a file was delivered</target>
+            </trans-unit>
+            <trans-unit id="w3xdU2K">
+                <source>label.hidden</source>
+                <target>Hidden</target>
             </trans-unit>
             <trans-unit id="cBE2pj8">
                 <source>label.in_stock</source>
@@ -986,9 +990,9 @@
                 <source>label.product_item_file_help</source>
                 <target>The file that will be sent for download</target>
             </trans-unit>
-            <trans-unit id="3w3.u.7">
-                <source>label.product_item_published_help</source>
-                <target>Uncheck to withdraw this item from sale, without deleting it or losing its file</target>
+            <trans-unit id="p2tXQxl">
+                <source>label.product_item_hidden_help</source>
+                <target>Tick to withdraw this item from sale, without deleting it or losing its file</target>
             </trans-unit>
             <trans-unit id="MKGqUz2">
                 <source>label.product_item_service_help</source>
@@ -1005,10 +1009,6 @@
             <trans-unit id="AxJkhgD">
                 <source>label.products_in_category</source>
                 <target>Items in the %category% category</target>
-            </trans-unit>
-            <trans-unit id="JNo2Slc">
-                <source>label.published</source>
-                <target>Published</target>
             </trans-unit>
             <trans-unit id="bPEKjFs">
                 <source>label.refine</source>
@@ -1270,6 +1270,10 @@
                 <source>text.download_link_expired</source>
                 <target>This download link has expired and is no longer valid.</target>
             </trans-unit>
+            <trans-unit id="8y0K8dr">
+                <source>text.hidden</source>
+                <target>A hidden product appears neither in the shop, nor in the search, nor in the sitemap, nor in the blocks naming it: its sheet is read through the Preview action.</target>
+            </trans-unit>
             <trans-unit id="093PkqA">
                 <source>text.item_already_downloaded</source>
                 <target>This item was already downloaded on the date below. It is no longer available.</target>
@@ -1277,10 +1281,6 @@
             <trans-unit id="8c.LYZW">
                 <source>text.items_management</source>
                 <target>Add items WITHOUT media/files and then add them afterwards, otherwise it doesn't work.</target>
-            </trans-unit>
-            <trans-unit id="IlGRDlM">
-                <source>text.published</source>
-                <target>An unpublished product appears neither in the shop, nor in the search, nor in the sitemap, nor in the blocks naming it: its sheet is read through the Preview action.</target>
             </trans-unit>
             <trans-unit id="B.vPyMX">
                 <source>text.shop_blocks_help</source>

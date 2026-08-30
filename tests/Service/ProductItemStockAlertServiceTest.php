@@ -70,19 +70,19 @@ class ProductItemStockAlertServiceTest extends TestCase
         );
     }
 
-    private function item(?int $limited, ?int $ordered, bool $published = true): ProductItem
+    private function item(?int $limited, ?int $ordered, bool $hidden = false): ProductItem
     {
         $product = new Product()
             ->setTitle('The book')
             ->setSlug('the-book')
-            ->setIsPublished(true)
+            ->setHidden(false)
         ;
 
         return new ProductItem()
             ->setTitle('Paperback')
             ->setLimitedQuantity($limited)
             ->setOrderedQuantity($ordered)
-            ->setIsPublished($published)
+            ->setHidden($hidden)
             ->setProduct($product)
         ;
     }
@@ -171,7 +171,7 @@ class ProductItemStockAlertServiceTest extends TestCase
     // An item back in stock but taken offline is not something the visitor could buy when they click
     public function testAnItemTakenOfflineIsNotWrittenAbout(): void
     {
-        $alert = $this->alert($this->item(5, 2, published: false));
+        $alert = $this->alert($this->item(5, 2, hidden: true));
         $service = $this->createService($this->repositoryReturning([$alert]));
 
         $this->assertSame(0, $service->notifyPending(50));
@@ -181,7 +181,7 @@ class ProductItemStockAlertServiceTest extends TestCase
     public function testAProductTakenOfflineIsNotWrittenAbout(): void
     {
         $item = $this->item(5, 2);
-        $item->getProduct()?->setIsPublished(false);
+        $item->getProduct()?->setHidden(true);
         $alert = $this->alert($item);
 
         $service = $this->createService($this->repositoryReturning([$alert]));

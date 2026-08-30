@@ -22,7 +22,7 @@ class ProductStateService implements ProductStateServiceInterface
     // Returns the card's badge, price and formats, the badge being the single most useful thing to say: what cannot be bought comes before what is running out, which comes before what is merely recent
     public function getState(Product $product): array
     {
-        $items = $product->getPublishedItems();
+        $items = $product->getVisibleItems();
         $cheapest = $this->getCheapestItem($product);
         $price = null === $cheapest ? null : (int) $cheapest->getPrice();
         $soldOut = $this->isSoldOut($product);
@@ -90,7 +90,7 @@ class ProductStateService implements ProductStateServiceInterface
     {
         $prices = [];
 
-        foreach ($product->getPublishedItems() as $item) {
+        foreach ($product->getVisibleItems() as $item) {
             $prices[] = (int) $item->getPrice();
         }
 
@@ -126,7 +126,7 @@ class ProductStateService implements ProductStateServiceInterface
     {
         $cheapest = null;
 
-        foreach ($product->getPublishedItems() as $item) {
+        foreach ($product->getVisibleItems() as $item) {
             if (null === $cheapest || (int) $item->getPrice() < (int) $cheapest->getPrice()) {
                 $cheapest = $item;
             }
@@ -178,7 +178,7 @@ class ProductStateService implements ProductStateServiceInterface
     // Whether at least one item is out of stock rather than withdrawn - what tells the two unbuyable states apart on the card
     private function hasItemSoldOut(Product $product): bool
     {
-        foreach ($product->getPublishedItems() as $item) {
+        foreach ($product->getVisibleItems() as $item) {
             if ($this->isItemSoldOut($item)) {
                 return true;
             }
@@ -190,7 +190,7 @@ class ProductStateService implements ProductStateServiceInterface
     // A product cannot be bought when not one of its items can still be ordered - a product with nothing published at all is not sold out, it is simply not for sale yet
     private function isSoldOut(Product $product): bool
     {
-        $items = $product->getPublishedItems();
+        $items = $product->getVisibleItems();
         if (0 === count($items)) {
             return false;
         }
@@ -207,7 +207,7 @@ class ProductStateService implements ProductStateServiceInterface
     // Whether at least one item is capped, whatever is left of it
     private function hasLimitedQuantity(Product $product): bool
     {
-        foreach ($product->getPublishedItems() as $item) {
+        foreach ($product->getVisibleItems() as $item) {
             if ((int) $item->getLimitedQuantity() > 0) {
                 return true;
             }
@@ -227,7 +227,7 @@ class ProductStateService implements ProductStateServiceInterface
     // The currency of the items, the euro when the product carries none
     private function getCurrency(Product $product): string
     {
-        foreach ($product->getPublishedItems() as $item) {
+        foreach ($product->getVisibleItems() as $item) {
             if (null !== $item->getCurrency()) {
                 return $item->getCurrency();
             }
@@ -241,7 +241,7 @@ class ProductStateService implements ProductStateServiceInterface
     {
         $formats = [];
 
-        foreach ($product->getPublishedItems() as $item) {
+        foreach ($product->getVisibleItems() as $item) {
             $formats[] = $this->getItemFormat($item);
         }
 

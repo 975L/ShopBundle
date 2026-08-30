@@ -148,9 +148,9 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'description' => 'description.guided_step_shop_product_price',
                 ],
                 [
-                    'label' => 'label.guided_step_shop_product_published',
-                    'description' => 'description.guided_step_shop_product_published',
-                    'highlight' => '#Product_isPublished',
+                    'label' => 'label.guided_step_shop_product_hidden',
+                    'description' => 'description.guided_step_shop_product_hidden',
+                    'highlight' => '#Product_hidden',
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_save',

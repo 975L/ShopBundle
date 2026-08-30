@@ -47,8 +47,8 @@ class ProductItemStockAlertRepository extends ServiceEntityRepository
             ->innerJoin('a.productItem', 'i')
             ->innerJoin('i.product', 'p')
             ->andWhere('a.notifiedAt IS NULL')
-            ->andWhere('i.isPublished = true')
-            ->andWhere('p.isPublished = true')
+            ->andWhere('i.hidden = false')
+            ->andWhere('p.hidden = false')
             ->andWhere('p.isDeleted = false')
             ->andWhere('p.availableAt IS NULL OR p.availableAt <= :now')
             // Back in stock: no cap at all, or a cap the orders have not reached. An item capped at 0 was withdrawn and never satisfies this, which is exactly what keeps it out of the window

@@ -110,8 +110,9 @@ class ProductImportProvider implements ImportProviderInterface
             // An archive written before the card had a visual carries neither: the text stays empty and the panel stays on, which is the default a card is sold with
             ->setGiftCardText($item['giftCardText'] ?? null)
             ->setGiftCardScratch($item['giftCardScratch'] ?? true)
-            // Published first, trashed second: trashing unpublishes (see Product::setIsDeleted), and the other order would put a product of the recycle bin back into the catalogue
-            ->setIsPublished($item['isPublished'] ?? false)
+            // Hidden first, trashed second: trashing hides (see Product::setIsDeleted), and the other order would put a product of the recycle bin back into the catalogue
+            // An archive written before the switch was turned round carries "isPublished" instead, and is read the same way rather than landing every product in the catalogue
+            ->setHidden($item['hidden'] ?? !($item['isPublished'] ?? false))
             ->setIsDeleted($item['isDeleted'] ?? false);
     }
 
@@ -228,8 +229,8 @@ class ProductImportProvider implements ImportProviderInterface
             // Carried like the rest: an archive is a copy of a shop at a moment, stock counters included
             ->setOrderedQuantity($itemData['orderedQuantity'] ?? null)
             ->setService($itemData['service'] ?? null)
-            // An archive written before the column existed carries items that were all on sale, which is what they come back as
-            ->setIsPublished($itemData['isPublished'] ?? true)
+            // An archive written before the column existed carries items that were all on sale, which is what they come back as - and one written before the switch was turned round carries "isPublished", read the same way
+            ->setHidden($itemData['hidden'] ?? !($itemData['isPublished'] ?? true))
             ->setItemCondition($itemData['itemCondition'] ?? null)
             ->setGiftCardValue($itemData['giftCardValue'] ?? null)
             ->setPosition($itemData['position'] ?? null);

@@ -28,8 +28,8 @@ final class ButtonComponent
     private function getProduct(): ?Product
     {
         if (null === $this->product && null !== $this->slug) {
-            // Named by a template or by a block, so it only renders what the shop stands behind: a draft or a trashed product answers null and the component renders nothing
-            $this->product = $this->productRepository->findOnePublishedBySlug($this->slug);
+            // Named by a template or by a block, so it only renders what the shop stands behind: a hidden or a trashed product answers null and the component renders nothing
+            $this->product = $this->productRepository->findOneVisibleBySlug($this->slug);
         }
 
         return $this->product;

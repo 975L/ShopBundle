@@ -63,12 +63,12 @@ class ProductItemStockAlertControllerTest extends TestCase
         return $controller;
     }
 
-    private function item(bool $productPublished = true, bool $itemPublished = true, bool $productDeleted = false): ProductItem
+    private function item(bool $productHidden = false, bool $itemHidden = false, bool $productDeleted = false): ProductItem
     {
         $product = new Product()
             ->setTitle('The book')
             ->setSlug('the-book')
-            ->setIsPublished($productPublished)
+            ->setHidden($productHidden)
         ;
 
         if ($productDeleted) {
@@ -79,7 +79,7 @@ class ProductItemStockAlertControllerTest extends TestCase
             ->setTitle('Paperback')
             ->setLimitedQuantity(5)
             ->setOrderedQuantity(5)
-            ->setIsPublished($itemPublished)
+            ->setHidden($itemHidden)
             ->setProduct($product)
         ;
     }
@@ -94,12 +94,12 @@ class ProductItemStockAlertControllerTest extends TestCase
     }
 
     // A page composed against a stale card must not take an address for something nobody can reach any more
-    public function testAnItemOfAnUnpublishedProductIsNotFound(): void
+    public function testAnItemOfAHiddenProductIsNotFound(): void
     {
         $this->expectException(NotFoundHttpException::class);
 
         $this->createController($this->createStub(ProductItemStockAlertServiceInterface::class))
-            ->new(new Request(), $this->item(productPublished: false))
+            ->new(new Request(), $this->item(productHidden: true))
         ;
     }
 
@@ -117,7 +117,7 @@ class ProductItemStockAlertControllerTest extends TestCase
         $this->expectException(NotFoundHttpException::class);
 
         $this->createController($this->createStub(ProductItemStockAlertServiceInterface::class))
-            ->new(new Request(), $this->item(itemPublished: false))
+            ->new(new Request(), $this->item(itemHidden: true))
         ;
     }
 

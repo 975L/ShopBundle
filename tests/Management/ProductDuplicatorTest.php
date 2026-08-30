@@ -143,11 +143,11 @@ class ProductDuplicatorTest extends TestCase
     // Nothing else says a copy is meant to be sold as it stands, and a catalogue with no draft state would have put it online the moment it was written
     public function testTheCopyIsADraft(): void
     {
-        $product = $this->createProduct()->setIsPublished(true);
+        $product = $this->createProduct()->setHidden(false);
 
         $copy = $this->createDuplicator()->duplicate($product);
 
-        $this->assertFalse($copy->isPublished());
+        $this->assertTrue($copy->isHidden());
         $this->assertFalse($copy->isDeleted());
     }
 
@@ -166,11 +166,11 @@ class ProductDuplicatorTest extends TestCase
     public function testAnItemLeftOfflineStaysOfflineInTheCopy(): void
     {
         $product = $this->createProduct();
-        $product->getItems()->first()->setIsPublished(false);
+        $product->getItems()->first()->setHidden(true);
 
         $copy = $this->createDuplicator()->duplicate($product);
 
-        $this->assertFalse($copy->getItems()->first()->isPublished());
+        $this->assertTrue($copy->getItems()->first()->isHidden());
     }
 
     // The brand and the offer travel with the copy, which is the same product priced the same way

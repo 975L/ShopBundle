@@ -18,7 +18,7 @@
                     <p class="gift-card-offer-title">{{ product.title }}</p>
                     <div class="gift-card-offer-amounts">
                         {# "|filter" and not a "for ... if": that modifier was dropped in Twig 3 #}
-                        {% for item in product.publishedItems|filter(item => item.giftCard) %}
+                        {% for item in product.visibleItems|filter(item => item.giftCard) %}
                             <twig:c975LShop:ProductItem:AddButton productItem="{{ item }}" type="secondary"/>
                         {% endfor %}
                     </div>

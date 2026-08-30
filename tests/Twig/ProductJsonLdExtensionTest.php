@@ -81,6 +81,14 @@ class ProductJsonLdExtensionTest extends TestCase
         $this->assertArrayNotHasKey('image', $graph['offers'][0]);
     }
 
+    // An item set aside publishes no offer, so its picture has no offer to be gathered for either
+    public function testAHiddenItemsMediaReachesNoOffer(): void
+    {
+        $product = $this->product()->addItem($this->item('a2')->setHidden(true)->setMedia(new ProductItemMedia()->setName('medias/shop/items/affiche-a2.webp')));
+
+        $this->assertStringNotContainsString('affiche-a2.webp', $this->extension->productJsonLd($product));
+    }
+
     // Nothing to publish, nothing rendered: the sheet's <script> tag is left out entirely
     public function testAProductWithoutTitleRendersNothing(): void
     {

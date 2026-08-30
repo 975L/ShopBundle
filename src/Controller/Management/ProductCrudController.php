@@ -107,12 +107,12 @@ class ProductCrudController extends AbstractCrudController
     {
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
 
-        // Trashed products are unpublished by definition (see deleteEntity() and Product::setIsDeleted()), so the column would hold "no" for every row of that view - hidden rather than left there saying nothing
-        $isPublishedField = BooleanField::new('isPublished')
-            ->setLabel(t('label.published', [], 'shop'))
-            ->setHelp(t('text.published', [], 'shop'));
+        // Trashed products are hidden by definition (see deleteEntity() and Product::setIsDeleted()), so the column would hold "yes" for every row of that view - taken off rather than left there saying nothing
+        $hiddenField = BooleanField::new('hidden')
+            ->setLabel(t('label.hidden', [], 'shop'))
+            ->setHelp(t('text.hidden', [], 'shop'));
         if ($this->isTrash()) {
-            $isPublishedField->hideOnIndex();
+            $hiddenField->hideOnIndex();
         }
 
         return [
@@ -120,7 +120,7 @@ class ProductCrudController extends AbstractCrudController
                 ->setFormTypeOption('disabled', 'disabled'),
             TextField::new('title')
                 ->setLabel(t('label.title', [], 'shop')),
-            $isPublishedField,
+            $hiddenField,
             SlugField::new('slug')
                 ->setLabel(t('label.slug', [], 'shop'))
                 ->setTargetFieldName('title')
@@ -241,7 +241,7 @@ class ProductCrudController extends AbstractCrudController
         $viewOnSiteAction = Action::new('viewOnSite', t('action.view_on_site', [], 'shop'), 'fa fa-external-link-alt')
             ->linkToUrl(fn (Product $product): string => $this->generateUrl('product_display', ['slug' => $product->getSlug()]))
             ->setHtmlAttributes(['target' => '_blank'])
-            ->displayIf(static fn (Product $product): bool => $product->isPublished() && !$product->isDeleted() && '' !== (string) $product->getSlug())
+            ->displayIf(static fn (Product $product): bool => !$product->isHidden() && !$product->isDeleted() && '' !== (string) $product->getSlug())
             ->addCssClass('btn btn-secondary')
         ;
 
@@ -257,11 +257,11 @@ class ProductCrudController extends AbstractCrudController
         $previewAction = Action::new('preview', t('action.preview', [], 'shop'), 'fa fa-eye')
             ->linkToUrl(fn (Product $product): string => $this->generateUrl('product_preview', ['slug' => $product->getSlug()]))
             ->setHtmlAttributes(['target' => '_blank'])
-            ->displayIf(static fn (Product $product): bool => !$product->isPublished() && !$product->isDeleted() && '' !== (string) $product->getSlug())
+            ->displayIf(static fn (Product $product): bool => $product->isHidden() && !$product->isDeleted() && '' !== (string) $product->getSlug())
             ->addCssClass('btn btn-secondary')
         ;
 
-        // Takes a product back out of the recycle bin, with everything it still holds - it comes back as a draft, its own switch having been dropped when it was trashed
+        // Takes a product back out of the recycle bin, with everything it still holds - it comes back hidden, its own switch having been turned on when it was trashed
         $restoreAction = Action::new('restore', t('action.restore', [], 'shop'), 'fa fa-trash-restore')
             ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('restore', $product, self::RESTORE_CSRF_TOKEN, true))
             ->displayIf(static fn (Product $product): bool => $product->isDeleted())
@@ -455,7 +455,7 @@ class ProductCrudController extends AbstractCrudController
         $entityManager->persist($redirect->setToUrl($toUrl)->setPermanent(true));
     }
 
-    // Takes a product back out of the recycle bin, untouched - it comes back as a draft, to be read once before it is published again
+    // Takes a product back out of the recycle bin, untouched - it comes back hidden, to be read once before it is shown again
     #[AdminRoute(options: ['methods' => ['GET']])]
     public function restore(Request $request, ProductRepository $productRepository, EntityManagerInterface $entityManager): Response
     {
@@ -530,6 +530,9 @@ class ProductCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
+            // Named in the editor's own language: with no label, EasyAdmin falls back on the class name and prints "Product" on every screen and every button
+            ->setEntityLabelInSingular(t('label.product', [], 'shop'))
+            ->setEntityLabelInPlural(t('label.products', [], 'shop'))
             ->setEntityPermission($this->configService->get('site-role-admin'))
             ->setDefaultSort(['position' => 'ASC'])
             ->overrideTemplate('crud/index', '@c975LShop/management/product_crud_index.html.twig')
@@ -618,7 +621,7 @@ class ProductCrudController extends AbstractCrudController
         return $positions;
     }
 
-    // Copies the product the action was clicked on and opens the copy, which is the screen it has to be named and priced on before it is left in the catalogue: a product carries no draft state, so the copy is online the moment it is written
+    // Copies the product the action was clicked on and opens the copy, which is the screen it has to be named and priced on before it is left in the catalogue: the copy is hidden, so nothing of it is on sale before that screen is filled in
     #[AdminRoute(options: ['methods' => ['GET']])]
     public function duplicate(Request $request, ProductRepository $productRepository, ProductDuplicator $productDuplicator): Response
     {
