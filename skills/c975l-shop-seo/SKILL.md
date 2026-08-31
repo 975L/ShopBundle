@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-seo
-description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork."
+description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork."
 ---
 
 # c975L ShopBundle — structured data, sitemap, health, recommendations
@@ -143,8 +143,8 @@ the markup** — the builder being right proves nothing about a site whose own t
 
 `ProductAffinity` stores a co-purchase count and a score per product pair, recomputed by
 `c975l:shop:affinity:calculate` — monthly, since it is a full pass over the orders.
-`ProductRecommendationService` scores candidates on three criteria: same category (40 points), similar
-price (20), historical co-purchases (30).
+`ProductRecommendationService` scores candidates on three criteria: same category (45 points), similar
+price (20), historical co-purchases (35).
 
 **A product's hand-picked `relatedProducts` come first and replace the calculation entirely** — the
 affinities read a sales history, which is exactly what a catalogue just filled in does not have. Only
@@ -154,6 +154,10 @@ anything.
 It serves both the sheet's "you might also like" (`getSimilarProducts()`) and PaymentBundle's basket
 recommendations (`BasketRecommendationProviderInterface`). Only `product` items are read from a basket —
 never a crowdfunding counterpart or a lottery ticket.
+
+`getTemplate()` names `@c975LShop/components/Product/Recommendations.html.twig`, which the basket page
+includes with the entries as a `recommendations` variable. **The markup belongs here, not to
+PaymentBundle** — the entries are `Product` entities, which it knows nothing of.
 
 **The affinities are a stored score, not a live query.** A block reading them shows what the last run
 computed, and that command invalidates the block cache itself: its bulk `DELETE` fires no Doctrine

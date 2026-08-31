@@ -16,6 +16,7 @@ use c975L\ShopBundle\Message\ProductItemDownloadMessage;
 use c975L\ShopBundle\Service\ProductItemDownloadService;
 use c975L\ShopBundle\Service\ProductItemDownloadServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
 class ProductItemDownloadMessageHandler
@@ -24,6 +25,7 @@ class ProductItemDownloadMessageHandler
         private readonly BasketRepository $basketRepository,
         private readonly BasketEmailSender $basketEmailSender,
         private readonly ProductItemDownloadServiceInterface $itemDownloadService,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -49,9 +51,10 @@ class ProductItemDownloadMessageHandler
                 continue;
             }
 
+            // The address is built here and not in the email template: the route belongs to this bundle, PaymentBundle only laying the links out (see BasketDownloadProviderInterface)
             $downloadLinks[$id] = [
                 'title' => $fileItem['title'],
-                'token' => $token,
+                'url' => $this->urlGenerator->generate('shop_download', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL),
                 'size' => $fileItem['size'],
             ];
         }

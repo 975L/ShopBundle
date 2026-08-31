@@ -2,6 +2,15 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.5.1
+
+**Nothing to do**, beyond upgrading `c975l/payment-bundle` to ^6.6 along with it - the two releases go together,
+PaymentBundle asking this bundle where its catalogue is and which template draws its recommendations rather than
+naming them itself.
+
+`Shop:ViewButton` is left where it is, for a page that drops it in, but the basket no longer calls it: it draws
+PaymentBundle's own `Basket:ContinueShoppingButton`, whose label reads "continue shopping" rather than "shop".
+
 ### v2.5
 
 **Articles carry a shipping weight.** One nullable column, and nothing to backfill: an article left unweighed

@@ -20,6 +20,7 @@ use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // A card is money bought in advance: this bundle knows which of its items is one and what it is worth, PaymentBundle owns the money
@@ -182,6 +183,6 @@ class ProductGiftCardTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
 
-        return new ProductBasketItemProvider($itemService, $this->createStub(MessageBusInterface::class), $giftCardService, $translator);
+        return new ProductBasketItemProvider($itemService, $this->createStub(MessageBusInterface::class), $giftCardService, $translator, $this->createStub(UrlGeneratorInterface::class));
     }
 }

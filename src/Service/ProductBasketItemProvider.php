@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Service;
 
 use c975L\PaymentBundle\Contract\BasketItemProviderInterface;
+use c975L\PaymentBundle\Contract\CatalogueBasketItemProviderInterface;
 use c975L\PaymentBundle\Contract\GiftCardDesign;
 use c975L\PaymentBundle\Contract\WeighableBasketItemProviderInterface;
 use c975L\PaymentBundle\Entity\Basket;
@@ -18,22 +19,30 @@ use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\PaymentBundle\Service\VatCalculator;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Plugs product items into PaymentBundle's Basket/checkout engine (see BasketItemProviderInterface)
-class ProductBasketItemProvider implements BasketItemProviderInterface, WeighableBasketItemProviderInterface
+class ProductBasketItemProvider implements BasketItemProviderInterface, CatalogueBasketItemProviderInterface, WeighableBasketItemProviderInterface
 {
     public function __construct(
         private readonly ProductItemServiceInterface $productItemService,
         private readonly MessageBusInterface $messageBus,
         private readonly GiftCardService $giftCardService,
         private readonly TranslatorInterface $translator,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
     public function getKind(): string
     {
         return 'product';
+    }
+
+    // Where the basket sends a customer back to - the products themselves rather than the top of the shop page, which the button is clicked to get past (see CatalogueBasketItemProviderInterface)
+    public function getCatalogueUrl(): ?string
+    {
+        return $this->urlGenerator->generate('shop_index') . '#products';
     }
 
     public function findItem(int | string $id): ?object

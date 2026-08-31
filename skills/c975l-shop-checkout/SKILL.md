@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-checkout
-description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, WeighableBasketItemProviderInterface, getWeight, weight, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, c975l:shop:stock-alerts:send, isItemSoldOut, isItemAvailable, shop_stock_alert, ShopIntegrityHealthCheckProvider, ShopIntegrityHealthCheckAdviceProvider, shop-integrity, undelivered-downloads, missing-files, oversold-items, free-items, findSellable, findDeliveredBasketIds."
+description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, WeighableBasketItemProviderInterface, CatalogueBasketItemProviderInterface, getCatalogueUrl, Basket:ContinueShoppingButton, getWeight, weight, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, c975l:shop:stock-alerts:send, isItemSoldOut, isItemAvailable, shop_stock_alert, ShopIntegrityHealthCheckProvider, ShopIntegrityHealthCheckAdviceProvider, shop-integrity, undelivered-downloads, missing-files, oversold-items, free-items, findSellable, findDeliveredBasketIds."
 ---
 
 # c975L ShopBundle — buying, paying, delivering
@@ -95,6 +95,12 @@ PaymentBundle's own `Basket:ViewButton`. That button already holds the `data-bas
 `"quantity"` elements the controller fills. **Do not add a second element carrying either target** —
 Stimulus fills only the first, leaving the other permanently stale.
 
+`ProductBasketItemProvider` also implements `CatalogueBasketItemProviderInterface`, whose
+`getCatalogueUrl()` returns `shop_index` with a `#products` fragment: the basket's
+`Basket:ContinueShoppingButton` is sent back to the articles rather than to the top of the shop page.
+**PaymentBundle names no route of this bundle** — it draws no button at all when the provider answers
+null. `Shop:ViewButton` is left for a page dropping it in, but the basket no longer calls it.
+
 This bundle ships **no JavaScript**; everything on the client comes from PaymentBundle's `basket`
 controller.
 
@@ -132,7 +138,8 @@ A bought file is never served from where it was uploaded. `ProductItemFile` impl
    the private file into **`private/downloads/`** under a name whose trailing hash gives way to a fresh
    16-character token, records a `ProductItemDownload` **expiring in `VALIDITY_DAYS` days**, and returns
    the token.
-3. The handler emails the `shop_download` links.
+3. The handler emails the absolute `shop_download` URLs, generated here rather than in PaymentBundle's
+   template: the route is this bundle's own, and both readers hand over a ready `url`.
 4. `ProductItemDownloadController` resolves the token through `resolveFilePath()` and hands the copy over
    with UiBundle's `PrivateFileResponseFactory`.
 5. `c975l:shop:downloads:delete` deletes the copies whose link is spent, and the rows kept past

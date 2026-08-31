@@ -20,6 +20,15 @@ use PHPUnit\Framework\TestCase;
 // What a product sheet recommends: the products an editor picked, and the calculated affinities only when nobody picked any
 class ProductRecommendationServiceTest extends TestCase
 {
+    // PaymentBundle's basket includes whatever path comes back, so a renamed template breaks the page rather than this call
+    public function testTheBasketTemplateNamedIsOneThisBundleShips(): void
+    {
+        $template = $this->service()->getTemplate();
+
+        $this->assertSame('@c975LShop/components/Product/Recommendations.html.twig', $template);
+        $this->assertFileExists(\dirname(__DIR__, 2) . '/templates/' . str_replace('@c975LShop/', '', $template));
+    }
+
     public function testThePickedProductsComeBeforeTheCalculatedOnes(): void
     {
         $picked = $this->product('picked');

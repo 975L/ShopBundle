@@ -18,6 +18,7 @@ use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // What may be dropped in a basket: the sheet of a draft or of a trashed product answers 404 or 410, but its items keep the ids an old page still carries
@@ -37,7 +38,22 @@ class ProductBasketItemProviderTest extends TestCase
             $this->createStub(MessageBusInterface::class),
             $this->createStub(GiftCardService::class),
             $translator,
+            $this->urlGenerator(),
         );
+    }
+
+    private function urlGenerator(): UrlGeneratorInterface
+    {
+        $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
+        $urlGenerator->method('generate')->willReturn('/shop');
+
+        return $urlGenerator;
+    }
+
+    // Where the basket sends a customer back to, the products themselves rather than the top of the page - see CatalogueBasketItemProviderInterface
+    public function testTheCatalogueIsTheProductListing(): void
+    {
+        $this->assertSame('/shop#products', $this->createProvider()->getCatalogueUrl());
     }
 
     // One basket entry of the given quantity, keyed by item id as PaymentBundle stores it

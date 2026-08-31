@@ -37,6 +37,12 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         return $this->getRecommendationsForBasket($basket, $limit);
     }
 
+    // The products are this bundle's own entities, so is the markup showing them - see BasketRecommendationProviderInterface
+    public function getTemplate(): string
+    {
+        return '@c975LShop/components/Product/Recommendations.html.twig';
+    }
+
     public function getRecommendationsForBasket(Basket $basket, int $limit = 4): array
     {
         $basketProductIds = $this->getProductIdsFromBasket($basket);

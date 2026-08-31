@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.5.1
+
+The shop says where its catalogue is, PaymentBundle no longer guessing
+
+- Requires `c975l/payment-bundle` `^6.6` (31/08/2026)
+- `ProductBasketItemProvider` implements PaymentBundle's `CatalogueBasketItemProviderInterface` (31/08/2026)
+- The basket's "continue shopping" button is sent to the product listing (31/08/2026)
+- `ProductRecommendationService::getTemplate()` names the basket's recommendations template (31/08/2026)
+- The confirmation e-mail's download links carry the full URL rather than the raw token (31/08/2026)
+- The checkout and seo skills cover the catalogue url and the recommendations template (31/08/2026)
+
 ## v2.5.0
 
 Articles carry a shipping weight, and the graph prices it
