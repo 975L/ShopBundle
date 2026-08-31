@@ -144,12 +144,8 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
 
     private function getProductIdsFromBasket(Basket $basket): array
     {
-        $productItemIds = [];
-        // Only get 'product' items, NOT 'crowdfunding', 'lottery', etc.
-        $items = $basket->getItems()['product'] ?? [];
-        foreach ($items as $id => $item) {
-            $productItemIds[] = $id;
-        }
+        // Only get 'product' items, NOT 'crowdfunding', 'lottery', etc. - the line's key is the ProductItem id
+        $productItemIds = array_keys($basket->getItems()['product'] ?? []);
 
         if (empty($productItemIds)) {
             return [];

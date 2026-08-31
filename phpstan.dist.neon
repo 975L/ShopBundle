@@ -31,3 +31,6 @@ parameters:
         -
             identifier: method.nonObject
             path: src/Listener/Traits/UserTrait.php
+
+        # PHP Mess Detector's own marker, which PHPStan reads as a typed tag and cannot parse - see the phpmd.xml.dist beside this file
+        - identifier: phpDoc.parseError

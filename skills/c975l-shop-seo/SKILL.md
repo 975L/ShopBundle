@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-seo
-description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, merchantReturnLink, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork."
+description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork."
 ---
 
 # c975L ShopBundle — structured data, sitemap, health, recommendations
@@ -18,7 +18,7 @@ description: "Use this skill when working on how the shop is read from outside i
 
 A product sheet publishes a schema.org `Product` as JSON-LD, with **one `offers` node per purchasable
 item** carrying its own title, description, picture, sku, gtin, price, list price, currency,
-availability, condition, shipping rate and return link. The product node itself carries a `brand`.
+availability, condition, shipping details and return link. The product node itself carries a `brand`.
 Purchasable means **not set aside**: both the builder and the extension read `Product::getVisibleItems()`,
 an item hidden publishing no offer for something the sheet no longer sells.
 
@@ -41,6 +41,14 @@ Availability follows the very rules the add button is disabled on: `limitedQuant
 `OutOfStock`, orders reaching the limit are `SoldOut`, a future `availableAt` is `PreOrder`, everything
 else `InStock`. **Those rules live in one place per concern** — the graph here, the badge in
 `ProductStateService` (see `c975l-shop-catalog`) — and a change to one is a change to both.
+
+`shippingDetails` is priced by PaymentBundle's `ShippingRateResolverInterface` on **that item's own
+weight**, for the one country `shop-shipping-country` names, which the node states as its
+`shippingDestination`. Five cases publish **nothing at all** rather than a guess: a downloaded file, a
+rendered service, an item nobody weighed, a shop naming no country, and a grid answering nothing for
+that parcel. What tells a posted item from the rest is `ProductBasketItemProvider`'s rule, so a graph
+and a delivery note never disagree. **Do not publish a tier of the grid as if it covered every parcel**,
+and do not publish a zero rate, which reads as free shipping.
 
 `sku` is the shop's own reference, and **falls back on the item's slug** when the column is left empty,
 which is what every offer carried before the column existed. `gtin` is the barcode number — an EAN-13

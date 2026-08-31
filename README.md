@@ -38,10 +38,11 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
   unsubscribe link (see [back-in-stock alerts](#back-in-stock-alerts))
 - Product catalog with categories, media, and downloadable items
 - Shop index, category pages and product sheets composed in the back-office with UiBundle's blocks, no template of your own
-- Eight block kinds of its own, putting the catalog on any page of the site
+- Nine block kinds of its own, putting the catalog on any page of the site, each drawn as a silhouette in the back-office picker
 - `Product` structured data (JSON-LD), the only `offers` node of the c975L ecosystem
 - `ItemList` structured data on the shop's index and its category pages
 - Plugs products into PaymentBundle's Basket/checkout engine via `BasketItemProviderInterface`
+- Shipping weight per item, in grams, weighing a basket for PaymentBundle's delivery grid and pricing the rate the structured data publishes
 - Product cards stating their own price, formats and availability, read from the items rather than stored
 - Struck-through price and discount badge, on the card as on the sheet, guarded against a figure that no longer holds
 - Listing ordered by novelty or price and narrowed by price, format and availability, growing on scroll, mobile first from the phone up
@@ -316,6 +317,10 @@ Either way, point `url-terms-of-sales` at whichever URL serves it — that key i
 
 ## Block kinds
 
+![ShopBundle blocks](.github/images/ShopBlocks.png)
+
+One tile per kind, captured on the showcase at [bundles.975l.com](https://bundles.975l.com/pages/blocks/Shop) - a kind with several variants shows only its first one, and a kind with no example there has no tile. Colors are the showcase's own theme, not what a site with its own theme renders.
+
 The bundle registers nine kinds with UiBundle's `BlockRegistry`, all in the **Shop** category, so the catalog
 reaches any page composed in the back-office - a SiteBundle `Page`, a `Book`, a product sheet - without a template
 of your own.
@@ -573,11 +578,13 @@ product can be sold in two of them at once. Leaving it unstated publishes nothin
 for its merchant listings, but a graph claiming "new" over a second-hand item is worse than a graph saying
 nothing.
 
-Each offer also carries what the sheet already displays about delivery and returns: the shipping rate from
-PaymentBundle's `shop-shipping`, on the items that are actually posted - a downloaded file and a rendered service
-carry none - and a `merchantReturnLink` pointing at `url-terms-of-sales`. Neither a destination country nor a
-return window is published: nothing in the ecosystem holds them, and a guessed one is a promise the shop never
-made.
+Each offer also carries what the sheet already displays about delivery and returns: the shipping rate
+PaymentBundle's grid charges for this very item's weight, to the one country `shop-shipping-country` names, on
+the items that are actually posted - a downloaded file and a rendered service carry none - and a
+`merchantReturnLink` pointing at `url-terms-of-sales`. Nothing is published for an item nobody weighed, for a
+shop naming no default country, or for a grid answering nothing: a tier published as if it covered every parcel
+is a guess. No return window is published either: nothing in the ecosystem holds one, and a guessed one is a
+promise the shop never made.
 
 The shop's index and a category page publish an `ItemList` of the cards they print, through a second function
 taking the products the page shows and, where it paginates, how many the pages before it already listed:
@@ -764,7 +771,7 @@ Installed alongside ConfigBundle, this bundle contributes on its own, with nothi
 | `ShopStatusProvider` | Whether the shop shows its test banner, the orders waiting to be shipped, how long the oldest has waited, the payments started but never confirmed, and the four counts of a catalog published but not finished - a sheet with no picture, a description too thin to rank, a picture with no `alt`, a category with no description - in the `extra` section of `/status/report` |
 | `ShopMaintenanceTaskProvider` | This bundle's two scheduled commands, so your site does not list them itself |
 | `WhatsNewProvider` | This bundle's entries on the "What's new" screen |
-| `StylesheetProvider` | The bundle's stylesheet, served in the site's single concatenated request |
+| `StylesheetProvider` | The bundle's stylesheet, served in the site's single concatenated request, and the silhouettes of its block kinds, loaded on the back-office block picker |
 
 ---
 

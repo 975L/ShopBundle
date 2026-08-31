@@ -37,8 +37,8 @@ class ProductAffinity
     #[ORM\Column(type: 'integer', options: ['default' => 0])]
     private int $coPurchaseCount = 0;
 
-    // Held as float: a decimal column reads back as a string
-    #[ORM\Column(type: Types::FLOAT, options: ['default' => 0])]
+    // Held as float, its default written as a string: MySQL reads column defaults back as strings and getDefaultValueDeclarationSQL() only unquotes integer types, so an int 0 declared "DEFAULT 0" against the "DEFAULT '0'" read from the database and every make:migration regenerated the same ALTER
+    #[ORM\Column(type: Types::FLOAT, options: ['default' => '0'])]
     private float $affinityScore = 0.0;
 
     #[ORM\Column(type: 'datetime')]

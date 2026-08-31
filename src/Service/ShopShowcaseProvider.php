@@ -85,11 +85,11 @@ class ShopShowcaseProvider implements GalleryShowcaseProviderInterface
                 'kind' => 'shop_product_items',
                 'variants' => ['' => $this->render('@c975LShop/components/Product/Items.html.twig', ['items' => $this->items($images)])],
             ],
-            // Real Media entities rather than the plain arrays above: UiBundle's slider reads its images with vich_uploader_asset(), which needs the entity BlockFixtureMediaAttacher builds from a placeholder path - the very reuse its nextPlaceholderImage() is public for
+            // Real Media entities rather than the plain arrays above: UiBundle's slider reads its images with vich_uploader_asset(), which needs the entity BlockFixtureMediaAttacher builds from a placeholder path - the very reuse its placeholderImagesFor() and nextPlaceholderImage() are public for
             $this->label('label.block_product_slider') => [
                 'description' => $this->label('label.block_product_slider_description'),
                 'kind' => 'shop_product_slider',
-                'variants' => ['' => $this->render('@c975LUi/components/Slider/Slider.html.twig', ['media' => $this->placeholderMedias(3), 'id' => 'showcase-product-slider', 'class' => 'img-500', 'duration' => 3500])],
+                'variants' => ['' => $this->render('@c975LUi/components/Slider/Slider.html.twig', ['media' => $this->sliderMedias(3), 'id' => 'showcase-product-slider', 'class' => 'img-500', 'duration' => 3500])],
             ],
             // The live search renders its input and nothing else as long as nothing is typed, so it previews as it looks on a page - only its cache entry was ever the problem, not its render
             $this->label('label.block_search') => [
@@ -201,6 +201,18 @@ class ShopShowcaseProvider implements GalleryShowcaseProviderInterface
         $media->setName($image);
 
         return $media;
+    }
+
+    // The photographs of one single product, which is what a product slider leafs through - the generic pool only shows unrelated landscapes side by side, saying nothing about the block. Keyed "shop/<slug>" by the site, exactly as the demo dataset reads them (see ShopDemoFixtureProvider), and falling back on that pool for a site declaring none rather than previewing an empty slider
+    /**
+     * @return list<Media>
+     */
+    private function sliderMedias(int $count): array
+    {
+        $spec = $this->catalog->getProducts()[0];
+        $medias = $this->mediaAttacher->placeholderImagesFor('shop/' . $spec['slug'], $this->label($spec['title']));
+
+        return [] === $medias ? $this->placeholderMedias($count) : \array_slice($medias, 0, $count);
     }
 
     /**

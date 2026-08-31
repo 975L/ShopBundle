@@ -79,6 +79,10 @@ class ProductItem implements \Stringable
     #[ORM\Column(length: 16, nullable: true)]
     private ?string $itemCondition = null;
 
+    // What the item weighs once packed, in grams, whole - as prices are held in cents, a tenth of a gram changing no tariff. Null on anything not weighed, which the basket adds up as nothing rather than as zero: half a catalogue weighed would price a parcel as if the rest of it were feathers. Read by PaymentBundle through WeighableBasketItemProviderInterface, the tariff grid and the zones being its business, not this catalogue's
+    #[ORM\Column(nullable: true)]
+    private ?int $weight = null;
+
     #[ORM\OneToOne(inversedBy: 'productItem', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
     private ?ProductItemFile $file = null;
@@ -124,6 +128,18 @@ class ProductItem implements \Stringable
     {
         // Keeps null, as the listener uses it to place the item at the end of the list
         $this->position = $position;
+
+        return $this;
+    }
+
+    public function getWeight(): ?int
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(?int $weight): static
+    {
+        $this->weight = $weight;
 
         return $this;
     }

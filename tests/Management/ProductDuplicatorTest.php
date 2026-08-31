@@ -197,6 +197,15 @@ class ProductDuplicatorTest extends TestCase
         $this->assertNull($item->getGtin());
     }
 
+    // Unlike the reference and the barcode: a copy of an article is the same object on the scales, and shipping it costs the same
+    public function testTheCopyWeighsWhatTheOriginalWeighs(): void
+    {
+        $product = $this->createProduct();
+        $product->getItems()->first()->setWeight(850);
+
+        $this->assertSame(850, $this->createDuplicator()->duplicate($product)->getItems()->first()->getWeight());
+    }
+
     // The relation is one-way, so the copy points at the same products without anything being written on them
     public function testTheCopyPointsAtTheSameRelatedProducts(): void
     {

@@ -136,6 +136,8 @@ class ProductDuplicator
             // Nothing has been sold of the copy, and the limited quantity is counted against this
             ->setOrderedQuantity(null)
             ->setService($item->isService())
+            // Carried, unlike the reference above: a copy of an article is the same object on the scales, and the parcel it goes in weighs the same
+            ->setWeight($item->getWeight())
             // Carried like the price: a copy of a gift card is a gift card, and without this value Product::isGiftCard() answers no for the whole copy
             ->setGiftCardValue($item->getGiftCardValue())
             // Carried as it stands: the copy is hidden as a whole, so an item set aside in the original has no reason to come back on sale in it

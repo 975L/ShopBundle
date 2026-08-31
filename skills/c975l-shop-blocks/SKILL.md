@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-blocks
-description: "Use this skill when putting the shop's catalog on a page composed in the back office of a Symfony application built on the c975L ecosystem — the nine shop block kinds, composing the shop's index, its category pages and a product sheet out of blocks, the three kinds that read the product of the sheet they sit on, the render cache and its catalog tags, and the block showcase. Covers why these kinds store no product and why one of them declines its cache entry. Triggers on: shop_products, shop_gift_cards, shop_categories, shop_product, shop_product_button, shop_search, shop_recommendations, shop_product_items, shop_product_slider, ShopBlockExtension, shop_block_products, shop_block_gift_cards, shop_block_categories, shop_block_product, shop_block_recommendations, shop_block_sheet_kinds, ShopBlockChoices, ShopBlockCacheTagProvider, ShopCacheInvalidationListener, ShopBlockCacheInvalidator, ShopBlockOwnerResolver, ShopShowcaseProvider, shop_product context, shop_product_block, shop_product_category_block, shop_settings_block, ShopSettings."
+description: "Use this skill when putting the shop's catalog on a page composed in the back office of a Symfony application built on the c975L ecosystem — the nine shop block kinds, composing the shop's index, its category pages and a product sheet out of blocks, the three kinds that read the product of the sheet they sit on, the render cache and its catalog tags, and the block showcase. Covers why these kinds store no product and why one of them declines its cache entry. Triggers on: shop_products, shop_gift_cards, shop_categories, shop_product, shop_product_button, shop_search, shop_recommendations, shop_product_items, shop_product_slider, ShopBlockExtension, shop_block_products, shop_block_gift_cards, shop_block_categories, shop_block_product, shop_block_recommendations, shop_block_sheet_kinds, ShopBlockChoices, ShopBlockCacheTagProvider, ShopCacheInvalidationListener, ShopBlockCacheInvalidator, ShopBlockOwnerResolver, ShopShowcaseProvider, shop_product context, shop_product_block, shop_product_category_block, shop_settings_block, ShopSettings, StylesheetProvider, getManagementStylesheets, BundleStylesheetManagementProviderInterface, block-thumbs, ui-block-thumb, block picker, silhouette."
 ---
 
 # c975L ShopBundle — blocks
@@ -10,7 +10,7 @@ description: "Use this skill when putting the shop's catalog on a page composed 
 **Package:** `c975l/shop-bundle` · **Bundle:** `c975L\ShopBundle\` · **Twig namespace:** `@c975LShop` · **Translation domain:** `shop`
 
 **Key source paths:**
-`config/services.yaml`, `src/Form/Block/`, `src/Twig/Extension/ShopBlockExtension.php`, `src/Service/ShopBlockChoices.php`, `src/Service/ShopBlockCacheTagProvider.php`, `src/Service/ShopBlockCacheInvalidator.php`, `src/Listener/ShopCacheInvalidationListener.php`, `src/Management/ShopBlockOwnerResolver.php`, `src/Management/ShopBlockEditUrlProvider.php`, `src/Service/ShopShowcaseProvider.php`, `templates/blocks/`, `templates/product/display.html.twig`, `templates/category/display.html.twig`, `templates/shop/index.html.twig`
+`config/services.yaml`, `src/Form/Block/`, `src/Twig/Extension/ShopBlockExtension.php`, `src/Service/ShopBlockChoices.php`, `src/Service/ShopBlockCacheTagProvider.php`, `src/Service/ShopBlockCacheInvalidator.php`, `src/Listener/ShopCacheInvalidationListener.php`, `src/Management/ShopBlockOwnerResolver.php`, `src/Management/ShopBlockEditUrlProvider.php`, `src/Service/ShopShowcaseProvider.php`, `src/Service/StylesheetProvider.php`, `sass/block-thumbs.scss`, `templates/blocks/`, `templates/product/display.html.twig`, `templates/category/display.html.twig`, `templates/shop/index.html.twig`
 
 **Related skills:** `c975l-shop-catalog`, `c975l-shop-checkout`, `c975l-shop-seo` in this same bundle, and `c975l-blocks`, `c975l-media` in UiBundle beside it.
 
@@ -101,6 +101,19 @@ gets no shop showcase.
 
 The stand-ins are built from `ShopSampleCatalog`, the same made-up catalogue a demo site is seeded with
 (see the `c975l-shop-catalog` skill) — enriching it there shows up here, and it is not written twice.
+`shop_product_slider` leafs through the photographs of the **first sample product**, the ones the site
+keys `shop/<slug>`, falling back on the generic pool for a site declaring none — a slider of unrelated
+landscapes says nothing about the kind.
+
+## The silhouettes of the kinds
+
+`sass/block-thumbs.scss` draws one silhouette per kind, `.ui-block-thumb--<kind>`, out of the frame and
+the five parts UiBundle's own `_block-thumbs.scss` defines. They are what the back-office picker shows,
+handed to it by `StylesheetProvider::getManagementStylesheets()`
+(`BundleStylesheetManagementProviderInterface`, tagged `ui.management_stylesheet`). A kind shipped
+without one shows as a bare frame, indistinguishable from every other undrawn kind. A site putting them
+on a public page contributes the same file through its own stylesheet provider, rather than every site
+carrying it everywhere.
 
 ## Do not
 
@@ -110,4 +123,5 @@ The stand-ins are built from `ShopSampleCatalog`, the same made-up catalogue a d
 - **Do not add a catalog-reading kind** without a tag resolver or `cacheable: false`.
 - **Do not duplicate a component in a block template** — the block is an adapter onto the same one.
 - **Do not give a showcase entry a media file of its own.**
+- **Do not add a block kind without its silhouette** in `sass/block-thumbs.scss` — the picker shows it as a bare frame.
 - **Do not put a `shop_product`-context kind** in a collection that has no product to read.

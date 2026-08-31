@@ -2,6 +2,29 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.5
+
+**Articles carry a shipping weight.** One nullable column, and nothing to backfill: an article left unweighed
+weighs nothing, which is what every article does today.
+
+```sql
+ALTER TABLE shop_product_item ADD weight INT DEFAULT NULL;
+```
+
+Generate it with `doctrine:migrations:diff` and run it. **Grams, whole**, as prices are held in cents. Fill it in
+for what the shop posts and leave it empty on downloads and services - a line that is not posted is left out of
+the weighing whatever the column says.
+
+The weight is read by PaymentBundle through its optional `WeighableBasketItemProviderInterface`, and priced on
+the delivery grid it gained in v6.5.0 - **read that bundle's UPGRADE too**: `shop-shipping` is gone, and a shop
+that writes no zone posts everything free.
+
+**The structured data changes with it.** A product sheet used to publish the flat rate as its `shippingRate`;
+it now publishes what the grid charges for **that article's own weight**, and names the country it is priced for
+(`shop-shipping-country`). An article nobody weighed, a shop naming no default country, or a grid saying nothing
+about that parcel publishes no `shippingDetails` at all - a rate stated for nowhere, or one tier of a grid stated
+as if it covered every parcel, is a guess, and a missing rich result beats a wrong one.
+
 ### v2.4
 
 **`isPublished` is replaced by `hidden`, on `Product` and on `ProductItem`.** The switch is the one the other

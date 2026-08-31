@@ -127,4 +127,34 @@ class ProductBasketItemProviderTest extends TestCase
     {
         $this->assertSame('label.unavailable', $this->createProvider(null)->validateCheckout(new Basket(), $this->basketItems(1)));
     }
+
+    // A line weighs the article as many times as it was ordered - the sum a shipping grid is priced on, not the weight of one article
+    public function testALineWeighsItsArticleAsManyTimesAsItWasOrdered(): void
+    {
+        $this->assertSame(1200, $this->createProvider()->getWeight(['item' => ['weight' => 400], 'quantity' => 3]));
+    }
+
+    // What is not posted leaves the parcel alone, whatever the catalogue says it weighs
+    public function testWhatIsNotPostedWeighsNothing(): void
+    {
+        $provider = $this->createProvider();
+
+        $this->assertNull($provider->getWeight(['item' => ['weight' => 400, 'file' => 'guide.pdf'], 'quantity' => 1]));
+        $this->assertNull($provider->getWeight(['item' => ['weight' => 400, 'service' => true], 'quantity' => 1]));
+    }
+
+    // An order is a snapshot frozen the day it was placed, and one taken before this bundle weighed anything carries no such key - it counts as nothing, never as zero, a catalogue half weighed pricing a parcel as if the rest of it were feathers
+    public function testAnArticleThatIsNotWeighedCountsAsNothing(): void
+    {
+        $provider = $this->createProvider();
+
+        $this->assertNull($provider->getWeight(['item' => ['weight' => null], 'quantity' => 2]));
+        $this->assertNull($provider->getWeight(['item' => [], 'quantity' => 2]));
+    }
+
+    // A line with no quantity at all is still one article, not none
+    public function testALineWithNoQuantityWeighsOneArticle(): void
+    {
+        $this->assertSame(400, $this->createProvider()->getWeight(['item' => ['weight' => 400]]));
+    }
 }

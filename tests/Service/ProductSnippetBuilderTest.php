@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Tests\Service;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Entity\ProductItem;
@@ -32,16 +33,25 @@ class ProductSnippetBuilderTest extends TestCase
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn(null);
 
-        $this->builder = new ProductSnippetBuilder($configService, new ProductStateService(), $this->ratingSnippetBuilder());
+        $this->builder = new ProductSnippetBuilder($configService, new ProductStateService(), $this->ratingSnippetBuilder(), $this->shippingRateResolver(null));
     }
 
     // The same builder against a shop that did fill those keys in
-    private function builder(array $config, array $aggregate = ['average' => 0.0, 'count' => 0]): ProductSnippetBuilder
+    private function builder(array $config, array $aggregate = ['average' => 0.0, 'count' => 0], ?int $shipping = null): ProductSnippetBuilder
     {
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturnCallback(static fn (string $key): mixed => $config[$key] ?? null);
 
-        return new ProductSnippetBuilder($configService, new ProductStateService(), $this->ratingSnippetBuilder($aggregate));
+        return new ProductSnippetBuilder($configService, new ProductStateService(), $this->ratingSnippetBuilder($aggregate), $this->shippingRateResolver($shipping));
+    }
+
+    // The grid PaymentBundle prices a parcel on, which the graph states for one article's own weight
+    private function shippingRateResolver(?int $price): ShippingRateResolverInterface
+    {
+        $resolver = $this->createStub(ShippingRateResolverInterface::class);
+        $resolver->method('resolve')->willReturn($price);
+
+        return $resolver;
     }
 
     public function testAProductWithoutTitlePublishesNothing(): void
@@ -198,22 +208,54 @@ class ProductSnippetBuilderTest extends TestCase
         $this->assertArrayNotHasKey('description', $this->builder->buildProduct($product)['offers'][0]);
     }
 
-    // What the Shipping component of the sheet states, said again where a search engine reads it
-    public function testAnOfferCarriesTheShopsShippingRate(): void
+    // What the Shipping component of the sheet states, said again where a search engine reads it - priced on the grid for this article's own weight, and naming the country it is priced for
+    public function testAnOfferCarriesTheRateTheGridPricesItsWeightAt(): void
     {
-        $builder = $this->builder(['shop-shipping' => 490, 'shop-currency' => 'eur']);
-        $shipping = $builder->buildProduct($this->product())['offers'][0]['shippingDetails'];
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur'], shipping: 490);
+        $product = $this->product();
+        $product->getItems()->first()->setWeight(850);
+
+        $shipping = $builder->buildProduct($product)['offers'][0]['shippingDetails'];
 
         $this->assertSame('OfferShippingDetails', $shipping['@type']);
         $this->assertSame('4.90', $shipping['shippingRate']['value']);
         $this->assertSame('EUR', $shipping['shippingRate']['currency']);
+        $this->assertSame('FR', $shipping['shippingDestination']['addressCountry']);
+    }
+
+    // The grid answers per weight and per zone: an article nobody weighed has no rate to publish, and one of its tiers stated as if it covered every parcel would be a guess
+    public function testAnUnweighedArticlePublishesNoShippingRate(): void
+    {
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur'], shipping: 490);
+
+        $this->assertArrayNotHasKey('shippingDetails', $builder->buildProduct($this->product())['offers'][0]);
+    }
+
+    // A rate published without saying where it posts to is a rate for nowhere
+    public function testAShopNamingNoDefaultCountryPublishesNoShippingRate(): void
+    {
+        $builder = $this->builder(['shop-currency' => 'eur'], shipping: 490);
+        $product = $this->product();
+        $product->getItems()->first()->setWeight(850);
+
+        $this->assertArrayNotHasKey('shippingDetails', $builder->buildProduct($product)['offers'][0]);
+    }
+
+    // A grid saying nothing about that parcel declares nothing, rather than a zero rate which reads as free shipping
+    public function testAGridSayingNothingPublishesNoShippingRate(): void
+    {
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur'], shipping: null);
+        $product = $this->product();
+        $product->getItems()->first()->setWeight(850);
+
+        $this->assertArrayNotHasKey('shippingDetails', $builder->buildProduct($product)['offers'][0]);
     }
 
     // The rule telling a shipped item from the rest is ProductBasketItemProvider's: a service is rendered, never posted
     public function testAServiceIsNotShipped(): void
     {
-        $builder = $this->builder(['shop-shipping' => 490, 'shop-currency' => 'eur']);
-        $product = new Product()->setTitle('Atelier')->setSlug('atelier')->addItem($this->item('seance', 5000)->setService(true));
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur'], shipping: 490);
+        $product = new Product()->setTitle('Atelier')->setSlug('atelier')->addItem($this->item('seance', 5000)->setService(true)->setWeight(850));
 
         $this->assertArrayNotHasKey('shippingDetails', $builder->buildProduct($product)['offers'][0]);
     }
@@ -221,23 +263,29 @@ class ProductSnippetBuilderTest extends TestCase
     // A file is downloaded rather than posted, but the empty placeholder ProductItemListener attaches to every new item is not one: what tells them apart is its name, here as in ProductBasketItemProvider
     public function testAnItemCarryingAnEmptyFilePlaceholderIsStillShipped(): void
     {
-        $builder = $this->builder(['shop-shipping' => 490, 'shop-currency' => 'eur']);
-        $product = new Product()->setTitle('Affiche')->setSlug('affiche')->addItem($this->item('a2', 1250)->setFile(new ProductItemFile()));
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur'], shipping: 490);
+        $product = new Product()->setTitle('Affiche')->setSlug('affiche')->addItem($this->item('a2', 1250)->setFile(new ProductItemFile())->setWeight(850));
 
         $this->assertSame('OfferShippingDetails', $builder->buildProduct($product)['offers'][0]['shippingDetails']['@type']);
     }
 
+    // A named file is downloaded rather than posted, and the grid pricing its weight for a named country changes nothing to that
     public function testADownloadedItemIsNotShipped(): void
     {
-        $builder = $this->builder(['shop-shipping' => 490, 'shop-currency' => 'eur']);
-        $product = new Product()->setTitle('Affiche')->setSlug('affiche')->addItem($this->item('a2', 1250)->setFile(new ProductItemFile()->setName('affiche.pdf')));
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur'], shipping: 490);
+        $product = new Product()->setTitle('Affiche')->setSlug('affiche')->addItem($this->item('a2', 1250)->setFile(new ProductItemFile()->setName('affiche.pdf'))->setWeight(850));
 
         $this->assertArrayNotHasKey('shippingDetails', $builder->buildProduct($product)['offers'][0]);
     }
 
+    // A shop that charges nothing has nothing to declare here rather than a zero rate, which reads as free shipping
     public function testAShopChargingNothingForShippingDeclaresNoRate(): void
     {
-        $this->assertArrayNotHasKey('shippingDetails', $this->builder->buildProduct($this->product())['offers'][0]);
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur'], shipping: 0);
+        $product = $this->product();
+        $product->getItems()->first()->setWeight(850);
+
+        $this->assertArrayNotHasKey('shippingDetails', $builder->buildProduct($product)['offers'][0]);
     }
 
     // The link and nothing else: no column of this ecosystem holds the return window, and a guessed one is a promise the shop never made

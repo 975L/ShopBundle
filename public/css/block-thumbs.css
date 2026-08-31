@@ -1,0 +1,173 @@
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+/* The silhouettes of this bundle's block kinds, shown wherever a kind has to be recognised at a glance: the visual picker an editor chooses a block from (UiBundle's assets/js/block-picker.js) and the public block showcase of a site. Drawn here rather than in UiBundle for the same reason as the kinds' templates and fixtures: a block belongs to the bundle shipping it. The frame, the five parts and the default silhouette come from UiBundle's sass/_block-thumbs.scss - what follows only says how this bundle's kinds arrange them. */
+/* A grid of products, each a picture over its name and its price */
+.ui-block-thumb--shop_products .ui-block-thumb__media {
+  display: block;
+  background-image: linear-gradient(to right, currentcolor 0 74%, transparent 74%), linear-gradient(to right, currentcolor 0 74%, transparent 74%);
+  background-size: 33.33% 44%;
+  background-position: 0 0, 0 100%;
+  background-repeat: repeat-x;
+  background-color: transparent;
+}
+.ui-block-thumb--shop_products .ui-block-thumb__title {
+  display: none;
+}
+.ui-block-thumb--shop_products .ui-block-thumb__line + .ui-block-thumb__line {
+  display: none;
+}
+
+/* A gift card is a card: the frame keeps the proportions of the real thing (ISO 7810, 1.586), and the amounts it can be bought for sit underneath */
+.ui-block-thumb--shop_gift_cards {
+  align-items: center;
+}
+.ui-block-thumb--shop_gift_cards .ui-block-thumb__media {
+  display: block;
+  flex: 0 0 auto;
+  width: 60%;
+  height: auto;
+  aspect-ratio: 1.586;
+  border-radius: 3px;
+  opacity: 0.3;
+}
+.ui-block-thumb--shop_gift_cards .ui-block-thumb__title {
+  display: none;
+}
+.ui-block-thumb--shop_gift_cards .ui-block-thumb__line {
+  width: 60%;
+  height: 0.25rem;
+  background-image: linear-gradient(to right, currentcolor 0 60%, transparent 60%);
+  background-size: 25% 100%;
+  background-color: transparent;
+}
+.ui-block-thumb--shop_gift_cards .ui-block-thumb__line + .ui-block-thumb__line {
+  display: none;
+}
+
+/* Category links, laid out as the row of pills they render as */
+.ui-block-thumb--shop_categories {
+  justify-content: center;
+}
+.ui-block-thumb--shop_categories .ui-block-thumb__title {
+  display: none;
+}
+.ui-block-thumb--shop_categories .ui-block-thumb__line {
+  height: 0.375rem;
+  border-radius: 3px;
+  background-image: linear-gradient(to right, currentcolor 0 72%, transparent 72%);
+  background-size: 34% 100%;
+  background-color: transparent;
+}
+.ui-block-thumb--shop_categories .ui-block-thumb__line + .ui-block-thumb__line {
+  width: 68%;
+  background-size: 50% 100%;
+}
+
+/* One product, in a card clickable through to its page */
+.ui-block-thumb--shop_product .ui-block-thumb__media {
+  display: block;
+  max-height: 45%;
+}
+.ui-block-thumb--shop_product .ui-block-thumb__action {
+  display: block;
+}
+.ui-block-thumb--shop_product .ui-block-thumb__line + .ui-block-thumb__line {
+  display: none;
+}
+
+/* Nothing but the button, whose label follows the product */
+.ui-block-thumb--shop_product_button {
+  align-items: center;
+}
+.ui-block-thumb--shop_product_button .ui-block-thumb__action {
+  display: block;
+  width: 55%;
+  height: 0.625rem;
+  border-radius: 3px;
+}
+.ui-block-thumb--shop_product_button .ui-block-thumb__title,
+.ui-block-thumb--shop_product_button .ui-block-thumb__line {
+  display: none;
+}
+
+/* The search field, and the results it drops underneath as they are typed */
+.ui-block-thumb--shop_search .ui-block-thumb__title {
+  width: 100%;
+  height: 0.625rem;
+  border-radius: 5px;
+  border: 1px solid currentcolor;
+  background: none;
+  opacity: 0.45;
+}
+.ui-block-thumb--shop_search .ui-block-thumb__line {
+  width: 85%;
+  margin-top: 0.125rem;
+}
+.ui-block-thumb--shop_search .ui-block-thumb__line + .ui-block-thumb__line {
+  width: 70%;
+}
+
+/* A row of products bought alongside this one */
+.ui-block-thumb--shop_recommendations .ui-block-thumb__media {
+  display: block;
+  max-height: 60%;
+  background-image: linear-gradient(to right, currentcolor 0 76%, transparent 76%);
+  background-size: 26% 100%;
+  background-color: transparent;
+}
+.ui-block-thumb--shop_recommendations .ui-block-thumb__title {
+  display: none;
+}
+.ui-block-thumb--shop_recommendations .ui-block-thumb__line + .ui-block-thumb__line {
+  display: none;
+}
+
+/* The buying table: a row per item, its price in a column of its own */
+.ui-block-thumb--shop_product_items {
+  justify-content: center;
+  gap: 0.25rem;
+}
+.ui-block-thumb--shop_product_items .ui-block-thumb__media {
+  display: block;
+  max-height: 0.1875rem;
+  opacity: 0.5;
+}
+.ui-block-thumb--shop_product_items .ui-block-thumb__title,
+.ui-block-thumb--shop_product_items .ui-block-thumb__line {
+  width: 100%;
+  height: 0.1875rem;
+  background-image: linear-gradient(to right, currentcolor 0 55%, transparent 55% 78%, currentcolor 78%);
+  background-color: transparent;
+}
+.ui-block-thumb--shop_product_items .ui-block-thumb__action {
+  display: block;
+  align-self: flex-end;
+}
+
+/* A product's own medias, run as a slideshow */
+.ui-block-thumb--shop_product_slider .ui-block-thumb__media {
+  display: block;
+}
+.ui-block-thumb--shop_product_slider .ui-block-thumb__title {
+  display: block;
+  position: absolute;
+  bottom: 0.875rem;
+  left: 50%;
+  width: 40%;
+  height: 0.1875rem;
+  opacity: 0.9;
+  background-image: linear-gradient(to right, var(--bs-body-bg, #fff) 0 50%, transparent 50%);
+  background-size: 0.375rem 100%;
+  background-color: transparent;
+  transform: translateX(-50%);
+}
+.ui-block-thumb--shop_product_slider .ui-block-thumb__line + .ui-block-thumb__line {
+  display: none;
+}
+
+/*# sourceMappingURL=block-thumbs.css.map */

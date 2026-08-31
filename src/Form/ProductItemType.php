@@ -26,6 +26,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductItemType extends AbstractType
 {
+    // A declaration of fields, one block per field: its length says how much the form asks for, not how much the method decides
+    /** @SuppressWarnings(PHPMD.ExcessiveMethodLength) */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -89,6 +91,13 @@ class ProductItemType extends AbstractType
                 'required' => false,
                 'label' => 'label.gtin',
                 'help' => 'label.gtin_help',
+            ])
+            ->add('weight', IntegerType::class, [
+                'required' => false,
+                'label' => 'label.weight',
+                'help' => 'label.weight_help',
+                // Grams, whole, as prices are held in cents - and left empty on anything that is not posted
+                'attr' => ['min' => 0, 'step' => 1],
             ])
             ->add('itemCondition', ChoiceType::class, [
                 'required' => false,

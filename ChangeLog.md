@@ -1,5 +1,35 @@
 # Changelog
 
+## v2.5.0
+
+Articles carry a shipping weight, and the graph prices it
+
+- **New `ProductItem::$weight`**, the packed weight in whole grams, null on what the shop does not weigh (31/08/2026) **Needs db migration** see [UPGRADE.md](UPGRADE.md)
+- `ProductBasketItemProvider` implements PaymentBundle's `WeighableBasketItemProviderInterface` (31/08/2026)
+- A line weighs its article as many times as it was ordered (31/08/2026)
+- A download, a service and a card sent by email weigh nothing (31/08/2026)
+- An unweighed article counts as nothing rather than as zero (31/08/2026)
+- The weight travels in the export and the import archives (31/08/2026)
+- Duplicating a product carries the weight of its items (31/08/2026)
+- New `label.weight` and `label.weight_help` in the three locales (31/08/2026)
+- The JSON-LD publishes the rate the delivery grid charges for the item's own weight, and names the country it is priced for (31/08/2026) [BC-Break]
+- No `shippingDetails` at all for an unweighed article, a shop naming no default country, or a silent grid (31/08/2026)
+- Requires `c975l/payment-bundle` `^6.5` (31/08/2026)
+- `ProductAffinity::$affinityScore` declares its default as a string, every `make:migration` regenerating the same `ALTER` (30/08/2026)
+- The showcase slider leafs through the photographs of the first sample product, keyed `shop/<slug>` (31/08/2026)
+- Failing those, the generic pool is rotated as before (31/08/2026)
+- Requires `c975l/core-bundle` `^1.19.2` for `BlockFixtureMediaAttacher::placeholderImagesFor()` (31/08/2026)
+- New `sass/block-thumbs.scss`, one silhouette per block kind (30/08/2026)
+- `StylesheetProvider` hands those silhouettes to the back-office block picker (30/08/2026)
+- `CalculateProductAffinityCommand`, `ProductImportProvider` and `ProductBasketItemProvider` split into smaller methods (30/08/2026)
+- New `phpmd.xml.dist`, and `composer qa` runs `mess` and `lizard` (31/08/2026)
+- The `mess` script prints the files PDepend could not parse (31/08/2026)
+- `.codacy.yaml` excludes the repository root's own `public/`, `tests/` and `vendor/` (31/08/2026)
+- One tile per block kind pictured in the README (31/08/2026)
+- The four shop skills cover the weight, the shipping graph and the silhouettes (31/08/2026)
+- PHPStan ignores the `phpDoc.parseError` PHPMD's `@SuppressWarnings` marker raises (31/08/2026)
+- Added `tests/Command/CalculateProductAffinityCommandTest.php` and `tests/Service/StylesheetProviderTest.php` (30/08/2026)
+
 ## v2.4.0
 
 The published switch is turned round into hidden

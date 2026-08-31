@@ -120,6 +120,7 @@ class ProductExportProvider implements ExportProviderInterface
             'currency' => $item->getCurrency(),
             'sku' => $item->getSku(),
             'gtin' => $item->getGtin(),
+            'weight' => $item->getWeight(),
             'vat' => $item->getVat(),
             'limitedQuantity' => $item->getLimitedQuantity(),
             'orderedQuantity' => $item->getOrderedQuantity(),

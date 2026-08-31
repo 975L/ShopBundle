@@ -67,7 +67,25 @@ class CalculateProductAffinityCommand extends Command
             return Command::SUCCESS;
         }
 
-        // Analyze baskets and extract product pairs
+        [$productPairs, $productTotalOrders] = $this->analyseBaskets($baskets);
+        $pairCount = count($productPairs);
+        $processed = $this->saveAffinities($productPairs, $productTotalOrders);
+
+        $this->entityManager->flush();
+
+        // The recommendations blocks read those scores at render time, and neither the bulk DELETE above nor a run finding no pair at all fires the Doctrine event ShopCacheInvalidationListener listens on
+        $this->cacheInvalidator->invalidateProducts();
+
+        // Summary
+        $output->writeln(sprintf('[SUCCESS] Analyzed %d baskets, processed %d pairs, updated %d records', $basketCount, $pairCount, $processed));
+
+        return Command::SUCCESS;
+    }
+
+    // Analyze baskets and extract product pairs, along with how many orders each product took part in
+    // @return array{0: array<string, array{product1: mixed, product2: mixed, count: int}>, 1: array<mixed, int>}
+    private function analyseBaskets(array $baskets): array
+    {
         $productPairs = [];
         $productTotalOrders = [];
 
@@ -84,9 +102,7 @@ class CalculateProductAffinityCommand extends Command
             }
 
             // Generate all pairs (combinations) from this basket
-            $pairs = $this->generateProductPairs($productIds);
-
-            foreach ($pairs as $pair) {
+            foreach ($this->generateProductPairs($productIds) as $pair) {
                 $key = $this->getPairKey($pair[0], $pair[1]);
                 $productPairs[$key] = [
                     'product1' => $pair[0],
@@ -96,36 +112,22 @@ class CalculateProductAffinityCommand extends Command
             }
         }
 
-        $pairCount = count($productPairs);
+        return [$productPairs, $productTotalOrders];
+    }
 
-        // Save or update ProductAffinity entities
+    // Save or update ProductAffinity entities, answering how many were written
+    private function saveAffinities(array $productPairs, array $productTotalOrders): int
+    {
         $now = new \DateTime();
         $processed = 0;
 
         foreach ($productPairs as $pairData) {
-            $product1Id = $pairData['product1'];
-            $product2Id = $pairData['product2'];
-            $coPurchaseCount = $pairData['count'];
-
             // Calculate affinity score (0-100)
-            $totalOrders = $productTotalOrders[$product1Id] ?? 1;
-            $affinityScore = min(100, ($coPurchaseCount / $totalOrders) * 100);
+            $totalOrders = $productTotalOrders[$pairData['product1']] ?? 1;
+            $affinityScore = min(100, ($pairData['count'] / $totalOrders) * 100);
 
-            // Find or create ProductAffinity entity
-            $affinity = $this->affinityRepository->findOneBy([
-                'product1' => $product1Id,
-                'product2' => $product2Id,
-            ]);
-
-            if (!$affinity) {
-                $affinity = new ProductAffinity();
-                $product1 = $this->entityManager->getReference('c975L\ShopBundle\Entity\Product', $product1Id);
-                $product2 = $this->entityManager->getReference('c975L\ShopBundle\Entity\Product', $product2Id);
-                $affinity->setProduct1($product1);
-                $affinity->setProduct2($product2);
-            }
-
-            $affinity->setCoPurchaseCount($coPurchaseCount);
+            $affinity = $this->findOrCreateAffinity($pairData['product1'], $pairData['product2']);
+            $affinity->setCoPurchaseCount($pairData['count']);
             $affinity->setAffinityScore(round($affinityScore, 2));
             $affinity->setLastCalculated($now);
 
@@ -137,15 +139,26 @@ class CalculateProductAffinityCommand extends Command
             }
         }
 
-        $this->entityManager->flush();
+        return $processed;
+    }
 
-        // The recommendations blocks read those scores at render time, and neither the bulk DELETE above nor a run finding no pair at all fires the Doctrine event ShopCacheInvalidationListener listens on
-        $this->cacheInvalidator->invalidateProducts();
+    // Find or create ProductAffinity entity
+    private function findOrCreateAffinity(mixed $product1Id, mixed $product2Id): ProductAffinity
+    {
+        $affinity = $this->affinityRepository->findOneBy([
+            'product1' => $product1Id,
+            'product2' => $product2Id,
+        ]);
 
-        // Summary
-        $output->writeln(sprintf('[SUCCESS] Analyzed %d baskets, processed %d pairs, updated %d records', $basketCount, $pairCount, $processed));
+        if ($affinity instanceof ProductAffinity) {
+            return $affinity;
+        }
 
-        return Command::SUCCESS;
+        $affinity = new ProductAffinity();
+        $affinity->setProduct1($this->entityManager->getReference('c975L\ShopBundle\Entity\Product', $product1Id));
+        $affinity->setProduct2($this->entityManager->getReference('c975L\ShopBundle\Entity\Product', $product2Id));
+
+        return $affinity;
     }
 
     // Fetches completed baskets (status: 'paid' or 'shipped').
@@ -165,13 +178,9 @@ class CalculateProductAffinityCommand extends Command
 
     private function getProductIdsFromBasket($basket): array
     {
-        $productItemIds = [];
         // Only get 'product' items, NOT 'crowdfunding', 'lottery', etc.
-        $items = $basket->getItems()['product'] ?? [];
-
-        foreach ($items as $id => $item) {
-            $productItemIds[] = $id;
-        }
+        // The line's key is the ProductItem id, which is all this reads of the basket
+        $productItemIds = array_keys($basket->getItems()['product'] ?? []);
 
         if (empty($productItemIds)) {
             return [];

@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-08-31",
+        "description": [
+            {
+                "en": "Each article of a product now takes a weight in grams, filled in on its form. Your shipping costs are worked out from what the basket really weighs instead of a single flat rate, and the product sheet tells search engines the delivery price for that very article. Leave the box empty on a download, a service, or anything you do not post: it is then left out of the weighing.",
+                "fr": "Chaque article d'un produit accepte désormais un poids en grammes, à saisir sur son formulaire. Vos frais de port sont calculés sur ce que le panier pèse réellement au lieu d'un tarif unique, et la fiche produit annonce aux moteurs de recherche le prix de livraison de cet article précis. Laissez la case vide pour un téléchargement, un service, ou tout ce que vous n'expédiez pas : il est alors sorti de la pesée.",
+                "es": "Cada artículo de un producto admite ahora un peso en gramos, que se indica en su formulario. Sus gastos de envío se calculan sobre lo que la cesta pesa realmente en lugar de una tarifa única, y la ficha de producto anuncia a los buscadores el precio de entrega de ese artículo concreto. Deje la casilla vacía para una descarga, un servicio o cualquier cosa que no envíe: entonces queda fuera del pesaje."
+            },
+            {
+                "en": "When you add a shop block to a page, each kind is now drawn in the picker: a grid of products, a slider, a search box, a buy button. You recognise the one you want at a glance instead of reading its name.",
+                "fr": "Quand vous ajoutez un block boutique à une page, chaque type est désormais dessiné dans le sélecteur : une grille de produits, un diaporama, une barre de recherche, un bouton d'achat. Vous reconnaissez celui que vous voulez d'un coup d'œil au lieu de lire son nom.",
+                "es": "Cuando añade un bloque de tienda a una página, cada tipo aparece ahora dibujado en el selector: una cuadrícula de productos, un carrusel, una barra de búsqueda, un botón de compra. Reconoce el que quiere de un vistazo en lugar de leer su nombre."
+            }
+        ]
+    },
+    {
         "date": "2026-08-30",
         "description": [
             {

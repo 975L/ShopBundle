@@ -11,6 +11,7 @@ services:
     c975L\ShopBundle\Service\StylesheetProvider:
         tags:
             - { name: 'ui.stylesheet', priority: 10 }
+            - { name: 'ui.management_stylesheet' }
 
     # Same reading as UiBundle's own limiters: c975LShopBundle prepends "shop_stock_alert" itself, so the public subscription route is never served unlimited, and a site that took the limiter away still gets a controller rather than a container that refuses to compile
     c975L\ShopBundle\Controller\ProductItemStockAlertController:

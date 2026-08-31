@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-catalog
-description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-free, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, demo catalogue, ReplacingFile, PlaceholderMediaProviderInterface."
+description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, weight, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-country, shop-shipping-free, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, demo catalogue, ReplacingFile, PlaceholderMediaProviderInterface."
 ---
 
 # c975L ShopBundle — catalog
@@ -19,7 +19,7 @@ description: "Use this skill when working with the shop's catalog in a Symfony a
 | Entity | Holds | Never holds |
 | --- | --- | --- |
 | `Product` | title, slug, description, `brand`, `availableAt`, position, `hidden`, `isDeleted`, medias, categories, blocks, `relatedProducts`, `giftCardText`, `giftCardScratch` | a price |
-| `ProductItem` | price and `priceBefore` (**cents**), currency, vat, `sku`, `gtin`, `limitedQuantity`, `orderedQuantity`, `service`, `itemCondition`, `hidden`, `giftCardValue`, one media, one file | its own page, a recycle bin |
+| `ProductItem` | price and `priceBefore` (**cents**), currency, vat, `sku`, `gtin`, `limitedQuantity`, `orderedQuantity`, `service`, `itemCondition`, `weight` (**grams**), `hidden`, `giftCardValue`, one media, one file | its own page, a recycle bin |
 | `ProductCategory` | name, slug, description, products (`ManyToMany`) | a price |
 
 `Product` implements `HasBlocksInterface` — its sheet is composed in the back office, see
@@ -210,9 +210,14 @@ contents are what disappears.
 
 ## Money settings are PaymentBundle's
 
-`shop-currency`, `shop-shipping`, `shop-shipping-free`, `shop-name` and `url-terms-of-sales` are
-declared and owned by **PaymentBundle**, read here through ConfigBundle's `config()`. This bundle
+`shop-currency`, `shop-shipping-country`, `shop-shipping-free`, `shop-name` and `url-terms-of-sales`
+are declared and owned by **PaymentBundle**, read here through ConfigBundle's `config()`. This bundle
 declares exactly one key of its own, `shop-test-mode`.
+
+`shop-shipping`, the single flat rate, is gone since Payment 6.5 — a parcel is priced by
+`ShippingRateResolverInterface` on its weight and its zone. The weight is the shop's own:
+`ProductItem::$weight`, **whole grams**, `null` on anything it does not weigh — carried by the export
+archives, by `ProductDuplicator`, and read by the checkout through `c975l-shop-checkout`.
 
 **Do not redeclare a `shop-*` money key in this bundle** — two declarations of one slug is a shop
 charging one price and displaying another.

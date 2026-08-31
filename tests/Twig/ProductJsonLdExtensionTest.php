@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Tests\Twig;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Entity\ProductItemMedia;
@@ -56,7 +57,7 @@ class ProductJsonLdExtensionTest extends TestCase
         $ratingService->method('getScale')->willReturn(5);
 
         $this->extension = new ProductJsonLdExtension(
-            new ProductSnippetBuilder($configService, new ProductStateService(), new RatingSnippetBuilder($ratingService)),
+            new ProductSnippetBuilder($configService, new ProductStateService(), new RatingSnippetBuilder($ratingService), $this->createStub(ShippingRateResolverInterface::class)),
             new ShopBreadcrumbBuilder($urlGenerator, $translator),
             new Packages(new PathPackage('/', new EmptyVersionStrategy())),
             new UrlHelper($requestStack),

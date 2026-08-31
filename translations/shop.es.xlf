@@ -1250,6 +1250,14 @@
                 <source>label.view</source>
                 <target>Ver</target>
             </trans-unit>
+            <trans-unit id="vYVfKM4">
+                <source>label.weight</source>
+                <target>Peso (g)</target>
+            </trans-unit>
+            <trans-unit id="Zph0EW.">
+                <source>label.weight_help</source>
+                <target>El peso del artículo una vez embalado, en gramos, para calcular los gastos de envío. Dejar vacío para una descarga, un servicio o un artículo que la tienda no pesa.</target>
+            </trans-unit>
             <trans-unit id="foONWZ2">
                 <source>label.you_might_also_like</source>
                 <target>También te puede gustar</target>

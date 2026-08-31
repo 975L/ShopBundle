@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Service;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\UiBundle\Service\RatingSnippetBuilder;
@@ -37,6 +38,7 @@ class ProductSnippetBuilder
         private readonly ConfigServiceInterface $configService,
         private readonly ProductStateServiceInterface $productStateService,
         private readonly RatingSnippetBuilder $ratingSnippetBuilder,
+        private readonly ShippingRateResolverInterface $shippingRateResolver,
     ) {
     }
 
@@ -237,13 +239,24 @@ class ProductSnippetBuilder
         ];
     }
 
-    // What the Shipping component of the sheet already states, said again where a search engine reads it. No destination and no delivery time: neither is configured anywhere, and a guessed country in a rich result is worse than a missing one
+    // What the Shipping component of the sheet already states, said again where a search engine reads it. Priced on the grid for this very article's weight, and to the one destination the shop names - a rate published without saying where it posts to is a rate for nowhere, and no delivery time is stated because none is configured anywhere
     private function shippingDetails(ProductItem $item): array
     {
-        $shipping = (int) $this->configService->get('shop-shipping');
+        // The rule telling a shipped item from the rest is ProductBasketItemProvider's, so a graph and a delivery note never disagree: a file is downloaded, a service is rendered, everything else is posted
+        if (null !== $item->getFile()?->getName() || true === $item->isService()) {
+            return [];
+        }
 
-        // A shop that charges nothing for shipping has nothing to declare here rather than a zero rate, which reads as free shipping. The rule telling a shipped item from the rest is ProductBasketItemProvider's, so a graph and a delivery note never disagree: a file is downloaded, a service is rendered, everything else is posted
-        if ($shipping <= 0 || null !== $item->getFile()?->getName() || true === $item->isService()) {
+        // Nothing is claimed for an article nobody weighed or a shop naming no default country: the grid answers per weight and per zone, and publishing one of its tiers as if it covered every parcel would be a guess
+        $country = trim((string) $this->configService->get('shop-shipping-country'));
+        $weight = $item->getWeight();
+        if ('' === $country || null === $weight) {
+            return [];
+        }
+
+        // A shop that charges nothing has nothing to declare here rather than a zero rate, which reads as free shipping
+        $shipping = $this->shippingRateResolver->resolve($country, $weight);
+        if (null === $shipping || $shipping <= 0) {
             return [];
         }
 
@@ -253,6 +266,10 @@ class ProductSnippetBuilder
                 '@type' => 'MonetaryAmount',
                 'value' => number_format($shipping / 100, 2, '.', ''),
                 'currency' => strtoupper(trim((string) $this->configService->get('shop-currency'))),
+            ],
+            'shippingDestination' => [
+                '@type' => 'DefinedRegion',
+                'addressCountry' => strtoupper($country),
             ],
         ];
     }

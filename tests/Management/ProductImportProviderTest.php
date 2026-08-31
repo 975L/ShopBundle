@@ -192,6 +192,27 @@ class ProductImportProviderTest extends TestCase
         new Filesystem()->remove([$projectDir, $filesDir]);
     }
 
+    // The weight travels with the rest, and an archive written before the column carries none - such an item comes back unweighed rather than weighing zero
+    public function testAnItemComesBackWeighingWhatTheArchiveNamesOrNothing(): void
+    {
+        $projectDir = $this->createDir();
+        $filesDir = $this->createDir();
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+
+        $data = $this->productData();
+        unset($data['items'][0]['file']);
+        $data['items'][0]['weight'] = 850;
+        $data['items'][] = ['slug' => 'a4', 'title' => 'A4', 'description' => 'Format A4', 'price' => 1500, 'currency' => 'eur', 'vat' => 20, 'position' => 1, 'media' => null, 'file' => null];
+
+        $this->createProvider($projectDir)->import([$data], $filesDir);
+
+        $items = $this->persistedOf(Product::class)[0]->getItems();
+        $this->assertSame(850, $items->first()->getWeight());
+        $this->assertNull($items->last()->getWeight());
+
+        new Filesystem()->remove([$projectDir, $filesDir]);
+    }
+
     // An archive taken before the switch was turned round carries "isPublished" and no "hidden": read the other way, a whole catalogue an admin had taken down would land on sale
     public function testAnArchiveCarryingTheOldPublishedFlagIsReadTheSameWay(): void
     {

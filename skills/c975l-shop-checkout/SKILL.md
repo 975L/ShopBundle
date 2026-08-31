@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-checkout
-description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, c975l:shop:stock-alerts:send, isItemSoldOut, isItemAvailable, shop_stock_alert, ShopIntegrityHealthCheckProvider, ShopIntegrityHealthCheckAdviceProvider, shop-integrity, undelivered-downloads, missing-files, oversold-items, free-items, findSellable, findDeliveredBasketIds."
+description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, WeighableBasketItemProviderInterface, getWeight, weight, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, c975l:shop:stock-alerts:send, isItemSoldOut, isItemAvailable, shop_stock_alert, ShopIntegrityHealthCheckProvider, ShopIntegrityHealthCheckAdviceProvider, shop-integrity, undelivered-downloads, missing-files, oversold-items, free-items, findSellable, findDeliveredBasketIds."
 ---
 
 # c975L ShopBundle — buying, paying, delivering
@@ -16,7 +16,8 @@ description: "Use this skill when working on buying, paying for or delivering a 
 
 ## The one plug into PaymentBundle
 
-`ProductBasketItemProvider` implements `BasketItemProviderInterface` and declares the kind `product`.
+`ProductBasketItemProvider` implements `BasketItemProviderInterface` and
+`WeighableBasketItemProviderInterface`, and declares the kind `product`.
 It is the **entire** contract between the shop and the checkout:
 
 | Method | Does |
@@ -27,6 +28,7 @@ It is the **entire** contract between the shop and the checkout:
 | `toBasketData($item, $quantity)` | flattens the item and its product into what the basket stores |
 | `getContentFlags($itemData)` | digital / service / physical, plus the gift card flag, which drives shipping |
 | `onBasketPaid($basket, $items)` | raises `orderedQuantity`, dispatches the download message, issues the gift cards |
+| `getWeight($itemData)` | what the line weighs in grams, the item's own weight times its quantity - `null` for what the shop never weighed |
 
 **`validateAddition()` must let a removal through**: a negative quantity never needs stock, and
 blocking it would trap an exhausted item in the basket. The stock rules there are the same three

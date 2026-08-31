@@ -124,6 +124,23 @@ class ProductExportProviderTest extends TestCase
         new Filesystem()->remove($projectDir);
     }
 
+    // What the shop weighs travels with the rest, and what it never weighed travels as nothing rather than as zero
+    public function testSerializeCarriesTheItemsWeight(): void
+    {
+        $projectDir = $this->createProjectDir([]);
+
+        $product = $this->createProduct();
+        $product->addItem(new ProductItem()->setTitle('A3')->setSlug('a3')->setPrice(2500)->setCurrency('eur')->setVat(20)->setWeight(850));
+        $product->addItem(new ProductItem()->setTitle('PDF')->setSlug('pdf')->setPrice(900)->setCurrency('eur')->setVat(20));
+
+        $items = new ProductExportProvider($this->createStub(ProductRepository::class), new BlockDataExporter($projectDir), $projectDir)->serialize([$product])['items'][0]['items'];
+
+        $this->assertSame(850, $items[0]['weight']);
+        $this->assertNull($items[1]['weight']);
+
+        new Filesystem()->remove($projectDir);
+    }
+
     private function createProduct(): Product
     {
         return new Product()

@@ -12,6 +12,7 @@ namespace c975L\ShopBundle\Service;
 
 use c975L\PaymentBundle\Contract\BasketItemProviderInterface;
 use c975L\PaymentBundle\Contract\GiftCardDesign;
+use c975L\PaymentBundle\Contract\WeighableBasketItemProviderInterface;
 use c975L\PaymentBundle\Entity\Basket;
 use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\PaymentBundle\Service\VatCalculator;
@@ -20,7 +21,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Plugs product items into PaymentBundle's Basket/checkout engine (see BasketItemProviderInterface)
-class ProductBasketItemProvider implements BasketItemProviderInterface
+class ProductBasketItemProvider implements BasketItemProviderInterface, WeighableBasketItemProviderInterface
 {
     public function __construct(
         private readonly ProductItemServiceInterface $productItemService,
@@ -142,6 +143,20 @@ class ProductBasketItemProvider implements BasketItemProviderInterface
         return Basket::CONTENT_FLAG_PHYSICAL | $giftCard;
     }
 
+    // What the line weighs, the article's own weight taken as many times as it was ordered - see WeighableBasketItemProviderInterface
+    public function getWeight(array $itemData): ?int
+    {
+        // Only what is posted weighs anything: a download and a service leave the parcel alone, and so does a card sent by e-mail, which getContentFlags() already reads as a service
+        if (0 === (Basket::CONTENT_FLAG_PHYSICAL & $this->getContentFlags($itemData))) {
+            return null;
+        }
+
+        // Read with defaults, like the flags above: a line snapshotted before this bundle weighed anything carries no such key, and an unweighed article is counted as nothing rather than as zero
+        $weight = $itemData['item']['weight'] ?? null;
+
+        return null === $weight ? null : (int) $weight * max(1, (int) ($itemData['quantity'] ?? 1));
+    }
+
     public function onBasketValidated(Basket $basket, array $itemsOfThisKind, array $requestData): array
     {
         // A plain product purchase carries nothing across the payment: what is ordered is already on the basket
@@ -158,32 +173,44 @@ class ProductBasketItemProvider implements BasketItemProviderInterface
                 $hasDigital = true;
             }
 
-            $giftCardValue = (int) ($itemContent['item']['giftCardValue'] ?? 0);
-
-            // A card is born here and nowhere else: the order is settled, so the money behind it exists. One card per unit bought, each with its own code - two cards of 20 € are not one of 40
-            if ($giftCardValue > 0) {
-                // Read off the basket and not off the product: the visual it was bought with is what the card keeps, whatever the catalogue has been changed to since
-                $design = new GiftCardDesign(
-                    $itemContent['parent']['image'] ?? null,
-                    $itemContent['parent']['giftCardText'] ?? null,
-                    $itemContent['parent']['giftCardScratch'] ?? true,
-                );
-
-                // The amount too: a card is worth what was paid for it, and a value re-priced between the checkout and the payment notice must not mint a card of another amount
-                for ($i = 0; $i < $itemContent['quantity']; ++$i) {
-                    $this->giftCardService->issue($giftCardValue, (string) ($itemContent['item']['currency'] ?? 'eur'), $basket, null, $design);
-                }
-            }
-
-            // Last, and the only thing the live catalogue is needed for: an item deleted since is simply no longer counted
-            $item = $this->productItemService->findOneById($id);
-            if (null !== $item) {
-                $item->setOrderedQuantity(($item->getOrderedQuantity() ?? 0) + $itemContent['quantity']);
-            }
+            $this->issueGiftCards($basket, $itemContent);
+            $this->countOrdered($id, $itemContent['quantity']);
         }
 
         if ($hasDigital) {
             $this->messageBus->dispatch(new ProductItemDownloadMessage($basket->getId()));
         }
+    }
+
+    // A card is born here and nowhere else: the order is settled, so the money behind it exists. One card per unit bought, each with its own code - two cards of 20 € are not one of 40
+    private function issueGiftCards(Basket $basket, array $itemContent): void
+    {
+        $giftCardValue = (int) ($itemContent['item']['giftCardValue'] ?? 0);
+        if ($giftCardValue <= 0) {
+            return;
+        }
+
+        // Read off the basket and not off the product: the visual it was bought with is what the card keeps, whatever the catalogue has been changed to since
+        $design = new GiftCardDesign(
+            $itemContent['parent']['image'] ?? null,
+            $itemContent['parent']['giftCardText'] ?? null,
+            $itemContent['parent']['giftCardScratch'] ?? true,
+        );
+
+        // The amount too: a card is worth what was paid for it, and a value re-priced between the checkout and the payment notice must not mint a card of another amount
+        for ($i = 0; $i < $itemContent['quantity']; ++$i) {
+            $this->giftCardService->issue($giftCardValue, (string) ($itemContent['item']['currency'] ?? 'eur'), $basket, null, $design);
+        }
+    }
+
+    // Last, and the only thing the live catalogue is needed for: an item deleted since is simply no longer counted
+    private function countOrdered(int | string $id, int $quantity): void
+    {
+        $item = $this->productItemService->findOneById($id);
+        if (null === $item) {
+            return;
+        }
+
+        $item->setOrderedQuantity(($item->getOrderedQuantity() ?? 0) + $quantity);
     }
 }

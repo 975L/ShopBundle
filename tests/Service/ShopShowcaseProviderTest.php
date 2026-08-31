@@ -115,6 +115,26 @@ class ShopShowcaseProviderTest extends TestCase
         $this->assertContainsOnlyInstancesOf(Media::class, $this->contextOf('@c975LUi/components/Slider/Slider.html.twig')['media']);
     }
 
+    // A product slider leafs through the photographs of one article, so it asks for the first sample product's own, keyed by the site under its slug - not the generic pool, which is a row of unrelated landscapes
+    public function testTheSliderLeafsThroughTheFirstProductsOwnPhotographs(): void
+    {
+        $slug = new ShopSampleCatalog()->getProducts()[0]['slug'];
+        $keyed = ['showcase/shop/' . $slug . '-1.webp', 'showcase/shop/' . $slug . '-2.webp', 'showcase/shop/' . $slug . '-3.webp'];
+
+        $this->createProvider(keyed: [$slug => $keyed])->getShowcases();
+
+        $medias = $this->contextOf('@c975LUi/components/Slider/Slider.html.twig')['media'];
+        $this->assertSame($keyed, array_map(static fn (Media $media): ?string => $media->getFilename(), $medias));
+    }
+
+    // A site declaring no photograph for that product still gets a slider, from the generic pool - every site starts with no keyed image at all
+    public function testTheSliderFallsBackOnTheGenericPoolWhenTheProductHasNoPhotograph(): void
+    {
+        $this->createProvider()->getShowcases();
+
+        $this->assertCount(3, $this->contextOf('@c975LUi/components/Slider/Slider.html.twig')['media']);
+    }
+
     private function contextOf(string $template): array
     {
         foreach ($this->rendered as $render) {
@@ -126,7 +146,11 @@ class ShopShowcaseProviderTest extends TestCase
         $this->fail($template . ' was never rendered');
     }
 
-    private function createProvider(array $images = ['medias/placeholder-1.jpg', 'medias/placeholder-2.jpg', 'medias/placeholder-3.jpg']): ShopShowcaseProvider
+    /**
+     * @param list<string>                $images
+     * @param array<string, list<string>> $keyed
+     */
+    private function createProvider(array $images = ['medias/placeholder-1.jpg', 'medias/placeholder-2.jpg', 'medias/placeholder-3.jpg'], array $keyed = []): ShopShowcaseProvider
     {
         $twig = $this->createStub(Environment::class);
         $twig->method('render')->willReturnCallback(function (string $template, array $context = []): string {
@@ -143,6 +167,12 @@ class ShopShowcaseProviderTest extends TestCase
 
         $attacher = $this->createStub(BlockFixtureMediaAttacher::class);
         $attacher->method('nextPlaceholderImage')->willReturnCallback(fn (): Media => new Media());
+        $attacher->method('placeholderImagesFor')->willReturnCallback(
+            static fn (string $key): array => array_map(
+                static fn (string $filename): Media => new Media()->setFilename($filename),
+                $keyed[str_replace('shop/', '', $key)] ?? [],
+            ),
+        );
 
         return new ShopShowcaseProvider($twig, $translator, $registry, $attacher, new ShopSampleCatalog());
     }
