@@ -9,9 +9,6 @@
     --shop-text-muted: color-mix(in srgb, var(--text) 62%, var(--background));
     // 58% and not 45%: this one carries the smallest texts of the card (the category and the price label, at 0.68rem), which is where WCAG asks for the most contrast, and 45% only held 3.4:1 on the card surface
     --shop-text-subtle: color-mix(in srgb, var(--text) 58%, var(--background));
-    // Flat and ink of the basket bar fixed at the bottom of the sheet, the same pair as a recommendation row: the bar is one of the shop's own brand surfaces, so it moves with --primary instead of staying on the ecosystem's neutral dark surface, which read as a foreign band on a site that is not black-on-white
-    --shop-navbar-background: var(--primary);
-    --shop-navbar-color: var(--background);
     // Flat and ink of a recommendation row: --primary is the far pole from --background whichever way round the site is, so the page's own ground is what reads on it. Carried by each row and not by the section around them, so what is picked out of the page is what can be clicked
     --shop-recommendations-background: var(--primary);
     --shop-recommendations-color: var(--background);

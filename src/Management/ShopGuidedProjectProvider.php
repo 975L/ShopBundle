@@ -55,42 +55,50 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_shop_category_open',
                     'description' => 'description.guided_step_shop_category_open',
+                    'narration' => 'narration.guided_step_shop_category_open',
                     'url' => $this->indexUrl(ProductCategoryCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_shop_category_new',
                     'description' => 'description.guided_step_shop_category_new',
+                    'narration' => 'narration.guided_step_shop_category_new',
                     'highlight' => '.action-new',
                 ],
                 [
                     'label' => 'label.guided_step_shop_category_name',
                     'description' => 'description.guided_step_shop_category_name',
+                    'narration' => 'narration.guided_step_shop_category_name',
                     'highlight' => '#ProductCategory_name',
                 ],
                 [
                     'label' => 'label.guided_step_shop_category_slug',
                     'description' => 'description.guided_step_shop_category_slug',
+                    'narration' => 'narration.guided_step_shop_category_slug',
                     'highlight' => '#ProductCategory_slug',
                 ],
                 [
                     'label' => 'label.guided_step_shop_category_description',
                     'description' => 'description.guided_step_shop_category_description',
+                    'narration' => 'narration.guided_step_shop_category_description',
                     // TextEditorField renders a trix editor over the input holding the value, which is the one carrying the field's own id
                     'highlight' => 'trix-editor[input="ProductCategory_description"]',
                 ],
                 [
                     'label' => 'label.guided_step_shop_category_position',
                     'description' => 'description.guided_step_shop_category_position',
+                    'narration' => 'narration.guided_step_shop_category_position',
                     'highlight' => '#ProductCategory_position',
                 ],
                 [
                     'label' => 'label.guided_step_shop_category_save',
                     'description' => 'description.guided_step_shop_category_save',
+                    'narration' => 'narration.guided_step_shop_category_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
                 [
                     'label' => 'label.guided_step_shop_category_empty',
                     'description' => 'description.guided_step_shop_category_empty',
+                    'narration' => 'narration.guided_step_shop_category_empty',
                 ],
             ],
         ];
@@ -110,51 +118,61 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_shop_product_open',
                     'description' => 'description.guided_step_shop_product_open',
+                    'narration' => 'narration.guided_step_shop_product_open',
                     'url' => $this->indexUrl(ProductCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_new',
                     'description' => 'description.guided_step_shop_product_new',
+                    'narration' => 'narration.guided_step_shop_product_new',
                     'highlight' => '.action-new',
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_title',
                     'description' => 'description.guided_step_shop_product_title',
+                    'narration' => 'narration.guided_step_shop_product_title',
                     'highlight' => '#Product_title',
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_categories',
                     'description' => 'description.guided_step_shop_product_categories',
+                    'narration' => 'narration.guided_step_shop_product_categories',
                     // AssociationField is rendered by tom-select, which hides the original select behind the wrapper it inserts right after it
                     'highlight' => '#Product_categories + .ts-wrapper',
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_available_at',
                     'description' => 'description.guided_step_shop_product_available_at',
+                    'narration' => 'narration.guided_step_shop_product_available_at',
                     'highlight' => '#Product_availableAt',
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_items',
                     'description' => 'description.guided_step_shop_product_items',
+                    'narration' => 'narration.guided_step_shop_product_items',
                     'highlight' => '[data-shop-product-items]',
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_item_add',
                     'description' => 'description.guided_step_shop_product_item_add',
+                    'narration' => 'narration.guided_step_shop_product_item_add',
                     'highlight' => '[data-shop-product-items] .field-collection-add-button',
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_price',
                     'description' => 'description.guided_step_shop_product_price',
+                    'narration' => 'narration.guided_step_shop_product_price',
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_hidden',
                     'description' => 'description.guided_step_shop_product_hidden',
+                    'narration' => 'narration.guided_step_shop_product_hidden',
                     'highlight' => '#Product_hidden',
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_save',
                     'description' => 'description.guided_step_shop_product_save',
+                    'narration' => 'narration.guided_step_shop_product_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
             ],
@@ -175,30 +193,36 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_shop_downloadable_open',
                     'description' => 'description.guided_step_shop_downloadable_open',
+                    'narration' => 'narration.guided_step_shop_downloadable_open',
                     'url' => $this->indexUrl(ProductCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_shop_downloadable_edit',
                     'description' => 'description.guided_step_shop_downloadable_edit',
+                    'narration' => 'narration.guided_step_shop_downloadable_edit',
                     'highlight' => '.action-edit',
                 ],
                 [
                     'label' => 'label.guided_step_shop_downloadable_items',
                     'description' => 'description.guided_step_shop_downloadable_items',
+                    'narration' => 'narration.guided_step_shop_downloadable_items',
                     'highlight' => '[data-shop-product-items]',
                 ],
                 [
                     'label' => 'label.guided_step_shop_downloadable_file',
                     'description' => 'description.guided_step_shop_downloadable_file',
+                    'narration' => 'narration.guided_step_shop_downloadable_file',
                 ],
                 [
                     'label' => 'label.guided_step_shop_downloadable_save',
                     'description' => 'description.guided_step_shop_downloadable_save',
+                    'narration' => 'narration.guided_step_shop_downloadable_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
                 [
                     'label' => 'label.guided_step_shop_downloadable_delivery',
                     'description' => 'description.guided_step_shop_downloadable_delivery',
+                    'narration' => 'narration.guided_step_shop_downloadable_delivery',
                 ],
             ],
         ];
@@ -218,36 +242,43 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_shop_gift_card_open',
                     'description' => 'description.guided_step_shop_gift_card_open',
+                    'narration' => 'narration.guided_step_shop_gift_card_open',
                     'url' => $this->indexUrl(ProductCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_shop_gift_card_edit',
                     'description' => 'description.guided_step_shop_gift_card_edit',
+                    'narration' => 'narration.guided_step_shop_gift_card_edit',
                     'highlight' => '.action-edit',
                 ],
                 [
                     'label' => 'label.guided_step_shop_gift_card_text',
                     'description' => 'description.guided_step_shop_gift_card_text',
+                    'narration' => 'narration.guided_step_shop_gift_card_text',
                     'highlight' => '#Product_giftCardText',
                 ],
                 [
                     'label' => 'label.guided_step_shop_gift_card_scratch',
                     'description' => 'description.guided_step_shop_gift_card_scratch',
+                    'narration' => 'narration.guided_step_shop_gift_card_scratch',
                     'highlight' => '#Product_giftCardScratch',
                 ],
                 [
                     'label' => 'label.guided_step_shop_gift_card_value',
                     'description' => 'description.guided_step_shop_gift_card_value',
+                    'narration' => 'narration.guided_step_shop_gift_card_value',
                     'highlight' => '[data-shop-product-items]',
                 ],
                 [
                     'label' => 'label.guided_step_shop_gift_card_save',
                     'description' => 'description.guided_step_shop_gift_card_save',
+                    'narration' => 'narration.guided_step_shop_gift_card_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
                 [
                     'label' => 'label.guided_step_shop_gift_card_issued',
                     'description' => 'description.guided_step_shop_gift_card_issued',
+                    'narration' => 'narration.guided_step_shop_gift_card_issued',
                 ],
             ],
         ];
@@ -267,20 +298,24 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_shop_test_mode_open',
                     'description' => 'description.guided_step_shop_test_mode_open',
+                    'narration' => 'narration.guided_step_shop_test_mode_open',
                     'url' => $this->urlGenerator->generate('management'),
                 ],
                 [
                     'label' => 'label.guided_step_shop_test_mode_enable',
                     'description' => 'description.guided_step_shop_test_mode_enable',
+                    'narration' => 'narration.guided_step_shop_test_mode_enable',
                     'highlight' => 'form[action$="/shop/test-mode-toggle"] button',
                 ],
                 [
                     'label' => 'label.guided_step_shop_test_mode_banner',
                     'description' => 'description.guided_step_shop_test_mode_banner',
+                    'narration' => 'narration.guided_step_shop_test_mode_banner',
                 ],
                 [
                     'label' => 'label.guided_step_shop_test_mode_disable',
                     'description' => 'description.guided_step_shop_test_mode_disable',
+                    'narration' => 'narration.guided_step_shop_test_mode_disable',
                     'highlight' => 'form[action$="/shop/test-mode-toggle"] button',
                 ],
             ],
@@ -301,21 +336,25 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_shop_export_open',
                     'description' => 'description.guided_step_shop_export_open',
+                    'narration' => 'narration.guided_step_shop_export_open',
                     'url' => $this->indexUrl(ProductCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_shop_export_select',
                     'description' => 'description.guided_step_shop_export_select',
+                    'narration' => 'narration.guided_step_shop_export_select',
                     'highlight' => '#form-batch-checkbox-all',
                 ],
                 [
                     'label' => 'label.guided_step_shop_export_run',
                     'description' => 'description.guided_step_shop_export_run',
+                    'narration' => 'narration.guided_step_shop_export_run',
                     'highlight' => '.action-exportSelection',
                 ],
                 [
                     'label' => 'label.guided_step_shop_export_import',
                     'description' => 'description.guided_step_shop_export_import',
+                    'narration' => 'narration.guided_step_shop_export_import',
                 ],
             ],
         ];

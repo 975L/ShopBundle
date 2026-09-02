@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-09-02",
+        "description": [
+            {
+                "en": "An article saved without a title, a description or a price is now pointed out on the form itself, where it used to end on an error page and lose what you had typed.",
+                "fr": "Un article enregistré sans titre, sans description ou sans prix vous est désormais signalé sur le formulaire même, là où il finissait sur une page d'erreur en perdant votre saisie.",
+                "es": "Un artículo guardado sin título, sin descripción o sin precio se le indica ahora en el propio formulario, donde antes terminaba en una página de error y perdía lo escrito."
+            },
+            {
+                "en": "The guided project for creating a product now says that the weight is what your parcel is charged on.",
+                "fr": "Le projet guidé qui crée un produit précise désormais que le poids décide du prix de votre colis.",
+                "es": "El proyecto guiado para crear un producto indica ahora que el peso determina el precio de su paquete."
+            }
+        ]
+    },
+    {
         "date": "2026-08-31",
         "description": [
             {

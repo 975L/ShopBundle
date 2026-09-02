@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="en" datatype="plaintext" original="shop_narration.en.xlf">
+        <body>
+            <trans-unit id="DNxHSeJ">
+                <source>narration.categories</source>
+                <target>"Categories" groups the products. A category only appears in the shop from the moment it holds at least one product.</target>
+            </trans-unit>
+            <trans-unit id="EhMylBu">
+                <source>narration.guided_step_shop_category_description</source>
+                <target>Introduce the category in a few lines: they are shown above the products, and read by the search engines.</target>
+            </trans-unit>
+            <trans-unit id="7zSSK3V">
+                <source>narration.guided_step_shop_category_empty</source>
+                <target>It stays hidden for now: an empty category is not shown in the shop, it will appear as soon as it holds a product.</target>
+            </trans-unit>
+            <trans-unit id="ai3ljyS">
+                <source>narration.guided_step_shop_category_name</source>
+                <target>Give it a name: it is what the visitor reads in the shop's menu and at the top of the category page.</target>
+            </trans-unit>
+            <trans-unit id="L5i3c8j">
+                <source>narration.guided_step_shop_category_new</source>
+                <target>Add a category. The button opens an empty form; nothing is saved before the end of it.</target>
+            </trans-unit>
+            <trans-unit id="cUTZRBv">
+                <source>narration.guided_step_shop_category_open</source>
+                <target>The panel takes you to the categories: the list of every one of the shop, in the order it displays them.</target>
+            </trans-unit>
+            <trans-unit id="8c3TlFH">
+                <source>narration.guided_step_shop_category_position</source>
+                <target>Decide where it comes: the categories are sorted by ascending position, then by name.</target>
+            </trans-unit>
+            <trans-unit id="PHfiDZI">
+                <source>narration.guided_step_shop_category_save</source>
+                <target>Save. You come back to the list, where the new category is waiting for its first product.</target>
+            </trans-unit>
+            <trans-unit id="6OtxV0Q">
+                <source>narration.guided_step_shop_category_slug</source>
+                <target>Check the address. Filled in from the name, it is part of the public url: changing it later breaks the links already shared.</target>
+            </trans-unit>
+            <trans-unit id="36kpVyc">
+                <source>narration.guided_step_shop_downloadable_delivery</source>
+                <target>Here is what the buyer receives: an e-mail in the language the order was placed in, carrying links that expire. The customer area hands out those same copies, never a fresh one.</target>
+            </trans-unit>
+            <trans-unit id="kcxGc7s">
+                <source>narration.guided_step_shop_downloadable_edit</source>
+                <target>Edit the product. Any of them can sell a file, including one that also ships a parcel.</target>
+            </trans-unit>
+            <trans-unit id="hE_hK.3">
+                <source>narration.guided_step_shop_downloadable_file</source>
+                <target>Attach the file in the item's own field. None of it is ever served straight from a public url.</target>
+            </trans-unit>
+            <trans-unit id="KPBc9rh">
+                <source>narration.guided_step_shop_downloadable_items</source>
+                <target>Move down to the items: the file is carried by an item, not by the product. Two items can sell two different files.</target>
+            </trans-unit>
+            <trans-unit id="B8T1mi3">
+                <source>narration.guided_step_shop_downloadable_open</source>
+                <target>The file is attached to an item, so we start from the product holding it: the panel takes you to the products.</target>
+            </trans-unit>
+            <trans-unit id="pcuQsr8">
+                <source>narration.guided_step_shop_downloadable_save</source>
+                <target>Save: the file is stored out of the web server's reach, where only a paid order can read it.</target>
+            </trans-unit>
+            <trans-unit id="_ayvGuQ">
+                <source>narration.guided_step_shop_export_import</source>
+                <target>The other site's import screen takes the archive as it is. The export group next to it dumps the raw table instead, which no import reads back.</target>
+            </trans-unit>
+            <trans-unit id="rlasIbt">
+                <source>narration.guided_step_shop_export_open</source>
+                <target>The export works on a selection, so we start from the listing: the panel takes you to the products.</target>
+            </trans-unit>
+            <trans-unit id="kx1hB9_">
+                <source>narration.guided_step_shop_export_run</source>
+                <target>Export the selection: an archive is downloaded, holding the products, their pictures, their items and the files those are bought for.</target>
+            </trans-unit>
+            <trans-unit id="rT3vjGd">
+                <source>narration.guided_step_shop_export_select</source>
+                <target>Check what leaves: the header box takes the whole page, a narrower selection is checked row by row.</target>
+            </trans-unit>
+            <trans-unit id="K8lAPqO">
+                <source>narration.guided_step_shop_gift_card_edit</source>
+                <target>Edit the product selling the card, whether it was just created or has been in the catalog for a while.</target>
+            </trans-unit>
+            <trans-unit id="Tu3D87l">
+                <source>narration.guided_step_shop_gift_card_issued</source>
+                <target>The code is minted at the sale. Nothing more to do here: the card is issued once the order is paid, and the payment bundle is where it is read afterwards.</target>
+            </trans-unit>
+            <trans-unit id="9EiidUH">
+                <source>narration.guided_step_shop_gift_card_open</source>
+                <target>A gift card is created like any other product: the panel takes you to the same listing.</target>
+            </trans-unit>
+            <trans-unit id="BqEZzc.">
+                <source>narration.guided_step_shop_gift_card_save</source>
+                <target>Save: the sheet is now selling a card rather than a parcel.</target>
+            </trans-unit>
+            <trans-unit id="qX0RYrj">
+                <source>narration.guided_step_shop_gift_card_scratch</source>
+                <target>Hide the code: the scratch layer covers it until whoever receives the card rubs it off.</target>
+            </trans-unit>
+            <trans-unit id="Utr41AM">
+                <source>narration.guided_step_shop_gift_card_text</source>
+                <target>Write what is printed on it: the line the card carries beside its amount, a wish, a shop name, a season.</target>
+            </trans-unit>
+            <trans-unit id="OLHcHyD">
+                <source>narration.guided_step_shop_gift_card_value</source>
+                <target>Set what it is worth. The amount lives on the item, next to its price: a card can be sold for less than it is worth.</target>
+            </trans-unit>
+            <trans-unit id="pT6vXhz">
+                <source>narration.guided_step_shop_product_available_at</source>
+                <target>Say when it becomes available. That is the date the shop states, on the sheet and in the structured data the search engines read.</target>
+            </trans-unit>
+            <trans-unit id="V_UMVne">
+                <source>narration.guided_step_shop_product_categories</source>
+                <target>Classify it. A product can belong to several categories, and it shows up under each of them.</target>
+            </trans-unit>
+            <trans-unit id="NyrbGAq">
+                <source>narration.guided_step_shop_product_hidden</source>
+                <target>Show it by unticking hidden: a hidden product stays visible here and nowhere else.</target>
+            </trans-unit>
+            <trans-unit id="F72rUnX">
+                <source>narration.guided_step_shop_product_item_add</source>
+                <target>Add the first item: a product with no item has no price, and no way into the basket.</target>
+            </trans-unit>
+            <trans-unit id="1wuchEH">
+                <source>narration.guided_step_shop_product_items</source>
+                <target>Move down to the items. The product says what it is; its items say what is bought, at what price, in which condition.</target>
+            </trans-unit>
+            <trans-unit id="bCvcdBL">
+                <source>narration.guided_step_shop_product_new</source>
+                <target>Add a product. One single form holds the sheet, its media, its prices and the blocks around them.</target>
+            </trans-unit>
+            <trans-unit id="e6oATdD">
+                <source>narration.guided_step_shop_product_open</source>
+                <target>The panel takes you to the products: the catalog as the shop reads it, trashed products excluded.</target>
+            </trans-unit>
+            <trans-unit id="1kFR1aL">
+                <source>narration.guided_step_shop_product_price</source>
+                <target>Fill in its price, its VAT rate and its currency, then its weight, which the parcel is charged on. The struck-through price is only filled if it really was charged over the last thirty days.</target>
+            </trans-unit>
+            <trans-unit id="mWlPKHR">
+                <source>narration.guided_step_shop_product_save</source>
+                <target>Save: the sheet is online the moment it is saved not hidden.</target>
+            </trans-unit>
+            <trans-unit id="sWHzX2s">
+                <source>narration.guided_step_shop_product_title</source>
+                <target>Give it a title: it is what the visitor reads first, and what the address is built from.</target>
+            </trans-unit>
+            <trans-unit id="cWMR.ej">
+                <source>narration.guided_step_shop_test_mode_banner</source>
+                <target>The visitor then sees a banner on every page of the shop, saying it is being set up. The payments have a test mode of their own, and the two are separate.</target>
+            </trans-unit>
+            <trans-unit id="wm5GV4w">
+                <source>narration.guided_step_shop_test_mode_disable</source>
+                <target>Turn it back off with the same button, the day the catalog is ready to be read as it stands.</target>
+            </trans-unit>
+            <trans-unit id="WbfdxFm">
+                <source>narration.guided_step_shop_test_mode_enable</source>
+                <target>Turn the test mode on: one click, no confirmation, and the shop is in it from the next page load.</target>
+            </trans-unit>
+            <trans-unit id="7qu_xj3">
+                <source>narration.guided_step_shop_test_mode_open</source>
+                <target>The panel brings you back to the dashboard: the shortcut sits among the others, above the sections.</target>
+            </trans-unit>
+            <trans-unit id="kTwJa4V">
+                <source>narration.products</source>
+                <target>"Products" holds the catalog. The shop displays them by ascending position, then by title.</target>
+            </trans-unit>
+            <trans-unit id="Ax50ox2">
+                <source>narration.shop</source>
+                <target>"Shop" opens the shop as a visitor reads it, in a new tab.</target>
+            </trans-unit>
+            <trans-unit id="wchKwdG">
+                <source>narration.shop_index</source>
+                <target>"Shop page" is what the shop says above the categories and the products it lists, composed with the same blocks as a product sheet.</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

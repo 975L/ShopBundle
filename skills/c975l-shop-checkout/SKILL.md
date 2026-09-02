@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-checkout
-description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, WeighableBasketItemProviderInterface, CatalogueBasketItemProviderInterface, getCatalogueUrl, Basket:ContinueShoppingButton, getWeight, weight, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, c975l:shop:stock-alerts:send, isItemSoldOut, isItemAvailable, shop_stock_alert, ShopIntegrityHealthCheckProvider, ShopIntegrityHealthCheckAdviceProvider, shop-integrity, undelivered-downloads, missing-files, oversold-items, free-items, findSellable, findDeliveredBasketIds."
+description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, WeighableBasketItemProviderInterface, CatalogueBasketItemProviderInterface, getCatalogueUrl, Basket:ContinueShoppingButton, getWeight, weight, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, Basket:Navbar, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, c975l:shop:stock-alerts:send, isItemSoldOut, isItemAvailable, shop_stock_alert, ShopIntegrityHealthCheckProvider, ShopIntegrityHealthCheckAdviceProvider, shop-integrity, undelivered-downloads, missing-files, oversold-items, free-items, findSellable, findDeliveredBasketIds."
 ---
 
 # c975L ShopBundle — buying, paying, delivering
@@ -90,10 +90,12 @@ worth and what it looks like.
 `data-ordered`. That controller also re-disables buttons from the live basket, so the `data-*` set is
 part of the contract — **dropping one silently disables the stock check on the client.**
 
-`Shop:NavbarBasket` is the bar shown as soon as the basket holds something, and it carries
-PaymentBundle's own `Basket:ViewButton`. That button already holds the `data-basket-target="total"` and
-`"quantity"` elements the controller fills. **Do not add a second element carrying either target** —
-Stimulus fills only the first, leaving the other permanently stale.
+`Basket:Navbar` (PaymentBundle) is the bar shown as soon as the basket holds something, and it carries
+PaymentBundle's own `Basket:ViewButton`. It is **placed once, in the site's layout**: this bundle's pages no
+longer emit it, and `Shop:NavbarBasket` survives only as a one-line wrapper for the sites that overrode it.
+That button already holds the `data-basket-target="total"` and `"quantity"` elements the controller fills.
+**Do not add a second element carrying either target** — Stimulus fills only the first, leaving the other
+permanently stale, which is exactly what a page emitting its own bar beside the layout's produces.
 
 `ProductBasketItemProvider` also implements `CatalogueBasketItemProviderInterface`, whose
 `getCatalogueUrl()` returns `shop_index` with a `#products` fragment: the basket's
@@ -225,6 +227,7 @@ apiece — a product to its edit screen, an order to its own read-only detail.
 - **Do not leave a never-downloaded copy behind** — the purge goes by the expiry date, not by whether the link was clicked.
 - **Do not email a link for a source file that no longer exists.**
 - **Do not duplicate a `data-basket-target`** already carried by PaymentBundle's own button.
+- **Do not emit the basket bar from a shop page** — `Basket:Navbar` is placed once in the site's layout, and a second one on the page is never filled.
 - **Do not offer a stock alert on an item withdrawn from sale** (`limitedQuantity` at 0) — nobody is waiting for what is not coming back.
 - **Do not send the alerts from a Doctrine listener** — it would fire inside the back-office flush and make the shopkeeper wait on the mailer.
 - **Do not send a whole waiting list in one pass** — the command is batched on purpose.

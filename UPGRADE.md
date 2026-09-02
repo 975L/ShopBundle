@@ -2,6 +2,21 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.5.2
+
+**The basket bar is placed by the site's layout, not by the shop's pages.** `shop/index`, `category/display` and
+`product/display` no longer emit it; add PaymentBundle's own component once in the layout instead:
+
+```twig
+<twig:c975LPayment:Basket:Navbar/>
+```
+
+`Shop:NavbarBasket` is kept as a one-line wrapper around it, so a site that overrode it keeps working - but a page
+that emits it beside a layout carrying `Basket:Navbar` gets two bars, the second one never filled by Stimulus.
+
+**`c975l/payment-bundle` is now required in `^6.7`**, which is where `Basket:Navbar` and its `set_timezone` route
+arrive. `TimezoneController` is dropped here, the route it answered belonging to whoever owns the basket.
+
 ### v2.5.1
 
 **Nothing to do**, beyond upgrading `c975l/payment-bundle` to ^6.6 along with it - the two releases go together,

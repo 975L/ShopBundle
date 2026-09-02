@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="fr" datatype="plaintext" original="shop_narration.fr.xlf">
+        <body>
+            <trans-unit id="DNxHSeJ">
+                <source>narration.categories</source>
+                <target>« Catégories » regroupe les produits. Une catégorie n'apparaît dans la boutique qu'à partir du moment où elle contient au moins un produit.</target>
+            </trans-unit>
+            <trans-unit id="EhMylBu">
+                <source>narration.guided_step_shop_category_description</source>
+                <target>Présentez la catégorie en quelques lignes : elles sont affichées au-dessus des produits, et lues par les moteurs de recherche.</target>
+            </trans-unit>
+            <trans-unit id="7zSSK3V">
+                <source>narration.guided_step_shop_category_empty</source>
+                <target>Elle reste invisible pour l'instant : une catégorie vide n'est pas affichée dans la boutique, elle apparaîtra dès qu'elle contiendra un produit.</target>
+            </trans-unit>
+            <trans-unit id="ai3ljyS">
+                <source>narration.guided_step_shop_category_name</source>
+                <target>Donnez-lui un nom : c'est ce que le visiteur lit dans le menu de la boutique et en tête de la page de catégorie.</target>
+            </trans-unit>
+            <trans-unit id="L5i3c8j">
+                <source>narration.guided_step_shop_category_new</source>
+                <target>Ajoutez une catégorie. Le bouton ouvre un formulaire vide ; rien n'est enregistré avant la fin.</target>
+            </trans-unit>
+            <trans-unit id="cUTZRBv">
+                <source>narration.guided_step_shop_category_open</source>
+                <target>Le panneau vous emmène sur les catégories : la liste de toutes celles de la boutique, dans l'ordre où elle les affiche.</target>
+            </trans-unit>
+            <trans-unit id="8c3TlFH">
+                <source>narration.guided_step_shop_category_position</source>
+                <target>Décidez de sa place : les catégories sont triées par position croissante, puis par nom.</target>
+            </trans-unit>
+            <trans-unit id="PHfiDZI">
+                <source>narration.guided_step_shop_category_save</source>
+                <target>Enregistrez. Vous revenez à la liste, où la nouvelle catégorie attend son premier produit.</target>
+            </trans-unit>
+            <trans-unit id="6OtxV0Q">
+                <source>narration.guided_step_shop_category_slug</source>
+                <target>Vérifiez l'adresse. Remplie à partir du nom, elle fait partie de l'url publique : la changer plus tard casse les liens déjà partagés.</target>
+            </trans-unit>
+            <trans-unit id="36kpVyc">
+                <source>narration.guided_step_shop_downloadable_delivery</source>
+                <target>Voici ce que reçoit l'acheteur : un e-mail dans la langue où la commande a été passée, portant des liens qui expirent. L'espace client redonne ces mêmes copies, jamais une nouvelle.</target>
+            </trans-unit>
+            <trans-unit id="kcxGc7s">
+                <source>narration.guided_step_shop_downloadable_edit</source>
+                <target>Modifiez le produit. N'importe lequel peut vendre un fichier, y compris un qui expédie aussi un colis.</target>
+            </trans-unit>
+            <trans-unit id="hE_hK.3">
+                <source>narration.guided_step_shop_downloadable_file</source>
+                <target>Joignez le fichier dans le champ de l'article. Rien n'en est jamais servi directement depuis une url publique.</target>
+            </trans-unit>
+            <trans-unit id="KPBc9rh">
+                <source>narration.guided_step_shop_downloadable_items</source>
+                <target>Descendez aux articles : le fichier est porté par un article, pas par le produit. Deux articles peuvent vendre deux fichiers différents.</target>
+            </trans-unit>
+            <trans-unit id="B8T1mi3">
+                <source>narration.guided_step_shop_downloadable_open</source>
+                <target>Le fichier est attaché à un article, on part donc du produit qui le porte : le panneau vous emmène sur les produits.</target>
+            </trans-unit>
+            <trans-unit id="pcuQsr8">
+                <source>narration.guided_step_shop_downloadable_save</source>
+                <target>Enregistrez : le fichier est rangé hors de portée du serveur web, où seule une commande payée peut le lire.</target>
+            </trans-unit>
+            <trans-unit id="_ayvGuQ">
+                <source>narration.guided_step_shop_export_import</source>
+                <target>L'écran d'import de l'autre site reprend l'archive telle quelle. Le groupe « Export » voisin, lui, vide la table brute, qu'aucun import ne relit.</target>
+            </trans-unit>
+            <trans-unit id="rlasIbt">
+                <source>narration.guided_step_shop_export_open</source>
+                <target>L'export travaille sur une sélection, on part donc de la liste : le panneau vous emmène sur les produits.</target>
+            </trans-unit>
+            <trans-unit id="kx1hB9_">
+                <source>narration.guided_step_shop_export_run</source>
+                <target>Exportez la sélection : une archive est téléchargée, contenant les produits, leurs images, leurs articles et les fichiers pour lesquels ils sont achetés.</target>
+            </trans-unit>
+            <trans-unit id="rT3vjGd">
+                <source>narration.guided_step_shop_export_select</source>
+                <target>Cochez ce qui part : la case d'en-tête prend toute la page, une sélection plus fine se coche ligne à ligne.</target>
+            </trans-unit>
+            <trans-unit id="K8lAPqO">
+                <source>narration.guided_step_shop_gift_card_edit</source>
+                <target>Modifiez le produit qui vend la carte, qu'il vienne d'être créé ou qu'il soit déjà au catalogue.</target>
+            </trans-unit>
+            <trans-unit id="Tu3D87l">
+                <source>narration.guided_step_shop_gift_card_issued</source>
+                <target>Le code est créé à la vente. Rien de plus à faire ici : la carte est émise une fois la commande payée, et c'est dans le bundle de paiement qu'elle se relit ensuite.</target>
+            </trans-unit>
+            <trans-unit id="9EiidUH">
+                <source>narration.guided_step_shop_gift_card_open</source>
+                <target>Une carte cadeau se crée comme n'importe quel produit : le panneau vous emmène sur la même liste.</target>
+            </trans-unit>
+            <trans-unit id="BqEZzc.">
+                <source>narration.guided_step_shop_gift_card_save</source>
+                <target>Enregistrez : la fiche vend désormais une carte plutôt qu'un colis.</target>
+            </trans-unit>
+            <trans-unit id="qX0RYrj">
+                <source>narration.guided_step_shop_gift_card_scratch</source>
+                <target>Masquez le code : la couche à gratter le couvre jusqu'à ce que la personne qui reçoit la carte la gratte.</target>
+            </trans-unit>
+            <trans-unit id="Utr41AM">
+                <source>narration.guided_step_shop_gift_card_text</source>
+                <target>Écrivez ce qui y est imprimé : la ligne que porte la carte à côté de son montant, un vœu, un nom de boutique, une saison.</target>
+            </trans-unit>
+            <trans-unit id="OLHcHyD">
+                <source>narration.guided_step_shop_gift_card_value</source>
+                <target>Fixez ce qu'elle vaut. Le montant vit sur l'article, à côté de son prix : une carte peut être vendue moins cher que ce qu'elle vaut.</target>
+            </trans-unit>
+            <trans-unit id="pT6vXhz">
+                <source>narration.guided_step_shop_product_available_at</source>
+                <target>Dites à partir de quand il est disponible. C'est la date que la boutique annonce, sur la fiche et dans les données structurées que lisent les moteurs de recherche.</target>
+            </trans-unit>
+            <trans-unit id="V_UMVne">
+                <source>narration.guided_step_shop_product_categories</source>
+                <target>Classez-le. Un produit peut appartenir à plusieurs catégories, et il apparaît sous chacune d'elles.</target>
+            </trans-unit>
+            <trans-unit id="NyrbGAq">
+                <source>narration.guided_step_shop_product_hidden</source>
+                <target>Montrez-le en décochant « Masqué » : un produit masqué reste visible ici et nulle part ailleurs.</target>
+            </trans-unit>
+            <trans-unit id="F72rUnX">
+                <source>narration.guided_step_shop_product_item_add</source>
+                <target>Ajoutez le premier article : un produit sans article n'a pas de prix, ni aucun moyen d'entrer dans le panier.</target>
+            </trans-unit>
+            <trans-unit id="1wuchEH">
+                <source>narration.guided_step_shop_product_items</source>
+                <target>Descendez aux articles. Le produit dit ce que c'est ; ses articles disent ce qui est acheté, à quel prix, dans quel état.</target>
+            </trans-unit>
+            <trans-unit id="bCvcdBL">
+                <source>narration.guided_step_shop_product_new</source>
+                <target>Ajoutez un produit. Un seul formulaire porte la fiche, ses médias, ses prix et les blocks qui les entourent.</target>
+            </trans-unit>
+            <trans-unit id="e6oATdD">
+                <source>narration.guided_step_shop_product_open</source>
+                <target>Le panneau vous emmène sur les produits : le catalogue tel que la boutique le lit, produits en corbeille exclus.</target>
+            </trans-unit>
+            <trans-unit id="1kFR1aL">
+                <source>narration.guided_step_shop_product_price</source>
+                <target>Renseignez son prix, son taux de TVA et sa devise, puis son poids, qui décide du prix du colis. Le prix barré ne se remplit que s'il a réellement été pratiqué ces trente derniers jours.</target>
+            </trans-unit>
+            <trans-unit id="mWlPKHR">
+                <source>narration.guided_step_shop_product_save</source>
+                <target>Enregistrez : la fiche est en ligne dès qu'elle est enregistrée non masquée.</target>
+            </trans-unit>
+            <trans-unit id="sWHzX2s">
+                <source>narration.guided_step_shop_product_title</source>
+                <target>Donnez-lui un titre : c'est ce que le visiteur lit en premier, et ce à partir de quoi l'adresse est construite.</target>
+            </trans-unit>
+            <trans-unit id="cWMR.ej">
+                <source>narration.guided_step_shop_test_mode_banner</source>
+                <target>Le visiteur voit alors un bandeau sur chaque page de la boutique, disant qu'elle est en cours d'installation. Les paiements ont leur propre mode test, et les deux sont distincts.</target>
+            </trans-unit>
+            <trans-unit id="wm5GV4w">
+                <source>narration.guided_step_shop_test_mode_disable</source>
+                <target>Désactivez-le avec le même bouton, le jour où le catalogue est prêt à être lu tel quel.</target>
+            </trans-unit>
+            <trans-unit id="WbfdxFm">
+                <source>narration.guided_step_shop_test_mode_enable</source>
+                <target>Activez le mode test : un clic, sans confirmation, et la boutique y passe dès le prochain chargement de page.</target>
+            </trans-unit>
+            <trans-unit id="7qu_xj3">
+                <source>narration.guided_step_shop_test_mode_open</source>
+                <target>Le panneau vous ramène au tableau de bord : le raccourci est parmi les autres, au-dessus des sections.</target>
+            </trans-unit>
+            <trans-unit id="kTwJa4V">
+                <source>narration.products</source>
+                <target>« Produits » tient le catalogue. La boutique les affiche par position croissante, puis par titre.</target>
+            </trans-unit>
+            <trans-unit id="Ax50ox2">
+                <source>narration.shop</source>
+                <target>« Boutique » ouvre la boutique telle que la lit un visiteur, dans un nouvel onglet.</target>
+            </trans-unit>
+            <trans-unit id="wchKwdG">
+                <source>narration.shop_index</source>
+                <target>« Page de la boutique » est ce que la boutique dit au-dessus des catégories et des produits qu'elle liste, composé avec les mêmes blocks qu'une fiche produit.</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

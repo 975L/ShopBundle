@@ -12,8 +12,6 @@
   --shop-border-strong: color-mix(in srgb, var(--text) 25%, var(--background));
   --shop-text-muted: color-mix(in srgb, var(--text) 62%, var(--background));
   --shop-text-subtle: color-mix(in srgb, var(--text) 58%, var(--background));
-  --shop-navbar-background: var(--primary);
-  --shop-navbar-color: var(--background);
   --shop-recommendations-background: var(--primary);
   --shop-recommendations-color: var(--background);
   --shop-radius-card: var(--radius-card, 10px);
@@ -71,37 +69,6 @@ div {
 
 .circle-numbers li.disabled::before {
   background-color: grey;
-}
-
-/* BASKET NAVBAR */
-.basket-navbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  width: 100%;
-  padding: 10px 16px;
-  background-color: var(--shop-navbar-background);
-  color: var(--shop-navbar-color);
-  transition: transform 0.3s ease-in-out;
-  transform: translateY(0);
-}
-
-.basket-navbar p {
-  margin: 0;
-}
-
-.basket-navbar.d-none {
-  transform: translateY(100%);
-}
-
-body.has-basket-navbar {
-  --bottom-bar-height: 72px;
-  padding-bottom: var(--bottom-bar-height);
 }
 
 /* PRODUCTS */
@@ -760,6 +727,11 @@ body.has-basket-navbar {
 
 .shop-breadcrumb-current {
   min-width: 0;
+  color: var(--shop-text-muted);
+}
+
+.shop-intro {
+  margin: 0 0 16px;
   color: var(--shop-text-muted);
 }
 

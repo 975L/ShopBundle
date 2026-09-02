@@ -230,6 +230,12 @@
     color: var(--shop-text-muted);
 }
 
+// The shop's own line, said above everything the site composes below it - the same sentence the guided tour quotes for its link
+.shop-intro {
+    margin: 0 0 16px;
+    color: var(--shop-text-muted);
+}
+
 // What the listing just below holds: the grid's caption, and not a figure dropped at the top of the page
 .shop-counters {
     display: flex;

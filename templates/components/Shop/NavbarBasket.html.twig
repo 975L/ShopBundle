@@ -1,4 +1,2 @@
-{# The bar the basket controller of PaymentBundle shows as soon as the basket holds something - the button carries the count and the total it keeps up to date, so nothing is repeated around it #}
-<div id="basket-navbar" class="basket-navbar d-none">
-    <twig:c975LPayment:Basket:ViewButton type="secondary" inline="true"/>
-</div>
+{# Kept as the name the sites overriding it already call, the bundle's own pages no longer emitting it: PaymentBundle documents its bar as placed once in the site's layout, and a page adding a second one leaves the second frozen #}
+<twig:c975LPayment:Basket:Navbar/>

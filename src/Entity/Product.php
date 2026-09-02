@@ -20,6 +20,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\Table(name: 'shop_product')]
@@ -82,6 +83,8 @@ class Product implements \Stringable, HasBlocksInterface
 
     #[ORM\OneToMany(targetEntity: ProductItem::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['position' => 'ASC'])]
+    // The rows added in the sheet are checked one by one, an empty one coming back as a form error rather than reaching the database
+    #[Assert\Valid]
     private Collection $items;
 
     #[ORM\ManyToOne]

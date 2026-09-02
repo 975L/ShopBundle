@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Contract\UserInterface;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductItemRepository::class)]
 #[ORM\Table(name: 'shop_product_item')]
@@ -27,16 +28,22 @@ class ProductItem implements \Stringable
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
+    // Required on the entity and not only on the form: the back-office submits without the browser's own check, and the slug is written off this title when the row is saved (see ProductItemListener)
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank]
     private ?string $title = null;
 
     #[ORM\Column(length: 50)]
     private ?string $slug = null;
 
+    // Required on the entity like the title above, and for the same reason: the column is NOT NULL, and a form submitted without it fails as a 500 rather than as a field the back-office can point at
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank]
     private ?string $description = null;
 
+    // NotNull and not NotBlank: an item given away costs 0, which the integrity check lists as a free item rather than as an error
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?int $price = null;
 
     // What the item was sold for before the current price, struck through beside it - null when it is not on offer. Read by ProductStateService, which ignores anything not above the price, so a leftover value never publishes a discount of zero or less

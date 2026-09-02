@@ -208,7 +208,7 @@
             </trans-unit>
             <trans-unit id="pZNb0_8">
                 <source>description.guided_step_shop_product_price</source>
-                <target>Le prix, son taux de TVA et sa devise, et le prix barré seulement s'il a réellement été pratiqué ces trente derniers jours.</target>
+                <target>Le prix, son taux de TVA et sa devise, le poids qui décide du prix du colis, et le prix barré seulement s'il a réellement été pratiqué ces trente derniers jours.</target>
             </trans-unit>
             <trans-unit id="rBwfZj2">
                 <source>description.guided_step_shop_product_save</source>
@@ -868,7 +868,7 @@
             </trans-unit>
             <trans-unit id="EkFFPCh">
                 <source>label.info_shop_link</source>
-                <target>La boutique telle que la lit un visiteur, ouverte dans un nouvel onglet.</target>
+                <target>Tous nos articles, à commander en ligne et à recevoir chez vous.</target>
             </trans-unit>
             <trans-unit id="Bw6Jk.r">
                 <source>label.item_already_downloaded</source>

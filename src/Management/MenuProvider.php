@@ -31,6 +31,7 @@ class MenuProvider implements MenuProviderInterface
             'product_category' => [
                 'controller' => ProductCategoryCrudController::class,
                 'label' => 'label.categories',
+                'narration' => 'narration.categories',
                 'translation_domain' => 'shop',
                 'icon' => 'fas fa-shop',
                 'description' => 'label.info_product_category',
@@ -38,6 +39,7 @@ class MenuProvider implements MenuProviderInterface
             'product' => [
                 'controller' => ProductCrudController::class,
                 'label' => 'label.products',
+                'narration' => 'narration.products',
                 'translation_domain' => 'shop',
                 'icon' => 'fas fa-shop',
                 'description' => 'label.info_product',
@@ -45,6 +47,7 @@ class MenuProvider implements MenuProviderInterface
             'shop_settings' => [
                 'controller' => ShopSettingsCrudController::class,
                 'label' => 'label.shop_index',
+                'narration' => 'narration.shop_index',
                 'translation_domain' => 'shop',
                 'icon' => 'fas fa-shop',
                 'description' => 'label.info_shop_index',
@@ -57,6 +60,7 @@ class MenuProvider implements MenuProviderInterface
         return [
             'shop' => [
                 'label' => 'label.shop',
+                'narration' => 'narration.shop',
                 'name' => 'shop_index',
                 'translation_domain' => 'shop',
                 'icon' => '',

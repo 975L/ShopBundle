@@ -14,6 +14,9 @@
 {% block content %}
     <twig:c975LShop:Shop:TestMode/>
     <div data-controller="basket{{ canEdit ? ' blockEditOverlay' : '' }}" class="shop"{% if canEdit %} data-edit-label="{{ 'label.edit'|trans({}, 'ui') }}"{% endif %}>
+        {# The shop's own line, said once above everything the site composes below it - the guided tour quotes it as the description of the link it points the visitor's shop at, and the two have to be the same sentence #}
+        <p class="shop-intro">{{ 'label.info_shop_link'|trans }}</p>
+
         {# What the shop says above its listing - delivery, welcome message, arguments - composed in the back-office with UiBundle's kinds, nothing to add here when the shop holds no block #}
         <twig:c975LUi:Blocks:Blocks blocks="{{ shopBlocks }}"/>
 
@@ -54,7 +57,6 @@
             </div>
         </div>
 
-        <twig:c975LShop:Shop:NavbarBasket/>
         <twig:c975LPayment:Basket:Message/>
     </div>
 

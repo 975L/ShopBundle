@@ -208,7 +208,7 @@
             </trans-unit>
             <trans-unit id="pZNb0_8">
                 <source>description.guided_step_shop_product_price</source>
-                <target>El precio, su tipo de IVA y su moneda, y el precio tachado solo si se aplicó realmente en los últimos treinta días.</target>
+                <target>El precio, su tipo de IVA y su moneda, el peso que determina el precio del paquete, y el precio tachado solo si se aplicó realmente en los últimos treinta días.</target>
             </trans-unit>
             <trans-unit id="rBwfZj2">
                 <source>description.guided_step_shop_product_save</source>
@@ -868,7 +868,7 @@
             </trans-unit>
             <trans-unit id="EkFFPCh">
                 <source>label.info_shop_link</source>
-                <target>La tienda tal como la lee un visitante, abierta en una pestaña nueva.</target>
+                <target>Todos nuestros artículos, para pedir en línea y recibir en casa.</target>
             </trans-unit>
             <trans-unit id="Bw6Jk.r">
                 <source>label.item_already_downloaded</source>

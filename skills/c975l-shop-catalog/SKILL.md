@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-catalog
-description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, weight, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-country, shop-shipping-free, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, demo catalogue, ReplacingFile, PlaceholderMediaProviderInterface."
+description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, weight, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-country, shop-shipping-free, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, ShopDemoOrderLinker, DemoFixtureLinkerInterface, demo catalogue, ReplacingFile, PlaceholderMediaProviderInterface."
 ---
 
 # c975L ShopBundle — catalog
@@ -196,6 +196,13 @@ product takes the images keyed **`shop/<slug>`**, all of them, each carrying its
 is the one its slider leafs through. Failing those, one of the generic pool, rotated over the catalogue.
 A site declaring neither still gets its catalogue, cards falling back on the bundle's own "no picture" image.
 
+`ShopDemoOrderLinker` (CoreBundle's `DemoFixtureLinkerInterface`) writes the orders that catalogue has
+already taken, once it has been flushed - a linker and not a provider, an order copying its lines off the
+catalogue the way a checkout copies them rather than pointing at it. Two of them, one posted and left
+unshipped for the guided project to mark as sent, one for a service. **The total holds the lines alone**,
+`Basket::getPayable()` adding the shipping on top of it: a total already carrying it is what the basket
+integrity check reads as a mismatch.
+
 Only the categories and the products are yielded, their items, pictures and files riding the ORM cascade.
 An item's slug is rewritten from its title by
 `ProductItemListener`, exactly as one typed in the back office is — the catalogue's own item slug is what
@@ -228,6 +235,7 @@ charging one price and displaying another.
   ignores it in silence, writing the row with no file name and nothing on the disk. Hand it a
   `ReplacingFile`, the way `ProductImportProvider` does.
 - **Do not have a fixture provider empty a table** — a demo site keeps its own content in those very tables.
+- **Do not write a demo order's shipping into its total** — `getPayable()` adds it, and a doubled total lights up the integrity check.
 - **Do not store a price on `Product`** — it is the lowest of its items, resolved at read time.
 - **Do not store prices as floats**, and do not store a currency per product.
 - **Do not treat `limitedQuantity: 0` as unlimited.**

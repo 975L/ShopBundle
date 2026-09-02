@@ -208,7 +208,7 @@
             </trans-unit>
             <trans-unit id="pZNb0_8">
                 <source>description.guided_step_shop_product_price</source>
-                <target>The price, its VAT rate and its currency, plus the struck-through price only if it really was charged over the last thirty days.</target>
+                <target>The price, its VAT rate and its currency, the weight the parcel is charged on, plus the struck-through price only if it really was charged over the last thirty days.</target>
             </trans-unit>
             <trans-unit id="rBwfZj2">
                 <source>description.guided_step_shop_product_save</source>
@@ -868,7 +868,7 @@
             </trans-unit>
             <trans-unit id="EkFFPCh">
                 <source>label.info_shop_link</source>
-                <target>The shop as a visitor reads it, opened in a new tab.</target>
+                <target>All our items, ordered online and delivered to your door.</target>
             </trans-unit>
             <trans-unit id="Bw6Jk.r">
                 <source>label.item_already_downloaded</source>

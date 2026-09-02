@@ -1,5 +1,22 @@
 # Changelog
 
+## v2.5.2
+
+The basket bar is placed once by the site, and a price row is validated before it saves
+
+- **A product item with no title, no description or no price no longer answers 500**: `ProductItem` carries `Assert\NotBlank` on `$title` and `$description`, `Assert\NotNull` on `$price`, and `Product::$items` carries `Assert\Valid` (01/09/2026)
+- Requires `c975l/core-bundle` `^1.21`, which is where `DemoFixtureLinkerInterface` arrives (02/09/2026)
+- Requires `c975l/payment-bundle` `^6.7`, which is where `Basket:Navbar` and the `set_timezone` route arrive (02/09/2026)
+- **New `ShopDemoOrderLinker`**: two paid orders written once the catalogue has been flushed, one posted and one for a service (see CoreBundle's `DemoFixtureLinkerInterface`) (01/09/2026)
+- A demo order's total holds its lines alone, `Basket::getPayable()` adding the shipping (02/09/2026)
+- **The basket bar is no longer emitted by the shop's pages** (02/09/2026) **See [UPGRADE.md](UPGRADE.md)**
+- `Shop:NavbarBasket` is kept as a one-line wrapper around PaymentBundle's `Basket:Navbar` (02/09/2026)
+- `TimezoneController` is dropped, PaymentBundle answering the `set_timezone` route (02/09/2026)
+- The shop's index prints its own line above the blocks composed on it (02/09/2026)
+- The menu entries and the guided steps carry a narration, shipped in `shop_narration.{en,fr}.xlf` (02/09/2026)
+- The guided product project says the weight decides the parcel's price (02/09/2026)
+- **New `NarrationCatalogueTest`**: every declared narration is shipped in both locales, and nothing is shipped undeclared (02/09/2026)
+
 ## v2.5.1
 
 The shop says where its catalogue is, PaymentBundle no longer guessing
