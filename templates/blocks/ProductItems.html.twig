@@ -1,17 +1,22 @@
 {# The items table of a product sheet, placed where the editor wants it rather than after every block. It carries its own "basket" controller and its own message area, so it also works dropped on a page that has neither #}
 {% set product = shop_block_product(productSlug|default(null)) %}
 {% if product %}
-    {% if title|default('') is not empty %}
-        <h2 id="items">{{ title }}</h2>
-    {% endif %}
-    {% if product.availableAt == null or product.availableAt|date('Ymd') <= "now"|date("Ymd") %}
-        <div data-controller="basket">
-            <twig:c975LShop:Product:Items items="{{ product.visibleItems }}"/>
-            <twig:c975LPayment:Basket:Message/>
+    {# The page measure and the vertical step, same reasoning as Categories.html.twig: nothing wraps a block hanging under ".blocks" #}
+    <div class="block-section">
+        <div class="section-wrap">
+            {% if title|default('') is not empty %}
+                <h2 id="items">{{ title }}</h2>
+            {% endif %}
+            {% if product.availableAt == null or product.availableAt|date('Ymd') <= "now"|date("Ymd") %}
+                <div data-controller="basket">
+                    <twig:c975LShop:Product:Items items="{{ product.visibleItems }}"/>
+                    <twig:c975LPayment:Basket:Message/>
+                </div>
+            {% else %}
+                <twig:c975LUi:Alert:Alert type="warning">
+                    {{ 'label.product_not_yet_available'|trans({}, 'shop') }} {{ product.availableAt|date('d/m/Y') }}.
+                </twig:c975LUi:Alert:Alert>
+            {% endif %}
         </div>
-    {% else %}
-        <twig:c975LUi:Alert:Alert type="warning">
-            {{ 'label.product_not_yet_available'|trans({}, 'shop') }} {{ product.availableAt|date('d/m/Y') }}.
-        </twig:c975LUi:Alert:Alert>
-    {% endif %}
+    </div>
 {% endif %}

@@ -1,5 +1,10 @@
 {# The label and the url follow the product: renaming it renames the button, where a UiBundle "button" holding both by hand would keep the old wording #}
 {% set product = shop_block_product(productSlug|default(null)) %}
 {% if product %}
-    <twig:c975LShop:Product:Button product="{{ product }}" type="{{ type|default('primary') }}"/>
+    {# The page measure and the vertical step, same reasoning as Categories.html.twig: nothing wraps a block hanging under ".blocks" #}
+    <div class="block-section">
+        <div class="section-wrap">
+            <twig:c975LShop:Product:Button product="{{ product }}" type="{{ type|default('primary') }}"/>
+        </div>
+    </div>
 {% endif %}

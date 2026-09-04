@@ -1,5 +1,50 @@
 [
     {
+        "date": "2026-09-04",
+        "description": [
+            {
+                "en": "Your shop's pages now line up with the rest of your site instead of running the full width of the window, and a block composed on them is no longer inset twice.",
+                "fr": "Les pages de votre boutique s'alignent désormais sur le reste de votre site au lieu de courir sur toute la largeur de l'écran, et un block composé dessus n'est plus décalé deux fois.",
+                "es": "Las páginas de su tienda se alinean ahora con el resto de su sitio en lugar de ocupar todo el ancho de la ventana, y un bloque compuesto en ellas ya no se sangra dos veces."
+            },
+            {
+                "en": "A new guided project walks you through the Shop page screen: the welcome line first, then the blocks standing above your listing.",
+                "fr": "Un nouveau projet guidé vous fait parcourir l'écran Page boutique : la phrase d'accueil d'abord, puis les blocks qui surmontent votre liste.",
+                "es": "Un nuevo proyecto guiado le acompaña por la pantalla Página de la tienda: primero la frase de bienvenida y luego los bloques que van encima de su lista."
+            },
+            {
+                "en": "A shop block dropped on any page of your site - the categories, a gift-card row, a product's items - now lines up with the rest of the page instead of touching the edges of the screen.",
+                "fr": "Un block boutique posé sur n'importe quelle page de votre site - les catégories, une rangée de cartes cadeaux, les articles d'un produit - s'aligne désormais sur le reste de la page au lieu de toucher les bords de l'écran.",
+                "es": "Un bloque de tienda colocado en cualquier página de su sitio - las categorías, una fila de tarjetas regalo, los artículos de un producto - se alinea ahora con el resto de la página en lugar de tocar los bordes de la pantalla."
+            },
+            {
+                "en": "The age a product is meant for now follows it: a copy of the product keeps it, and an exported catalogue brings it back on import.",
+                "fr": "L'âge auquel s'adresse un produit le suit désormais : une copie du produit le conserve, et un catalogue exporté le ramène à l'import.",
+                "es": "La edad a la que se dirige un producto ahora le acompaña: una copia del producto la conserva, y un catálogo exportado la recupera al importar."
+            }
+        ]
+    },
+    {
+        "date": "2026-09-03",
+        "description": [
+            {
+                "en": "The line your shop says above everything else is now yours to write, on the Shop page screen; left empty, it keeps the sentence it has always shown.",
+                "fr": "La phrase que votre boutique dit au-dessus de tout le reste s'écrit désormais sur l'écran Page boutique ; laissée vide, elle garde celle qu'elle affichait jusqu'ici.",
+                "es": "La frase que su tienda dice encima de todo lo demás ahora la escribe usted, en la pantalla Página de la tienda; si la deja vacía, mantiene la que mostraba hasta ahora."
+            },
+            {
+                "en": "You can now say what age a product is meant for: the sheet shows your site's age warning, search engines read the audience from it, and an age typed in another shape is pointed out on the form.",
+                "fr": "Vous pouvez désormais indiquer à quel âge un produit s'adresse : la fiche affiche l'avertissement d'âge de votre site, les moteurs de recherche en lisent le public, et un âge écrit autrement vous est signalé sur le formulaire.",
+                "es": "Ahora puede indicar a qué edad se dirige un producto: la ficha muestra la advertencia de edad de su sitio, los buscadores leen ahí el público, y una edad escrita de otra forma se le indica en el formulario."
+            },
+            {
+                "en": "The title your shop's page carries in search results, and the sentence it is shared with, can now be written in Url descriptions.",
+                "fr": "Le titre que porte la page de votre boutique dans les résultats de recherche, et la phrase avec laquelle elle est partagée, s'écrivent désormais dans Descriptions d'urls.",
+                "es": "El título que lleva la página de su tienda en los resultados de búsqueda, y la frase con la que se comparte, ahora se escriben en Descripciones de urls."
+            }
+        ]
+    },
+    {
         "date": "2026-09-02",
         "description": [
             {

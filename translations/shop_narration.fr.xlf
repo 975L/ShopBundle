@@ -106,6 +106,26 @@
                 <source>narration.guided_step_shop_gift_card_value</source>
                 <target>Fixez ce qu'elle vaut. Le montant vit sur l'article, à côté de son prix : une carte peut être vendue moins cher que ce qu'elle vaut.</target>
             </trans-unit>
+            <trans-unit id="HbdoHvF">
+                <source>narration.guided_step_shop_index_blocks</source>
+                <target>Composez ce qui surmonte la liste. Livraison, arguments, message d'accueil : les mêmes types que ceux d'une page du site.</target>
+            </trans-unit>
+            <trans-unit id="OSmRTvL">
+                <source>narration.guided_step_shop_index_intro</source>
+                <target>Écrivez la phrase d'accueil. C'est la phrase propre à la boutique, affichée au-dessus de tout le reste ; laissée vide, la page reprend celle qui décrit la boutique dans le menu.</target>
+            </trans-unit>
+            <trans-unit id="voTRx.8">
+                <source>narration.guided_step_shop_index_open</source>
+                <target>Ouvrez la page de la boutique, dans le menu de gauche. C'est un écran pour une seule ligne, et il s'ouvre directement sur son formulaire.</target>
+            </trans-unit>
+            <trans-unit id=".GIPefZ">
+                <source>narration.guided_step_shop_index_save</source>
+                <target>Enregistrez. L'index de la boutique affiche la phrase et les blocks dès que la ligne est enregistrée.</target>
+            </trans-unit>
+            <trans-unit id="XJyQ1RX">
+                <source>narration.guided_step_shop_product_age</source>
+                <target>Indiquez à qui il s'adresse. Écrivez l'âge comme une plage de chiffres, trois tiret huit, ou quinze tiret à partir de quinze ans : la fiche en tire son avertissement, et les moteurs de recherche son public.</target>
+            </trans-unit>
             <trans-unit id="pT6vXhz">
                 <source>narration.guided_step_shop_product_available_at</source>
                 <target>Dites à partir de quand il est disponible. C'est la date que la boutique annonce, sur la fiche et dans les données structurées que lisent les moteurs de recherche.</target>
@@ -124,7 +144,7 @@
             </trans-unit>
             <trans-unit id="1wuchEH">
                 <source>narration.guided_step_shop_product_items</source>
-                <target>Descendez aux articles. Le produit dit ce que c'est ; ses articles disent ce qui est acheté, à quel prix, dans quel état.</target>
+                <target>Descendez aux articles. Le produit dit ce que c'est ; ses articles disent ce qui est acheté, à quel prix, dans quel état. Le poids de chaque article est celui sur lequel les frais de port sont calculés.</target>
             </trans-unit>
             <trans-unit id="bCvcdBL">
                 <source>narration.guided_step_shop_product_new</source>

@@ -79,9 +79,11 @@
     min-width: 0;
 }
 
+// Printed on --primary in the ink computed for that flat, which is where the shop's small type reads hardest - so the row's title is set a notch larger than the price under it
 .recommendation-data strong {
     font-family: var(--font-family-title);
-    font-size: 0.9rem;
+    font-weight: var(--font-title-weight);
+    font-size: 1rem;
 }
 
 // Mixed out of the row's own ink and not the page's quiet grey, which was mixed for the page's ground and not for this flat

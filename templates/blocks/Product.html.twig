@@ -1,7 +1,12 @@
 {# Renders nothing at all when the product it points at no longer exists, rather than half a card #}
 {% set product = shop_block_product(productSlug|default(null)) %}
 {% if product %}
-    <div class="products">
-        <twig:c975LShop:Product:Product product="{{ product }}"/>
+    {# The page measure and the vertical step, same reasoning as Categories.html.twig: nothing wraps a block hanging under ".blocks" #}
+    <div class="block-section">
+        <div class="section-wrap">
+            <div class="products">
+                <twig:c975LShop:Product:Product product="{{ product }}"/>
+            </div>
+        </div>
     </div>
 {% endif %}

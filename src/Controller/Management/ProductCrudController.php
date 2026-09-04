@@ -142,6 +142,11 @@ class ProductCrudController extends AbstractCrudController
                 ->setHelp(t('label.brand_help', [], 'shop'))
                 ->setRequired(false)
                 ->hideOnIndex(),
+            TextField::new('age')
+                ->setLabel(t('label.age', [], 'shop'))
+                ->setHelp(t('label.age_help', [], 'shop'))
+                ->setRequired(false)
+                ->hideOnIndex(),
             DateField::new('availableAt')
                 ->setLabel(t('label.available_at', [], 'shop')),
 

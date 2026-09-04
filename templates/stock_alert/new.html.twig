@@ -1,4 +1,4 @@
-{% extends 'layout.html.twig' %}
+{% extends '@c975LShop/layout.html.twig' %}
 {% trans_default_domain 'shop' %}
 
 {# Defines specific variables #}
@@ -8,17 +8,20 @@
 {% set robots = 'noindex, follow' %}
 
 {% block content %}
-    <p class="text lead">{{ 'label.stock_alert_intro'|trans({'%product%': product.title, '%item%': productItem.title}) }}</p>
+    {# The page measure, the layout no longer wrapping a page's content (see @c975LShop/layout.html.twig) - this page composes no block, so the one wrapper holds everything #}
+    <div class="section-wrap">
+        <p class="text lead">{{ 'label.stock_alert_intro'|trans({'%product%': product.title, '%item%': productItem.title}) }}</p>
 
-    {{ form_start(form) }}
-        {# The errors bound to no field - an expired token, say - without which the page redisplays saying nothing #}
-        {{ form_errors(form) }}
-        {{ form_widget(form) }}
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">{{ 'label.stock_alert_submit'|trans }}</button>
-        </div>
-    {{ form_end(form) }}
+        {{ form_start(form) }}
+            {# The errors bound to no field - an expired token, say - without which the page redisplays saying nothing #}
+            {{ form_errors(form) }}
+            {{ form_widget(form) }}
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">{{ 'label.stock_alert_submit'|trans }}</button>
+            </div>
+        {{ form_end(form) }}
 
-    {# The visitor has to be told what the address is kept for, and how they get out of it, before they type it #}
-    <p class="text text-muted">{{ 'text.stock_alert_privacy'|trans }}</p>
+        {# The visitor has to be told what the address is kept for, and how they get out of it, before they type it #}
+        <p class="text text-muted">{{ 'text.stock_alert_privacy'|trans }}</p>
+    </div>
 {% endblock %}

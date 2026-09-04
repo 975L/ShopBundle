@@ -70,6 +70,10 @@
                 <source>description.guided_project_shop_gift_card</source>
                 <target>Una tarjeta es un producto como otro, salvo que lo que vale se escribe en su artículo y su aspecto se decide en su ficha.</target>
             </trans-unit>
+            <trans-unit id="..R2bSj">
+                <source>description.guided_project_shop_index</source>
+                <target>La página con la que abre la tienda: la frase que acoge al visitante y los bloques compuestos encima de la lista.</target>
+            </trans-unit>
             <trans-unit id="ucGRCvp">
                 <source>description.guided_project_shop_product</source>
                 <target>La ficha que lee el visitante y el artículo que lleva lo que paga: uno sin el otro no vende nada.</target>
@@ -178,6 +182,26 @@
                 <source>description.guided_step_shop_gift_card_value</source>
                 <target>El importe vive en el artículo, junto a su precio: una tarjeta puede venderse por menos de lo que vale.</target>
             </trans-unit>
+            <trans-unit id="n4TpbWF">
+                <source>description.guided_step_shop_index_blocks</source>
+                <target>Envío, argumentos, mensaje de bienvenida: los mismos tipos con los que se compone una página del sitio.</target>
+            </trans-unit>
+            <trans-unit id="4eggnV7">
+                <source>description.guided_step_shop_index_intro</source>
+                <target>La frase propia de la tienda, mostrada por encima de todo lo demás; si se deja vacía, la página recupera la que describe la tienda en el menú.</target>
+            </trans-unit>
+            <trans-unit id="4NBCPKA">
+                <source>description.guided_step_shop_index_open</source>
+                <target>Una pantalla para una sola fila, abierta directamente en su formulario: aquí no hay nada que listar.</target>
+            </trans-unit>
+            <trans-unit id="0i8wul1">
+                <source>description.guided_step_shop_index_save</source>
+                <target>El índice de la tienda muestra la frase y los bloques en cuanto se guarda la fila.</target>
+            </trans-unit>
+            <trans-unit id="inThwdu">
+                <source>description.guided_step_shop_product_age</source>
+                <target>Una edad escrita como un intervalo de cifras, «3-8» o «15-» a partir de 15 años: la ficha saca de ahí su advertencia, y los buscadores su público.</target>
+            </trans-unit>
             <trans-unit id="U6WlC77">
                 <source>description.guided_step_shop_product_available_at</source>
                 <target>La fecha que la tienda anuncia, en la ficha y en los datos estructurados que leen los buscadores.</target>
@@ -196,7 +220,7 @@
             </trans-unit>
             <trans-unit id="ZPjQILJ">
                 <source>description.guided_step_shop_product_items</source>
-                <target>El producto dice qué es; sus artículos dicen qué se compra, a qué precio y en qué estado.</target>
+                <target>El producto dice qué es; sus artículos dicen qué se compra, a qué precio y en qué estado. El peso de cada artículo es aquel sobre el que se calculan los gastos de envío: un artículo dejado a cero se envía gratis.</target>
             </trans-unit>
             <trans-unit id="rAyhDoU">
                 <source>description.guided_step_shop_product_new</source>
@@ -261,6 +285,14 @@
             <trans-unit id="4jca4DY">
                 <source>label.added</source>
                 <target>¡añadido!</target>
+            </trans-unit>
+            <trans-unit id="dnzVgba">
+                <source>label.age</source>
+                <target>Edad</target>
+            </trans-unit>
+            <trans-unit id="z7fVVbq">
+                <source>label.age_help</source>
+                <target>La edad a la que se dirige el producto, solo cifras: «3-8», o «15-» a partir de 15 años. Se publica en los datos estructurados, donde los motores la leen como dos edades.</target>
             </trans-unit>
             <trans-unit id="5bnbli8">
                 <source>label.all_our_items</source>
@@ -594,6 +626,10 @@
                 <source>label.guided_project_shop_gift_card</source>
                 <target>Vender una tarjeta regalo</target>
             </trans-unit>
+            <trans-unit id="gZ3jzsI">
+                <source>label.guided_project_shop_index</source>
+                <target>Configurar la página de la tienda</target>
+            </trans-unit>
             <trans-unit id="2sYUII0">
                 <source>label.guided_project_shop_product</source>
                 <target>Crear un producto</target>
@@ -701,6 +737,26 @@
             <trans-unit id="AlQ0guP">
                 <source>label.guided_step_shop_gift_card_value</source>
                 <target>Fijar su valor</target>
+            </trans-unit>
+            <trans-unit id="_v.Xu6a">
+                <source>label.guided_step_shop_index_blocks</source>
+                <target>Componer lo que va encima de la lista</target>
+            </trans-unit>
+            <trans-unit id="OLl8Za1">
+                <source>label.guided_step_shop_index_intro</source>
+                <target>Escribir la frase de bienvenida</target>
+            </trans-unit>
+            <trans-unit id="75vppuM">
+                <source>label.guided_step_shop_index_open</source>
+                <target>Abrir la página de la tienda</target>
+            </trans-unit>
+            <trans-unit id="Rt97UtT">
+                <source>label.guided_step_shop_index_save</source>
+                <target>Guardar</target>
+            </trans-unit>
+            <trans-unit id="ou2A4o9">
+                <source>label.guided_step_shop_product_age</source>
+                <target>Indicar a quién se dirige</target>
             </trans-unit>
             <trans-unit id="YGYOF33">
                 <source>label.guided_step_shop_product_available_at</source>
@@ -1050,6 +1106,10 @@
                 <source>label.shop_index</source>
                 <target>Página de la tienda</target>
             </trans-unit>
+            <trans-unit id="A7Y0lAL">
+                <source>label.shop_intro</source>
+                <target>Frase de introducción</target>
+            </trans-unit>
             <trans-unit id="8PB.r2w">
                 <source>label.shop_sample_category_decoration</source>
                 <target>Decoración</target>
@@ -1293,6 +1353,10 @@
             <trans-unit id="B.vPyMX">
                 <source>text.shop_blocks_help</source>
                 <target>Lo que la tienda dice encima de su listado</target>
+            </trans-unit>
+            <trans-unit id="cjiF4J9">
+                <source>text.shop_intro_help</source>
+                <target>La frase que la tienda dice encima de todo lo demás; si se deja vacía, la página muestra la predeterminada</target>
             </trans-unit>
             <trans-unit id="UjIeEUT">
                 <source>text.stock_alert_not_awaited</source>

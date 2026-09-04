@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-blocks
-description: "Use this skill when putting the shop's catalog on a page composed in the back office of a Symfony application built on the c975L ecosystem — the nine shop block kinds, composing the shop's index, its category pages and a product sheet out of blocks, the three kinds that read the product of the sheet they sit on, the render cache and its catalog tags, and the block showcase. Covers why these kinds store no product and why one of them declines its cache entry. Triggers on: shop_products, shop_gift_cards, shop_categories, shop_product, shop_product_button, shop_search, shop_recommendations, shop_product_items, shop_product_slider, ShopBlockExtension, shop_block_products, shop_block_gift_cards, shop_block_categories, shop_block_product, shop_block_recommendations, shop_block_sheet_kinds, ShopBlockChoices, ShopBlockCacheTagProvider, ShopCacheInvalidationListener, ShopBlockCacheInvalidator, ShopBlockOwnerResolver, ShopShowcaseProvider, shop_product context, shop_product_block, shop_product_category_block, shop_settings_block, ShopSettings, StylesheetProvider, getManagementStylesheets, BundleStylesheetManagementProviderInterface, block-thumbs, ui-block-thumb, block picker, silhouette."
+description: "Use this skill when putting the shop's catalog on a page composed in the back office of a Symfony application built on the c975L ecosystem — the nine shop block kinds, composing the shop's index, its category pages and a product sheet out of blocks, the three kinds that read the product of the sheet they sit on, the render cache and its catalog tags, and the block showcase. Covers why these kinds store no product and why one of them declines its cache entry. Triggers on: shop_products, shop_gift_cards, shop_categories, shop_product, shop_product_button, shop_search, shop_recommendations, shop_product_items, shop_product_slider, ShopBlockExtension, shop_block_products, shop_block_gift_cards, shop_block_categories, shop_block_product, shop_block_recommendations, shop_block_sheet_kinds, ShopBlockChoices, ShopBlockCacheTagProvider, hasScheduled, ShopCacheInvalidationListener, ShopBlockCacheInvalidator, ShopBlockOwnerResolver, ShopShowcaseProvider, shop_product context, shop_product_block, shop_product_category_block, shop_settings_block, ShopSettings, StylesheetProvider, getManagementStylesheets, BundleStylesheetManagementProviderInterface, block-thumbs, ui-block-thumb, block picker, silhouette, block-section, section-wrap, framed, ShopPageMeasureTest."
 ---
 
 # c975L ShopBundle — blocks
@@ -34,6 +34,13 @@ Every template under `templates/blocks/` is an **adapter**: it resolves what to 
 `shop_block_*()` Twig function and hands it to the same component the bundle's own pages use. So
 restyling a component moves the pages *and* the blocks at once, and there is nothing to keep in step
 between the two.
+
+**Each adapter states the page measure and the vertical step for itself**, wrapping what it writes in
+`<div class="block-section"><div class="section-wrap">`: a block hangs straight under UiBundle's `.blocks`,
+which is `display: contents`, so nothing above it measures it and a bare one runs the full window width. Two
+carry none and need none — `shop_products` is framed by its own component (prop `framed`), and
+`shop_product_slider` is laid out on `--reading-max-width` by UiBundle's slider. `ShopPageMeasureTest` holds
+the contract.
 
 **A block stores a slug and a maximum, never the products themselves.** `ShopBlockExtension` resolves
 them live at render time, which is what keeps a block from going stale against the catalog: a product
@@ -81,12 +88,16 @@ UiBundle's own invalidation listener cannot close the gap. Each entry carries a 
 `ProductItem`, `ProductMedia`, `ProductCategory` or `ProductAffinity` changes.
 `c975l:shop:affinity:calculate` invalidates them explicitly: its bulk `DELETE` fires no Doctrine event.
 
-Two deliberate exceptions:
+Three deliberate exceptions:
 
 - **`shop_search` is `cacheable: false`** — it renders a Live Component, whose markup carries the props
   checksum and the CSRF token of the current session.
 - **A `shop_products` block drawing at random returns `null` from its tag resolver**, i.e. renders
   live: a cached entry would freeze the draw until the catalog itself changed.
+- **A catalog holding a product still to be released renders every catalog-reading kind live** —
+  `ProductRepository::hasScheduled()` answers for the whole catalog, and while it is true the resolvers
+  return `null`: a date passing fires no Doctrine event, so a cached entry would keep the product out
+  of the listing past its release. The veto is catalog-wide, a block filtered on one category included.
 
 Adding a kind that reads the catalog means adding it to `ShopBlockCacheTagProvider::PRODUCT_KINDS`, or
 declaring it `cacheable: false`. Forgetting both serves a stale catalog until the next `cache:clear`.
@@ -122,6 +133,7 @@ carrying it everywhere.
 - **Do not cache a kind that renders a Live Component** or draws at random.
 - **Do not add a catalog-reading kind** without a tag resolver or `cacheable: false`.
 - **Do not duplicate a component in a block template** — the block is an adapter onto the same one.
+- **Do not write a block template without its `.block-section` and its `.section-wrap`** — nothing above it measures it.
 - **Do not give a showcase entry a media file of its own.**
 - **Do not add a block kind without its silhouette** in `sass/block-thumbs.scss` — the picker shows it as a bare frame.
 - **Do not put a `shop_product`-context kind** in a collection that has no product to read.

@@ -82,7 +82,7 @@
 
 .product-badge-new {
     background-color: var(--surface-accent);
-    color: var(--primary);
+    color: var(--primary-ink);
 }
 
 .product-badge-limited-quantity {
@@ -98,7 +98,8 @@
 // The one badge the shop puts its own brand behind: a price cut is what the visitor came for, and the neutral flat of the others reads as another mention rather than as an offer
 .product-badge-discount {
     background-color: var(--primary);
-    color: var(--background);
+    // Same reason as --shop-recommendations-color: the ground only reads on --primary while the site is light
+    color: var(--button-color);
 }
 
 .product-body {
@@ -116,10 +117,11 @@
     text-transform: uppercase;
 }
 
+// A notch above what a card's title used to be set at: it is the one text of the card read from across a grid, and small type is the first thing to fade whatever the surface it is printed on
 .product h3 {
     margin: 0;
     font-family: var(--font-family-title);
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     line-height: 1.25;
 }
 
@@ -174,11 +176,12 @@
 
 .product-price strong {
     font-family: var(--font-family-title);
+    font-weight: var(--font-title-weight);
     font-size: 1.05rem;
 }
 
 .product-view {
-    color: var(--primary);
+    color: var(--primary-ink);
     font-size: 0.8rem;
     white-space: nowrap;
 }
@@ -258,7 +261,7 @@
     }
 
     .product h3 {
-        font-size: 1.03rem;
+        font-size: 1.13rem;
     }
 }
 

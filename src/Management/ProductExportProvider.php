@@ -86,6 +86,8 @@ class ProductExportProvider implements ExportProviderInterface
             'title' => $product->getTitle(),
             'description' => $product->getDescription(),
             'brand' => $product->getBrand(),
+            // What the sheet warns the buyer of, the archive being a faithful copy: without it a re-import drops the warning and the "audience" node built from it
+            'age' => $product->getAge(),
             'position' => $product->getPosition(),
             'hidden' => $product->isHidden(),
             // The archive is a faithful copy: a product exported out of the recycle bin comes back to the recycle bin, not into the catalogue

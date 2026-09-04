@@ -112,6 +112,7 @@ class ProductImportProvider implements ImportProviderInterface
             ->setTitle($item['title'])
             ->setDescription($item['description'] ?? '')
             ->setBrand($item['brand'] ?? null)
+            ->setAge($item['age'] ?? null)
             ->setPosition($item['position'] ?? null)
             ->setAvailableAt(isset($item['availableAt']) ? new \DateTime($item['availableAt']) : null);
 

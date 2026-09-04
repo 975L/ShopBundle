@@ -255,6 +255,24 @@ class ProductImportProviderTest extends TestCase
         new Filesystem()->remove([$projectDir, $filesDir]);
     }
 
+    // The age comes back as the archive names it, and one taken before the column existed leaves the product unaged rather than emptied of a warning it never had
+    public function testTheProductComesBackWithTheAgeTheArchiveNames(): void
+    {
+        $projectDir = $this->createDir();
+        $filesDir = $this->createDir();
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+
+        $data = $this->productData();
+        unset($data['items'][0]['file']);
+        $data['age'] = '3-8';
+
+        $this->createProvider($projectDir)->import([$data], $filesDir);
+
+        $this->assertSame('3-8', $this->persistedOf(Product::class)[0]->getAge());
+
+        new Filesystem()->remove([$projectDir, $filesDir]);
+    }
+
     private function productData(): array
     {
         return [

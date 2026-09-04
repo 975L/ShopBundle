@@ -9,9 +9,9 @@
     --shop-text-muted: color-mix(in srgb, var(--text) 62%, var(--background));
     // 58% and not 45%: this one carries the smallest texts of the card (the category and the price label, at 0.68rem), which is where WCAG asks for the most contrast, and 45% only held 3.4:1 on the card surface
     --shop-text-subtle: color-mix(in srgb, var(--text) 58%, var(--background));
-    // Flat and ink of a recommendation row: --primary is the far pole from --background whichever way round the site is, so the page's own ground is what reads on it. Carried by each row and not by the section around them, so what is picked out of the page is what can be clicked
+    // Flat and ink of a recommendation row. The ink is --button-color and not --background: the page's ground is only the far pole from --primary while the site is light, where in dark mode the two are both dark and a row's title fell to 1.22:1 on its own flat. --button-color is what UiBundle's ThemeVariablesCssListener computes as the legible ink for whatever paints on --primary, in either mode - the very question asked here. Carried by each row and not by the section around them, so what is picked out of the page is what can be clicked
     --shop-recommendations-background: var(--primary);
-    --shop-recommendations-color: var(--background);
+    --shop-recommendations-color: var(--button-color);
     --shop-radius-card: var(--radius-card, 10px);
     --shop-radius-row: 10px;
     --shop-radius-badge: 4px;

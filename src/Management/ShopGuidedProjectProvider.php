@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Management\GuidedProjectProviderInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ShopBundle\Controller\Management\ProductCategoryCrudController;
 use c975L\ShopBundle\Controller\Management\ProductCrudController;
+use c975L\ShopBundle\Controller\Management\ShopSettingsCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -33,6 +34,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
     {
         return [
             $this->categoryProject(),
+            $this->indexProject(),
             $this->productProject(),
             $this->downloadableProject(),
             $this->giftCardProject(),
@@ -104,6 +106,47 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
         ];
     }
 
+    // The page the shop opens on, set once before the catalogue is filled: its sentence and the blocks under it are the first thing a visitor reads, and the only screen of this bundle editing a single row rather than a list
+    private function indexProject(): array
+    {
+        return [
+            'slug' => 'shop-index',
+            'label' => 'label.guided_project_shop_index',
+            'description' => 'description.guided_project_shop_index',
+            'translation_domain' => 'shop',
+            // Between the category and the product: the shop's own page is what one settles before filling the catalogue it lists
+            'order' => 8015,
+            'role' => $this->roleNeeded(),
+            'steps' => [
+                [
+                    'label' => 'label.guided_step_shop_index_open',
+                    'description' => 'description.guided_step_shop_index_open',
+                    'narration' => 'narration.guided_step_shop_index_open',
+                    // The index action redirects straight to the single row, so the screen this opens on is already the form - no edit step to walk through
+                    'url' => $this->indexUrl(ShopSettingsCrudController::class),
+                ],
+                [
+                    'label' => 'label.guided_step_shop_index_intro',
+                    'description' => 'description.guided_step_shop_index_intro',
+                    'narration' => 'narration.guided_step_shop_index_intro',
+                    'highlight' => '#ShopSettings_intro',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_index_blocks',
+                    'description' => 'description.guided_step_shop_index_blocks',
+                    'narration' => 'narration.guided_step_shop_index_blocks',
+                    'highlight' => '[data-shop-settings-blocks]',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_index_save',
+                    'description' => 'description.guided_step_shop_index_save',
+                    'narration' => 'narration.guided_step_shop_index_save',
+                    'highlight' => '.action-saveAndReturn',
+                ],
+            ],
+        ];
+    }
+
     // The product holds what the visitor reads, its items hold what they pay - one sheet without the other sells nothing
     private function productProject(): array
     {
@@ -139,6 +182,12 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'narration' => 'narration.guided_step_shop_product_categories',
                     // AssociationField is rendered by tom-select, which hides the original select behind the wrapper it inserts right after it
                     'highlight' => '#Product_categories + .ts-wrapper',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_product_age',
+                    'description' => 'description.guided_step_shop_product_age',
+                    'narration' => 'narration.guided_step_shop_product_age',
+                    'highlight' => '#Product_age',
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_available_at',
@@ -360,7 +409,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
         ];
     }
 
-    // The bar every screen these projects walk sets on its own index (see ProductCrudController and ProductCategoryCrudController), so a parcours is never offered to someone its very first step turns away
+    // The bar every screen these projects walk sets on its own index (see ProductCrudController, ProductCategoryCrudController and ShopSettingsCrudController), so a parcours is never offered to someone its very first step turns away
     private function roleNeeded(): string
     {
         return $this->configService->get('site-role-admin');

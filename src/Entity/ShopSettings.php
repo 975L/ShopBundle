@@ -16,6 +16,7 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Trait\HasBlocksTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 // The shop's index has no entity of its own to hang its blocks on, the way a product sheet and a category page have - this is that entity, and nothing else: a single row, holding what the editor composed above the listing
@@ -29,6 +30,10 @@ class ShopSettings implements \Stringable, HasBlocksInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    // The shop's own line, said once above everything the blocks compose below it - left empty, the page falls back to the sentence the back-office menu already uses to describe the shop link
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $intro = null;
 
     // What the shop's index says above its listing - composed in the back-office with UiBundle's kinds, the same way a product sheet and a category page are
     #[ORM\ManyToMany(targetEntity: Block::class, cascade: ['persist', 'remove'])]
@@ -50,5 +55,17 @@ class ShopSettings implements \Stringable, HasBlocksInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getIntro(): ?string
+    {
+        return $this->intro;
+    }
+
+    public function setIntro(?string $intro): self
+    {
+        $this->intro = $intro;
+
+        return $this;
     }
 }

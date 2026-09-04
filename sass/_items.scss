@@ -74,6 +74,7 @@
 
 .product-item-heading strong {
     font-family: var(--font-family-title);
+    font-weight: var(--font-title-weight);
     font-size: 0.95rem;
 }
 
@@ -123,6 +124,7 @@
 
 .product-item-price strong {
     font-family: var(--font-family-title);
+    font-weight: var(--font-title-weight);
     font-size: 1rem;
 }
 
@@ -138,7 +140,7 @@
 
 // Stated as a figure rather than as a badge here: the row already carries its stock line and its format, and a third coloured pill on it would make the price the quietest thing in the row
 .product-item-discount {
-    color: var(--primary);
+    color: var(--primary-ink);
     font-size: 0.72rem;
     font-weight: 600;
 }

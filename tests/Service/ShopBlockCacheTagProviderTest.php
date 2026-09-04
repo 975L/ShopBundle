@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Tests\Service;
 
+use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
 use c975L\ShopBundle\Service\ShopBlockCacheTagProvider;
 use c975L\UiBundle\Entity\Block;
@@ -22,7 +23,7 @@ class ShopBlockCacheTagProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->resolvers = new ShopBlockCacheTagProvider()->getCacheTagResolvers();
+        $this->resolvers = $this->provider()->getCacheTagResolvers();
     }
 
     // Every kind of the bundle but the search, which declares "cacheable: false" and is never asked
@@ -53,6 +54,53 @@ class ShopBlockCacheTagProviderTest extends TestCase
     {
         $this->assertNull($this->resolvers['shop_products']($this->block(['random' => true])));
         $this->assertNotNull($this->resolvers['shop_products']($this->block(['random' => false])));
+    }
+
+    // The day a scheduled product goes on sale, no row is saved and no tag is dropped - an entry cached the day before would hold it out of the listing for good
+    public function testAScheduledProductDeclinesTheEntryOfTheListingsReadingADate(): void
+    {
+        $resolvers = $this->provider(true)->getCacheTagResolvers();
+
+        foreach (['shop_products', 'shop_gift_cards', 'shop_recommendations'] as $kind) {
+            $this->assertNull($resolvers[$kind]($this->block()), $kind);
+        }
+    }
+
+    // A sheet's own kinds read the product they are placed on whatever its date (see ShopBlockExtension::getProduct), and the categories listing reads no product at all
+    public function testTheKindsReadingNoDateAreCachedWhateverIsScheduled(): void
+    {
+        $resolvers = $this->provider(true)->getCacheTagResolvers();
+
+        foreach (['shop_product', 'shop_product_button', 'shop_product_items', 'shop_product_slider'] as $kind) {
+            $this->assertSame([ShopBlockCacheInvalidator::CACHE_TAG_PRODUCTS], $resolvers[$kind]($this->block()), $kind);
+        }
+
+        $this->assertSame([ShopBlockCacheInvalidator::CACHE_TAG_CATEGORIES], $resolvers['shop_categories']($this->block()));
+    }
+
+    // Three products blocks on the same page ask the same question once, and ask it again once the request is over
+    public function testTheAnswerIsReadOncePerRequest(): void
+    {
+        $productRepository = $this->createMock(ProductRepository::class);
+        $productRepository->expects($this->exactly(2))->method('hasScheduled')->willReturn(false);
+
+        $provider = new ShopBlockCacheTagProvider($productRepository);
+        $resolvers = $provider->getCacheTagResolvers();
+
+        $resolvers['shop_products']($this->block());
+        $resolvers['shop_products']($this->block());
+        $resolvers['shop_gift_cards']($this->block());
+
+        $provider->reset();
+        $resolvers['shop_products']($this->block());
+    }
+
+    private function provider(bool $scheduled = false): ShopBlockCacheTagProvider
+    {
+        $productRepository = $this->createStub(ProductRepository::class);
+        $productRepository->method('hasScheduled')->willReturn($scheduled);
+
+        return new ShopBlockCacheTagProvider($productRepository);
     }
 
     private function block(array $data = []): Block

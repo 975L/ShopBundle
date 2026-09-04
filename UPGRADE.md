@@ -2,6 +2,46 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.6
+
+**The shop's pages measure themselves.** A new `@c975LShop/layout.html.twig`, which every public template of this
+bundle extends, overrides UiBundle's `container` block: the wrapper an app's layout puts around a page's content -
+SiteBundle's `.container` and its 15px among them - is dropped, and each template states its own measure by
+wrapping what it writes itself in a `.section-wrap`. A shop listing therefore stops at `--body-max-width` like the
+rest of the site, on the same gutter every composed page uses, instead of running the whole window width.
+
+**Nothing to do on a site that overrode no shop template**, beyond looking at the pages once. A site that did copy
+one into `templates/bundles/c975LShopBundle/` keeps its own copy, which still opens the app's wrapper: re-base it
+on the new one, or the page keeps the old measure while the rest of the shop moves to the new one.
+
+The blocks composed on a shop page are now rendered **outside** that wrapper, each block already carrying a
+`.section-wrap` of its own - a second one around them applied the gutter twice. A site whose stylesheet targeted a
+block through `.container .section-wrap`, or through the shop's own wrapper, needs its selector rewritten.
+
+That measure now lives in the block templates themselves: each `templates/blocks/*.html.twig` of this bundle
+wraps what it writes in a `.block-section` and a `.section-wrap`. A site that overrode one into
+`templates/bundles/c975LShopBundle/blocks/` has to add that pair to its copy, or the kind runs the whole window
+width. The two exceptions are `Products.html.twig`, framed by its own component, and `ProductSlider.html.twig`,
+laid out by UiBundle's slider.
+
+**Two nullable columns arrive.** Generate the migration with `doctrine:migrations:diff` and run it; there is
+nothing to backfill, both being empty on every existing row:
+
+```sql
+ALTER TABLE shop_product ADD age VARCHAR(20) DEFAULT NULL;
+ALTER TABLE shop_settings ADD intro LONGTEXT DEFAULT NULL;
+```
+
+`shop_product.age` is the range a product is meant for, typed as `3-8` or `15-`; anything else is now refused by
+the form rather than saved. `shop_settings.intro` is the line the shop's index prints above its blocks, written on
+the *Shop page* screen - left empty, the index keeps printing `label.info_shop_link` as it always did.
+
+**`c975l/core-bundle` is now required in `^1.23.0`**, which is where `Alert:AgeWarning` takes the age it guards on
+itself - the sheet hands it over rather than wrapping the call in an `if` of its own. A product carrying an age
+prints the site's age warning above what the visitor decides on - the sentence is CoreBundle's
+`site-age-warning` setting, written in the back office and empty until it is, so a shop with nothing to state
+prints nothing. A site declaring several languages says it in each from that setting's own "Traduire" screen.
+
 ### v2.5.2
 
 **The basket bar is placed by the site's layout, not by the shop's pages.** `shop/index`, `category/display` and

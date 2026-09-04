@@ -42,6 +42,26 @@ class ProductRepositoryTest extends TestCase
         $this->assertStringContainsString('p.isDeleted = false', (string) $dql);
     }
 
+    // The file is joined with the item: every card asks each of its items whether it carries one, to say digital or physical and to name the format (see ProductStateService), which costs a query per item when the association is left to be resolved one by one
+    public function testTheSortedListingReadsItsItemsFilesInTheSameQuery(): void
+    {
+        $dql = null;
+        $this->createRepository($dql)->findAllSorted('newest');
+
+        // Joined and selected: joined alone, the alias would filter the rows without sparing a single query
+        $this->assertStringContainsString('LEFT JOIN i.file', (string) $dql);
+        $this->assertStringContainsString('SELECT p, m, c, i, f', (string) $dql);
+    }
+
+    // The same, on the listing a category leads to: the cards it shows are the very same ones
+    public function testTheCategoryListingReadsItsItemsFilesInTheSameQuery(): void
+    {
+        $dql = null;
+        $this->createRepository($dql)->findByCategorySlug('histoires');
+
+        $this->assertStringContainsString('LEFT JOIN i.file', (string) $dql);
+    }
+
     // A repository wired on an entity manager that runs no query, only records the DQL it was handed
     private function createRepository(?string &$dql): ProductRepository
     {

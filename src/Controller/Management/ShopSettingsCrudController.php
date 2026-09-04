@@ -27,6 +27,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInter
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -71,6 +72,15 @@ class ShopSettingsCrudController extends AbstractCrudController
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
 
         return [
+            // The one line the index prints above everything else, plain text and not a block: it is the shop's own sentence, and a shop that never comes here keeps the default the menu describes the shop link with
+            FormField::addFieldset(t('label.shop_intro', [], 'shop')),
+            TextareaField::new('intro')
+                ->setLabel(t('label.shop_intro', [], 'shop'))
+                ->setHelp(t('text.shop_intro_help', [], 'shop'))
+                ->setNumOfRows(2)
+                ->setColumns('col-12')
+                ->setRequired(false),
+
             // Blocks: what the shop's index says above its listing, composed with UiBundle's kinds - the same collection a product sheet and a category page hold, minus the context that offers the two sheet-only kinds, which have no product to read here
             FormField::addFieldset(t('label.blocks', [], 'shop')),
             CollectionField::new('blocks')
@@ -82,7 +92,8 @@ class ShopSettingsCrudController extends AbstractCrudController
                 ->allowAdd()
                 ->allowDelete()
                 ->setFormTypeOption('by_reference', false)
-                ->setFormTypeOption('row_attr', $this->blockMoveRowAttrBuilder->build(ShopBlockOwnerResolver::TYPE_SHOP, $entity instanceof ShopSettings ? $entity->getId() : null)),
+                // The sortable's own attributes, plus the one the guided project points at when it walks the user down to the blocks: the entries are numbered by the collection, so no id inside is stable enough to name (see ShopGuidedProjectProvider)
+                ->setFormTypeOption('row_attr', ['data-shop-settings-blocks' => '1', ...$this->blockMoveRowAttrBuilder->build(ShopBlockOwnerResolver::TYPE_SHOP, $entity instanceof ShopSettings ? $entity->getId() : null)]),
         ];
     }
 

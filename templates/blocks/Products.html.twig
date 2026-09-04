@@ -2,8 +2,14 @@
 {% set products = shop_block_products(categorySlug|default(null), max|default(null), random|default(false)) %}
 {% if products is not empty %}
     {# No anchor: the page keeps its own "products" id, the one the sort links, the filters and the "load more" link point at #}
-    <twig:c975LShop:Product:Products products="{{ products }}" title="{{ title|default('') }}" id=""/>
+    {# "framed": the listing writes its own ".block-section" and ".section-wrap", so nothing is wrapped here - see components/Product/Products.html.twig #}
+    <twig:c975LShop:Product:Products products="{{ products }}" title="{{ title|default('') }}" id="" framed="true"/>
     {% if displayMore|default(false) %}
-        <twig:c975LUi:Button:Button label="{{ 'label.shop'|trans({}, 'shop') }}" url="{{ path('shop_index') }}"/>
+        {# The button is a sibling of the framed listing above, not a child of it, so it states the same measure and the same step for itself or it sits against the screen's edge #}
+        <div class="block-section">
+            <div class="section-wrap">
+                <twig:c975LUi:Button:Button label="{{ 'label.shop'|trans({}, 'shop') }}" url="{{ path('shop_index') }}"/>
+            </div>
+        </div>
     {% endif %}
 {% endif %}

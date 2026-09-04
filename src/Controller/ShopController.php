@@ -36,6 +36,9 @@ class ShopController extends AbstractController
     )]
     public function index(Request $request): Response
     {
+        // Read once for the two things the index takes from it, the row being absent on a shop that never opened the back-office screen
+        $settings = $this->shopSettingsRepository->findSingle();
+
         return $this->render(
             '@c975LShop/shop/index.html.twig',
             [
@@ -44,8 +47,10 @@ class ShopController extends AbstractController
                 'order' => $this->shopService->getOrder($request->query),
                 'filters' => $this->shopService->getFilters($request->query),
                 'priceBrackets' => $this->shopService->getPriceBrackets(),
+                // The shop's own line - null until the editor writes one, the template then falling back to the sentence the back-office menu describes the shop link with
+                'shopIntro' => $settings?->getIntro(),
                 // What the editor composed above the listing - an empty collection on a shop that never opened the screen, which renders nothing rather than failing on a row that was never created
-                'shopBlocks' => $this->shopSettingsRepository->findSingle()?->getBlocks() ?? [],
+                'shopBlocks' => $settings?->getBlocks() ?? [],
             ]
         );
     }

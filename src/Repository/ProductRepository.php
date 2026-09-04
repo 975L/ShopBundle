@@ -63,10 +63,12 @@ class ProductRepository extends ServiceEntityRepository
     public function findAllSorted(?string $sort = null): array
     {
         $qb = $this->available($this->createQueryBuilder('p'))
-            ->select('p, m, c, i')
+            ->select('p, m, c, i, f')
             ->leftJoin('p.medias', 'm')
             ->leftJoin('p.categories', 'c')
-            ->leftJoin('p.items', 'i');
+            ->leftJoin('p.items', 'i')
+            // The file joined with the item: every card asks each of its items whether it carries one, to say digital or physical and to name the format (see ProductStateService), which costs a query per item when the association is left to be resolved one by one. A to-one join, so it multiplies no row
+            ->leftJoin('i.file', 'f');
 
         if ('newest' === $sort) {
             $qb->orderBy('p.creation', 'DESC');
@@ -103,10 +105,12 @@ class ProductRepository extends ServiceEntityRepository
     {
         // "c" filters and "c2" hydrates: fetch-joining the filtered alias would leave each card with the one category it was matched on, where the listing shows the first of them all
         return $this->available($this->createQueryBuilder('p'))
-            ->select('p, m, c2, i')
+            ->select('p, m, c2, i, f')
             ->leftJoin('p.medias', 'm')
             ->leftJoin('p.categories', 'c2')
             ->leftJoin('p.items', 'i')
+            // Same as findAllSorted(): the cards read each item's file, which costs a query per item when it is not joined
+            ->leftJoin('i.file', 'f')
             ->join('p.categories', 'c')
             ->andWhere('c.slug = :slug')
             ->setParameter('slug', $slug)
@@ -172,6 +176,19 @@ class ProductRepository extends ServiceEntityRepository
             ->andWhere('p.id IN (:ids)')
             ->setParameter('ids', $ids)
             ->orderBy('m.position', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    // Whether a product waits for a date still ahead, which is what tells a listing moving on its own from one only ever changed by a save: the answer is what ShopBlockCacheTagProvider caches or renders live on. A product with no date at all is on sale already, and is none of them
+    public function hasScheduled(): bool
+    {
+        return [] !== $this->visible($this->createQueryBuilder('p'))
+            ->select('p.id')
+            ->andWhere('p.availableAt > :now')
+            ->setParameter('now', new \DateTime())
+            ->setMaxResults(1)
             ->getQuery()
             ->getResult()
         ;

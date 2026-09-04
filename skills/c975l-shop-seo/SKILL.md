@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-seo
-description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork."
+description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork, url_metadata_title, url_metadata_summary, UrlMetadataProvider, Url descriptions."
 ---
 
 # c975L ShopBundle — structured data, sitemap, health, recommendations
@@ -18,7 +18,8 @@ description: "Use this skill when working on how the shop is read from outside i
 
 A product sheet publishes a schema.org `Product` as JSON-LD, with **one `offers` node per purchasable
 item** carrying its own title, description, picture, sku, gtin, price, list price, currency,
-availability, condition, shipping details and return link. The product node itself carries a `brand`.
+availability, condition, shipping details and return link. The product node itself carries a `brand`
+and an `audience`.
 Purchasable means **not set aside**: both the builder and the extension read `Product::getVisibleItems()`,
 an item hidden publishing no offer for something the sheet no longer sells.
 
@@ -56,6 +57,13 @@ on a shelf product, an ISBN-13 on a book — and is what lets a comparison engin
 product sold elsewhere; a product made in-house carries none, and claiming one it does not have is
 worse than publishing nothing. `brand` sits on `Product`, not on the item, and Google Merchant Center
 declines a branded offer naming none.
+
+`Product::$age` publishes the `audience` node, a `PeopleAudience` carrying `suggestedMinAge` and, when
+the range names one, `suggestedMaxAge`. The column takes the range as an editor types it (`3-8`, or
+`15-` from fifteen up) and the entity refuses anything else (`label.age_invalid`, in the `validators`
+domain), the builder reading the two figures off that one string. A range written backwards is refused
+at the form by `Product::validateAgeRange()` (`label.age_range_reversed`) and publishes no node at all
+if it ever reaches the builder. It is **not** `typicalAgeRange`, which belongs to a `CreativeWork` — see BookBundle.
 
 An item on offer also publishes a `priceSpecification` of type `ListPrice`, which is what Google shows
 as a crossed-out price. Its guard is `ProductStateService::getItemPriceBefore()` — the very one the
@@ -106,6 +114,12 @@ runs without any of them. A trail of fewer than two levels publishes nothing.
 The sheet also sets `ogImage`, `ogImageAlt` and `summarySocialNetwork` for the layout. The template
 setting the share image is the only one that knows what it shows, so it says it there rather than
 leaving the layout to read a media column this bundle's medias do not have.
+
+The shop's index passes its own labels through `url_metadata_title()` and `url_metadata_summary()`,
+so the row an editor wrote for `/shop` in ConfigBundle's *Url descriptions* wins and the shipped
+`label.shop` / `label.all_our_items` are its fallback. **Setting `title` and `summarySocialNetwork`
+outright would make that row unreachable** — the layouts only read one for what the template left
+unsaid.
 
 ## Sitemap and llms.txt
 

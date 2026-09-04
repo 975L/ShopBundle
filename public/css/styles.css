@@ -13,7 +13,7 @@
   --shop-text-muted: color-mix(in srgb, var(--text) 62%, var(--background));
   --shop-text-subtle: color-mix(in srgb, var(--text) 58%, var(--background));
   --shop-recommendations-background: var(--primary);
-  --shop-recommendations-color: var(--background);
+  --shop-recommendations-color: var(--button-color);
   --shop-radius-card: var(--radius-card, 10px);
   --shop-radius-row: 10px;
   --shop-radius-badge: 4px;
@@ -149,7 +149,7 @@ div {
 
 .product-badge-new {
   background-color: var(--surface-accent);
-  color: var(--primary);
+  color: var(--primary-ink);
 }
 
 .product-badge-limited-quantity {
@@ -164,7 +164,7 @@ div {
 
 .product-badge-discount {
   background-color: var(--primary);
-  color: var(--background);
+  color: var(--button-color);
 }
 
 .product-body {
@@ -185,7 +185,7 @@ div {
 .product h3 {
   margin: 0;
   font-family: var(--font-family-title);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   line-height: 1.25;
 }
 
@@ -238,11 +238,12 @@ div {
 
 .product-price strong {
   font-family: var(--font-family-title);
+  font-weight: var(--font-title-weight);
   font-size: 1.05rem;
 }
 
 .product-view {
-  color: var(--primary);
+  color: var(--primary-ink);
   font-size: 0.8rem;
   white-space: nowrap;
 }
@@ -311,7 +312,7 @@ div {
     padding: 14px 14px 16px;
   }
   .product h3 {
-    font-size: 1.03rem;
+    font-size: 1.13rem;
   }
 }
 @media (min-width: 900px) {
@@ -397,6 +398,7 @@ div {
 
 .product-item-heading strong {
   font-family: var(--font-family-title);
+  font-weight: var(--font-title-weight);
   font-size: 0.95rem;
 }
 
@@ -446,6 +448,7 @@ div {
 
 .product-item-price strong {
   font-family: var(--font-family-title);
+  font-weight: var(--font-title-weight);
   font-size: 1rem;
 }
 
@@ -460,7 +463,7 @@ div {
 }
 
 .product-item-discount {
-  color: var(--primary);
+  color: var(--primary-ink);
   font-size: 0.72rem;
   font-weight: 600;
 }
@@ -915,7 +918,8 @@ div {
 
 .recommendation-data strong {
   font-family: var(--font-family-title);
-  font-size: 0.9rem;
+  font-weight: var(--font-title-weight);
+  font-size: 1rem;
 }
 
 .recommendation-price {

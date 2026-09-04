@@ -70,6 +70,10 @@
                 <source>description.guided_project_shop_gift_card</source>
                 <target>A card is a product like any other, except that what it is worth is typed on its item and what it looks like is decided on its sheet.</target>
             </trans-unit>
+            <trans-unit id="..R2bSj">
+                <source>description.guided_project_shop_index</source>
+                <target>The page the shop opens on: the sentence it greets a visitor with, and the blocks composed above the listing.</target>
+            </trans-unit>
             <trans-unit id="ucGRCvp">
                 <source>description.guided_project_shop_product</source>
                 <target>The sheet the visitor reads, and the item carrying what they pay - one without the other sells nothing.</target>
@@ -178,6 +182,26 @@
                 <source>description.guided_step_shop_gift_card_value</source>
                 <target>The amount lives on the item, next to its price: a card can be sold for less than it is worth.</target>
             </trans-unit>
+            <trans-unit id="n4TpbWF">
+                <source>description.guided_step_shop_index_blocks</source>
+                <target>Delivery, arguments, a welcome message: the same kinds a page of the site is composed with.</target>
+            </trans-unit>
+            <trans-unit id="4eggnV7">
+                <source>description.guided_step_shop_index_intro</source>
+                <target>The shop's own sentence, printed above everything else; left empty, the page falls back to the one the menu describes the shop with.</target>
+            </trans-unit>
+            <trans-unit id="4NBCPKA">
+                <source>description.guided_step_shop_index_open</source>
+                <target>One screen for one row, opened straight on its form - there is nothing to list here.</target>
+            </trans-unit>
+            <trans-unit id="0i8wul1">
+                <source>description.guided_step_shop_index_save</source>
+                <target>The shop's index shows the line and the blocks as soon as the row is saved.</target>
+            </trans-unit>
+            <trans-unit id="inThwdu">
+                <source>description.guided_step_shop_product_age</source>
+                <target>An age written as a range of figures, "3-8" or "15-" from 15 up: the sheet warns the visitor with it, and search engines read the audience off it.</target>
+            </trans-unit>
             <trans-unit id="U6WlC77">
                 <source>description.guided_step_shop_product_available_at</source>
                 <target>The date the shop states, on the sheet and in the structured data the search engines read.</target>
@@ -196,7 +220,7 @@
             </trans-unit>
             <trans-unit id="ZPjQILJ">
                 <source>description.guided_step_shop_product_items</source>
-                <target>The product says what it is; its items say what is bought, at what price, in which condition.</target>
+                <target>The product says what it is; its items say what is bought, at what price, in which condition. The weight of each item is the one the shipping cost is computed on, so an item left at zero is shipped for nothing.</target>
             </trans-unit>
             <trans-unit id="rAyhDoU">
                 <source>description.guided_step_shop_product_new</source>
@@ -261,6 +285,14 @@
             <trans-unit id="4jca4DY">
                 <source>label.added</source>
                 <target>added!</target>
+            </trans-unit>
+            <trans-unit id="dnzVgba">
+                <source>label.age</source>
+                <target>Age</target>
+            </trans-unit>
+            <trans-unit id="z7fVVbq">
+                <source>label.age_help</source>
+                <target>The age the product is meant for, figures alone: "3-8", or "15-" from 15 up. Published in the structured data, where engines read it as two ages.</target>
             </trans-unit>
             <trans-unit id="5bnbli8">
                 <source>label.all_our_items</source>
@@ -594,6 +626,10 @@
                 <source>label.guided_project_shop_gift_card</source>
                 <target>Sell a gift card</target>
             </trans-unit>
+            <trans-unit id="gZ3jzsI">
+                <source>label.guided_project_shop_index</source>
+                <target>Set up the shop page</target>
+            </trans-unit>
             <trans-unit id="2sYUII0">
                 <source>label.guided_project_shop_product</source>
                 <target>Create a product</target>
@@ -701,6 +737,26 @@
             <trans-unit id="AlQ0guP">
                 <source>label.guided_step_shop_gift_card_value</source>
                 <target>Set what it is worth</target>
+            </trans-unit>
+            <trans-unit id="_v.Xu6a">
+                <source>label.guided_step_shop_index_blocks</source>
+                <target>Compose what stands above the listing</target>
+            </trans-unit>
+            <trans-unit id="OLl8Za1">
+                <source>label.guided_step_shop_index_intro</source>
+                <target>Write the welcome line</target>
+            </trans-unit>
+            <trans-unit id="75vppuM">
+                <source>label.guided_step_shop_index_open</source>
+                <target>Open the shop page</target>
+            </trans-unit>
+            <trans-unit id="Rt97UtT">
+                <source>label.guided_step_shop_index_save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="ou2A4o9">
+                <source>label.guided_step_shop_product_age</source>
+                <target>Say who it is for</target>
             </trans-unit>
             <trans-unit id="YGYOF33">
                 <source>label.guided_step_shop_product_available_at</source>
@@ -1050,6 +1106,10 @@
                 <source>label.shop_index</source>
                 <target>Shop page</target>
             </trans-unit>
+            <trans-unit id="A7Y0lAL">
+                <source>label.shop_intro</source>
+                <target>Intro sentence</target>
+            </trans-unit>
             <trans-unit id="8PB.r2w">
                 <source>label.shop_sample_category_decoration</source>
                 <target>Decoration</target>
@@ -1293,6 +1353,10 @@
             <trans-unit id="B.vPyMX">
                 <source>text.shop_blocks_help</source>
                 <target>What the shop says above its listing</target>
+            </trans-unit>
+            <trans-unit id="cjiF4J9">
+                <source>text.shop_intro_help</source>
+                <target>The line the shop says above everything else; left empty, the page shows the default one</target>
             </trans-unit>
             <trans-unit id="UjIeEUT">
                 <source>text.stock_alert_not_awaited</source>

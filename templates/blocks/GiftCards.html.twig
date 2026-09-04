@@ -2,29 +2,34 @@
 {# It carries its own "basket" controller and its own message area, so it also works dropped on a page that has neither - the same reasoning as ProductItems.html.twig #}
 {% set giftCards = shop_block_gift_cards(max|default(null)) %}
 {% if giftCards is not empty %}
-    {% if title|default('') is not empty %}
-        <h2 id="gift-cards">{{ title }}</h2>
-    {% endif %}
-    <div data-controller="basket">
-        <div class="cards">
-            {% for product in giftCards %}
-                <div class="gift-card-offer">
-                    {# The card as it will be, with no amount on it: what it is worth is picked below, and a figure printed here would be one of the several offered #}
-                    <twig:c975LPayment:GiftCard:Card
-                        image="{{ product.medias is not empty ? product.medias[0].name : '' }}"
-                        text="{{ product.giftCardText }}"
-                        scratch="{{ product.giftCardScratch }}"
-                    />
-                    <p class="gift-card-offer-title">{{ product.title }}</p>
-                    <div class="gift-card-offer-amounts">
-                        {# "|filter" and not a "for ... if": that modifier was dropped in Twig 3 #}
-                        {% for item in product.visibleItems|filter(item => item.giftCard) %}
-                            <twig:c975LShop:ProductItem:AddButton productItem="{{ item }}" type="secondary"/>
-                        {% endfor %}
-                    </div>
+    {# The page measure and the vertical step, same reasoning as Categories.html.twig: nothing wraps a block hanging under ".blocks" #}
+    <div class="block-section">
+        <div class="section-wrap">
+            {% if title|default('') is not empty %}
+                <h2 id="gift-cards">{{ title }}</h2>
+            {% endif %}
+            <div data-controller="basket">
+                <div class="cards">
+                    {% for product in giftCards %}
+                        <div class="gift-card-offer">
+                            {# The card as it will be, with no amount on it: what it is worth is picked below, and a figure printed here would be one of the several offered #}
+                            <twig:c975LPayment:GiftCard:Card
+                                image="{{ product.medias is not empty ? product.medias[0].name : '' }}"
+                                text="{{ product.giftCardText }}"
+                                scratch="{{ product.giftCardScratch }}"
+                            />
+                            <p class="gift-card-offer-title">{{ product.title }}</p>
+                            <div class="gift-card-offer-amounts">
+                                {# "|filter" and not a "for ... if": that modifier was dropped in Twig 3 #}
+                                {% for item in product.visibleItems|filter(item => item.giftCard) %}
+                                    <twig:c975LShop:ProductItem:AddButton productItem="{{ item }}" type="secondary"/>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+                <twig:c975LPayment:Basket:Message/>
+            </div>
         </div>
-        <twig:c975LPayment:Basket:Message/>
     </div>
 {% endif %}

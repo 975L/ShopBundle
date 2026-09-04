@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="fr" datatype="plaintext" original="validators.en.xlf">
+        <body>
+            <trans-unit id="zyiGivt">
+                <source>label.age_invalid</source>
+                <target>Écrivez l'âge comme une plage de chiffres, « 3-8 » ou « 15- » à partir de 15 ans</target>
+            </trans-unit>
+            <trans-unit id="3L1S05t">
+                <source>label.age_range_reversed</source>
+                <target>L'âge le plus bas vient en premier : écrivez « 3-8 » et non « 8-3 »</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

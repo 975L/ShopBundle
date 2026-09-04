@@ -66,10 +66,10 @@ class ShopGuidedProjectProviderTest extends TestCase
         $projects = $this->createProvider()->getGuidedProjects();
 
         $this->assertSame(
-            ['shop-category', 'shop-product', 'shop-downloadable', 'shop-gift-card', 'shop-test-mode', 'shop-export'],
+            ['shop-category', 'shop-index', 'shop-product', 'shop-downloadable', 'shop-gift-card', 'shop-test-mode', 'shop-export'],
             array_column($projects, 'slug'),
         );
-        $this->assertSame([8010, 8020, 8030, 8040, 8050, 8060], array_column($projects, 'order'));
+        $this->assertSame([8010, 8015, 8020, 8030, 8040, 8050, 8060], array_column($projects, 'order'));
     }
 
     public function testEverySlugIsPrefixedWithTheBundleName(): void
@@ -121,14 +121,14 @@ class ShopGuidedProjectProviderTest extends TestCase
         }
     }
 
-    // Each parcours opens on the listing its task starts from, the four written from the products one included
+    // Each parcours opens on the listing its task starts from, the four written from the products one included - the shop's own page having a screen of its own, which opens straight on the single row it edits
     public function testEachCrudProjectOpensOnItsOwnListing(): void
     {
         $controllers = [];
         $this->createProvider($controllers)->getGuidedProjects();
 
         $this->assertSame(
-            ['ProductCategoryCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController'],
+            ['ProductCategoryCrudController', 'ShopSettingsCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController'],
             array_map(static fn (string $fqcn): string => basename(str_replace('\\', '/', $fqcn)), $controllers),
         );
     }
@@ -146,8 +146,9 @@ class ShopGuidedProjectProviderTest extends TestCase
     // Both toggle steps highlight the button ShopShortcutController's own route renders on the dashboard
     public function testTheTestModeToggleStepsHighlightTheShortcutButton(): void
     {
-        $project = $this->createProvider()->getGuidedProjects()[4];
-        $highlights = array_values(array_filter(array_column($project['steps'], 'highlight')));
+        // Read by slug and not by rank: a project slipped into the sequence would silently move the one this checks
+        $projects = array_column($this->createProvider()->getGuidedProjects(), null, 'slug');
+        $highlights = array_values(array_filter(array_column($projects['shop-test-mode']['steps'], 'highlight')));
 
         $this->assertSame(
             ['form[action$="/shop/test-mode-toggle"] button', 'form[action$="/shop/test-mode-toggle"] button'],
@@ -203,7 +204,7 @@ class ShopGuidedProjectProviderTest extends TestCase
     {
         foreach ($this->createProvider()->getGuidedProjects() as $project) {
             foreach ($project['steps'] as $index => $step) {
-                if (!isset($step['highlight']) || !preg_match('/(?:#|input=")(Product|ProductCategory)_(\w+)/', $step['highlight'], $matches)) {
+                if (!isset($step['highlight']) || !preg_match('/(?:#|input=")(Product|ProductCategory|ShopSettings)_(\w+)/', $step['highlight'], $matches)) {
                     continue;
                 }
 
@@ -231,6 +232,14 @@ class ShopGuidedProjectProviderTest extends TestCase
         $source = (string) file_get_contents(\dirname(__DIR__, 2) . '/src/Controller/Management/ProductCrudController.php');
 
         $this->assertStringContainsString("'data-shop-product-items' => '1'", $source);
+    }
+
+    // The blocks of the shop's own page are numbered by EasyAdmin just the same, so the project points at the attribute ShopSettingsCrudController sets on the collection
+    public function testTheShopBlocksCollectionIsHighlightedByItsOwnAttribute(): void
+    {
+        $source = (string) file_get_contents(\dirname(__DIR__, 2) . '/src/Controller/Management/ShopSettingsCrudController.php');
+
+        $this->assertStringContainsString("'data-shop-settings-blocks' => '1'", $source);
     }
 
     // A label or description with no translation reads as its own key in the panel, in whichever locale it is missing from

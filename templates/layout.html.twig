@@ -1,0 +1,7 @@
+{# The layout every page of the shop extends, for the one thing they all need and none of them can state alone: dropping the wrapper an app's layout puts around a page's content, SiteBundle's ".container" and its 15px among them. Each template then states the page measure on what is its own, and only on that - a composed page's blocks carry the ".section-wrap" they already read, and a second one around them would apply its gutter twice, which is the very shape SiteBundle's pages/page.html.twig has. Nothing here names SiteBundle: this bundle requires c975l/core-bundle and not c975l/site-bundle, so the block name comes from UiBundle. The app's own file first, as SiteBundle's page does, so a site adding blocks around its layout has them apply to the shop's pages too; UiBundle's layout is the fallback for an app that has not run the scaffold #}
+{% extends ['layout.html.twig', '@c975LUi/layout.html.twig'] %}
+
+{# "parent()" is deliberately not called: it would render the wrapper of whichever layout sits between this one and UiBundle's, which is the very wrapper this block exists to drop #}
+{% block container %}
+    {% block content %}{% endblock %}
+{% endblock %}

@@ -1,5 +1,10 @@
 {# The live search of the shop's own index, placed wherever a page needs it - the shop's index puts the field in its filter row and states nothing above it, a block naming its own #}
-{% if title|default('') is not empty %}
-    <h2>{{ title }}</h2>
-{% endif %}
-<twig:c975LShop:Product:Search categorySlug="{{ categorySlug|default(null) }}"/>
+{# The page measure and the vertical step, same reasoning as Categories.html.twig: nothing wraps a block hanging under ".blocks" #}
+<div class="block-section">
+    <div class="section-wrap">
+        {% if title|default('') is not empty %}
+            <h2>{{ title }}</h2>
+        {% endif %}
+        <twig:c975LShop:Product:Search categorySlug="{{ categorySlug|default(null) }}"/>
+    </div>
+</div>

@@ -58,6 +58,7 @@ class MenuProvider implements MenuProviderInterface
     public function getLinks(): array
     {
         return [
+            // The description is the sentence the shop's index falls back to, not necessarily the one it prints: a shop that has written its own intro on the back-office index screen shows that one instead (see ShopSettingsCrudController and templates/shop/index.html.twig). Reading the row here would cost the menu a query and hand it a description that is no longer a translation key
             'shop' => [
                 'label' => 'label.shop',
                 'narration' => 'narration.shop',

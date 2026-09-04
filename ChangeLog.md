@@ -1,5 +1,30 @@
 # Changelog
 
+## v2.6.0
+
+The shop's pages measure themselves, and a product says who it is for
+
+- The title of a product card and of a recommendation row is set a notch larger (03/09/2026)
+- Card and row titles carry the theme's title weight (04/09/2026)
+- A recommendation row, the accent texts and the discount badge hold their contrast in dark mode (04/09/2026)
+- **New `ShopSettings::$intro`**: the shop's index line, written on the *Shop page* screen (03/09/2026) **Needs `doctrine:migrations:diff` then `migrate`**
+- The product sheet states the site's age warning for a product carrying an age (`Alert:AgeWarning`, config `site-age-warning`) (03/09/2026) **Needs `c975l/core-bundle` ^1.23.0**
+- The shop index reads its title and its sentence from *Descriptions d'urls* over its own labels (03/09/2026)
+- **New `Product::$age`**: a range typed on the product screen, published as the graph's `PeopleAudience` (03/09/2026) **Needs `doctrine:migrations:diff` then `migrate`**
+- `ProductRepository::findAllSorted()` and `findByCategorySlug()` join `i.file` (03/09/2026)
+- **New `ProductRepository::hasScheduled()`**: a catalogue holding a product still to be released renders its catalog blocks live (03/09/2026)
+- **New `@c975LShop/layout.html.twig`**: the shop's pages drop the app's wrapper and each states its own `.section-wrap` (04/09/2026) **See [UPGRADE.md](UPGRADE.md)**
+- A block composed on a shop page is no longer wrapped in a second `.section-wrap` (04/09/2026)
+- The shop's own block kinds state their `.block-section` and their `.section-wrap` (04/09/2026)
+- The *see more* button of the `shop_products` block is laid out on the page measure (04/09/2026)
+- `Product::$age` only accepts the range the graph reads, refused by the form otherwise (04/09/2026)
+- `Product::$age` refuses a range written backwards (04/09/2026)
+- `Product::$age` travels with an export, an import and a duplication (04/09/2026)
+- **New `validators.{en,fr,es}.xlf`**, holding `label.age_invalid` and `label.age_range_reversed` (04/09/2026)
+- **New guided project `shop-index`**: four steps on the *Shop page* screen (04/09/2026)
+- The guided product project says who the product is meant for (04/09/2026)
+- The guided product project says what an item's weight decides (04/09/2026)
+
 ## v2.5.2
 
 The basket bar is placed once by the site, and a price row is validated before it saves

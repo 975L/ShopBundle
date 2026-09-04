@@ -11,11 +11,13 @@
 namespace c975L\ShopBundle\Tests\Controller;
 
 use c975L\ShopBundle\Controller\ShopController;
+use c975L\ShopBundle\Entity\ShopSettings;
 use c975L\ShopBundle\Repository\ShopSettingsRepository;
 use c975L\ShopBundle\Service\ShopServiceInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Twig\Environment;
 
@@ -38,6 +40,45 @@ class ShopControllerTest extends TestCase
         $controller->setContainer($container);
 
         return $controller;
+    }
+
+    // The index reads the single row for its own line, whose absence is the ordinary state of a shop that never opened the back-office screen - the template then prints the default sentence
+    private function renderIndexWith(?ShopSettings $settings): array
+    {
+        $parameters = [];
+
+        $twig = $this->createStub(Environment::class);
+        $twig->method('render')->willReturnCallback(function (string $name, array $context) use (&$parameters): string {
+            $parameters = $context;
+
+            return '<index>';
+        });
+
+        $settingsRepository = $this->createStub(ShopSettingsRepository::class);
+        $settingsRepository->method('findSingle')->willReturn($settings);
+
+        $container = new Container();
+        $container->set('twig', $twig);
+
+        $controller = new ShopController($this->createStub(ShopServiceInterface::class), $settingsRepository);
+        $controller->setContainer($container);
+        $controller->index(new Request());
+
+        return $parameters;
+    }
+
+    public function testIndexPassesTheIntroWrittenInTheBackOffice(): void
+    {
+        $settings = new ShopSettings();
+        $settings->setIntro('Nos livres, à lire dès 3 ans.');
+
+        $this->assertSame('Nos livres, à lire dès 3 ans.', $this->renderIndexWith($settings)['shopIntro']);
+    }
+
+    // Null and not an empty string: the template's "default" filter is what puts the shipped sentence back
+    public function testIndexPassesNoIntroWhenTheShopHasNoSettingsRow(): void
+    {
+        $this->assertNull($this->renderIndexWith(null)['shopIntro']);
     }
 
     public function testTermsOfSalesRendersTheModelWhenSiteBundleIsAbsent(): void

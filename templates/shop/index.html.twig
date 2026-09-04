@@ -1,9 +1,10 @@
-{% extends 'layout.html.twig' %}
+{% extends '@c975LShop/layout.html.twig' %}
 {% trans_default_domain 'shop' %}
 
 {# Defines specific variables #}
-{% set title = 'label.shop'|trans %}
-{% set summarySocialNetwork = 'label.all_our_items'|trans %}
+{# The row an editor wrote for this url wins, these translated labels being its fallback (see ConfigBundle's UrlMetadata): the layouts only read a row for what the template left unsaid, so setting them outright made the shop's own row unreachable #}
+{% set title = url_metadata_title('label.shop'|trans) %}
+{% set summarySocialNetwork = url_metadata_summary('label.all_our_items'|trans) %}
 
 {% set perPage = products.getItemNumberPerPage %}
 {% set total = products.getTotalItemCount %}
@@ -12,52 +13,58 @@
 {% set canEdit = is_granted(config('site-role-editor')) %}
 
 {% block content %}
-    <twig:c975LShop:Shop:TestMode/>
     <div data-controller="basket{{ canEdit ? ' blockEditOverlay' : '' }}" class="shop"{% if canEdit %} data-edit-label="{{ 'label.edit'|trans({}, 'ui') }}"{% endif %}>
-        {# The shop's own line, said once above everything the site composes below it - the guided tour quotes it as the description of the link it points the visitor's shop at, and the two have to be the same sentence #}
-        <p class="shop-intro">{{ 'label.info_shop_link'|trans }}</p>
+        {# The page measure, stated on what the shop writes itself: the layout no longer wraps the whole content, so the blocks composed below run bare and keep the single gutter each of them already carries (see @c975LShop/layout.html.twig) #}
+        <div class="section-wrap">
+            <twig:c975LShop:Shop:TestMode/>
+
+            {# The shop's own line, said once above everything the site composes below it - written in the back-office on the shop index screen, and defaulting to the sentence the menu already describes the shop link with #}
+            <p class="shop-intro">{{ shopIntro|default('label.info_shop_link'|trans) }}</p>
+        </div>
 
         {# What the shop says above its listing - delivery, welcome message, arguments - composed in the back-office with UiBundle's kinds, nothing to add here when the shop holds no block #}
         <twig:c975LUi:Blocks:Blocks blocks="{{ shopBlocks }}"/>
 
-        {# The search first and alone: naming what one came for is the shortest way through a shop, and it is the only control worth a full row of a phone screen #}
-        <twig:c975LShop:Product:Search/>
+        <div class="section-wrap">
+            {# The search first and alone: naming what one came for is the shortest way through a shop, and it is the only control worth a full row of a phone screen #}
+            <twig:c975LShop:Product:Search/>
 
-        {# Everything that narrows the listing under one folded panel - category, price, format, availability, order. See components/Product/Refine.html.twig for why it is folded #}
-        <twig:c975LShop:Product:Refine order="{{ order }}" filters="{{ filters }}" priceBrackets="{{ priceBrackets }}"/>
+            {# Everything that narrows the listing under one folded panel - category, price, format, availability, order. See components/Product/Refine.html.twig for why it is folded #}
+            <twig:c975LShop:Product:Refine order="{{ order }}" filters="{{ filters }}" priceBrackets="{{ priceBrackets }}"/>
 
-        {# What the listing below holds, read as its caption rather than as a figure standing above the filters: filtering changes it, and it has to be next to what it counts #}
-        <p class="shop-counters">
-            <strong>{{ total }}</strong> {{ 'label.products'|trans|lower }}
-            {% if categoriesCount > 0 %}
-                <span class="shop-counters-separator">·</span>
-                <strong>{{ categoriesCount }}</strong> {{ 'label.categories'|trans|lower }}
-            {% endif %}
-        </p>
-
-        {# The listing grows instead of turning pages: UiBundle's controller fetches the page the link below already points to and appends its cards. Nothing here is written for it alone - without javascript, and for a crawler, that link is the ordinary link to the next page it looks like #}
-        <div data-controller="infiniteScroll">
-            <twig:c975LShop:Product:Products products="{{ products }}" editable="{{ canEdit }}" infinite="true" rating="true"/>
-
-            <div class="shop-list-footer">
-                {% if total > perPage %}
-                    {# What has been shown so far and not what this page holds: the "next" link below is a real link, so a visitor - or a crawler - can land straight on page 3, where the cards of that page alone say nothing of where the listing stands #}
-                    <p class="shop-range" aria-live="polite">{{ 'label.products'|trans }} <span data-infiniteScroll-target="count">{{ (products.getCurrentPageNumber - 1) * perPage + products|length }}</span> / {{ total }}</p>
+            {# What the listing below holds, read as its caption rather than as a figure standing above the filters: filtering changes it, and it has to be next to what it counts #}
+            <p class="shop-counters">
+                <strong>{{ total }}</strong> {{ 'label.products'|trans|lower }}
+                {% if categoriesCount > 0 %}
+                    <span class="shop-counters-separator">·</span>
+                    <strong>{{ categoriesCount }}</strong> {{ 'label.categories'|trans|lower }}
                 {% endif %}
-                {% if products.getCurrentPageNumber < products.getPageCount %}
-                    {# The paginator's own query is reused rather than rebuilt: the order, the category and the search the visitor came with are in it, and would be lost on the next page otherwise #}
-                    <a
-                        href="{{ path(products.route, products.query({'p': products.getCurrentPageNumber + 1})) }}#products"
-                        rel="next"
-                        class="btn btn-secondary shop-load-more"
-                        data-infiniteScroll-target="next"
-                        data-action="click->infiniteScroll#load"
-                    >{{ 'label.load_more'|trans }}</a>
-                {% endif %}
+            </p>
+
+            {# The listing grows instead of turning pages: UiBundle's controller fetches the page the link below already points to and appends its cards. Nothing here is written for it alone - without javascript, and for a crawler, that link is the ordinary link to the next page it looks like #}
+            <div data-controller="infiniteScroll">
+                <twig:c975LShop:Product:Products products="{{ products }}" editable="{{ canEdit }}" infinite="true" rating="true"/>
+
+                <div class="shop-list-footer">
+                    {% if total > perPage %}
+                        {# What has been shown so far and not what this page holds: the "next" link below is a real link, so a visitor - or a crawler - can land straight on page 3, where the cards of that page alone say nothing of where the listing stands #}
+                        <p class="shop-range" aria-live="polite">{{ 'label.products'|trans }} <span data-infiniteScroll-target="count">{{ (products.getCurrentPageNumber - 1) * perPage + products|length }}</span> / {{ total }}</p>
+                    {% endif %}
+                    {% if products.getCurrentPageNumber < products.getPageCount %}
+                        {# The paginator's own query is reused rather than rebuilt: the order, the category and the search the visitor came with are in it, and would be lost on the next page otherwise #}
+                        <a
+                            href="{{ path(products.route, products.query({'p': products.getCurrentPageNumber + 1})) }}#products"
+                            rel="next"
+                            class="btn btn-secondary shop-load-more"
+                            data-infiniteScroll-target="next"
+                            data-action="click->infiniteScroll#load"
+                        >{{ 'label.load_more'|trans }}</a>
+                    {% endif %}
+                </div>
             </div>
-        </div>
 
-        <twig:c975LPayment:Basket:Message/>
+            <twig:c975LPayment:Basket:Message/>
+        </div>
     </div>
 
     {# The cards this page prints, as the list a search engine reads a catalog through - the sheets it points at carry the prices, so nothing is published twice. The offset is the paginator's own: the second page numbers its cards from where the first stopped. "raw" because the payload goes through a variable, which drops the function's own is_safe marking - the builder already escaped every character that could close the tag #}

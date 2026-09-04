@@ -1,4 +1,4 @@
-{% extends 'layout.html.twig' %}
+{% extends '@c975LShop/layout.html.twig' %}
 {% trans_default_domain 'shop' %}
 
 {# Defines specific variables #}
@@ -6,9 +6,12 @@
 {% set robots = 'noindex, follow' %}
 
 {% block content %}
-    <section class="text-center">
-        <twig:c975LUi:Alert:Alert type="success">
-            {{ 'text.stock_alert_unsubscribed'|trans }}
-        </twig:c975LUi:Alert:Alert>
-    </section>
+    {# The page measure, the layout no longer wrapping a page's content (see @c975LShop/layout.html.twig) - this page composes no block, so the one wrapper holds everything #}
+    <div class="section-wrap">
+        <section class="text-center">
+            <twig:c975LUi:Alert:Alert type="success">
+                {{ 'text.stock_alert_unsubscribed'|trans }}
+            </twig:c975LUi:Alert:Alert>
+        </section>
+    </div>
 {% endblock %}

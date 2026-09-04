@@ -1,25 +1,28 @@
-{% extends 'layout.html.twig' %}
+{% extends '@c975LShop/layout.html.twig' %}
 {% trans_default_domain 'shop' %}
 
 {# Defines specific variables #}
 {% set title = (productItem.downloadedAt ? 'label.item_already_downloaded' : 'label.download_link_expired')|trans %}
 
 {% block content %}
-    <section class="text-center">
-        <twig:c975LUi:Alert:Alert type="info">
+    {# The page measure, the layout no longer wrapping a page's content (see @c975LShop/layout.html.twig) - this page composes no block, so the one wrapper holds everything #}
+    <div class="section-wrap">
+        <section class="text-center">
+            <twig:c975LUi:Alert:Alert type="info">
 
-            {# A link that was used says when, one that ran out without ever being used has no date to show #}
-            {% if productItem.downloadedAt %}
-                {{ 'text.item_already_downloaded'|trans({}, 'shop') }}
-                <p>{{ productItem.downloadedAt|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</p>
-            {% else %}
-                {{ 'text.download_link_expired'|trans({}, 'shop') }}
-            {% endif %}
+                {# A link that was used says when, one that ran out without ever being used has no date to show #}
+                {% if productItem.downloadedAt %}
+                    {{ 'text.item_already_downloaded'|trans({}, 'shop') }}
+                    <p>{{ productItem.downloadedAt|date('d/m/Y - H:i', app.session.get('user_timezone', 'Europe/Paris')) }}</p>
+                {% else %}
+                    {{ 'text.download_link_expired'|trans({}, 'shop') }}
+                {% endif %}
 
-            {# ContactFormBundle is optional: a shop installed without it shows the page rather than failing on a route that does not exist #}
-            {% if route_exists('contactform_display') %}
-                <p><a href="{{ absolute_url(path('contactform_display')) }}" rel="nofollow" class="btn btn-primary">{{ 'label.contact'|trans({}, 'commons') }}</a></p>
-            {% endif %}
-        </twig:c975LUi:Alert:Alert>
-    </section>
+                {# ContactFormBundle is optional: a shop installed without it shows the page rather than failing on a route that does not exist #}
+                {% if route_exists('contactform_display') %}
+                    <p><a href="{{ absolute_url(path('contactform_display')) }}" rel="nofollow" class="btn btn-primary">{{ 'label.contact'|trans({}, 'commons') }}</a></p>
+                {% endif %}
+            </twig:c975LUi:Alert:Alert>
+        </section>
+    </div>
 {% endblock %}

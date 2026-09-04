@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="en" datatype="plaintext" original="validators.en.xlf">
+        <body>
+            <trans-unit id="zyiGivt">
+                <source>label.age_invalid</source>
+                <target>Write the age as a range of figures, "3-8" or "15-" from 15 up</target>
+            </trans-unit>
+            <trans-unit id="3L1S05t">
+                <source>label.age_range_reversed</source>
+                <target>The lowest age must come first: write "3-8" and not "8-3"</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

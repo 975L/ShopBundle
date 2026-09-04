@@ -106,6 +106,26 @@
                 <source>narration.guided_step_shop_gift_card_value</source>
                 <target>Set what it is worth. The amount lives on the item, next to its price: a card can be sold for less than it is worth.</target>
             </trans-unit>
+            <trans-unit id="HbdoHvF">
+                <source>narration.guided_step_shop_index_blocks</source>
+                <target>Compose what stands above the listing. Delivery, arguments, a welcome message: the same kinds a page of the site is composed with.</target>
+            </trans-unit>
+            <trans-unit id="OSmRTvL">
+                <source>narration.guided_step_shop_index_intro</source>
+                <target>Write the welcome line. It is the shop's own sentence, printed above everything else; left empty, the page falls back to the one the menu describes the shop with.</target>
+            </trans-unit>
+            <trans-unit id="voTRx.8">
+                <source>narration.guided_step_shop_index_open</source>
+                <target>Open the shop page, in the left-hand menu. It is one screen for one row, and it opens straight on its form.</target>
+            </trans-unit>
+            <trans-unit id=".GIPefZ">
+                <source>narration.guided_step_shop_index_save</source>
+                <target>Save. The shop's index shows the line and the blocks as soon as the row is saved.</target>
+            </trans-unit>
+            <trans-unit id="XJyQ1RX">
+                <source>narration.guided_step_shop_product_age</source>
+                <target>Say who it is for. Write the age as a range of figures, three dash eight, or fifteen dash from fifteen up: the sheet warns the visitor with it, and search engines read the audience off it.</target>
+            </trans-unit>
             <trans-unit id="pT6vXhz">
                 <source>narration.guided_step_shop_product_available_at</source>
                 <target>Say when it becomes available. That is the date the shop states, on the sheet and in the structured data the search engines read.</target>
@@ -124,7 +144,7 @@
             </trans-unit>
             <trans-unit id="1wuchEH">
                 <source>narration.guided_step_shop_product_items</source>
-                <target>Move down to the items. The product says what it is; its items say what is bought, at what price, in which condition.</target>
+                <target>Move down to the items. The product says what it is; its items say what is bought, at what price, in which condition. The weight of each item is what the shipping cost is computed on.</target>
             </trans-unit>
             <trans-unit id="bCvcdBL">
                 <source>narration.guided_step_shop_product_new</source>

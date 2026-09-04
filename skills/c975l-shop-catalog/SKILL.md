@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-catalog
-description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, weight, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-country, shop-shipping-free, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, ShopDemoOrderLinker, DemoFixtureLinkerInterface, demo catalogue, ReplacingFile, PlaceholderMediaProviderInterface."
+description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: age, AgeWarning, site-age-warning, label.age_invalid, label.age_range_reversed, validateAgeRange, section-wrap, Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, weight, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-country, shop-shipping-free, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, ShopDemoOrderLinker, DemoFixtureLinkerInterface, demo catalogue, ReplacingFile, PlaceholderMediaProviderInterface."
 ---
 
 # c975L ShopBundle — catalog
@@ -18,7 +18,7 @@ description: "Use this skill when working with the shop's catalog in a Symfony a
 
 | Entity | Holds | Never holds |
 | --- | --- | --- |
-| `Product` | title, slug, description, `brand`, `availableAt`, position, `hidden`, `isDeleted`, medias, categories, blocks, `relatedProducts`, `giftCardText`, `giftCardScratch` | a price |
+| `Product` | title, slug, description, `brand`, `age`, `availableAt`, position, `hidden`, `isDeleted`, medias, categories, blocks, `relatedProducts`, `giftCardText`, `giftCardScratch` | a price |
 | `ProductItem` | price and `priceBefore` (**cents**), currency, vat, `sku`, `gtin`, `limitedQuantity`, `orderedQuantity`, `service`, `itemCondition`, `weight` (**grams**), `hidden`, `giftCardValue`, one media, one file | its own page, a recycle bin |
 | `ProductCategory` | name, slug, description, products (`ManyToMany`) | a price |
 
@@ -38,6 +38,7 @@ delete action only sets this). The two are not the same thing: hidden means "not
 | `ProductRepository::findAllSorted()`, `search()`, `findByCategorySlug()`, `findRandomProducts()`, `findAvailableProductsExcluding()`, `findByCategoriesExcluding()` | not hidden, not trashed, past `availableAt` |
 | `ProductRepository::findOneVisibleBySlug()` | not hidden, not trashed — what blocks and components naming a product read |
 | `ProductRepository::findOneBySlug()` | any state — the sheet itself, which then answers 410/404 |
+| `ProductRepository::hasScheduled()` | whether the catalog holds a product whose `availableAt` is still ahead — what the block cache reads (see `c975l-shop-blocks`) |
 | `ProductRepository::findNotDeleted()` | hidden ones included, trash excluded — the back-office pickers (`ShopBlockChoices`) |
 
 `ProductController::display()` throws `GoneHttpException` for a trashed product and a 404 for a hidden one;
@@ -115,6 +116,26 @@ button that is or is not disabled, and from the `availability` the structured da
 | `shop_download` | `/shop/download/{token}` — see `c975l-shop-checkout` |
 | `shop_terms_of_sales` | `/shop/terms-of-sales`, unless SiteBundle serves it |
 
+Every one of those templates extends `@c975LShop/layout.html.twig`, which overrides UiBundle's
+`container` block to drop the wrapper an app's layout puts around a page's content — SiteBundle's
+`.container` among them. The page measure is then each template's own: it wraps what it writes itself in
+a `.section-wrap` and leaves `<twig:c975LUi:Blocks:Blocks/>` bare, every block carrying one already. The
+product sheet is the exception, its blocks sitting inside the grid column beside the gallery, so the
+wrapper goes around the whole sheet.
+
+The sheet prints `<twig:c975LUi:Alert:AgeWarning age="{{ product.age }}"/>` above what the visitor
+decides on, and the fragment carries the guards: a product declaring no `age`, and a site leaving the
+setting empty, render nothing. The sentence itself is the site's, written once in CoreBundle's
+`site-age-warning`, which a multilingual site translates in the back office. The field is also the
+graph's `audience` (see `c975l-shop-seo`).
+
+`age` is a free text field validated to the very format the graph reads: one to three figures, and a
+second group only with its dash (`3-8`, `15-`, `3`), refused as `label.age_invalid` otherwise, plus
+`Product::validateAgeRange()`, an `#[Assert\Callback]` refusing a range written backwards as
+`label.age_range_reversed` — both messages live in `translations/validators.*.xlf`. It travels with the
+product: `ProductExportProvider` writes it, `ProductImportProvider::fillProduct()` reads it back, and
+`ProductDuplicator` carries it onto the copy.
+
 **The order parameter is `order`, not `sort`** — that is the name the listing has been shared and
 indexed under since it had page links. An order the listing does not offer falls back on the shop's
 positions rather than erroring.
@@ -148,7 +169,9 @@ terms, a welcome message, arguments, a footer band — is composed in the back-o
 kinds, in the three places this bundle owns blocks:
 
 - **the shop's index** — the single `ShopSettings` row, edited on the dashboard's *Shop page* screen,
-  rendered above the listing by `shop/index.html.twig`.
+  rendered above the listing by `shop/index.html.twig`. That row also holds `intro`, the one plain-text
+  line the index prints above its blocks; left empty, the page falls back to `label.info_shop_link`, the
+  sentence the back-office menu describes the shop link with.
 - **a category page** — `ProductCategory` blocks, edited in the category's own CRUD, rendered under its
   description.
 - **a product sheet** — `Product` blocks, edited in the product's CRUD (see *Composing a product sheet*
@@ -239,11 +262,14 @@ charging one price and displaying another.
 - **Do not store a price on `Product`** — it is the lowest of its items, resolved at read time.
 - **Do not store prices as floats**, and do not store a currency per product.
 - **Do not treat `limitedQuantity: 0` as unlimited.**
+- **Do not loosen the `age` pattern** — anything the entity accepts and `audience()` cannot read is a warning dropped in silence.
 - **Do not compute a badge, a price or a format in a template** — call `shop_product_state()`.
 - **Do not read `product.items` in anything the public sees** — `getVisibleItems()` is the public read.
 - **Do not add an `isDeleted` to `ProductItem`** — it has no url to protect; hide it or delete it.
 - **Do not rename `?order=`** to `?sort=`; shared and indexed urls carry the name it has.
 - **Do not drop the joins from `findAllSorted()`.**
+- **Do not wrap `<twig:c975LUi:Blocks:Blocks/>` in a `.section-wrap`** — each block carries one, and a
+  second one applies the gutter twice. The shop's layout deliberately poses none.
 - **Do not declare a `shop-*` money key here** — they are PaymentBundle's.
 - **Do not add JavaScript for the items accordion** — `<details name>` already does it.
 - **Do not hardcode a colour in `sass/`** — every one goes through a token.

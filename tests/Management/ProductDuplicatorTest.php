@@ -185,6 +185,14 @@ class ProductDuplicatorTest extends TestCase
         $this->assertSame(2000, $copy->getItems()->first()->getPriceBefore());
     }
 
+    // A copy sells the same thing to the same readers: dropped, the age warning and the "audience" node built from it would go with no message
+    public function testTheCopyKeepsTheAge(): void
+    {
+        $copy = $this->createDuplicator()->duplicate($this->createProduct()->setAge('3-8'));
+
+        $this->assertSame('3-8', $copy->getAge());
+    }
+
     // A reference and a barcode name one item and one only: two offers publishing the same GTIN is the very claim the column exists to prevent
     public function testTheCopyTakesNeitherTheReferenceNorTheBarcode(): void
     {

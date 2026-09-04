@@ -40,6 +40,8 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - Shop index, category pages and product sheets composed in the back-office with UiBundle's blocks, no template of your own
 - Nine block kinds of its own, putting the catalog on any page of the site, each drawn as a silhouette in the back-office picker
 - `Product` structured data (JSON-LD), the only `offers` node of the c975L ecosystem
+- The site's age warning stated on a product declaring an age — one sentence written once in the back office (CoreBundle's `site-age-warning`), printed on every such sheet
+- Shop index describable from the back office — title and shared sentence written in *Descriptions d'urls*, over the bundle's own labels
 - `ItemList` structured data on the shop's index and its category pages
 - Plugs products into PaymentBundle's Basket/checkout engine via `BasketItemProviderInterface`, and tells it where the catalogue is (`CatalogueBasketItemProviderInterface`) and which template draws the recommended products (`BasketRecommendationProviderInterface`)
 - Shipping weight per item, in grams, weighing a basket for PaymentBundle's delivery grid and pricing the rate the structured data publishes
@@ -197,6 +199,14 @@ security:
 Both public templates are mobile first: a single column is the default, the grids widening on their own through
 `auto-fill` / `minmax()`, and the few media queries only raise what a phone cannot hold.
 
+Every page of the shop extends `@c975LShop/layout.html.twig`, which overrides UiBundle's `container` block to
+drop the wrapper an app's layout puts around a page's content - SiteBundle's `.container` and its 15px among
+them. Each template then states the page measure itself, wrapping what is its own in a `.section-wrap` and
+leaving the blocks composed on the page bare: they carry one already, and a second one around them would apply
+its gutter twice. A shop listing therefore stops at `--body-max-width` like the rest of the site instead of
+running the whole window width, and a site adding blocks around its own `layout.html.twig` still has them apply
+to the shop's pages.
+
 The listing shows, above the products, how many the shop holds and in how many categories, then one row of
 filters - category selector, live search and the three orders `?order=` accepts. An order the listing does not
 offer falls back on the shop's own positions.
@@ -340,6 +350,11 @@ of your own.
 
 > **Maintenance note:** update this table whenever a kind is added, renamed, or removed in `config/services.yaml`.
 
+Each kind states the page measure and the vertical step for itself, wrapping what it writes in a `.block-section`
+and a `.section-wrap`: a block hangs straight under UiBundle's `.blocks`, which is `display: contents`, so nothing
+above it would measure it. Two do not, and need none: `shop_products` is framed by its own component, and
+`shop_product_slider` is laid out by UiBundle's slider.
+
 A block stores what to show - a category slug, a maximum - never the products themselves, which `ShopBlockExtension`
 resolves live at render time through the `shop_block_*()` Twig functions. So a block never goes stale against the
 catalog, and a product renamed or deleted leaves the blocks pointing at it rendering nothing rather than half a card.
@@ -415,6 +430,10 @@ leads back to whichever screen composes it, `ShopBlockEditUrlProvider` resolving
 
 The single `ShopSettings` row is created the first time the **Shop page** screen is opened: a shop that never
 opened it renders no block above its listing rather than failing on a row that was never created.
+
+That same screen carries the one line the index prints above its blocks, `ShopSettings::$intro`, as plain text
+rather than as a block: it is the shop's own sentence, said once. Left empty, the index falls back to
+`label.info_shop_link`, the sentence the management menu describes the shop link with.
 
 The blocks live in the `shop_product_block`, `shop_product_category_block` and `shop_settings_block` join tables,
 so an existing installation needs a migration:
@@ -540,7 +559,7 @@ Each row lists the articles or the orders behind its count, one link apiece, on 
 ## Structured data
 
 A product sheet publishes a schema.org `Product` graph as JSON-LD - name, image, description, sku, brand,
-category, and one `offers` node per purchasable item carrying its own title, description, picture, sku, gtin,
+category, audience, and one `offers` node per purchasable item carrying its own title, description, picture, sku, gtin,
 price, list price, currency, availability and condition. That is what a search engine shows as a rich result, and what any site reading the
 shop from outside needs to know what is on sale and for how much.
 
@@ -561,6 +580,15 @@ deliberately leaves it out, so a book sold through this shop never publishes its
 Availability follows the very rules the "add to basket" button is disabled on: an item limited to `0` is
 `OutOfStock`, one whose orders reached its limit is `SoldOut`, a product with a future release date is
 `PreOrder`, everything else is `InStock`.
+
+`Product.age` states who the product is meant for, typed as a range an editor reads (`3-8`, or `15-` from
+fifteen up) and published as the `audience` node schema.org expects of a product: a `PeopleAudience` carrying
+`suggestedMinAge` and `suggestedMaxAge`, which Google lists among the recommended properties of a merchant
+listing. It is not the `typicalAgeRange` a book carries - that property belongs to a `CreativeWork`, and a
+product is not one. The field only accepts that shape - anything else is refused by the form rather than saved
+and then silently dropped by the graph - and a range written backwards publishes no node at all rather than one
+describing nobody. Unlike the brand, the field is read by the sheet too: a product declaring an age prints the
+site's age warning above what the visitor decides on.
 
 Three references make the graph readable by a merchant listing rather than by a search engine alone.
 `Product.brand` names the maker, which Google Merchant Center declines a branded offer for not stating.

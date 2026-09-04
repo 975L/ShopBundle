@@ -21,6 +21,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\Table(name: 'shop_product')]
@@ -48,6 +49,12 @@ class Product implements \Stringable, HasBlocksInterface
     // The maker of the product, published as the graph's Brand node - Google Merchant Center declines a branded offer that names none. Left empty on anything made in-house, whose brand is the shop itself
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $brand = null;
+
+    // The age the product is meant for, written as a range ("3-8", "15-"), published as the graph's PeopleAudience. A string and not two columns: it is typed as it is printed, and schema.org's own two ages are read off it (see ProductSnippetBuilder), which is why the very format that builder reads is asked of the editor rather than accepted and then dropped in silence - the length being the column's own, which a free text field would overrun into a database error
+    #[Assert\Length(max: 20)]
+    #[Assert\Regex(pattern: '/^\s*\d{1,3}\s*(?:-\s*\d{0,3})?\s*$/', message: 'label.age_invalid')]
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $age = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $availableAt = null;
@@ -391,6 +398,33 @@ class Product implements \Stringable, HasBlocksInterface
         $this->categories->removeElement($category);
 
         return $this;
+    }
+
+    public function getAge(): ?string
+    {
+        return $this->age;
+    }
+
+    public function setAge(?string $age): static
+    {
+        $this->age = $age;
+
+        return $this;
+    }
+
+    // A range written backwards is refused here rather than dropped by ProductSnippetBuilder::audience(), which is the very silence the format asked of the editor exists to avoid. Only reached once the pattern above matched, or a single value would raise two violations for the one mistake
+    #[Assert\Callback]
+    public function validateAgeRange(ExecutionContextInterface $context): void
+    {
+        if (1 !== preg_match('/^\s*(\d{1,3})\s*-\s*(\d{1,3})\s*$/', (string) $this->age, $ages)) {
+            return;
+        }
+
+        if ((int) $ages[2] < (int) $ages[1]) {
+            $context->buildViolation('label.age_range_reversed')
+                ->atPath('age')
+                ->addViolation();
+        }
     }
 
     public function getBrand(): ?string

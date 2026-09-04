@@ -141,6 +141,19 @@ class ProductExportProviderTest extends TestCase
         new Filesystem()->remove($projectDir);
     }
 
+    // The age the sheet warns on travels with the rest, and a product carrying none travels as nothing rather than as an empty string
+    public function testSerializeCarriesTheAge(): void
+    {
+        $projectDir = $this->createProjectDir([]);
+
+        $exporter = new ProductExportProvider($this->createStub(ProductRepository::class), new BlockDataExporter($projectDir), $projectDir);
+
+        $this->assertSame('3-8', $exporter->serialize([$this->createProduct()->setAge('3-8')])['items'][0]['age']);
+        $this->assertNull($exporter->serialize([$this->createProduct()])['items'][0]['age']);
+
+        new Filesystem()->remove($projectDir);
+    }
+
     private function createProduct(): Product
     {
         return new Product()

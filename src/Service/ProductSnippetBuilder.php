@@ -64,6 +64,8 @@ class ProductSnippetBuilder
             // What Google Merchant Center declines a branded offer for not naming. Left out of the graph when the shop makes the product itself, which carries no brand of its own
             'brand' => $this->brand($product),
             'category' => $this->category($product),
+            // Who the product is meant for, which schema.org says of a Product through an audience and never through the typicalAgeRange a book carries - that property belongs to a CreativeWork, and Google reads this one on a merchant listing
+            'audience' => $this->audience($product),
             // What the sheet prints above the description, said where a search engine reads it - the node is UiBundle's, which owns the votes and knows the scale they were cast on
             'aggregateRating' => $withRating ? $this->ratingSnippetBuilder->build('shop_product', (int) $product->getId()) : [],
             // One Offer per purchasable item rather than a single AggregateOffer: the items of one product are free to be priced in different currencies, which no aggregate can express, and each carries its own availability
@@ -166,6 +168,31 @@ class ProductSnippetBuilder
 
         // JSON_HEX_TAG keeps a "</script>" typed into a field from closing the tag, JSON_INVALID_UTF8_SUBSTITUTE keeps a stray byte from emptying the whole graph
         return json_encode($snippet, \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE | \JSON_INVALID_UTF8_SUBSTITUTE);
+    }
+
+    // The two ages schema.org reads, off the one range an editor types ("3-8", "15-" from 15 up): a bare minimum is a range of its own, an empty or unreadable one publishes no node at all rather than a node saying nothing
+    private function audience(Product $product): array
+    {
+        if (1 !== preg_match('/^\s*(\d{1,3})\s*-?\s*(\d{1,3})?\s*$/', (string) $product->getAge(), $ages)) {
+            return [];
+        }
+
+        $min = (int) $ages[1];
+        $max = isset($ages[2]) ? (int) $ages[2] : 0;
+
+        // A range written backwards is dropped whole: published as it is, it would describe an audience nobody belongs to
+        if (0 !== $max && $max < $min) {
+            return [];
+        }
+
+        // Not built through clean(), which drops a zero: "0-3" is a range of its own, and a shop selling to the very young says exactly that
+        $audience = ['@type' => 'PeopleAudience', 'suggestedMinAge' => $min];
+
+        if (0 !== $max) {
+            $audience['suggestedMaxAge'] = $max;
+        }
+
+        return $audience;
     }
 
     // The maker of the product as a Brand node, empty when it names none

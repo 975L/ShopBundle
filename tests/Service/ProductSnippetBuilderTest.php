@@ -325,6 +325,43 @@ class ProductSnippetBuilderTest extends TestCase
         $this->assertArrayNotHasKey('brand', $this->builder->buildProduct($this->product()));
     }
 
+    // Who the product is for, said as schema.org says it of a Product: an audience, never the typicalAgeRange a book carries
+    public function testAProductStatingAnAgePublishesAnAudienceNode(): void
+    {
+        $snippet = $this->builder->buildProduct($this->product()->setAge('3-8'));
+
+        $this->assertSame(['@type' => 'PeopleAudience', 'suggestedMinAge' => 3, 'suggestedMaxAge' => 8], $snippet['audience']);
+    }
+
+    // "15-" is a floor and not a range: the node says where it starts and stops there
+    public function testAnOpenRangePublishesItsMinimumAlone(): void
+    {
+        $snippet = $this->builder->buildProduct($this->product()->setAge('15-'));
+
+        $this->assertSame(['@type' => 'PeopleAudience', 'suggestedMinAge' => 15], $snippet['audience']);
+    }
+
+    // A shop selling to the very young says "0-3", and zero is an age like any other - it is not an empty field
+    public function testAnAgeStartingAtZeroKeepsItsMinimum(): void
+    {
+        $snippet = $this->builder->buildProduct($this->product()->setAge('0-3'));
+
+        $this->assertSame(['@type' => 'PeopleAudience', 'suggestedMinAge' => 0, 'suggestedMaxAge' => 3], $snippet['audience']);
+    }
+
+    public function testAProductWithoutAnAgePublishesNoAudienceNode(): void
+    {
+        $this->assertArrayNotHasKey('audience', $this->builder->buildProduct($this->product()));
+    }
+
+    // Typed by hand, so what cannot be read as two ages publishes nothing rather than a node describing nobody
+    public function testAnUnreadableOrBackwardsAgePublishesNoAudienceNode(): void
+    {
+        foreach (['3 ans', 'de 3 a 8', '-8', '8-3'] as $age) {
+            $this->assertArrayNotHasKey('audience', $this->builder->buildProduct($this->product()->setAge($age)), $age);
+        }
+    }
+
     public function testAnOfferCarriesTheShopsOwnReferenceWhenItStatesOne(): void
     {
         $product = $this->product();
