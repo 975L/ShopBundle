@@ -151,7 +151,7 @@ class ShopIntegrityHealthCheckProviderTest extends TestCase
         )->runChecks();
 
         $this->assertCount(4, $rows);
-        $this->assertSame(HealthCheckResult::STATUS_ERROR, $this->row($rows, ShopIntegrityHealthCheckProvider::ROW_MISSING_FILES)['status']);
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $this->row($rows, ShopIntegrityHealthCheckProvider::ROW_MISSING_FILES)['status']);
         $this->assertSame('Table gone', $this->row($rows, ShopIntegrityHealthCheckProvider::ROW_MISSING_FILES)['details']['error']);
         $this->assertSame(HealthCheckResult::STATUS_OK, $this->row($rows, ShopIntegrityHealthCheckProvider::ROW_UNDELIVERED_DOWNLOADS)['status']);
     }

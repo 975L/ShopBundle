@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.6.1
+
+A product is dropped from its own sheet
+
+- Requires `c975l/core-bundle` `^1.24`, which is where a check that never ran becomes a warning (07/09/2026)
+- The product sheet carries the *move to trash* button (07/09/2026)
+- `composer mess` names how many files PDepend could not parse (07/09/2026)
+- `phpunit.xml.dist` fails on a notice as well (07/09/2026)
+- `composer run -l` describes `rector`, `mess` and `lizard` (07/09/2026)
+- `ShopIntegrityHealthCheckProviderTest` expects a warning on the check that throws (07/09/2026)
+
 ## v2.6.0
 
 The shop's pages measure themselves, and a product says who it is for

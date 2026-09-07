@@ -293,6 +293,8 @@ class ProductCrudController extends AbstractCrudController
             ->add(Crud::PAGE_EDIT, $viewOnSiteAction)
             ->add(Crud::PAGE_EDIT, $previewAction)
             ->add(Crud::PAGE_EDIT, $duplicateAction)
+            // A product is sent to the recycle bin from its own sheet too, rather than only from the row button of the list - this version of EasyAdmin puts no delete button on the edit page
+            ->add(Crud::PAGE_EDIT, Action::DELETE)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action->displayIf(static fn (Product $product): bool => !$product->isDeleted()),
                 $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
@@ -325,6 +327,12 @@ class ProductCrudController extends AbstractCrudController
                     ->displayIf(static fn (Product $product): bool => !$product->isDeleted()),
                 $this->translator->trans('action.move_to_trash', [], 'shop'),
             ))
+            // Same gesture on the sheet itself, keeping its words there, where the bar has the room for them
+            ->update(Crud::PAGE_EDIT, Action::DELETE, fn (Action $action) => $action
+                ->setLabel(t('action.move_to_trash', [], 'shop'))
+                ->setIcon('fa fa-box-archive')
+                ->askConfirmation(t('confirm.move_to_trash', [], 'shop'))
+                ->displayIf(static fn (Product $product): bool => !$product->isDeleted()))
             // reorder() turns priority ordering off page-wide, so "exportSelection" leads the batch bar too - "batchDelete" is left unnamed, as naming it throws where it is disabled
             ->reorder(Crud::PAGE_INDEX, ['exportSelection', Action::EDIT, 'viewOnSite', 'preview', 'duplicate', 'restore', Action::DELETE, 'deletePermanently'])
             ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'preview', 'duplicate'])
