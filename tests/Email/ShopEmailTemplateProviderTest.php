@@ -76,6 +76,15 @@ class ShopEmailTemplateProviderTest extends TestCase
         $this->assertSame($filled, $placed);
     }
 
+    // Written down as an url and nothing else, the reader was left to copy it into a browser by hand
+    public function testTheWayOutIsALinkAndNotALineToCopy(): void
+    {
+        foreach ($this->provider()->getEmailTemplates()[ShopEmailTemplateProvider::BACK_IN_STOCK] as $blocks) {
+            $this->assertSame('html', $blocks[3][0]);
+            $this->assertStringContainsString('<a href="{{ unsubscribe_url }}">{{ unsubscribe_url }}</a>', (string) $blocks[3][3]);
+        }
+    }
+
     // Read from translations/, so a catalogue and a declaration cannot drift
     private function provider(): ShopEmailTemplateProvider
     {

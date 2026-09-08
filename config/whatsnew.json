@@ -11,6 +11,11 @@
                 "en": "Text on your pages is no longer pushed to the left by the shop: a card or a section you centred now stays centred.",
                 "fr": "Le texte de vos pages n'est plus poussé à gauche par la boutique : une carte ou une section que vous avez centrée reste centrée.",
                 "es": "El texto de sus páginas ya no queda desplazado a la izquierda por la tienda: una tarjeta o una sección que haya centrado permanece centrada."
+            },
+            {
+                "en": "The back-in-stock e-mail now carries its unsubscribe address as a link rather than a line to copy by hand.",
+                "fr": "Le courriel de retour en stock porte désormais son adresse de désinscription sous forme de lien plutôt que d'une ligne à recopier à la main.",
+                "es": "El correo de vuelta a existencias ahora lleva su dirección para darse de baja como enlace en lugar de una línea que copiar a mano."
             }
         ]
     },

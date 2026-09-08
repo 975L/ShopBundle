@@ -60,7 +60,7 @@ class ShopEmailTemplateProvider implements EmailTemplateProviderInterface
                 $this->text('label.back_in_stock_intro', $locale, ['%item%' => '{{ item_title }}']),
                 $this->text('label.back_in_stock_hurry', $locale),
                 ['button', null, null, null, $this->trans('label.back_in_stock_buy', $locale), '{{ product_url }}'],
-                $this->text('label.back_in_stock_unsubscribe', $locale, ['%url%' => '{{ unsubscribe_url }}']),
+                $this->html('label.back_in_stock_unsubscribe', $locale, ['%url%' => '<a href="{{ unsubscribe_url }}">{{ unsubscribe_url }}</a>']),
             ],
         ];
     }
@@ -69,6 +69,13 @@ class ShopEmailTemplateProvider implements EmailTemplateProviderInterface
     private function text(string $key, string $locale, array $parameters = []): array
     {
         return ['text', null, null, $this->trans($key, $locale, $parameters), null, null];
+    }
+
+    // Same sentence, kept as markup: the anchor comes from the parameter and not from the catalogue, so a translator writes prose and never html - and the placeholder values an html block carries are escaped at render time (see EmailTemplateRenderer::contentFor())
+    /** @return array{0: string, 1: ?string, 2: ?string, 3: ?string, 4: ?string, 5: ?string} */
+    private function html(string $key, string $locale, array $parameters = []): array
+    {
+        return ['html', null, null, $this->trans($key, $locale, $parameters), null, null];
     }
 
     // A catalogue parameter becomes the "{{ name }}" an EmailTemplate block substitutes: the two placeholder syntaxes have to meet somewhere, and an admin editing that sentence in the back-office sees the one the editor documents

@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.7.1
+
+The back-in-stock unsubscribe url becomes a link
+
+- The `back_in_stock` unsubscribe block moves from `text` to `html`, carrying an anchor (08/09/2026)
+- A site already seeded must delete its `back_in_stock` rows and re-run `c975l:ui:email-templates:ensure` (08/09/2026)
+- The checkout skill states the `html` unsubscribe block and the reseed it needs (08/09/2026)
+
 ## v2.7.0
 
 Every file the shop declares is checked against the disk
