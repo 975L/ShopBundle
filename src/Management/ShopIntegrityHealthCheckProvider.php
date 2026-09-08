@@ -12,7 +12,7 @@ namespace c975L\ShopBundle\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Management\HealthCheckErrorRow;
-use c975L\ConfigBundle\Management\HealthCheckProviderInterface;
+use c975L\ConfigBundle\Management\HealthCheckExhaustiveInterface;
 use c975L\ConfigBundle\Service\SiteUrlResolver;
 use c975L\PaymentBundle\Entity\Basket;
 use c975L\PaymentBundle\Repository\BasketRepository;
@@ -21,17 +21,15 @@ use c975L\ShopBundle\Repository\ProductItemDownloadRepository;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductItemDownloadService;
 use c975L\ShopBundle\Service\ProductItemDownloadServiceInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// What the catalogue and the deliveries hide from every screen - a file paid for and never handed over, a file on sale that left the server, an article sold past its stock - none of which shows up until a customer runs into it: the catalogue-side counterpart of PaymentBundle's BasketIntegrityHealthCheckProvider, which reads the orders themselves
-class ShopIntegrityHealthCheckProvider implements HealthCheckProviderInterface
+// What the catalogue and the deliveries hide from every screen - a file paid for and never handed over, an article sold past its stock, an article on sale for nothing: the catalogue-side counterpart of PaymentBundle's BasketIntegrityHealthCheckProvider, which reads the orders themselves. Exhaustive, so the "#missing-files" row of an earlier version leaves the dashboard rather than standing at whatever status it last had - a file that left the server is ShopFilesHealthCheckProvider's business
+class ShopIntegrityHealthCheckProvider implements HealthCheckExhaustiveInterface
 {
     public const string KIND = 'shop-integrity';
 
     // Suffixes the rows are keyed by, appended to the site root so each check keeps a history of its own
     public const string ROW_UNDELIVERED_DOWNLOADS = '#undelivered-downloads';
-    public const string ROW_MISSING_FILES = '#missing-files';
     public const string ROW_OVERSOLD_ITEMS = '#oversold-items';
     public const string ROW_FREE_ITEMS = '#free-items';
 
@@ -50,8 +48,6 @@ class ShopIntegrityHealthCheckProvider implements HealthCheckProviderInterface
         private readonly ProductItemDownloadServiceInterface $itemDownloadService,
         private readonly SiteUrlResolver $siteUrlResolver,
         private readonly TranslatorInterface $translator,
-        #[Autowire(param: 'kernel.project_dir')]
-        private readonly string $projectDir,
     ) {
     }
 
@@ -70,7 +66,6 @@ class ShopIntegrityHealthCheckProvider implements HealthCheckProviderInterface
 
         return [
             $this->guard($siteRoot . self::ROW_UNDELIVERED_DOWNLOADS, 'label.health_check_shop_undelivered_downloads', HealthCheckResult::STATUS_ERROR, fn () => $this->undeliveredDownloads()),
-            $this->guard($siteRoot . self::ROW_MISSING_FILES, 'label.health_check_shop_missing_files', HealthCheckResult::STATUS_ERROR, fn () => $this->missingFiles()),
             $this->guard($siteRoot . self::ROW_OVERSOLD_ITEMS, 'label.health_check_shop_oversold_items', HealthCheckResult::STATUS_ERROR, fn () => $this->oversoldItems()),
             $this->guard($siteRoot . self::ROW_FREE_ITEMS, 'label.health_check_shop_free_items', HealthCheckResult::STATUS_WARNING, fn () => $this->freeItems()),
         ];
@@ -107,27 +102,6 @@ class ShopIntegrityHealthCheckProvider implements HealthCheckProviderInterface
             $this->basketRepository->findOrdersSince(new \DateTime('-' . ProductItemDownloadService::VALIDITY_DAYS . ' days')),
             fn (Basket $basket) => $basket->getModification() < $before && [] !== $this->itemDownloadService->getFileItems($basket->getItems()),
         ));
-    }
-
-    // A file on sale that is no longer where it is read from: the sheet still offers it, the checkout still takes the money, and the delivery skips the item rather than failing (see ProductItemDownloadMessageHandler)
-    private function missingFiles(): array
-    {
-        $offenders = [];
-
-        foreach ($this->sellable() as $item) {
-            $file = $item->getFile();
-            $name = $file?->getName();
-
-            if (null === $file || null === $name) {
-                continue;
-            }
-
-            if (!is_file($this->projectDir . '/' . $file->getPrivateDirectory() . '/' . $name)) {
-                $offenders[] = $this->offender($item, $name);
-            }
-        }
-
-        return \array_slice($offenders, 0, self::MAX_OFFENDERS);
     }
 
     // Sold past what was declared: the stock left reads as a negative number nobody is shown, and the shop goes on taking orders it cannot fill

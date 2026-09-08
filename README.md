@@ -539,12 +539,11 @@ php bin/console c975l:health-check:run --kind=product-json-ld
 ```
 
 A third one, `shop-integrity`, looks for what a shop cannot see about itself — the counterpart of PaymentBundle's
-`basket-integrity`, which reads the orders themselves where these four need the catalogue resolved:
+`basket-integrity`, which reads the orders themselves where these three need the catalogue resolved:
 
 | Row | What it reports |
 |---|---|
 | `#undelivered-downloads` | a paid order holding a file whose copy was never made nor sent - read only as far back as a link lives, the nightly purge taking the copies of older orders away |
-| `#missing-files` | a file on sale that is no longer on the server: the sheet still offers it, the checkout still takes the money, and the delivery skips the item rather than failing |
 | `#oversold-items` | an article ordered more times than the stock declared |
 | `#free-items` | an article on sale for nothing - a warning and never an error, and reported only where it is the exception: a catalogue giving away more than it sells has that row skipped |
 
@@ -553,6 +552,18 @@ php bin/console c975l:health-check:run --kind=shop-integrity
 ```
 
 Each row lists the articles or the orders behind its count, one link apiece, on the Health check page.
+
+### A file the database declares and the server no longer has
+
+`Management\ShopFilesHealthCheckProvider` (kind `files-shop`) reports, as an error, every file a row of this bundle names and the server no longer holds — one row per file, linking to the product it is re-uploaded from. Everything it does is UiBundle's `AbstractDeclaredFilesHealthCheckProvider`, this only names the rows to look at.
+
+It covers the pictures of a product and of its items, **and the digital item files themselves**, which is what it was written for: a buyer is sent a link to one of those after paying, so a missing file is a sale that cannot be delivered. Those files are moved out of `public/` once uploaded (see UiBundle's `VichPrivateFileInterface`), and the row names the directory they hang off so they are looked for where they actually sit.
+
+```bash
+php bin/console c975l:health-check:run --kind=files-shop
+```
+
+A file of an article **taken off sale** is covered too — its buyers still hold a live link, where the catalogue checks above only ever walk what is currently sellable.
 
 ---
 

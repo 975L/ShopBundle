@@ -22,31 +22,17 @@ use c975L\ShopBundle\Repository\ProductItemDownloadRepository;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductItemDownloadServiceInterface;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// What a shop cannot see about itself: a file paid for and never sent, a file on sale that left the server, an article sold past what is left of it
+// What a shop cannot see about itself: a file paid for and never sent, an article sold past what is left of it, an article on sale for nothing
 class ShopIntegrityHealthCheckProviderTest extends TestCase
 {
-    private string $projectDir;
-
-    protected function setUp(): void
-    {
-        $this->projectDir = sys_get_temp_dir() . '/shop-integrity-' . uniqid();
-        new Filesystem()->mkdir($this->projectDir . '/private/medias/shop/items');
-    }
-
-    protected function tearDown(): void
-    {
-        new Filesystem()->remove($this->projectDir);
-    }
-
     // "Checked, nothing found" and not silence - silence is what a check that never ran looks like
     public function testASoundShopReportsEveryCheckAsGreen(): void
     {
         $rows = $this->provider()->runChecks();
 
-        $this->assertCount(4, $rows);
+        $this->assertCount(3, $rows);
         foreach ($rows as $row) {
             $this->assertSame(HealthCheckResult::STATUS_OK, $row['status'], $row['url']);
         }
@@ -78,25 +64,6 @@ class ShopIntegrityHealthCheckProviderTest extends TestCase
         $order = $this->order('2026-000044')->setModification(new \DateTime());
 
         $row = $this->row($this->provider(['orders' => [$order], 'fileItems' => [12 => ['title' => 'A story', 'file' => 'story.pdf', 'size' => 10]]])->runChecks(), ShopIntegrityHealthCheckProvider::ROW_UNDELIVERED_DOWNLOADS);
-
-        $this->assertSame(HealthCheckResult::STATUS_OK, $row['status']);
-    }
-
-    // The sheet still offers it and the checkout still takes the money: the delivery skips the item rather than failing
-    public function testAFileMissingFromTheServerIsReported(): void
-    {
-        $row = $this->row($this->provider(['items' => [$this->item(file: 'medias/shop/items/gone.pdf')]])->runChecks(), ShopIntegrityHealthCheckProvider::ROW_MISSING_FILES);
-
-        $this->assertSame(HealthCheckResult::STATUS_ERROR, $row['status']);
-        $this->assertSame('medias/shop/items/gone.pdf', $row['details']['offenders'][0]['info']);
-        $this->assertSame('A book / An item', $row['details']['offenders'][0]['label']);
-    }
-
-    public function testAFileThatIsWhereItIsReadFromIsNotReported(): void
-    {
-        touch($this->projectDir . '/private/medias/shop/items/there.pdf');
-
-        $row = $this->row($this->provider(['items' => [$this->item(file: 'medias/shop/items/there.pdf')]])->runChecks(), ShopIntegrityHealthCheckProvider::ROW_MISSING_FILES);
 
         $this->assertSame(HealthCheckResult::STATUS_OK, $row['status']);
     }
@@ -147,12 +114,11 @@ class ShopIntegrityHealthCheckProviderTest extends TestCase
             $this->downloadService([]),
             $this->siteUrlResolver('https://example.com/'),
             $this->translator(),
-            $this->projectDir,
         )->runChecks();
 
-        $this->assertCount(4, $rows);
-        $this->assertSame(HealthCheckResult::STATUS_WARNING, $this->row($rows, ShopIntegrityHealthCheckProvider::ROW_MISSING_FILES)['status']);
-        $this->assertSame('Table gone', $this->row($rows, ShopIntegrityHealthCheckProvider::ROW_MISSING_FILES)['details']['error']);
+        $this->assertCount(3, $rows);
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $this->row($rows, ShopIntegrityHealthCheckProvider::ROW_OVERSOLD_ITEMS)['status']);
+        $this->assertSame('Table gone', $this->row($rows, ShopIntegrityHealthCheckProvider::ROW_OVERSOLD_ITEMS)['details']['error']);
         $this->assertSame(HealthCheckResult::STATUS_OK, $this->row($rows, ShopIntegrityHealthCheckProvider::ROW_UNDELIVERED_DOWNLOADS)['status']);
     }
 
@@ -174,7 +140,6 @@ class ShopIntegrityHealthCheckProviderTest extends TestCase
             $this->downloadService($found['fileItems'] ?? []),
             $this->siteUrlResolver($siteRoot),
             $this->translator(),
-            $this->projectDir,
         );
     }
 

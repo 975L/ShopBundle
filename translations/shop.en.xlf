@@ -866,18 +866,6 @@
                 <source>label.health_check_shop_free_items_skipped</source>
                 <target>Free is this catalogue's own model, not the exception - nothing is reported</target>
             </trans-unit>
-            <trans-unit id="bQhAsZt">
-                <source>label.health_check_shop_missing_files</source>
-                <target>Files on sale missing from the server</target>
-            </trans-unit>
-            <trans-unit id="nT51XO4">
-                <source>label.health_check_shop_missing_files_ko</source>
-                <target>%count% article(s) on sale whose file is no longer on the server</target>
-            </trans-unit>
-            <trans-unit id="ACBBKl4">
-                <source>label.health_check_shop_missing_files_ok</source>
-                <target>Every file on sale is where it is read from</target>
-            </trans-unit>
             <trans-unit id="Itd3h6w">
                 <source>label.health_check_shop_oversold_items</source>
                 <target>Articles sold past their stock</target>

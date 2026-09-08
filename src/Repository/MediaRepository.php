@@ -24,6 +24,19 @@ class MediaRepository extends ServiceEntityRepository
         parent::__construct($registry, Media::class);
     }
 
+    // The rows naming a stored file, whatever the owner they hang off - what the declared-files health check walks (see UiBundle's AbstractDeclaredFilesHealthCheckProvider)
+    /** @return Media[] */
+    public function findWithFilename(): array
+    {
+        return $this->createQueryBuilder('m')
+            ->where('m.name IS NOT NULL AND m.name != :empty')
+            ->setParameter('empty', '')
+            ->orderBy('m.name', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     //    /**
     //     * @return Media[] Returns an array of Media objects
     //     */

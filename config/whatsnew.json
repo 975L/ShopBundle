@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-09-08",
+        "description": [
+            {
+                "en": "The Health check page now tells you when a picture or a downloadable file of your shop is missing from the server - including for articles you have taken off sale, whose buyers still hold a download link.",
+                "fr": "La page Contrôle de santé vous signale désormais qu'une image ou un fichier téléchargeable de votre boutique manque sur le serveur - y compris pour les articles que vous avez retirés de la vente, dont les acheteurs disposent encore d'un lien de téléchargement.",
+                "es": "La página Control de salud le avisa ahora cuando falta en el servidor una imagen o un archivo descargable de su tienda, incluidos los artículos que ha retirado de la venta, cuyos compradores conservan un enlace de descarga."
+            },
+            {
+                "en": "Text on your pages is no longer pushed to the left by the shop: a card or a section you centred now stays centred.",
+                "fr": "Le texte de vos pages n'est plus poussé à gauche par la boutique : une carte ou une section que vous avez centrée reste centrée.",
+                "es": "El texto de sus páginas ya no queda desplazado a la izquierda por la tienda: una tarjeta o una sección que haya centrado permanece centrada."
+            }
+        ]
+    },
+    {
         "date": "2026-09-04",
         "description": [
             {

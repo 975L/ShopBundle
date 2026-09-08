@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.7.0
+
+Every file the shop declares is checked against the disk
+
+- New `ShopFilesHealthCheckProvider` (kind `files-shop`), checking every declared picture and digital file against the disk (08/09/2026)
+- A digital item is looked for outside `public/`, through the `directory` the parent provider now takes (08/09/2026)
+- New `MediaRepository::findWithFilename()` (08/09/2026)
+- New `ShopFilesHealthCheckProviderTest` (08/09/2026)
+- `shop-integrity` loses its `#missing-files` row, `files-shop` covering it for every file rather than the sellable ones alone (08/09/2026)
+- The three `label.health_check_shop_missing_files*` keys are dropped from the three locales (08/09/2026)
+- `ShopIntegrityHealthCheckProvider` is now exhaustive, so the retired row leaves the dashboard on the next run (08/09/2026)
+- `sass/_general.scss` is dropped, with the bare `div { text-align: left }` it forced on every page of the site (08/09/2026)
+- `vich/uploader-bundle` moves to `^3.0` and `c975l/core-bundle` to `^1.25` (08/09/2026)
+
 ## v2.6.2
 
 The CI runs phpmd and lizard

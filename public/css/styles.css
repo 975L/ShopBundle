@@ -22,11 +22,6 @@
   --shop-stock-low: color-mix(in srgb, #c98a2e 55%, var(--text));
 }
 
-/* GENERAL */
-div {
-  text-align: left;
-}
-
 /* ALERTS */
 .alert {
   text-align: center;

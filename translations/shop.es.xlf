@@ -866,18 +866,6 @@
                 <source>label.health_check_shop_free_items_skipped</source>
                 <target>La gratuidad es el modelo de este catálogo, no la excepción: no se informa de nada</target>
             </trans-unit>
-            <trans-unit id="bQhAsZt">
-                <source>label.health_check_shop_missing_files</source>
-                <target>Archivos a la venta que faltan en el servidor</target>
-            </trans-unit>
-            <trans-unit id="nT51XO4">
-                <source>label.health_check_shop_missing_files_ko</source>
-                <target>%count% artículo(s) a la venta cuyo archivo ya no está en el servidor</target>
-            </trans-unit>
-            <trans-unit id="ACBBKl4">
-                <source>label.health_check_shop_missing_files_ok</source>
-                <target>Cada archivo a la venta está donde se lee</target>
-            </trans-unit>
             <trans-unit id="Itd3h6w">
                 <source>label.health_check_shop_oversold_items</source>
                 <target>Artículos vendidos por encima de su stock</target>

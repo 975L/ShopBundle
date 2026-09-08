@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-checkout
-description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, WeighableBasketItemProviderInterface, CatalogueBasketItemProviderInterface, getCatalogueUrl, Basket:ContinueShoppingButton, getWeight, weight, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, Basket:Navbar, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, c975l:shop:stock-alerts:send, isItemSoldOut, isItemAvailable, shop_stock_alert, ShopIntegrityHealthCheckProvider, ShopIntegrityHealthCheckAdviceProvider, shop-integrity, undelivered-downloads, missing-files, oversold-items, free-items, findSellable, findDeliveredBasketIds."
+description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, WeighableBasketItemProviderInterface, CatalogueBasketItemProviderInterface, getCatalogueUrl, Basket:ContinueShoppingButton, getWeight, weight, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, Basket:Navbar, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, c975l:shop:stock-alerts:send, isItemSoldOut, isItemAvailable, shop_stock_alert, ShopIntegrityHealthCheckProvider, ShopIntegrityHealthCheckAdviceProvider, shop-integrity, undelivered-downloads, oversold-items, free-items, ShopFilesHealthCheckProvider, files-shop, AbstractDeclaredFilesHealthCheckProvider, findWithFilename, findSellable, findDeliveredBasketIds."
 ---
 
 # c975L ShopBundle — buying, paying, delivering
@@ -198,18 +198,23 @@ installing the shop gets them without a system crontab entry, and a site removin
 
 ## What is checked weekly
 
-`ShopIntegrityHealthCheckProvider` (kind `shop-integrity`) runs four checks, one dashboard row each — the
+`ShopIntegrityHealthCheckProvider` (kind `shop-integrity`) runs three checks, one dashboard row each — the
 catalogue-side counterpart of PaymentBundle's `basket-integrity`, which reads the orders themselves.
 
 | Row | Reads |
 |---|---|
 | `#undelivered-downloads` | a paid order holding a file with no `ProductItemDownload` ever written for it — read no further back than `VALIDITY_DAYS`, the purge taking older copies away, and an hour's grace for the message handler |
-| `#missing-files` | a sellable `ProductItemFile` whose file is not under `private/` — the sheet still sells it and the delivery skips the item rather than failing |
 | `#oversold-items` | `orderedQuantity` past `limitedQuantity` |
 | `#free-items` | a sellable item priced at zero — a warning, and reported only where it is the exception: a catalogue giving away half or more of what it lists has the row skipped |
 
 Each check is guarded on its own: `HealthCheckRunner` drops **every** row of a provider that throws, and no rows
-at all reads as "nothing to report".
+at all reads as "nothing to report". The provider is exhaustive, so a row it no longer declares leaves the
+dashboard — which is how the `#missing-files` row a site recorded under an earlier version goes away.
+
+**A file that left the server is not read here**: `ShopFilesHealthCheckProvider` (kind `files-shop`) says it,
+of every `ProductMedia`, `ProductItemMedia` and `ProductItemFile` rather than of the sellable ones alone — a
+file whose article was taken off sale still has buyers holding a live link. It extends UiBundle's
+`AbstractDeclaredFilesHealthCheckProvider` and names `private` as the directory of a digital item.
 
 `ShopIntegrityHealthCheckAdviceProvider` turns each count into the articles or the orders behind it, one link
 apiece — a product to its edit screen, an order to its own read-only detail.
