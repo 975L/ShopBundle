@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.6.2
+
+The CI runs phpmd and lizard
+
+- The CI workflow runs `composer mess` and `composer lizard` (08/09/2026)
+- `bin/ci.sh` installs `phpmd` and a pinned `lizard` (08/09/2026)
+
 ## v2.6.1
 
 A product is dropped from its own sheet
