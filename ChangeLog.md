@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.7.2
+
+The shop's admin menu carries its icons
+
+- The shop menu section gets its `fas fa-cart-shopping` icon (09/09/2026)
+- The shop's public page link gets its `fas fa-store` icon (09/09/2026)
+- The shop's public page link opens in a new tab (09/09/2026)
+- `eslint.config.mjs` declares the `sessionStorage` global (09/09/2026)
+- The README states the shop link leaves the admin in a new tab (09/09/2026)
+- Added a `config/whatsnew.json` entry for the menu icons and the new tab (09/09/2026)
+
 ## v2.7.1
 
 The back-in-stock unsubscribe url becomes a link

@@ -22,6 +22,7 @@ class MenuProvider implements MenuProviderInterface
         return [
             'label' => 'label.shop',
             'translation_domain' => 'shop',
+            'icon' => 'fas fa-cart-shopping',
         ];
     }
 
@@ -64,7 +65,9 @@ class MenuProvider implements MenuProviderInterface
                 'narration' => 'narration.shop',
                 'name' => 'shop_index',
                 'translation_domain' => 'shop',
-                'icon' => '',
+                'icon' => 'fas fa-store',
+                // Opens the site's public page in a new tab (see MenuBuilder::getMenuItems())
+                'target' => '_blank',
                 'description' => 'label.info_shop_link',
             ],
         ];

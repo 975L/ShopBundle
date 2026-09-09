@@ -801,7 +801,7 @@ Installed alongside ConfigBundle, this bundle contributes on its own, with nothi
 
 | Contribution | What it does |
 | --- | --- |
-| `MenuProvider` | The Products, Categories and Shop page entries of the management sidebar |
+| `MenuProvider` | The Products, Categories and Shop page entries of the management sidebar, the Shop page one leaving the admin in a new tab |
 | `LinkableRouteProvider` | The shop and each of its categories, selectable as a SiteBundle menu target |
 | `UrlMetadataProvider` | `/shop`, the one url of this bundle no entity describes, listed on the "Url descriptions" screen |
 | `ProductExportProvider` / `ProductImportProvider` | The whole catalogue in the "Export sync (everything)" archive, and read back by the "Import content" screen (see [export / import products](#export--import-products)) |

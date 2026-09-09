@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-09-09",
+        "description": [
+            {
+                "en": "The shop's entries in the management menu now carry their own icons, so you spot them at a glance.",
+                "fr": "Les entrées de la boutique dans le menu de gestion portent désormais leurs icônes, pour les repérer d'un coup d'oeil.",
+                "es": "Las entradas de la tienda en el menú de gestión llevan ahora sus propios iconos, para localizarlas de un vistazo."
+            },
+            {
+                "en": "The link to your shop page opens in a new tab, so you keep the back office open behind it.",
+                "fr": "Le lien vers votre page boutique s'ouvre dans un nouvel onglet, ce qui laisse l'administration ouverte derrière.",
+                "es": "El enlace a la página de su tienda se abre en una pestaña nueva, dejando la administración abierta detrás."
+            }
+        ]
+    },
+    {
         "date": "2026-09-08",
         "description": [
             {
