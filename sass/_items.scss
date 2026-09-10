@@ -75,7 +75,7 @@
 .product-item-heading strong {
     font-family: var(--font-family-title);
     font-weight: var(--font-title-weight);
-    font-size: 0.95rem;
+    font-size: 1.05rem;
 }
 
 .product-item-kind {
@@ -83,7 +83,7 @@
     border-radius: 3px;
     background-color: var(--surface-alt);
     color: var(--shop-text-muted);
-    font-size: 0.62rem;
+    font-size: 0.75rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }
@@ -94,12 +94,12 @@
 
 .product-item-description {
     color: var(--shop-text-muted);
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     line-height: 1.45;
 }
 
 .product-item-stock {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
 }
 
 .product-item-stock-ok {
@@ -125,23 +125,23 @@
 .product-item-price strong {
     font-family: var(--font-family-title);
     font-weight: var(--font-title-weight);
-    font-size: 1rem;
+    font-size: 1.15rem;
 }
 
 .product-item-vat {
     color: var(--shop-text-subtle);
-    font-size: 0.68rem;
+    font-size: 0.78rem;
 }
 
 .product-item-price-before {
     color: var(--shop-text-subtle);
-    font-size: 0.8rem;
+    font-size: 0.9rem;
 }
 
 // Stated as a figure rather than as a badge here: the row already carries its stock line and its format, and a third coloured pill on it would make the price the quietest thing in the row
 .product-item-discount {
     color: var(--primary-ink);
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     font-weight: 600;
 }
 
@@ -160,7 +160,7 @@
     border: 1px solid var(--primary);
     border-radius: 6px;
     color: var(--shop-text-muted);
-    font-size: 0.6rem;
+    font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;

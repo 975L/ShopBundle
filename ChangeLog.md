@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.7.3
+
+The product item text grows a step
+
+- The product item row's font sizes go up a step (10/09/2026)
+
 ## v2.7.2
 
 The shop's admin menu carries its icons

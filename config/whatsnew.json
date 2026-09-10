@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-09-10",
+        "description": [
+            {
+                "en": "The items listed on your shop pages are printed a little larger, so their name, price and stock read at a glance.",
+                "fr": "Les articles listés sur vos pages boutique s'affichent un peu plus grands, pour lire leur nom, leur prix et leur stock d'un coup d'oeil.",
+                "es": "Los artículos listados en sus páginas de tienda se muestran algo más grandes, para leer su nombre, su precio y su stock de un vistazo."
+            }
+        ]
+    },
+    {
         "date": "2026-09-09",
         "description": [
             {
