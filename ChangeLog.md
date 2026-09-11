@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.8.1
+
+Sort directions use SortDirection instead of deprecated strings
+
+- Queries and `OrderBy` mappings use `\SortDirection` instead of `'ASC'`/`'DESC'` (11/09/2026)
+- Requires `doctrine/orm` `^3.7` (11/09/2026)
+- PHPStan and its deprecation rules move to `require-dev` (11/09/2026)
+- The CI no longer installs PHPStan with setup-php (11/09/2026)
+- The test suite fails on Doctrine deprecations (11/09/2026)
+
 ## v2.8.0
 
 The shop and its catalogue in every language the site declares

@@ -31,7 +31,7 @@ class MediaRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('m')
             ->where('m.name IS NOT NULL AND m.name != :empty')
             ->setParameter('empty', '')
-            ->orderBy('m.name', 'ASC')
+            ->orderBy('m.name', \SortDirection::Ascending)
             ->getQuery()
             ->getResult()
         ;

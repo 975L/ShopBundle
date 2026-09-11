@@ -31,7 +31,7 @@ class ProductAffinityRepository extends ServiceEntityRepository
             ->select('IDENTITY(pa.product2) as relatedProductId', 'pa.affinityScore')
             ->where('pa.product1 = :productId')
             ->setParameter('productId', $productId)
-            ->orderBy('pa.affinityScore', 'DESC')
+            ->orderBy('pa.affinityScore', \SortDirection::Descending)
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

@@ -23,7 +23,7 @@
         "php": ">=8.4",
         "c975l/core-bundle": "^1.28.0",
         "c975l/payment-bundle": "^6.7",
-        "doctrine/orm": "^3.6",
+        "doctrine/orm": "^3.7",
         "easycorp/easyadmin-bundle": "^5.1",
         "imagine/imagine": "^1.5",
         "symfony/asset": "^8.0",
@@ -40,6 +40,8 @@
         "vich/uploader-bundle": "^3.0"
     },
     "require-dev": {
+        "phpstan/phpstan": "^2.2",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpunit/phpunit": "^13.2"
     },
     "minimum-stability": "dev",

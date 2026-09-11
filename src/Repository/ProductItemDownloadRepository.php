@@ -32,7 +32,7 @@ class ProductItemDownloadRepository extends ServiceEntityRepository
             ->andWhere('d.expiresAt > :now')
             ->setParameter('basketId', $basketId)
             ->setParameter('now', $now)
-            ->orderBy('d.expiresAt', 'DESC')
+            ->orderBy('d.expiresAt', \SortDirection::Descending)
             ->getQuery()
             ->getResult();
     }

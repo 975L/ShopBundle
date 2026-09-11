@@ -38,7 +38,7 @@ class ShopSettings implements \Stringable, HasBlocksInterface
     // What the shop's index says above its listing - composed in the back-office with UiBundle's kinds, the same way a product sheet and a category page are
     #[ORM\ManyToMany(targetEntity: Block::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinTable(name: 'shop_settings_block')]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     private Collection $blocks;
 
     public function __construct()

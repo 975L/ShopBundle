@@ -85,11 +85,11 @@ class Product implements \Stringable, HasBlocksInterface
     private bool $giftCardScratch = true;
 
     #[ORM\OneToMany(targetEntity: ProductMedia::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist', 'remove'])]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     private Collection $medias;
 
     #[ORM\OneToMany(targetEntity: ProductItem::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist', 'remove'])]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     // The rows added in the sheet are checked one by one, an empty one coming back as a form error rather than reaching the database
     #[Assert\Valid]
     private Collection $items;
@@ -104,13 +104,13 @@ class Product implements \Stringable, HasBlocksInterface
     // What the product sheet says beyond its items: a banner, arguments, a gallery, a FAQ - composed in the back-office with UiBundle's kinds rather than in a template of its own
     #[ORM\ManyToMany(targetEntity: Block::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinTable(name: 'shop_product_block')]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     private Collection $blocks;
 
     // The products an editor picked to go with this one, which the affinity calculation cannot know before anything has been sold. Deliberately one-way: "goes with" is not always mutual, a case going with a phone where the phone leads on its own
     #[ORM\ManyToMany(targetEntity: self::class)]
     #[ORM\JoinTable(name: 'shop_product_related')]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     private Collection $relatedProducts;
 
     public function __construct()

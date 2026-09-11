@@ -47,7 +47,7 @@ class ProductRepository extends ServiceEntityRepository
             }
         }
 
-        return $qb->orderBy('p.title', 'DESC')
+        return $qb->orderBy('p.title', \SortDirection::Descending)
             ->getQuery()
             ->getResult()
         ;
@@ -71,14 +71,14 @@ class ProductRepository extends ServiceEntityRepository
             ->leftJoin('i.file', 'f');
 
         if ('newest' === $sort) {
-            $qb->orderBy('p.creation', 'DESC');
+            $qb->orderBy('p.creation', \SortDirection::Descending);
         } else {
-            $qb->orderBy('p.position', 'ASC');
+            $qb->orderBy('p.position', \SortDirection::Ascending);
         }
 
         return $qb
-            ->addOrderBy('m.position', 'ASC')
-            ->addOrderBy('i.position', 'ASC')
+            ->addOrderBy('m.position', \SortDirection::Ascending)
+            ->addOrderBy('i.position', \SortDirection::Ascending)
             ->getQuery()
             ->getResult()
         ;
@@ -114,9 +114,9 @@ class ProductRepository extends ServiceEntityRepository
             ->join('p.categories', 'c')
             ->andWhere('c.slug = :slug')
             ->setParameter('slug', $slug)
-            ->orderBy('p.position', 'ASC')
-            ->addOrderBy('m.position', 'ASC')
-            ->addOrderBy('i.position', 'ASC')
+            ->orderBy('p.position', \SortDirection::Ascending)
+            ->addOrderBy('m.position', \SortDirection::Ascending)
+            ->addOrderBy('i.position', \SortDirection::Ascending)
             ->getQuery()
             ->getResult()
         ;
@@ -149,8 +149,8 @@ class ProductRepository extends ServiceEntityRepository
             ->leftJoin('i.media', 'im')
             ->leftJoin('i.file', 'if')
             ->andWhere('p.slug = :slug')
-            ->orderBy('m.position', 'ASC')
-            ->addOrderBy('i.position', 'ASC')
+            ->orderBy('m.position', \SortDirection::Ascending)
+            ->addOrderBy('i.position', \SortDirection::Ascending)
             ->setParameter('slug', $slug)
         ;
     }
@@ -175,7 +175,7 @@ class ProductRepository extends ServiceEntityRepository
             ->leftJoin('p.medias', 'm')
             ->andWhere('p.id IN (:ids)')
             ->setParameter('ids', $ids)
-            ->orderBy('m.position', 'ASC')
+            ->orderBy('m.position', \SortDirection::Ascending)
             ->getQuery()
             ->getResult()
         ;
@@ -201,7 +201,7 @@ class ProductRepository extends ServiceEntityRepository
             ->select('p, c, i')
             ->leftJoin('p.categories', 'c')
             ->leftJoin('p.items', 'i')
-            ->orderBy('p.position', 'ASC');
+            ->orderBy('p.position', \SortDirection::Ascending);
 
         if (!empty($excludeIds)) {
             $qb->andWhere('p.id NOT IN (:excludeIds)')
@@ -224,7 +224,7 @@ class ProductRepository extends ServiceEntityRepository
             ->leftJoin('p.items', 'i')
             ->andWhere('c.id IN (:categoryIds)')
             ->setParameter('categoryIds', $categoryIds)
-            ->orderBy('p.position', 'ASC');
+            ->orderBy('p.position', \SortDirection::Ascending);
 
         if (!empty($excludeProductIds)) {
             $qb->andWhere('p.id NOT IN (:excludeIds)')
@@ -259,7 +259,7 @@ class ProductRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.isDeleted = false')
-            ->orderBy('p.position', 'ASC')
+            ->orderBy('p.position', \SortDirection::Ascending)
             ->getQuery()
             ->getResult()
         ;

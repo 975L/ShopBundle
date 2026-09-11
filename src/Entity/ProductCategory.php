@@ -51,7 +51,7 @@ class ProductCategory implements \Stringable, HasBlocksInterface
     // What the category page says beyond its listing - composed in the back-office with UiBundle's kinds, the same way a product sheet is, rather than in a template of its own
     #[ORM\ManyToMany(targetEntity: Block::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinTable(name: 'shop_product_category_block')]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => \SortDirection::Ascending])]
     private Collection $blocks;
 
     public function __construct()

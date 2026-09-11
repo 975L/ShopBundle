@@ -64,8 +64,8 @@ class ProductItemRepository extends ServiceEntityRepository
             ->andWhere('i.hidden = false')
             ->andWhere('p.hidden = false')
             ->andWhere('p.isDeleted = false')
-            ->orderBy('p.title', 'ASC')
-            ->addOrderBy('i.position', 'ASC')
+            ->orderBy('p.title', \SortDirection::Ascending)
+            ->addOrderBy('i.position', \SortDirection::Ascending)
             ->getQuery()
             ->getResult();
     }

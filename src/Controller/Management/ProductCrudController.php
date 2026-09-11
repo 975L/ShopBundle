@@ -145,7 +145,7 @@ class ProductCrudController extends AbstractCrudController
                 ->setLabel(t('label.categories', [], 'shop'))
                 ->setRequired(false)
                 ->setQueryBuilder(
-                    fn ($queryBuilder) => $queryBuilder->orderBy('entity.name', 'ASC')
+                    fn ($queryBuilder) => $queryBuilder->orderBy('entity.name', \SortDirection::Ascending)
                 ),
             IntegerField::new('position')
                 ->setLabel(t('label.position', [], 'shop'))
@@ -176,7 +176,7 @@ class ProductCrudController extends AbstractCrudController
                 ->setQueryBuilder(
                     fn ($queryBuilder) => $queryBuilder
                         ->andWhere('entity.isDeleted = false')
-                        ->orderBy('entity.title', 'ASC')
+                        ->orderBy('entity.title', \SortDirection::Ascending)
                 ),
 
             // The card this product sells, if it sells one: what is printed on it beside the amount its items carry (see ProductItem::$giftCardValue). Left alone on an ordinary product, whose sheet the fieldset simply says nothing about
@@ -604,8 +604,8 @@ class ProductCrudController extends AbstractCrudController
 
         // Read-only, so the catalogue never enters the unit of work: a flush() would run ProductListener on every managed product, not only on the reordered ones, and restamp the whole shop's modification date and author
         $products = $productRepository->createQueryBuilder('p')
-            ->orderBy('p.position', 'ASC')
-            ->addOrderBy('p.id', 'ASC')
+            ->orderBy('p.position', \SortDirection::Ascending)
+            ->addOrderBy('p.id', \SortDirection::Ascending)
             ->getQuery()
             ->setHint(Query::HINT_READ_ONLY, true)
             ->getResult()
