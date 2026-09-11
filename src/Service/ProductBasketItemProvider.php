@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Service;
 
+use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
 use c975L\PaymentBundle\Contract\BasketItemProviderInterface;
 use c975L\PaymentBundle\Contract\CatalogueBasketItemProviderInterface;
 use c975L\PaymentBundle\Contract\GiftCardDesign;
@@ -19,7 +20,6 @@ use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\PaymentBundle\Service\VatCalculator;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Plugs product items into PaymentBundle's Basket/checkout engine (see BasketItemProviderInterface)
@@ -30,7 +30,7 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
         private readonly MessageBusInterface $messageBus,
         private readonly GiftCardService $giftCardService,
         private readonly TranslatorInterface $translator,
-        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly LocalizedUrlGenerator $localizedUrlGenerator,
     ) {
     }
 
@@ -42,7 +42,7 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
     // Where the basket sends a customer back to - the products themselves rather than the top of the shop page, which the button is clicked to get past (see CatalogueBasketItemProviderInterface)
     public function getCatalogueUrl(): ?string
     {
-        return $this->urlGenerator->generate('shop_index') . '#products';
+        return $this->localizedUrlGenerator->path('shop_index') . '#products';
     }
 
     public function findItem(int | string $id): ?object
@@ -111,7 +111,7 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
     public function toBasketData(object $item, int $quantity): array
     {
         $itemData = $item->toArray();
-        unset($itemData['product'], $itemData['creation'], $itemData['position'], $itemData['modification'], $itemData['user']);
+        unset($itemData['product'], $itemData['creation'], $itemData['position'], $itemData['modification'], $itemData['user'], $itemData['translated']);
         $itemData['media'] = $item->getMedia() ? $item->getMedia()->getName() : null;
         $itemData['file'] = $item->getFile() ? $item->getFile()->getName() : null;
         $itemData['size'] = $item->getFile() ? $item->getFile()->getSize() : null;

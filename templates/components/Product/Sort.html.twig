@@ -17,7 +17,7 @@
         {% for key, label in orders %}
             {% set selected = current == (key is empty ? null : key) %}
             <a
-                href="{{ path('shop_index', kept|merge(key is empty ? {} : {'order': key})) }}#products"
+                href="{{ localized_path('shop_index', kept|merge(key is empty ? {} : {'order': key})) }}#products"
                 class="product-sort-link{{ selected ? ' product-sort-current' : '' }}"
                 {% if selected %}aria-current="true"{% endif %}
             >{{ label|trans({}, 'shop') }}</a>

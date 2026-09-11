@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-seo
-description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork, url_metadata_title, url_metadata_summary, UrlMetadataProvider, Url descriptions."
+description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork, url_metadata_title, url_metadata_summary, UrlMetadataProvider, Url descriptions, ShopPublicUrlResolver, resolveAlternates, resolveLocalizedUrl, alternates, hreflang, ShopTranslatedLocales, localized urls."
 ---
 
 # c975L ShopBundle — structured data, sitemap, health, recommendations
@@ -10,7 +10,7 @@ description: "Use this skill when working on how the shop is read from outside i
 **Package:** `c975l/shop-bundle` · **Bundle:** `c975L\ShopBundle\` · **Twig namespace:** `@c975LShop` · **Translation domain:** `shop`
 
 **Key source paths:**
-`src/Service/ProductSnippetBuilder.php`, `src/Twig/ProductJsonLdExtension.php`, `src/Service/ShopBreadcrumbBuilder.php`, `src/Management/ShopSitemapProvider.php`, `src/Management/ShopStatusProvider.php`, `src/Management/ProductStructuredDataHealthCheckProvider.php`, `src/Service/ProductJsonLdClient.php`, `src/Management/UrlMetadataProvider.php`, `src/Service/ProductRecommendationService.php`, `src/Entity/ProductAffinity.php`, `src/Command/CalculateProductAffinityCommand.php`, `templates/product/display.html.twig`, `templates/category/display.html.twig`, `templates/shop/index.html.twig`
+`src/Service/ProductSnippetBuilder.php`, `src/Twig/ProductJsonLdExtension.php`, `src/Service/ShopBreadcrumbBuilder.php`, `src/Service/ShopPublicUrlResolver.php`, `src/Management/ShopSitemapProvider.php`, `src/Management/ShopStatusProvider.php`, `src/Management/ProductStructuredDataHealthCheckProvider.php`, `src/Service/ProductJsonLdClient.php`, `src/Management/UrlMetadataProvider.php`, `src/Service/ProductRecommendationService.php`, `src/Entity/ProductAffinity.php`, `src/Command/CalculateProductAffinityCommand.php`, `templates/product/display.html.twig`, `templates/category/display.html.twig`, `templates/shop/index.html.twig`
 
 **Related skills:** `c975l-shop-catalog`, `c975l-shop-blocks`, `c975l-shop-checkout` in this same bundle, and `c975l-management`, `c975l-operations` in ConfigBundle beside it.
 
@@ -98,6 +98,11 @@ positions skip one being malformed, and a page printing no card publishes nothin
 
 ## The breadcrumb
 
+Its three levels are read in the language the page around them is being read in
+(`ShopPublicUrlResolver::resolveLocalizedUrl()`): the trail a visitor on `/en/shop/products/x` clicks
+stays in English, and the `BreadcrumbList` describes the page really open. The host comes from
+`site-url`, falling back on the router's own absolute url while it is unconfigured.
+
 A product sheet and a category page each publish a `BreadcrumbList` in a **second `<script>` tag**,
 beside the product graph rather than merged into it:
 
@@ -132,7 +137,15 @@ The shop's own url deliberately carries neither: a heading pointing at the catal
 nothing a model can use, and an url with no title is simply left out.
 
 **Nothing is declared before `site-url` is configured** — a sitemap only accepts absolute urls, so the
-provider returns an empty array rather than relative ones.
+provider returns an empty array rather than relative ones. Every url is built through
+`ShopPublicUrlResolver` rather than by hand, so the sitemap cannot drift from the routes themselves.
+
+**Each screen is declared once per language it answers in**, every entry carrying the whole
+`alternates` group (`ShopPublicUrlResolver::resolveAlternates()`, gated by `ShopTranslatedLocales`): a
+language's url is only ever crawled if the sitemap names it, and the group alone leaves the other
+languages undeclared. The writing language comes first, so a shop declaring one language keeps the
+sitemap it has always had, byte for byte — `alternates` is then empty. A route without a localised
+twin yields no group rather than an exception, so one missing pair cannot fail the whole write.
 
 Descriptions are passed as they are; the writer strips the markup, flattens and truncates. **Do not
 pre-truncate them here.**

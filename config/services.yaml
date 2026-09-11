@@ -29,6 +29,7 @@ services:
               translation_domain: 'shop'
               category: 'label.category_shop'
               form: 'c975L\ShopBundle\Form\Block\ProductsBlockType'
+              translatable: 'title'
               template: '@c975LShop/blocks/Products.html.twig'
               pickable: true
               cacheable: true
@@ -43,6 +44,7 @@ services:
               translation_domain: 'shop'
               category: 'label.category_shop'
               form: 'c975L\ShopBundle\Form\Block\GiftCardsBlockType'
+              translatable: 'title'
               template: '@c975LShop/blocks/GiftCards.html.twig'
               pickable: true
               cacheable: true
@@ -57,6 +59,7 @@ services:
               translation_domain: 'shop'
               category: 'label.category_shop'
               form: 'c975L\ShopBundle\Form\Block\CategoriesBlockType'
+              translatable: 'title'
               template: '@c975LShop/blocks/Categories.html.twig'
               pickable: true
               cacheable: true
@@ -99,6 +102,7 @@ services:
               translation_domain: 'shop'
               category: 'label.category_shop'
               form: 'c975L\ShopBundle\Form\Block\ProductSearchBlockType'
+              translatable: 'title'
               template: '@c975LShop/blocks/Search.html.twig'
               pickable: true
               # The one kind of the eight that is not cached: it renders a Live Component, whose markup carries the props checksum and the csrf token of the current session - the very reason UiBundle's own "form" kind is not cached either
@@ -114,6 +118,7 @@ services:
               translation_domain: 'shop'
               category: 'label.category_shop'
               form: 'c975L\ShopBundle\Form\Block\RecommendationsBlockType'
+              translatable: 'title'
               template: '@c975LShop/blocks/Recommendations.html.twig'
               pickable: true
               cacheable: true
@@ -129,6 +134,7 @@ services:
               translation_domain: 'shop'
               category: 'label.category_shop'
               form: 'c975L\ShopBundle\Form\Block\ProductItemsBlockType'
+              translatable: 'title'
               template: '@c975LShop/blocks/ProductItems.html.twig'
               pickable: true
               cacheable: true

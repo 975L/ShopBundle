@@ -10,12 +10,12 @@
 
 namespace c975L\ShopBundle\Service;
 
+use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\UiBundle\Contract\FavoriteItemProviderInterface;
 use c975L\UiBundle\Model\CollectionItem;
 use Symfony\Component\Asset\Packages;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 // Turns the "shop_product" rows a wishlist holds back into cards - the only place of this bundle that knows what that name stands for, UiBundle storing a name and an id and nothing else
 class ShopFavoriteItemProvider implements FavoriteItemProviderInterface
@@ -25,7 +25,7 @@ class ShopFavoriteItemProvider implements FavoriteItemProviderInterface
 
     public function __construct(
         private readonly ProductRepository $productRepository,
-        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly LocalizedUrlGenerator $localizedUrlGenerator,
         private readonly Packages $packages,
     ) {
     }
@@ -45,7 +45,8 @@ class ShopFavoriteItemProvider implements FavoriteItemProviderInterface
                 title: trim((string) $product->getTitle()),
                 description: $this->excerpt($product),
                 imageUrl: $this->imageUrl($product),
-                url: $this->urlGenerator->generate('product_display', ['slug' => $product->getSlug()]),
+                // Read in the language the wishlist is being read in: a card taking the visitor back into the writing language is the very fault localised urls were added for
+                url: $this->localizedUrlGenerator->path('product_display', ['slug' => $product->getSlug()]),
                 slug: $product->getSlug(),
             );
         }

@@ -28,7 +28,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 ## Contents
 
 - **Setup** — [requirements](#requirements) · [installation](#installation) · [upgrading from v1](#upgrading)
-- **Using it** — [usage](#usage) · [block kinds](#block-kinds) · [composing the shop](#composing-the-shop) · [commands](#commands) · [export / import products](#export--import-products) · [sitemap, llms.txt and health check](#sitemap-llmstxt-and-health-check) · [structured data](#structured-data) · [wish list](#wish-list) · [back-in-stock alerts](#back-in-stock-alerts) · [customer ratings](#customer-ratings) · [test mode](#test-mode) · [the demo catalog](#the-demo-catalog) · [what the site's dashboard gets](#what-the-sites-dashboard-gets)
+- **Using it** — [usage](#usage) · [block kinds](#block-kinds) · [composing the shop](#composing-the-shop) · [languages](#languages) · [commands](#commands) · [export / import products](#export--import-products) · [sitemap, llms.txt and health check](#sitemap-llmstxt-and-health-check) · [structured data](#structured-data) · [wish list](#wish-list) · [back-in-stock alerts](#back-in-stock-alerts) · [customer ratings](#customer-ratings) · [test mode](#test-mode) · [the demo catalog](#the-demo-catalog) · [what the site's dashboard gets](#what-the-sites-dashboard-gets)
 
 ## Features
 
@@ -50,6 +50,8 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - Listing ordered by novelty or price and narrowed by price, format and availability, growing on scroll, mobile first from the phone up
 - Breadcrumb above every sheet and category page, published as `BreadcrumbList` structured data
 - Product affinity calculation and recommendations, overridden by the products an editor picks by hand
+- Catalog translated row by row, behind the site's own language declaration — the three public screens answering under `/{_locale}/`, the back-office offering each sheet in the chosen language (see [languages](#languages))
+- Sitemap declaring each screen once per language, every entry carrying its whole `alternates` group
 - Sitemap, `llms.txt` section and health check, all from one provider
 - Catalogue and deliveries checked on their own weekly, `shop-integrity`: a file paid for and never handed over, a file on sale that left the server, an article sold past its stock
 - Shop pages selectable as SiteBundle menu targets
@@ -510,6 +512,32 @@ it".
 Two things are deliberately left out of the archive, both being rebuilt rather than carried: the affinities
 between products, which `c975l:shop:affinity:calculate` recomputes from the orders of the site they belong
 to, and the download links of the baskets, which belong to the payments rather than to the catalogue.
+
+---
+
+## Languages
+
+A shop declaring a single language — which is every shop until it says otherwise — is untouched by everything below: the urls, the sitemap and the back-office are exactly what they have always been. The declaration is Symfony's own, read through ConfigBundle's `SiteLocales` (see SiteBundle's README for the `enabled_locales` details); nothing is filled in here.
+
+### Urls
+
+The writing language keeps its bare urls byte for byte — `/shop`, `/shop/products/{slug}`, `/shop/category/{slug}` — and every other language answers under its own prefix through the `shop_index_localized`, `product_display_localized` and `category_display_localized` routes. `ShopTranslatedLocales` is the whole of the rule saying which languages each screen answers in, held in one file rather than in three controllers.
+
+The three screens answer in **every** language the site declares, translated or not: `/en` is the language the shop is being read in, not a claim about the row. A sheet is mostly this bundle's own interface — the price, the stock, the shipping, the buy button, the cards under it — and a name still in the writing language is a page half translated rather than another page.
+
+This bundle's own links are rewritten into the language the page around them is being read in — `ShopLinkLocalizer`, answering UiBundle's `InternalLinkLocalizerInterface` — anchors and query strings carried over, so `/shop#products` reads as `/en/shop#products`. What a template generates goes through ConfigBundle's `LocalizedUrlGenerator` instead, and what needs an absolute url — the breadcrumb and the `BreadcrumbList` built from it — through `ShopPublicUrlResolver`.
+
+### Translating
+
+A product is one product in every language: one row, one price, one stock, one slug. Only its texts are said again, through the **Translate** action of the Products and Categories indexes, which reopens the very same edit screen in the chosen language (url parameter `contenu`). A field left holding the source text between brackets counts as nothing written, so a half-translated sheet is never broken.
+
+What is translatable: a product's title, description and gift-card text, a category's name and description, an item's title and description (on its product's language screen), and the shop's own intro line. A slug is the url a search engine has indexed, an SKU and a GTIN are the vocabulary of a warehouse and a marketplace, and a brand is named the same everywhere — none of them are words a translator writes. The invoice is left out whole, being in the language of the company issuing it.
+
+The translations themselves are UiBundle's `Translation` rows, read back through `ContentTranslator`; `ShopTranslationPurgeListener` takes a row's translations away with the row.
+
+### Sitemap
+
+`sitemap-shop.xml` declares each screen once per language it answers in, every entry carrying the whole `alternates` group — a language's url is only ever crawled if the sitemap names it. A shop declaring one language keeps the sitemap it has always had, byte for byte.
 
 ---
 

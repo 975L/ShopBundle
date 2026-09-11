@@ -36,6 +36,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             $this->categoryProject(),
             $this->indexProject(),
             $this->productProject(),
+            $this->translateProject(),
             $this->downloadableProject(),
             $this->giftCardProject(),
             $this->testModeProject(),
@@ -222,6 +223,66 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_shop_product_save',
                     'description' => 'description.guided_step_shop_product_save',
                     'narration' => 'narration.guided_step_shop_product_save',
+                    'highlight' => '.action-saveAndReturn',
+                ],
+            ],
+        ];
+    }
+
+    // The same sheet said in another language: the texts alone belong to it, everything else - the price, the stock, the references - being the same everywhere
+    private function translateProject(): array
+    {
+        return [
+            'slug' => 'shop-translate',
+            'label' => 'label.guided_project_shop_translate',
+            'description' => 'description.guided_project_shop_translate',
+            'translation_domain' => 'shop',
+            'order' => 8025,
+            'role' => $this->roleNeeded(),
+            'steps' => [
+                [
+                    'label' => 'label.guided_step_shop_translate_open',
+                    'description' => 'description.guided_step_shop_translate_open',
+                    'narration' => 'narration.guided_step_shop_translate_open',
+                    'url' => $this->indexUrl(ProductCrudController::class),
+                ],
+                [
+                    'label' => 'label.guided_step_shop_translate_action',
+                    'description' => 'description.guided_step_shop_translate_action',
+                    'narration' => 'narration.guided_step_shop_translate_action',
+                    // Only shown where the site declares more than one language, which is what the step's description says
+                    'highlight' => '.action-translate',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_translate_tabs',
+                    'description' => 'description.guided_step_shop_translate_tabs',
+                    'narration' => 'narration.guided_step_shop_translate_tabs',
+                    // Posted by ConfigBundle's own tab strip, which is what carries the "?contenu=xx" the language screens are read at
+                    'highlight' => '[data-content-locales]',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_translate_title',
+                    'description' => 'description.guided_step_shop_translate_title',
+                    'narration' => 'narration.guided_step_shop_translate_title',
+                    'highlight' => '#Product_title',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_translate_description',
+                    'description' => 'description.guided_step_shop_translate_description',
+                    'narration' => 'narration.guided_step_shop_translate_description',
+                    // The editor itself and not "#Product_description", which is the hidden input trix writes into - nothing a visitor could be shown
+                    'highlight' => 'trix-editor[input="Product_description"]',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_translate_gift_card_text',
+                    'description' => 'description.guided_step_shop_translate_gift_card_text',
+                    'narration' => 'narration.guided_step_shop_translate_gift_card_text',
+                    'highlight' => '#Product_giftCardText',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_translate_save',
+                    'description' => 'description.guided_step_shop_translate_save',
+                    'narration' => 'narration.guided_step_shop_translate_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
             ],

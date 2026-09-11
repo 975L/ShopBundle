@@ -15,6 +15,7 @@ use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductRecommendationServiceInterface;
+use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\ShopBundle\Twig\Extension\ShopBlockExtension;
 use c975L\UiBundle\Entity\Block;
 use PHPUnit\Framework\TestCase;
@@ -32,6 +33,8 @@ class ShopBlockExtensionTest extends TestCase
             $this->createStub(ProductCategoryRepository::class),
             $this->createStub(ProductRecommendationServiceInterface::class),
             new RequestStack(),
+            // A double rather than the real one: what it lays over is ShopTranslator's own test, and a single-language site lays nothing
+            $this->createStub(ShopTranslator::class),
         );
     }
 
@@ -99,6 +102,7 @@ class ShopBlockExtensionTest extends TestCase
             $this->createStub(ProductCategoryRepository::class),
             $this->createStub(ProductRecommendationServiceInterface::class),
             new RequestStack(),
+            $this->createStub(ShopTranslator::class),
         );
     }
 

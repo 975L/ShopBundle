@@ -6,6 +6,26 @@
                 "en": "The items listed on your shop pages are printed a little larger, so their name, price and stock read at a glance.",
                 "fr": "Les articles listés sur vos pages boutique s'affichent un peu plus grands, pour lire leur nom, leur prix et leur stock d'un coup d'oeil.",
                 "es": "Los artículos listados en sus páginas de tienda se muestran algo más grandes, para leer su nombre, su precio y su stock de un vistazo."
+            },
+            {
+                "en": "Your catalog can now be written in every language your site offers: each product, category and item has its own language screen, opened by the Translate button on the lists.",
+                "fr": "Votre catalogue peut désormais être écrit dans toutes les langues de votre site : chaque produit, catégorie et article a son écran de langue, ouvert par le bouton Traduire depuis les listes.",
+                "es": "Su catálogo puede escribirse ahora en todos los idiomas de su sitio: cada producto, categoría y artículo tiene su pantalla de idioma, abierta con el botón Traducir desde las listas."
+            },
+            {
+                "en": "A price, a stock, a slug and a reference stay where you wrote them: a language screen only ever asks for the texts a visitor reads, and a field you leave alone keeps the original.",
+                "fr": "Un prix, un stock, une adresse et une référence restent là où vous les avez saisis : un écran de langue ne demande que les textes lus par le visiteur, et un champ laissé tel quel conserve l'original.",
+                "es": "Un precio, un stock, una dirección y una referencia permanecen donde los escribió: una pantalla de idioma solo pide los textos que lee el visitante, y un campo que deje intacto conserva el original."
+            },
+            {
+                "en": "A guided tour walks you through translating a product, from the list to the saved sheet.",
+                "fr": "Une visite guidée vous accompagne pour traduire un produit, de la liste jusqu'à la fiche enregistrée.",
+                "es": "Una visita guiada le acompaña para traducir un producto, desde la lista hasta la ficha guardada."
+            },
+            {
+                "en": "Search engines are now told about your shop pages in each language they answer in, so a translated sheet can be found in its own language.",
+                "fr": "Les moteurs de recherche connaissent désormais vos pages boutique dans chaque langue où elles répondent, pour qu'une fiche traduite se trouve dans sa langue.",
+                "es": "Los motores de búsqueda conocen ahora sus páginas de tienda en cada idioma en el que responden, para que una ficha traducida se encuentre en su idioma."
             }
         ]
     },

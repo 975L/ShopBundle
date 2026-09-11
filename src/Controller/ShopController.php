@@ -10,8 +10,11 @@
 
 namespace c975L\ShopBundle\Controller;
 
+use c975L\ConfigBundle\Service\LocalizedRouteNegotiator;
 use c975L\ShopBundle\Repository\ShopSettingsRepository;
 use c975L\ShopBundle\Service\ShopServiceInterface;
+use c975L\ShopBundle\Service\ShopTranslatedLocales;
+use c975L\ShopBundle\Service\ShopTranslator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,10 +28,19 @@ class ShopController extends AbstractController
     public function __construct(
         private readonly ShopServiceInterface $shopService,
         private readonly ShopSettingsRepository $shopSettingsRepository,
+        private readonly LocalizedRouteNegotiator $negotiator,
+        private readonly ShopTranslatedLocales $translatedLocales,
+        private readonly ShopTranslator $shopTranslator,
     ) {
     }
 
-    // INDEX
+    // INDEX - the same index in another language, the writing language keeping "/shop" byte for byte: the pattern holds the languages the site declares beside the one it is written in and matches nothing while there are none (see c975LConfigBundle::declareLocalesPattern), so a single-language shop only ever answers on the bare route
+    #[Route(
+        '/{_locale}/shop',
+        name: 'shop_index_localized',
+        requirements: ['_locale' => '%c975l_config.locales_pattern%'],
+        methods: ['GET']
+    )]
     #[Route(
         '/shop',
         name: 'shop_index',
@@ -36,13 +48,24 @@ class ShopController extends AbstractController
     )]
     public function index(Request $request): Response
     {
+        $askedLanguage = $this->negotiator->redirectToAskedLanguage($request, $this->translatedLocales->forShop(), 'shop_index');
+        if (null !== $askedLanguage) {
+            return $this->negotiator->vary($request, $askedLanguage);
+        }
+
         // Read once for the two things the index takes from it, the row being absent on a shop that never opened the back-office screen
         $settings = $this->shopSettingsRepository->findSingle();
 
-        return $this->render(
+        $products = $this->shopService->findAllProductsPaginated($request->query);
+
+        // The language being read laid over the names and descriptions, for this render and no longer: called here rather than on postLoad, the back office having to go on showing the text a row was written in (see ShopTranslator::apply)
+        $this->shopTranslator->apply($products);
+        $this->shopTranslator->apply(null === $settings ? [] : [$settings]);
+
+        return $this->negotiator->vary($request, $this->render(
             '@c975LShop/shop/index.html.twig',
             [
-                'products' => $this->shopService->findAllProductsPaginated($request->query),
+                'products' => $products,
                 'categoriesCount' => $this->shopService->countCategories(),
                 'order' => $this->shopService->getOrder($request->query),
                 'filters' => $this->shopService->getFilters($request->query),
@@ -52,7 +75,7 @@ class ShopController extends AbstractController
                 // What the editor composed above the listing - an empty collection on a shop that never opened the screen, which renders nothing rather than failing on a row that was never created
                 'shopBlocks' => $settings?->getBlocks() ?? [],
             ]
-        );
+        ));
     }
 
     // TERMS OF SALES

@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Tests\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\ConfigBundle\Test\ManagementTargetsTestCase;
 use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Management\LinkableRouteProvider;
@@ -18,6 +19,7 @@ use c975L\ShopBundle\Management\MenuProvider;
 use c975L\ShopBundle\Management\ShopGuidedProjectProvider;
 use c975L\ShopBundle\Management\ShopShortcutProvider;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
+use c975L\ShopBundle\Service\ShopTranslatedLocales;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Every CRUD controller and route this bundle's management providers name, checked against what its controllers actually declare - see ConfigBundle's ManagementTargetsTestCase
@@ -27,7 +29,7 @@ class ManagementTargetsTest extends ManagementTargetsTestCase
     {
         return [
             new MenuProvider(),
-            new LinkableRouteProvider($this->categoryRepository(), $this->createStub(TranslatorInterface::class)),
+            new LinkableRouteProvider($this->categoryRepository(), $this->createStub(TranslatorInterface::class), new ShopTranslatedLocales(new SiteLocales(['fr'], 'fr'))),
             // The guided projects generate their urls, so they take the recorders this test case reads them back from
             new ShopGuidedProjectProvider($this->adminUrlGenerator(), $this->configService(), $this->urlGenerator()),
             new ShopShortcutProvider($this->createStub(TranslatorInterface::class), $this->configService()),

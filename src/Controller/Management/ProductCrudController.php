@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Controller\Management;
 
 use c975L\ConfigBundle\Entity\Redirect;
+use c975L\ConfigBundle\Management\ContentLocaleScreen;
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Repository\RedirectRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
@@ -18,6 +19,7 @@ use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\ShopBundle\Entity\Product;
+use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Form\ProductItemType;
 use c975L\ShopBundle\Form\ProductMediaType;
 use c975L\ShopBundle\Management\ProductDuplicator;
@@ -25,6 +27,7 @@ use c975L\ShopBundle\Management\ProductExportProvider;
 use c975L\ShopBundle\Management\ProductImportProvider;
 use c975L\ShopBundle\Management\ShopBlockOwnerResolver;
 use c975L\ShopBundle\Repository\ProductRepository;
+use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Repository\FavoriteRepository;
 use c975L\UiBundle\Repository\RatingRepository;
@@ -42,7 +45,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\ActionGroup;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
@@ -57,14 +62,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Intl\Locales;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -89,10 +97,12 @@ class ProductCrudController extends AbstractCrudController
         private readonly ConfigServiceInterface $configService,
         private readonly Connection $connection,
         private readonly ContentExporter $contentExporter,
+        private readonly ContentLocaleScreen $contentLocaleScreen,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
         private readonly ProductExportProvider $productExportProvider,
         private readonly RedirectRepository $redirectRepository,
         private readonly RequestStack $requestStack,
+        private readonly ShopTranslator $shopTranslator,
         private readonly TableExporter $tableExporter,
         private readonly TranslatorInterface $translator,
     ) {
@@ -105,6 +115,12 @@ class ProductCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        // The very same edit screen, opened on another language: what that language says of this row, and nothing else. A price, a stock, a slug and a reference are the same in every language and are written on the screen the row was written on (see ContentLocaleScreen)
+        $contentLocale = Crud::PAGE_EDIT === $pageName ? $this->contentLocale() : null;
+        if (null !== $contentLocale) {
+            return $this->translationFields($contentLocale);
+        }
+
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
 
         // Trashed products are hidden by definition (see deleteEntity() and Product::setIsDeleted()), so the column would hold "yes" for every row of that view - taken off rather than left there saying nothing
@@ -282,12 +298,20 @@ class ProductCrudController extends AbstractCrudController
             ->addCssClass('btn btn-danger')
         ;
 
+        // Opens the first language screen straight from the list, the way SiteBundle's pages are translated - the tabs above a sheet already opened are the only other way in, and a translation screen nobody finds translates nothing
+        $translateAction = $this->contentLocaleScreen
+            ->action('translate', t('action.translate', [], 'shop'), 'fa fa-language', $this->shopTranslator->getTranslatableLocales())
+            ->displayIf(fn (Product $product): bool => !$product->isDeleted() && $this->shopTranslator->isActive())
+            ->addCssClass('btn btn-secondary')
+        ;
+
         return $actions
             ->add(Crud::PAGE_INDEX, $exportGroup)
             ->add(Crud::PAGE_INDEX, $this->trashAction())
             ->add(Crud::PAGE_INDEX, $viewOnSiteAction)
             ->add(Crud::PAGE_INDEX, $previewAction)
             ->add(Crud::PAGE_INDEX, $duplicateAction)
+            ->add(Crud::PAGE_INDEX, $translateAction)
             ->add(Crud::PAGE_INDEX, $restoreAction)
             ->add(Crud::PAGE_INDEX, $deletePermanentlyAction)
             ->add(Crud::PAGE_EDIT, $viewOnSiteAction)
@@ -310,6 +334,10 @@ class ProductCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, 'duplicate', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
                 $this->translator->trans('action.duplicate', [], 'shop'),
+            ))
+            ->update(Crud::PAGE_INDEX, 'translate', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.translate', [], 'shop'),
             ))
             ->update(Crud::PAGE_INDEX, 'restore', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
@@ -547,6 +575,8 @@ class ProductCrudController extends AbstractCrudController
             ->setEntityLabelInSingular(t('label.product', [], 'shop'))
             ->setEntityLabelInPlural(t('label.products', [], 'shop'))
             ->setEntityPermission($this->configService->get('site-role-admin'))
+            // Carries the language tabs above the form, and nothing at all on a site declaring a single language (see ContentLocaleScreen)
+            ->overrideTemplate('crud/edit', '@c975LShop/management/product_crud_edit.html.twig')
             ->setDefaultSort(['position' => 'ASC'])
             ->overrideTemplate('crud/index', '@c975LShop/management/product_crud_index.html.twig')
         ;
@@ -707,5 +737,156 @@ class ProductCrudController extends AbstractCrudController
     private function fetchExportRows(): array
     {
         return $this->connection->fetchAllAssociative('SELECT * FROM `' . self::TABLE . '` ORDER BY `id`');
+    }
+
+    // The language this row is being written in, when it is not the one the site was written in (see ContentLocaleScreen)
+    private function contentLocale(): ?string
+    {
+        return $this->contentLocaleScreen->locale($this->shopTranslator->getTranslatableLocales());
+    }
+
+    // Each translatable text, holding what that language already says or the source between brackets where it says nothing yet - unmapped, all of them, what is written here belonging to the translation table and mapped back overwriting the text the shop was written in
+    /** @return list<FieldInterface> */
+    private function translationFields(string $locale): array
+    {
+        $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
+        // Every field keyed, empty rather than absent, on a screen reached without the entity it describes: the fields below read the answer promptValues() promises whichever way this was entered
+        $values = $entity instanceof Product ? $this->shopTranslator->promptValues($entity, $locale) : array_fill_keys(ShopTranslator::PRODUCT_FIELDS, null);
+
+        return [
+            FormField::addFieldset(t('label.fieldset_this_language', ['%language%' => Locales::getName($locale, $locale)], 'shop'))
+                ->setHelp(t('label.fieldset_this_language_help', [], 'shop')),
+            TextField::new('title')
+                ->setLabel(t('label.title', [], 'shop'))
+                ->setRequired(false)
+                ->setFormTypeOption('mapped', false)
+                ->setFormTypeOption('data', $values['title']),
+            // The very type the writing screen declares: a description is rich text there, and translating it through a plain textarea showed the markup as source and stored the answer stripped of it - the translated sheet then rendering as one block where the original has paragraphs. Donovan goes with the textarea, the form theme only ever putting it under one
+            TextEditorField::new('description')
+                ->setLabel(t('label.description', [], 'shop'))
+                ->setRequired(false)
+                ->setFormTypeOption('mapped', false)
+                ->setFormTypeOption('data', $values['description']),
+            TextField::new('giftCardText')
+                ->setLabel(t('label.gift_card_text', [], 'shop'))
+                ->setRequired(false)
+                ->setFormTypeOption('mapped', false)
+                ->setFormTypeOption('data', $values['giftCardText']),
+            ...($entity instanceof Product ? $this->itemTranslationFields($entity, $locale) : []),
+        ];
+    }
+
+    // Each variant's name and description, under a fieldset named after it - three variants would otherwise read as three identical pairs, told apart by their bracketed prompt alone. A textarea, as on the writing screen (see ProductItemType)
+    /** @return list<FieldInterface> */
+    private function itemTranslationFields(Product $product, string $locale): array
+    {
+        $fields = [];
+        foreach ($this->translatableItems($product) as $id => $item) {
+            $values = $this->shopTranslator->promptValues($item, $locale);
+
+            $fields[] = FormField::addFieldset((string) $item->getUntranslated('title'));
+            $fields[] = TextField::new(self::itemFieldName($id, 'title'))
+                ->setLabel(t('label.title', [], 'shop'))
+                ->setRequired(false)
+                ->setFormTypeOption('mapped', false)
+                ->setFormTypeOption('data', $values['title']);
+            $fields[] = TextareaField::new(self::itemFieldName($id, 'description'))
+                ->setLabel(t('label.description', [], 'shop'))
+                ->setRequired(false)
+                ->setFormTypeOption('mapped', false)
+                ->setFormTypeOption('data', $values['description']);
+        }
+
+        return $fields;
+    }
+
+    // The variants a language screen offers, keyed by id: one not saved yet has nothing to file a translation under
+    /** @return array<int, ProductItem> */
+    private function translatableItems(Product $product): array
+    {
+        $items = [];
+        foreach ($product->getItems() as $item) {
+            $id = $item->getId();
+            if (null !== $id) {
+                $items[$id] = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    // The unmapped field one text of one variant is written in, named after the variant's id - built from the product's own items on both sides, so a name forged in the POST matches no field
+    private static function itemFieldName(int $id, string $field): string
+    {
+        return 'item_' . $id . '_' . $field;
+    }
+
+    // What the language tabs at the top of the edit screen need, and nothing at all where the row is not saved yet or the site declares a single language
+    #[\Override]
+    public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
+    {
+        $responseParameters = parent::configureResponseParameters($responseParameters);
+
+        $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
+        $id = $entity instanceof Product ? $entity->getId() : null;
+        if (null !== $id && $this->shopTranslator->isActive()) {
+            $this->contentLocaleScreen->addParameters($responseParameters, self::class, $id, $this->shopTranslator->getTranslatableLocales(), $this->contentLocale());
+        }
+
+        return $responseParameters;
+    }
+
+    // What a language screen wrote, handed over to be stored on the flush that saves the row and never before it (see ContentLocaleScreen::stageOnSubmit)
+    #[\Override]
+    public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
+        $contentLocale = $this->contentLocale();
+
+        $this->contentLocaleScreen->stageOnSubmit(
+            $formBuilder,
+            $contentLocale,
+            ShopTranslator::PRODUCT_FIELDS,
+            function (object $entity, array $values) use ($contentLocale): void {
+                if ($entity instanceof Product && null !== $contentLocale) {
+                    $this->shopTranslator->stage($entity, $contentLocale, $values);
+                }
+            }
+        );
+
+        $product = $entityDto->getInstance();
+        if ($product instanceof Product) {
+            $this->stageItemsOnSubmit($formBuilder, $product, $contentLocale);
+        }
+
+        return $formBuilder;
+    }
+
+    // Each variant's texts handed over the same way, filed under the variant rather than the product - only the fields the form really carries, a key missing from what stage() is given leaving that translation alone where a null would erase it
+    private function stageItemsOnSubmit(FormBuilderInterface $formBuilder, Product $product, ?string $contentLocale): void
+    {
+        foreach ($this->translatableItems($product) as $id => $item) {
+            $names = array_map(static fn (string $field): string => self::itemFieldName($id, $field), ShopTranslator::ITEM_FIELDS);
+
+            $this->contentLocaleScreen->stageOnSubmit(
+                $formBuilder,
+                $contentLocale,
+                $names,
+                function (object $entity, array $values) use ($contentLocale, $item, $id): void {
+                    if (!$entity instanceof Product || null === $contentLocale) {
+                        return;
+                    }
+
+                    $staged = [];
+                    foreach (ShopTranslator::ITEM_FIELDS as $field) {
+                        if (\array_key_exists(self::itemFieldName($id, $field), $values)) {
+                            $staged[$field] = $values[self::itemFieldName($id, $field)];
+                        }
+                    }
+
+                    $this->shopTranslator->stage($item, $contentLocale, $staged);
+                }
+            );
+        }
     }
 }

@@ -182,6 +182,34 @@
                 <source>narration.guided_step_shop_test_mode_open</source>
                 <target>The panel brings you back to the dashboard: the shortcut sits among the others, above the sections.</target>
             </trans-unit>
+            <trans-unit id="HLvPJUP">
+                <source>narration.guided_step_shop_translate_action</source>
+                <target>This button opens the sheet straight into the first language to translate, without going through the writing screen. It is only there where the site declares more than one language.</target>
+            </trans-unit>
+            <trans-unit id="p0kZrHY">
+                <source>narration.guided_step_shop_translate_description</source>
+                <target>This is the same editor as on the writing screen: your paragraphs, your lists and your links are kept in the translated language.</target>
+            </trans-unit>
+            <trans-unit id="nN.BMz6">
+                <source>narration.guided_step_shop_translate_gift_card_text</source>
+                <target>If this product is sold as a gift card, translate the text printed on its front as well. On an ordinary product the field stays empty: there is nothing to do.</target>
+            </trans-unit>
+            <trans-unit id="qGhrmhb">
+                <source>narration.guided_step_shop_translate_open</source>
+                <target>The panel takes you to the products: a translation starts from this very list.</target>
+            </trans-unit>
+            <trans-unit id="ErvJqwk">
+                <source>narration.guided_step_shop_translate_save</source>
+                <target>Save: the translation goes online at once, at that language's own address. The price, the stock and the references stay the same everywhere.</target>
+            </trans-unit>
+            <trans-unit id="bQJNo3W">
+                <source>narration.guided_step_shop_translate_tabs</source>
+                <target>The tabs move from one language to another. The first is the one the shop was written in: it is the one serving as the source.</target>
+            </trans-unit>
+            <trans-unit id="2ws2nZa">
+                <source>narration.guided_step_shop_translate_title</source>
+                <target>The title shown between brackets is the writing language's own. It stays as it is until you type something: a half-translated sheet stays readable.</target>
+            </trans-unit>
             <trans-unit id="kTwJa4V">
                 <source>narration.products</source>
                 <target>"Products" holds the catalog. The shop displays them by ascending position, then by title.</target>

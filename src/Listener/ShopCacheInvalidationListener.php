@@ -16,6 +16,8 @@ use c975L\ShopBundle\Entity\ProductAffinity;
 use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
+use c975L\ShopBundle\Service\ShopTranslator;
+use c975L\UiBundle\Entity\Translation;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
@@ -55,6 +57,9 @@ class ShopCacheInvalidationListener
             $entity instanceof ProductItem,
             $entity instanceof Media,
             $entity instanceof ProductAffinity => $this->invalidator->invalidateProducts(),
+            // A language screen writes Translation rows alone, its fields being unmapped: the product or category it translates has no changeset and fires none of the arms above
+            $entity instanceof Translation && ShopTranslator::OWNER_CATEGORY === $entity->getOwnerType() => $this->invalidator->invalidateCategories(),
+            $entity instanceof Translation && \in_array($entity->getOwnerType(), [ShopTranslator::OWNER_PRODUCT, ShopTranslator::OWNER_ITEM], true) => $this->invalidator->invalidateProducts(),
             default => null,
         };
     }

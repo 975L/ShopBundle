@@ -182,6 +182,34 @@
                 <source>narration.guided_step_shop_test_mode_open</source>
                 <target>Le panneau vous ramène au tableau de bord : le raccourci est parmi les autres, au-dessus des sections.</target>
             </trans-unit>
+            <trans-unit id="HLvPJUP">
+                <source>narration.guided_step_shop_translate_action</source>
+                <target>Ce bouton ouvre la fiche directement dans la première langue à traduire, sans passer par l'écran d'écriture. Il n'est là que si le site déclare plus d'une langue.</target>
+            </trans-unit>
+            <trans-unit id="p0kZrHY">
+                <source>narration.guided_step_shop_translate_description</source>
+                <target>C'est le même éditeur que sur l'écran d'écriture : vos paragraphes, vos listes et vos liens sont conservés dans la langue traduite.</target>
+            </trans-unit>
+            <trans-unit id="nN.BMz6">
+                <source>narration.guided_step_shop_translate_gift_card_text</source>
+                <target>Si ce produit se vend comme carte cadeau, traduisez aussi le texte imprimé au recto. Sur un produit ordinaire, le champ reste vide : il n'y a rien à faire.</target>
+            </trans-unit>
+            <trans-unit id="qGhrmhb">
+                <source>narration.guided_step_shop_translate_open</source>
+                <target>Le panneau vous emmène sur les produits : c'est de cette liste que part une traduction.</target>
+            </trans-unit>
+            <trans-unit id="ErvJqwk">
+                <source>narration.guided_step_shop_translate_save</source>
+                <target>Enregistrez : la traduction est en ligne aussitôt, à l'adresse de cette langue. Le prix, le stock et les références, eux, restent les mêmes partout.</target>
+            </trans-unit>
+            <trans-unit id="bQJNo3W">
+                <source>narration.guided_step_shop_translate_tabs</source>
+                <target>Les onglets passent d'une langue à l'autre. La première est celle où la boutique a été écrite : c'est elle qui sert de source.</target>
+            </trans-unit>
+            <trans-unit id="2ws2nZa">
+                <source>narration.guided_step_shop_translate_title</source>
+                <target>Le titre affiché entre crochets est celui de la langue d'écriture. Il reste tel quel tant que vous n'avez rien saisi : une fiche à moitié traduite reste lisible.</target>
+            </trans-unit>
             <trans-unit id="kTwJa4V">
                 <source>narration.products</source>
                 <target>« Produits » tient le catalogue. La boutique les affiche par position croissante, puis par titre.</target>

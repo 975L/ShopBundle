@@ -10,6 +10,8 @@
 
 namespace c975L\ShopBundle\Tests\Service;
 
+use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Repository\ProductRepository;
@@ -18,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Asset\PathPackage;
 use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 // The one place of this bundle that knows what "shop_product" stands for, UiBundle's wishlist storing a name and an id and nothing else
@@ -95,6 +98,8 @@ class ShopFavoriteItemProviderTest extends TestCase
             static fn (string $route, array $parameters = []): string => 'https://example.org/' . $route . (isset($parameters['slug']) ? '/' . $parameters['slug'] : '')
         );
 
-        return new ShopFavoriteItemProvider($repository, $urlGenerator, new Packages(new PathPackage('/', new EmptyVersionStrategy())));
+        $localizedUrlGenerator = new LocalizedUrlGenerator($urlGenerator, new SiteLocales(['fr'], 'fr'), new RequestStack());
+
+        return new ShopFavoriteItemProvider($repository, $localizedUrlGenerator, new Packages(new PathPackage('/', new EmptyVersionStrategy())));
     }
 }

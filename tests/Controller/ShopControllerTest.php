@@ -10,15 +10,21 @@
 
 namespace c975L\ShopBundle\Tests\Controller;
 
+use c975L\ConfigBundle\Service\LocalizedRouteNegotiator;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\ShopBundle\Controller\ShopController;
 use c975L\ShopBundle\Entity\ShopSettings;
 use c975L\ShopBundle\Repository\ShopSettingsRepository;
 use c975L\ShopBundle\Service\ShopServiceInterface;
+use c975L\ShopBundle\Service\ShopTranslatedLocales;
+use c975L\ShopBundle\Service\ShopTranslator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\LocaleSwitcher;
 use Twig\Environment;
 
 class ShopControllerTest extends TestCase
@@ -36,6 +42,9 @@ class ShopControllerTest extends TestCase
         $controller = new ShopController(
             $this->createStub(ShopServiceInterface::class),
             $this->createStub(ShopSettingsRepository::class),
+            $this->createNegotiator(),
+            new ShopTranslatedLocales($this->createSiteLocales()),
+            $this->createStub(ShopTranslator::class),
         );
         $controller->setContainer($container);
 
@@ -60,7 +69,11 @@ class ShopControllerTest extends TestCase
         $container = new Container();
         $container->set('twig', $twig);
 
-        $controller = new ShopController($this->createStub(ShopServiceInterface::class), $settingsRepository);
+        // The listing is a page of products, empty here: the test is about the shop's own line beside it
+        $shopService = $this->createStub(ShopServiceInterface::class);
+        $shopService->method('findAllProductsPaginated')->willReturn([]);
+
+        $controller = new ShopController($shopService, $settingsRepository, $this->createNegotiator(), new ShopTranslatedLocales($this->createSiteLocales()), $this->createStub(ShopTranslator::class));
         $controller->setContainer($container);
         $controller->index(new Request());
 
@@ -108,5 +121,21 @@ class ShopControllerTest extends TestCase
         $this->expectException(NotFoundHttpException::class);
 
         $controller->termsOfSales();
+    }
+
+    // A shop declaring one language, which is every shop until it says otherwise: the negotiator then refuses nothing, redirects nowhere and varies on nothing
+    private function createSiteLocales(array $enabledLocales = ['fr'], string $defaultLocale = 'fr'): SiteLocales
+    {
+        return new SiteLocales($enabledLocales, $defaultLocale);
+    }
+
+    private function createNegotiator(array $enabledLocales = ['fr'], string $defaultLocale = 'fr'): LocalizedRouteNegotiator
+    {
+        $router = $this->createStub(UrlGeneratorInterface::class);
+        $router->method('generate')->willReturnCallback(
+            static fn (string $name, array $parameters = []): string => '/' . $name . '?' . http_build_query($parameters)
+        );
+
+        return new LocalizedRouteNegotiator($this->createSiteLocales($enabledLocales, $defaultLocale), new LocaleSwitcher($defaultLocale, []), $router);
     }
 }

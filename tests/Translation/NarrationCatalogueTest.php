@@ -16,9 +16,9 @@ use PHPUnit\Framework\TestCase;
 class NarrationCatalogueTest extends TestCase
 {
     // The bundle's own narrations, resolved in its "shop" domain suffixed "_narration" - spoken and never drawn, hence the two locales the rest of the bundle does not stop at
-    private const array LOCALES = ['en', 'fr'];
+    private const array LOCALES = ['en', 'fr', 'es'];
 
-    public function testEveryDeclaredNarrationIsShippedInBothLocales(): void
+    public function testEveryDeclaredNarrationIsShippedInEveryLocale(): void
     {
         $declared = $this->declared();
         $this->assertNotEmpty($declared, 'No narration declared in "src/", the test itself is broken.');

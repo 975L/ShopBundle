@@ -11,19 +11,27 @@
 namespace c975L\ShopBundle\Tests\Controller\Management;
 
 use c975L\ConfigBundle\Entity\Redirect;
+use c975L\ConfigBundle\Management\ContentLocaleScreen;
 use c975L\ConfigBundle\Repository\RedirectRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\ConfigBundle\Service\Export\TableExporter;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\ShopBundle\Controller\Management\ProductCrudController;
 use c975L\ShopBundle\Entity\Product;
+use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Management\ProductExportProvider;
+use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -32,7 +40,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // Guards the ordering the products index persists when a row is dropped (see UiBundle's ea-index-sort.js), and what a renamed or permanently deleted product leaves behind at its old url. The drag itself is a browser gesture, so what is locked here is what the payload it POSTs turns into.
 class ProductCrudControllerTest extends TestCase
 {
-    private function createController(?RedirectRepository $redirectRepository = null): ProductCrudController
+    private function createController(?RedirectRepository $redirectRepository = null, ?ContentLocaleScreen $contentLocaleScreen = null, ?ShopTranslator $shopTranslator = null): ProductCrudController
     {
         return new ProductCrudController(
             $this->createStub(AdminContextProviderInterface::class),
@@ -41,13 +49,70 @@ class ProductCrudControllerTest extends TestCase
             $this->createStub(ConfigServiceInterface::class),
             $this->createStub(Connection::class),
             $this->createStub(ContentExporter::class),
+            $contentLocaleScreen ?? $this->createStub(ContentLocaleScreen::class),
             $this->createStub(CsrfTokenManagerInterface::class),
             $this->createStub(ProductExportProvider::class),
             $redirectRepository ?? $this->createStub(RedirectRepository::class),
             $this->createStub(RequestStack::class),
+            $shopTranslator ?? $this->createStub(ShopTranslator::class),
             $this->createStub(TableExporter::class),
             $this->createStub(TranslatorInterface::class),
         );
+    }
+
+    // A product holding one saved variant (id 12) and one not saved yet, which has nothing to file a translation under
+    private function productWithItems(): Product
+    {
+        $saved = new ProductItem()->setTitle('Large')->setDescription('Blue');
+        new \ReflectionProperty(ProductItem::class, 'id')->setValue($saved, 12);
+
+        return new Product()
+            ->addItem($saved)
+            ->addItem(new ProductItem()->setTitle('Small')->setDescription('Red'));
+    }
+
+    // The language screen offers each saved variant its own name and description, holding what promptValues() hands back
+    public function testTheLanguageScreenOffersEachSavedVariantItsOwnTexts(): void
+    {
+        $shopTranslator = $this->createStub(ShopTranslator::class);
+        $shopTranslator->method('promptValues')->willReturn(['title' => '[Large]', 'description' => '[Blue]']);
+        $controller = $this->createController(shopTranslator: $shopTranslator);
+
+        $fields = new \ReflectionMethod(ProductCrudController::class, 'itemTranslationFields')
+            ->invoke($controller, $this->productWithItems(), 'en');
+
+        $dtos = array_map(static fn (FieldInterface $field) => $field->getAsDto(), $fields);
+        $inputs = array_values(array_filter($dtos, static fn ($dto): bool => !str_starts_with((string) $dto->getProperty(), 'ea_form_')));
+
+        $this->assertCount(3, $fields, 'One fieldset and two fields, for the saved variant alone');
+        $this->assertSame(['item_12_title', 'item_12_description'], array_map(static fn ($dto) => $dto->getProperty(), $inputs));
+        $this->assertSame('[Large]', $inputs[0]->getFormTypeOption('data'));
+        $this->assertFalse($inputs[1]->getFormTypeOption('mapped'));
+    }
+
+    // A submission stages each variant's texts under the variant, and a field the form does not carry is left out rather than staged as null, which would erase it
+    public function testASubmissionStagesTheVariantTextsUnderTheVariant(): void
+    {
+        $staged = [];
+        $shopTranslator = $this->createStub(ShopTranslator::class);
+        $shopTranslator->method('stage')->willReturnCallback(static function (object $row, string $locale, array $values) use (&$staged): void {
+            $staged[] = [$row, $locale, $values];
+        });
+        $contentLocaleScreen = new ContentLocaleScreen(new RequestStack(), $this->createStub(AdminUrlGeneratorInterface::class), $this->createStub(SiteLocales::class));
+        $controller = $this->createController(contentLocaleScreen: $contentLocaleScreen, shopTranslator: $shopTranslator);
+
+        $product = $this->productWithItems();
+        $builder = Forms::createFormFactory()
+            ->createBuilder(FormType::class, $product, ['data_class' => Product::class])
+            ->add('item_12_title', TextType::class, ['mapped' => false]);
+
+        new \ReflectionMethod(ProductCrudController::class, 'stageItemsOnSubmit')->invoke($controller, $builder, $product, 'en');
+        $builder->getForm()->submit(['item_12_title' => 'Grand']);
+
+        $this->assertCount(1, $staged);
+        $this->assertSame($product->getItems()->first(), $staged[0][0]);
+        $this->assertSame('en', $staged[0][1]);
+        $this->assertSame(['title' => 'Grand'], $staged[0][2]);
     }
 
     private function applyOrder(array $products, array $ids): array

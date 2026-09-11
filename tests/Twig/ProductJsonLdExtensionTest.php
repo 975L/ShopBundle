@@ -11,6 +11,8 @@
 namespace c975L\ShopBundle\Tests\Twig;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
@@ -18,6 +20,7 @@ use c975L\ShopBundle\Entity\ProductItemMedia;
 use c975L\ShopBundle\Service\ProductSnippetBuilder;
 use c975L\ShopBundle\Service\ProductStateService;
 use c975L\ShopBundle\Service\ShopBreadcrumbBuilder;
+use c975L\ShopBundle\Service\ShopPublicUrlResolver;
 use c975L\ShopBundle\Twig\ProductJsonLdExtension;
 use c975L\UiBundle\Service\RatingService;
 use c975L\UiBundle\Service\RatingSnippetBuilder;
@@ -58,7 +61,10 @@ class ProductJsonLdExtensionTest extends TestCase
 
         $this->extension = new ProductJsonLdExtension(
             new ProductSnippetBuilder($configService, new ProductStateService(), new RatingSnippetBuilder($ratingService), $this->createStub(ShippingRateResolverInterface::class)),
-            new ShopBreadcrumbBuilder($urlGenerator, $translator),
+            new ShopBreadcrumbBuilder(
+                new ShopPublicUrlResolver($configService, new LocalizedUrlGenerator($urlGenerator, new SiteLocales(['fr'], 'fr'), $requestStack), $urlGenerator, new SiteLocales(['fr'], 'fr')),
+                $translator,
+            ),
             new Packages(new PathPackage('/', new EmptyVersionStrategy())),
             new UrlHelper($requestStack),
             $urlGenerator,

@@ -34,6 +34,10 @@
                 <source>action.restore</source>
                 <target>Restaurer</target>
             </trans-unit>
+            <trans-unit id="VOwL1H0">
+                <source>action.translate</source>
+                <target>Traduire</target>
+            </trans-unit>
             <trans-unit id="8w7xgsI">
                 <source>action.trash</source>
                 <target>Corbeille</target>
@@ -81,6 +85,10 @@
             <trans-unit id="gC63sPJ">
                 <source>description.guided_project_shop_test_mode</source>
                 <target>Dire tout haut que le catalogue est en cours d'installation, pour qu'un visiteur précoce ne prenne pas une répétition pour une vraie commande.</target>
+            </trans-unit>
+            <trans-unit id="u9i7llf">
+                <source>description.guided_project_shop_translate</source>
+                <target>La même fiche dite dans une autre langue : les textes seuls lui appartiennent, le prix, le stock et les références étant les mêmes partout.</target>
             </trans-unit>
             <trans-unit id="TvAfPjx">
                 <source>description.guided_step_shop_category_description</source>
@@ -257,6 +265,34 @@
             <trans-unit id="C3SshWm">
                 <source>description.guided_step_shop_test_mode_open</source>
                 <target>Le raccourci est parmi les autres, au-dessus des sections.</target>
+            </trans-unit>
+            <trans-unit id="5ftpjF_">
+                <source>description.guided_step_shop_translate_action</source>
+                <target>Le bouton ouvre la fiche directement dans la première langue à traduire. Il n'apparaît que si le site déclare plus d'une langue.</target>
+            </trans-unit>
+            <trans-unit id="Ufjm5Cj">
+                <source>description.guided_step_shop_translate_description</source>
+                <target>Le même éditeur que sur l'écran d'écriture : les paragraphes et les liens sont conservés.</target>
+            </trans-unit>
+            <trans-unit id="U.6BPK7">
+                <source>description.guided_step_shop_translate_gift_card_text</source>
+                <target>La phrase imprimée sur la carte cadeau, quand le produit en vend une : vide sur un produit ordinaire, il n'y a rien à traduire.</target>
+            </trans-unit>
+            <trans-unit id="aaEQErZ">
+                <source>description.guided_step_shop_translate_open</source>
+                <target>Le catalogue tel que la boutique le lit, produits en corbeille exclus.</target>
+            </trans-unit>
+            <trans-unit id="PKr0.Yx">
+                <source>description.guided_step_shop_translate_save</source>
+                <target>La traduction est en ligne dès qu'elle est enregistrée, sur l'adresse de cette langue.</target>
+            </trans-unit>
+            <trans-unit id="jvGtokx">
+                <source>description.guided_step_shop_translate_tabs</source>
+                <target>Les onglets passent d'une langue à l'autre, la première étant celle où la fiche a été écrite.</target>
+            </trans-unit>
+            <trans-unit id="eYMlYQ0">
+                <source>description.guided_step_shop_translate_title</source>
+                <target>Le titre entre crochets est celui de la langue d'écriture : il reste affiché tant que rien n'est saisi.</target>
             </trans-unit>
             <trans-unit id="O4ItfqQ">
                 <source>flash.product_deleted_permanently</source>
@@ -526,6 +562,14 @@
                 <source>label.export</source>
                 <target>Exporter</target>
             </trans-unit>
+            <trans-unit id="LHpZe.c">
+                <source>label.fieldset_this_language</source>
+                <target>Dans cette langue (%language%)</target>
+            </trans-unit>
+            <trans-unit id="p8XUdUk">
+                <source>label.fieldset_this_language_help</source>
+                <target>Ces textes sont propres à cette langue. Les autres champs — prix, stock, slug, références — sont les mêmes partout et se modifient sur l'écran de la langue d'écriture.</target>
+            </trans-unit>
             <trans-unit id="DmcAvc0">
                 <source>label.file</source>
                 <target>Fichier</target>
@@ -637,6 +681,10 @@
             <trans-unit id="WhDofZ9">
                 <source>label.guided_project_shop_test_mode</source>
                 <target>Répéter la boutique</target>
+            </trans-unit>
+            <trans-unit id="zdcDI0T">
+                <source>label.guided_project_shop_translate</source>
+                <target>Traduire un produit</target>
             </trans-unit>
             <trans-unit id="d71lE0c">
                 <source>label.guided_step_shop_category_description</source>
@@ -813,6 +861,34 @@
             <trans-unit id=".HMBUIL">
                 <source>label.guided_step_shop_test_mode_open</source>
                 <target>Revenir au tableau de bord</target>
+            </trans-unit>
+            <trans-unit id="ZNCpc6S">
+                <source>label.guided_step_shop_translate_action</source>
+                <target>Ouvrir l'écran de langue</target>
+            </trans-unit>
+            <trans-unit id="f3bDFuK">
+                <source>label.guided_step_shop_translate_description</source>
+                <target>Traduire la description</target>
+            </trans-unit>
+            <trans-unit id="3x74kY8">
+                <source>label.guided_step_shop_translate_gift_card_text</source>
+                <target>Traduire le texte du recto</target>
+            </trans-unit>
+            <trans-unit id="x1sfH28">
+                <source>label.guided_step_shop_translate_open</source>
+                <target>Ouvrir les produits</target>
+            </trans-unit>
+            <trans-unit id="ZkNXOtY">
+                <source>label.guided_step_shop_translate_save</source>
+                <target>Enregistrer</target>
+            </trans-unit>
+            <trans-unit id="9IyHkew">
+                <source>label.guided_step_shop_translate_tabs</source>
+                <target>Choisir la langue</target>
+            </trans-unit>
+            <trans-unit id="GOW__Q1">
+                <source>label.guided_step_shop_translate_title</source>
+                <target>Traduire le titre</target>
             </trans-unit>
             <trans-unit id="i0R_Ccz">
                 <source>label.health_check_advice_shop_offender</source>

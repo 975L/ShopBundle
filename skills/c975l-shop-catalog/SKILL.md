@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-catalog
-description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: age, AgeWarning, site-age-warning, label.age_invalid, label.age_range_reversed, validateAgeRange, section-wrap, Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, weight, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-country, shop-shipping-free, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, ShopDemoOrderLinker, DemoFixtureLinkerInterface, demo catalogue, ReplacingFile, PlaceholderMediaProviderInterface."
+description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: age, AgeWarning, site-age-warning, label.age_invalid, label.age_range_reversed, validateAgeRange, section-wrap, Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, weight, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-country, shop-shipping-free, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, ShopDemoOrderLinker, DemoFixtureLinkerInterface, demo catalogue, ReplacingFile, PlaceholderMediaProviderInterface, ShopTranslator, ShopTranslatedLocales, ShopLinkLocalizer, ShopPublicUrlResolver, ShopTranslationPurgeListener, ContentLocaleScreen, contenu, data-content-locales, action-translate, shop_index_localized, product_display_localized, category_display_localized, PRODUCT_FIELDS, CATEGORY_FIELDS, ITEM_FIELDS, SETTINGS_FIELDS, promptValues, translatedLocales, forShop, forProduct, forCategory, LocalizedUrlGenerator, hreflang, alternates."
 ---
 
 # c975L ShopBundle — catalog
@@ -10,7 +10,7 @@ description: "Use this skill when working with the shop's catalog in a Symfony a
 **Package:** `c975l/shop-bundle` · **Bundle:** `c975L\ShopBundle\` · **Twig namespace:** `@c975LShop` · **Translation domain:** `shop`
 
 **Key source paths:**
-`src/Entity/Product.php`, `src/Entity/ProductCategory.php`, `src/Entity/ProductItem.php`, `src/Entity/Media.php`, `src/Repository/ProductRepository.php`, `src/Service/ProductStateService.php`, `src/Service/ShopService.php`, `src/Management/ProductDuplicator.php`, `src/Management/ProductExportProvider.php`, `src/Management/ProductImportProvider.php`, `src/Twig/ProductStateExtension.php`, `src/Twig/Components/`, `templates/shop/`, `templates/product/`, `templates/category/`, `templates/components/`, `sass/`
+`src/Entity/Product.php`, `src/Entity/ProductCategory.php`, `src/Entity/ProductItem.php`, `src/Entity/Media.php`, `src/Repository/ProductRepository.php`, `src/Service/ProductStateService.php`, `src/Service/ShopService.php`, `src/Management/ProductDuplicator.php`, `src/Management/ProductExportProvider.php`, `src/Management/ProductImportProvider.php`, `src/Twig/ProductStateExtension.php`, `src/Twig/Components/`, `src/Service/ShopTranslator.php`, `src/Service/ShopTranslatedLocales.php`, `src/Service/ShopLinkLocalizer.php`, `src/Service/ShopPublicUrlResolver.php`, `src/Listener/ShopTranslationPurgeListener.php`, `templates/shop/`, `templates/product/`, `templates/category/`, `templates/components/`, `sass/`
 
 **Related skills:** `c975l-shop-blocks`, `c975l-shop-checkout`, `c975l-shop-seo` in this same bundle, and `c975l-blocks`, `c975l-media` in UiBundle beside it.
 
@@ -111,8 +111,11 @@ button that is or is not disabled, and from the `availability` the structured da
 | Route | URL |
 | --- | --- |
 | `shop_index` | `/shop` — `?order=newest\|price_asc\|price_desc`, `?price=`, `?format=`, `?stock=`, `?p=` for the page |
+| `shop_index_localized` | `/{_locale}/shop` — same screen, another language (see **Languages** below) |
 | `product_display` | `/shop/products/{slug}` |
+| `product_display_localized` | `/{_locale}/shop/products/{slug}` |
 | `category_display` | `/shop/category/{slug}` |
+| `category_display_localized` | `/{_locale}/shop/category/{slug}` |
 | `shop_download` | `/shop/download/{token}` — see `c975l-shop-checkout` |
 | `shop_terms_of_sales` | `/shop/terms-of-sales`, unless SiteBundle serves it |
 
@@ -161,6 +164,22 @@ own highest starting price (`ProductRepository::findMaxLowestItemPrice()`) — t
 `matchesPrice()` compares them against — never written out, so they suit the shop they are offered on. A `price` range is parsed rather than checked against the bands currently
 offered, so a shared url survives the catalogue's prices moving. **They are on `/shop` only** — a
 category page lists what its category holds, with no pagination of its own to filter.
+
+## Languages
+
+A shop declaring a single language never reads any of this: `ContentTranslator` short-circuits on `isActive()`, and the urls, the sitemap and the back-office are exactly what they have always been.
+
+**Which url answers** is `ShopTranslatedLocales` — `forShop()`, `forProduct()`, `forCategory()`, each returning every language the site declares. The three screens answer in all of them, translated or not: `/en` is the language the shop is being read in, not a claim about the row. Do not gate a localised url on whether the row was translated — a sheet is mostly this bundle's own interface, and sending a visitor reading `/en/shop` back to `/shop` at the first click on a card is the fault this replaced.
+
+**What a row really says** is `ShopTranslator::translatedLocales()` — a different question, and what an `hreflang` group will name the day the shop declares one. Nothing calls it yet.
+
+**Translating** goes through ConfigBundle's `ContentLocaleScreen`: the **Translate** action of the Products and Categories indexes (`.action-translate`) reopens the very same edit screen in the chosen language, url parameter `contenu`, with the tab strip `[data-content-locales]` above it. `ShopTranslator::promptValues()` fills each field with what that language already says or the source between brackets; `stage()` stores it on the flush that saves the row, a field left holding the bracketed source counting as nothing written. Declare a field on the language screen with **the very type the writing screen uses** — a rich text translated through a plain textarea shows the markup as source and stores the answer stripped of it. A variant has no screen of its own: the product's language screen carries each saved variant's `ITEM_FIELDS` as unmapped `item_<id>_<field>` fields, staged under the variant.
+
+Translatable: `PRODUCT_FIELDS` (`title`, `description`, `giftCardText`), `CATEGORY_FIELDS` (`name`, `description`), `ITEM_FIELDS` (`title`, `description`), `SETTINGS_FIELDS` (`intro`). A slug, an SKU, a GTIN, a brand and the invoice are not words a translator writes.
+
+**Links.** `ShopLinkLocalizer` (UiBundle's `InternalLinkLocalizerInterface`) rewrites this bundle's own stored links into the language being read, carrying the anchor and the query over. What a template generates goes through ConfigBundle's `LocalizedUrlGenerator::path()`; what needs an absolute url goes through `ShopPublicUrlResolver`.
+
+**Purge.** `ShopTranslationPurgeListener` takes a row's translations away with the row — translations name their owner rather than pointing at it, so no foreign key does it. The id is recorded on `preRemove` and the delete runs on `postRemove`, Doctrine having set the id back to null by then.
 
 ## Composing the chrome
 
@@ -277,4 +296,9 @@ charging one price and displaying another.
 - **Do not leave `exportSelection` out of a `reorder()` call** — `reorder()` turns EasyAdmin's priority
   ordering off for the whole page, and the batch bar then falls back to the declaration order, which puts
   delete first. Name the export, never `batchDelete`, which throws where it is disabled.
+- **Do not gate a localised url on whether the row is translated** — `ShopTranslatedLocales` answers every declared language on purpose; what a row says is `ShopTranslator::translatedLocales()`, a separate question.
+- **Do not declare a language-screen field with a different type from the writing screen** — a rich text under a plain textarea loses its markup on save.
+- **Do not generate a shop url with the plain router** in anything a visitor clicks — `LocalizedUrlGenerator::path()` for a relative one, `ShopPublicUrlResolver` for an absolute one.
+- **Do not read a row's id in a `postRemove` listener** — Doctrine has already nulled it; record it on `preRemove`, as `ShopTranslationPurgeListener` does.
+- **Do not add `[/?#]` to `ShopLinkLocalizer`'s patterns** — a sub-path would let PaymentBundle's `/shop/basket/...` match, and no route of this shop has one.
 - **Do not move a catalogue with the SQL/CSV/JSON dumps** — they carry one table at a time; the zip export carries a product whole.

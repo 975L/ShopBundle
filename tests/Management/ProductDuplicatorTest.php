@@ -17,8 +17,11 @@ use c975L\ShopBundle\Entity\ProductItemMedia;
 use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Management\ProductDuplicator;
 use c975L\ShopBundle\Repository\ProductRepository;
+use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media as BlockMedia;
+use c975L\UiBundle\Entity\Translation;
+use c975L\UiBundle\Service\TranslationCopier;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -44,7 +47,7 @@ class ProductDuplicatorTest extends TestCase
         $this->filesystem->remove($this->projectDir);
     }
 
-    private function createDuplicator(): ProductDuplicator
+    private function createDuplicator(?TranslationCopier $translationCopier = null): ProductDuplicator
     {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturn('(copie)');
@@ -58,6 +61,7 @@ class ProductDuplicatorTest extends TestCase
             new AsciiSlugger(),
             $translator,
             $parameterBag,
+            $translationCopier ?? $this->createStub(TranslationCopier::class),
         );
     }
 
@@ -129,6 +133,22 @@ class ProductDuplicatorTest extends TestCase
         $product->addBlock($container);
 
         return $product;
+    }
+
+    // What the product, its items and its blocks say in the site's other languages go with the copy, written once it is saved (see TranslationCopier)
+    public function testTheCopyCarriesTheTranslationsOfEverythingItHolds(): void
+    {
+        $copied = [];
+        $translationCopier = $this->createStub(TranslationCopier::class);
+        $translationCopier->method('copy')->willReturnCallback(static function (string $ownerType) use (&$copied): void {
+            $copied[] = $ownerType;
+        });
+
+        $this->createDuplicator($translationCopier)->duplicate($this->createProduct());
+
+        $this->assertContains(ShopTranslator::OWNER_PRODUCT, $copied);
+        $this->assertContains(ShopTranslator::OWNER_ITEM, $copied);
+        $this->assertContains(Translation::OWNER_BLOCK, $copied);
     }
 
     public function testTheCopyIsNamedAfterTheOriginalAndTakesASlugOfItsOwn(): void

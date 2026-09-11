@@ -12,10 +12,14 @@ namespace c975L\ShopBundle\Tests\Service;
 
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductCategory;
+use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Service\ShopDemoFixtureProvider;
 use c975L\ShopBundle\Service\ShopSampleCatalog;
+use c975L\ShopBundle\Service\ShopTranslator;
+use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\PlaceholderMediaRegistry;
+use c975L\UiBundle\Service\DemoFixtureTranslator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -56,7 +60,7 @@ class ShopDemoFixtureProviderTest extends TestCase
         $registry->method('getDocument')->willReturn($document);
         $registry->method('getImagesFor')->willReturnCallback(static fn (string $key): array => $keyed[$key] ?? []);
 
-        return new ShopDemoFixtureProvider(new ShopSampleCatalog(), $translator, $registry, $this->projectDir);
+        return new ShopDemoFixtureProvider(new ShopSampleCatalog(), new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $registry, $this->projectDir);
     }
 
     /** @return list<object> */
@@ -206,5 +210,62 @@ class ShopDemoFixtureProviderTest extends TestCase
         }
 
         $this->fail('no product "table-basse-chene"');
+    }
+
+    // The dataset says itself in every language the site declares, its catalogue keys read a second time - categories, products and the items sold under them alike
+    public function testTheSecondPassWritesEveryLanguageOfTheCatalog(): void
+    {
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnCallback(
+            static fn (string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string => sprintf('%s[%s]', $id, $locale ?? 'fr')
+        );
+
+        $registry = $this->createStub(PlaceholderMediaRegistry::class);
+        $registry->method('getImages')->willReturn([]);
+        $registry->method('getDocument')->willReturn(null);
+        $registry->method('getImagesFor')->willReturn([]);
+
+        $provider = new ShopDemoFixtureProvider(new ShopSampleCatalog(), new DemoFixtureTranslator($translator, ['fr', 'en'], 'fr'), $translator, $registry, $this->projectDir);
+
+        $identifier = 0;
+        foreach ($provider->getDemoFixtures() as $entity) {
+            $this->giveAnIdentifier($entity, ++$identifier);
+        }
+
+        $rows = iterator_to_array($provider->getLinkedDemoFixtures(), false);
+
+        $this->assertNotSame([], $rows, 'The demo catalog was not staged for translation at all.');
+        $this->assertSame(['en'], $this->distinct($rows, static fn (Translation $row): string => (string) $row->getLocale()));
+        $this->assertSame(
+            [ShopTranslator::OWNER_CATEGORY, ShopTranslator::OWNER_ITEM, ShopTranslator::OWNER_PRODUCT],
+            $this->distinct($rows, static fn (Translation $row): string => (string) $row->getOwnerType())
+        );
+    }
+
+    /**
+     * @param list<Translation>             $rows
+     * @param callable(Translation): string $read
+     *
+     * @return list<string>
+     */
+    private function distinct(array $rows, callable $read): array
+    {
+        $values = array_values(array_unique(array_map($read, $rows)));
+        sort($values);
+
+        return $values;
+    }
+
+    // The items ride the ORM cascade off their product, so nothing yields them and only the product is walked here - each of them is given an identifier the way a flush would
+    private function giveAnIdentifier(object $entity, int $id): void
+    {
+        new \ReflectionProperty($entity::class, 'id')->setValue($entity, $id);
+
+        if ($entity instanceof Product) {
+            $position = 0;
+            foreach ($entity->getItems() as $item) {
+                new \ReflectionProperty(ProductItem::class, 'id')->setValue($item, $id * 100 + ++$position);
+            }
+        }
     }
 }

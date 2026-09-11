@@ -12,14 +12,13 @@ namespace c975L\ShopBundle\Service;
 
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductCategory;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// The trail leading to a shop page, built once and read twice - the nav printed above the page and the BreadcrumbList a search engine shows - so the markup never claims a trail the visitor is not shown
+// The trail leading to a shop page, built once and read twice - the nav printed above the page and the BreadcrumbList a search engine shows - so the markup never claims a trail the visitor is not shown. Every level is read in the language the page around it is being read in: a visitor on "/en/shop/products/x" clicking the trail stays in English, and the graph describes the page he really has open
 class ShopBreadcrumbBuilder
 {
     public function __construct(
-        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ShopPublicUrlResolver $shopPublicUrlResolver,
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -41,7 +40,7 @@ class ShopBreadcrumbBuilder
 
         $trail[] = [
             'name' => trim((string) $product->getTitle()),
-            'url' => $this->urlGenerator->generate('product_display', ['slug' => $product->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL),
+            'url' => $this->shopPublicUrlResolver->resolveLocalizedUrl('product_display', ['slug' => $product->getSlug()]),
         ];
 
         return $trail;
@@ -62,7 +61,7 @@ class ShopBreadcrumbBuilder
     {
         return [
             'name' => $this->translator->trans('label.shop', [], 'shop'),
-            'url' => $this->urlGenerator->generate('shop_index', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            'url' => $this->shopPublicUrlResolver->resolveLocalizedUrl('shop_index'),
         ];
     }
 
@@ -70,7 +69,7 @@ class ShopBreadcrumbBuilder
     {
         return [
             'name' => trim((string) $category->getName()),
-            'url' => $this->urlGenerator->generate('category_display', ['slug' => $category->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL),
+            'url' => $this->shopPublicUrlResolver->resolveLocalizedUrl('category_display', ['slug' => $category->getSlug()]),
         ];
     }
 }

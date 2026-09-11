@@ -2,6 +2,7 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
+use c975L\ConfigBundle\Management\ContentLocaleScreen;
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ContentExporter;
@@ -12,6 +13,7 @@ use c975L\ShopBundle\Management\ProductCategoryExportProvider;
 use c975L\ShopBundle\Management\ProductCategoryImportProvider;
 use c975L\ShopBundle\Management\ShopBlockOwnerResolver;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
+use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use Doctrine\DBAL\Connection;
@@ -21,10 +23,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\ActionGroup;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -33,8 +38,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Intl\Locales;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function Symfony\Component\Translation\t;
@@ -50,8 +57,10 @@ class ProductCategoryCrudController extends AbstractCrudController
         private readonly ConfigServiceInterface $configService,
         private readonly Connection $connection,
         private readonly ContentExporter $contentExporter,
+        private readonly ContentLocaleScreen $contentLocaleScreen,
         private readonly ProductCategoryExportProvider $productCategoryExportProvider,
         private readonly ProductCategoryRepository $productCategoryRepository,
+        private readonly ShopTranslator $shopTranslator,
         private readonly TableExporter $tableExporter,
         private readonly TranslatorInterface $translator,
     ) {
@@ -64,6 +73,12 @@ class ProductCategoryCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        // The very same edit screen, opened on another language: what that language says of this row, and nothing else. A price, a stock, a slug and a reference are the same in every language and are written on the screen the row was written on (see ContentLocaleScreen)
+        $contentLocale = Crud::PAGE_EDIT === $pageName ? $this->contentLocale() : null;
+        if (null !== $contentLocale) {
+            return $this->translationFields($contentLocale);
+        }
+
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
 
         return [
@@ -126,9 +141,17 @@ class ProductCategoryCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary')
         ;
 
+        // Opens the first language screen straight from the list, the way SiteBundle's pages are translated - the tabs above a sheet already opened are the only other way in, and a translation screen nobody finds translates nothing
+        $translateAction = $this->contentLocaleScreen
+            ->action('translate', t('action.translate', [], 'shop'), 'fa fa-language', $this->shopTranslator->getTranslatableLocales())
+            ->displayIf(fn (ProductCategory $category): bool => $this->shopTranslator->isActive())
+            ->addCssClass('btn btn-secondary')
+        ;
+
         return $actions
             ->add(Crud::PAGE_INDEX, $exportGroup)
             ->add(Crud::PAGE_INDEX, $viewOnSiteAction)
+            ->add(Crud::PAGE_INDEX, $translateAction)
             ->add(Crud::PAGE_EDIT, $viewOnSiteAction)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
@@ -137,6 +160,10 @@ class ProductCategoryCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, 'viewOnSite', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
                 $this->translator->trans('action.view_on_site', [], 'shop'),
+            ))
+            ->update(Crud::PAGE_INDEX, 'translate', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.translate', [], 'shop'),
             ))
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
@@ -165,6 +192,8 @@ class ProductCategoryCrudController extends AbstractCrudController
             ->setEntityLabelInSingular(t('label.category', [], 'shop'))
             ->setEntityLabelInPlural(t('label.categories', [], 'shop'))
             ->setEntityPermission($this->configService->get('site-role-admin'))
+            // Carries the language tabs above the form, and nothing at all on a site declaring a single language (see ContentLocaleScreen)
+            ->overrideTemplate('crud/edit', '@c975LShop/management/product_category_crud_edit.html.twig')
             ->setDefaultSort(['position' => 'ASC'])
             ->overrideTemplate('crud/index', '@c975LShop/management/product_category_crud_index.html.twig')
         ;
@@ -224,5 +253,72 @@ class ProductCategoryCrudController extends AbstractCrudController
     private function fetchExportRows(): array
     {
         return $this->connection->fetchAllAssociative('SELECT * FROM `' . self::TABLE . '` ORDER BY `id`');
+    }
+
+    // The language this row is being written in, when it is not the one the site was written in (see ContentLocaleScreen)
+    private function contentLocale(): ?string
+    {
+        return $this->contentLocaleScreen->locale($this->shopTranslator->getTranslatableLocales());
+    }
+
+    // Each translatable text, holding what that language already says or the source between brackets where it says nothing yet - unmapped, all of them, what is written here belonging to the translation table and mapped back overwriting the text the shop was written in
+    /** @return list<FieldInterface> */
+    private function translationFields(string $locale): array
+    {
+        $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
+        // Every field keyed, empty rather than absent, on a screen reached without the entity it describes: the fields below read the answer promptValues() promises whichever way this was entered
+        $values = $entity instanceof ProductCategory ? $this->shopTranslator->promptValues($entity, $locale) : array_fill_keys(ShopTranslator::CATEGORY_FIELDS, null);
+
+        return [
+            FormField::addFieldset(t('label.fieldset_this_language', ['%language%' => Locales::getName($locale, $locale)], 'shop'))
+                ->setHelp(t('label.fieldset_this_language_help', [], 'shop')),
+            TextField::new('name')
+                ->setLabel(t('label.name', [], 'shop'))
+                ->setRequired(false)
+                ->setFormTypeOption('mapped', false)
+                ->setFormTypeOption('data', $values['name']),
+            // The very type the writing screen declares: a description is rich text there, and translating it through a plain textarea showed the markup as source and stored the answer stripped of it. Donovan goes with the textarea, the form theme only ever putting it under one
+            TextEditorField::new('description')
+                ->setLabel(t('label.description', [], 'shop'))
+                ->setRequired(false)
+                ->setFormTypeOption('mapped', false)
+                ->setFormTypeOption('data', $values['description']),
+        ];
+    }
+
+    // What the language tabs at the top of the edit screen need, and nothing at all where the row is not saved yet or the site declares a single language
+    #[\Override]
+    public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
+    {
+        $responseParameters = parent::configureResponseParameters($responseParameters);
+
+        $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
+        $id = $entity instanceof ProductCategory ? $entity->getId() : null;
+        if (null !== $id && $this->shopTranslator->isActive()) {
+            $this->contentLocaleScreen->addParameters($responseParameters, self::class, $id, $this->shopTranslator->getTranslatableLocales(), $this->contentLocale());
+        }
+
+        return $responseParameters;
+    }
+
+    // What a language screen wrote, handed over to be stored on the flush that saves the row and never before it (see ContentLocaleScreen::stageOnSubmit)
+    #[\Override]
+    public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
+        $contentLocale = $this->contentLocale();
+
+        $this->contentLocaleScreen->stageOnSubmit(
+            $formBuilder,
+            $contentLocale,
+            ShopTranslator::CATEGORY_FIELDS,
+            function (object $entity, array $values) use ($contentLocale): void {
+                if ($entity instanceof ProductCategory && null !== $contentLocale) {
+                    $this->shopTranslator->stage($entity, $contentLocale, $values);
+                }
+            }
+        );
+
+        return $formBuilder;
     }
 }

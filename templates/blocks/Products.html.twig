@@ -8,7 +8,7 @@
         {# The button is a sibling of the framed listing above, not a child of it, so it states the same measure and the same step for itself or it sits against the screen's edge #}
         <div class="block-section">
             <div class="section-wrap">
-                <twig:c975LUi:Button:Button label="{{ 'label.shop'|trans({}, 'shop') }}" url="{{ path('shop_index') }}"/>
+                <twig:c975LUi:Button:Button label="{{ 'label.shop'|trans({}, 'shop') }}" url="{{ localized_path('shop_index') }}"/>
             </div>
         </div>
     {% endif %}

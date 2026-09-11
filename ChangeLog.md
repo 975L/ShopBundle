@@ -1,5 +1,43 @@
 # Changelog
 
+## v2.8.0
+
+The shop and its catalogue in every language the site declares
+
+- `/{_locale}/shop`, `/{_locale}/shop/products/{slug}` and `/{_locale}/shop/category/{slug}` join the bare urls (10/09/2026)
+- The writing language keeps its bare urls (10/09/2026)
+- The three shop screens answer in every declared language, translated or not (10/09/2026)
+- `ShopTranslatedLocales` says which languages each screen answers in (10/09/2026)
+- The shop controllers use CoreBundle's `LocalizedRouteNegotiator` (10/09/2026)
+- `ShopLinkLocalizer` localises the shop's own links, anchor and query kept (10/09/2026)
+- `ShopLinkLocalizer` matches the three shop screens, not the `/shop` prefix (10/09/2026)
+- A category menu target declares its `locales` (10/09/2026)
+- The language menu shows on the shop screens (10/09/2026)
+- Products, categories, variants and the shop intro are translatable through `ShopTranslator` (10/09/2026)
+- Slug, SKU, GTIN, brand, condition and invoice stay untranslated (10/09/2026)
+- `ShopTranslator::translatedLocales()` names the languages a row is written in (10/09/2026)
+- Products and categories gain a language screen, opened by the `?contenu=xx` tabs (10/09/2026)
+- The product's language screen carries each variant's title and description (11/09/2026)
+- A language screen field keeps the writing screen's type (10/09/2026)
+- A language screen field holds the translation or the bracketed source (10/09/2026)
+- Translations are stored on the flush saving the row (10/09/2026)
+- A saved shop translation drops the shop blocks' cache (11/09/2026)
+- `ShopTranslationPurgeListener` deletes a removed row's translations (10/09/2026)
+- Translations are laid over rows on the front render paths only, never persisted (10/09/2026)
+- A basket keeps its item names as they were when added (10/09/2026)
+- Templates use `localized_path` instead of `path` (10/09/2026)
+- `CatalogueCompletenessTest` checks every locale against the writing one (10/09/2026)
+- Six block kinds declare their translatable texts (10/09/2026)
+- The demo catalogue is seeded in every declared language (10/09/2026)
+- The sitemap declares each screen once per language, with its `alternates` group (10/09/2026)
+- `ShopPublicUrlResolver` builds the shop's public urls (10/09/2026)
+- The breadcrumb and its `BreadcrumbList` follow the language being read (10/09/2026)
+- The wishlist card and the "continue shopping" button follow the language being read (10/09/2026)
+- The Products and Categories indexes gain a `Translate` action (10/09/2026)
+- The `shop-translate` guided project walks through translating a product (10/09/2026)
+- A duplicated product carries its translations, through CoreBundle's `TranslationCopier` (11/09/2026)
+- Requires `c975l/core-bundle` `^1.28.0` (10/09/2026)
+
 ## v2.7.3
 
 The product item text grows a step

@@ -15,6 +15,7 @@ use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductRecommendationServiceInterface;
+use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Entity\Block;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Service\ResetInterface;
@@ -40,15 +41,27 @@ class ShopBlockExtension implements ResetInterface
         private readonly ProductCategoryRepository $categoryRepository,
         private readonly ProductRecommendationServiceInterface $recommendationService,
         private readonly RequestStack $requestStack,
+        private readonly ShopTranslator $shopTranslator,
     ) {
     }
 
+    // The language being read laid over whatever a block is about to show, for this render and no longer: every accessor below goes through it rather than the two loaders alone, a block naming a category querying on its own and one asking for a single product too (see ShopTranslator::apply)
     /**
-     * A null category is the whole shop, which is what the block form's empty choice stores.
-     * Shuffling happens before the maximum applies, so "4 products at random" draws from the whole catalog and not from its first four - a block asking for it declines its own cache entry (see ShopBlockCacheTagProvider), so a new draw is made at every render.
+     * @template T of Product|ProductCategory
      *
-     * @return list<Product>
+     * @param list<T> $rows
+     *
+     * @return list<T>
      */
+    private function translated(array $rows): array
+    {
+        $this->shopTranslator->apply($rows);
+
+        return $rows;
+    }
+
+    // A null category is the whole shop, which is what the block form's empty choice stores; shuffling happens before the maximum applies, so "4 products at random" draws from the whole catalog and a block asking for it declines its own cache entry (see ShopBlockCacheTagProvider)
+    /** @return list<Product> */
     #[AsTwigFunction('shop_block_products')]
     public function getProducts(?string $categorySlug = null, ?int $max = null, bool $random = false): array
     {
@@ -60,22 +73,17 @@ class ShopBlockExtension implements ResetInterface
             shuffle($products);
         }
 
-        return null !== $max ? \array_slice($products, 0, $max) : $products;
+        return $this->translated(null !== $max ? \array_slice($products, 0, $max) : $products);
     }
 
-    /**
-     * The visuals a card can be bought on, i.e. the products at least one item of which is money bought in advance (see Product::isGiftCard()).
-     *
-     * Filtered off the catalogue already read for this request rather than queried again: findAllSorted() joins the items, so the answer costs nothing beyond the loop.
-     *
-     * @return list<Product>
-     */
+    // The visuals a card can be bought on, the products at least one item of which is money bought in advance (see Product::isGiftCard()) - filtered off the catalogue already read for this request rather than queried again, findAllSorted() joining the items
+    /** @return list<Product> */
     #[AsTwigFunction('shop_block_gift_cards')]
     public function getGiftCards(?int $max = null): array
     {
         $giftCards = array_values(array_filter($this->loadProducts(), static fn (Product $product): bool => $product->isGiftCard()));
 
-        return null !== $max ? \array_slice($giftCards, 0, $max) : $giftCards;
+        return $this->translated(null !== $max ? \array_slice($giftCards, 0, $max) : $giftCards);
     }
 
     /**
@@ -86,7 +94,7 @@ class ShopBlockExtension implements ResetInterface
     {
         $categories = $this->loadCategories();
 
-        return null !== $max ? \array_slice($categories, 0, $max) : $categories;
+        return $this->translated(null !== $max ? \array_slice($categories, 0, $max) : $categories);
     }
 
     // An empty slug is what the kinds composing a product sheet store: they show the product the sheet is about, read from the request, and render nothing anywhere else. A slug pointing at a deleted or renamed product answers null the same way, its template then rendering nothing rather than half a card
@@ -103,9 +111,16 @@ class ShopBlockExtension implements ResetInterface
         // A product named by a block has to stand on its own, a hidden or a trashed one rendering nothing, where the sheet's own product is read whatever its state so a hidden product's preview shows its blocks - the key says which reading it was, both being cached under the same slug
         $key = ($named ? 'published:' : 'any:') . $slug;
 
-        return $this->bySlug[$key] ??= $named
+        $product = $this->bySlug[$key] ??= $named
             ? $this->productRepository->findOneVisibleBySlug($slug)
             : $this->productRepository->findOneBySlug($slug);
+
+        if (null !== $product) {
+            $this->translated([$product]);
+            $this->shopTranslator->apply($product->getItems());
+        }
+
+        return $product;
     }
 
     /**
@@ -118,13 +133,11 @@ class ShopBlockExtension implements ResetInterface
     {
         $product = $this->getProduct($slug);
 
-        return null !== $product ? $this->recommendationService->getSimilarProducts($product, $max) : [];
+        return null !== $product ? $this->translated($this->recommendationService->getSimilarProducts($product, $max)) : [];
     }
 
+    // Every kind held by a sheet, its containers' slots included, over two levels - as deep as a container of a container goes: what a hardcoded section of product/display.html.twig reads to step aside when the editor has placed the block taking it over
     /**
-     * Every kind held by a sheet, its containers' slots included: what a hardcoded section of product/display.html.twig reads to step aside when the editor has placed the block taking it over.
-     * Two levels of slots, which is as deep as a container of a container goes.
-     *
      * @param iterable<Block> $blocks
      *
      * @return list<string>

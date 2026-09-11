@@ -3,9 +3,5 @@
 {% block main %}
     {{ include('@c975LConfig/management/_content_locale_tabs.html.twig') }}
 
-    {% if content_locale|default(null) is null %}
-        <p>{{ ('label.info_shop_index'|trans({}, 'shop')) }}</p>
-    {% endif %}
-
     {{ parent() }}
 {% endblock main %}

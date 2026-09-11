@@ -11,7 +11,7 @@
 {# The card is an article holding a link, and not a link holding an article: the score at the bottom is made of buttons, and a button inside a link is invalid html a click would answer by navigating instead of voting #}
 {# The edit url moves up with it, so the pencil follows the whole card and not only its clickable part - UiBundle's overlay reads the nearest ancestor carrying it #}
 <article class="product{{ state.soldOut ? ' product-sold-out' : '' }} {{ class|default("") }}" id="product-{{ product.slug }}"{% if editUrl %} data-block-edit-url="{{ editUrl }}"{% endif %}>
-    <a class="product-link" href="{{ path('product_display', {'slug': product.slug}) }}">
+    <a class="product-link" href="{{ localized_path('product_display', {'slug': product.slug}) }}">
         {% set imageSrc = media != false ? media : "bundles/c975lshop/images/no-product-image.webp" %}
         <div class="product-visual">
             {# The media's own alternative text, the product's title when it carries none: the whole card is a link, and a link whose only content is an image with no alternative says nothing #}

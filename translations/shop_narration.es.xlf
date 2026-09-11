@@ -1,0 +1,227 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="es" datatype="plaintext" original="shop_narration.es.xlf">
+        <body>
+            <trans-unit id="DNxHSeJ">
+                <source>narration.categories</source>
+                <target>«Categorías» agrupa los productos. Una categoría solo aparece en la tienda a partir del momento en que contiene al menos un producto.</target>
+            </trans-unit>
+            <trans-unit id="EhMylBu">
+                <source>narration.guided_step_shop_category_description</source>
+                <target>Presente la categoría en unas líneas: se muestran encima de los productos y las leen los buscadores.</target>
+            </trans-unit>
+            <trans-unit id="7zSSK3V">
+                <source>narration.guided_step_shop_category_empty</source>
+                <target>De momento permanece invisible: una categoría vacía no se muestra en la tienda, aparecerá en cuanto contenga un producto.</target>
+            </trans-unit>
+            <trans-unit id="ai3ljyS">
+                <source>narration.guided_step_shop_category_name</source>
+                <target>Póngale un nombre: es lo que el visitante lee en el menú de la tienda y al principio de la página de categoría.</target>
+            </trans-unit>
+            <trans-unit id="L5i3c8j">
+                <source>narration.guided_step_shop_category_new</source>
+                <target>Añada una categoría. El botón abre un formulario vacío; nada se guarda antes del final.</target>
+            </trans-unit>
+            <trans-unit id="cUTZRBv">
+                <source>narration.guided_step_shop_category_open</source>
+                <target>El panel le lleva a las categorías: la lista de todas las de la tienda, en el orden en que las muestra.</target>
+            </trans-unit>
+            <trans-unit id="8c3TlFH">
+                <source>narration.guided_step_shop_category_position</source>
+                <target>Decida su lugar: las categorías se ordenan por posición ascendente y luego por nombre.</target>
+            </trans-unit>
+            <trans-unit id="PHfiDZI">
+                <source>narration.guided_step_shop_category_save</source>
+                <target>Guarde. Vuelve a la lista, donde la nueva categoría espera su primer producto.</target>
+            </trans-unit>
+            <trans-unit id="6OtxV0Q">
+                <source>narration.guided_step_shop_category_slug</source>
+                <target>Compruebe la dirección. Rellenada a partir del nombre, forma parte de la url pública: cambiarla más adelante rompe los enlaces ya compartidos.</target>
+            </trans-unit>
+            <trans-unit id="36kpVyc">
+                <source>narration.guided_step_shop_downloadable_delivery</source>
+                <target>Esto es lo que recibe el comprador: un correo en el idioma en que se hizo el pedido, con enlaces que caducan. El área de cliente vuelve a dar esas mismas copias, nunca una nueva.</target>
+            </trans-unit>
+            <trans-unit id="kcxGc7s">
+                <source>narration.guided_step_shop_downloadable_edit</source>
+                <target>Modifique el producto. Cualquiera puede vender un archivo, incluso uno que también envía un paquete.</target>
+            </trans-unit>
+            <trans-unit id="hE_hK.3">
+                <source>narration.guided_step_shop_downloadable_file</source>
+                <target>Adjunte el archivo en el campo del artículo. Nada de él se sirve nunca directamente desde una url pública.</target>
+            </trans-unit>
+            <trans-unit id="KPBc9rh">
+                <source>narration.guided_step_shop_downloadable_items</source>
+                <target>Baje hasta los artículos: el archivo lo lleva un artículo, no el producto. Dos artículos pueden vender dos archivos distintos.</target>
+            </trans-unit>
+            <trans-unit id="B8T1mi3">
+                <source>narration.guided_step_shop_downloadable_open</source>
+                <target>El archivo se adjunta a un artículo, así que se parte del producto que lo contiene: el panel le lleva a los productos.</target>
+            </trans-unit>
+            <trans-unit id="pcuQsr8">
+                <source>narration.guided_step_shop_downloadable_save</source>
+                <target>Guarde: el archivo se coloca fuera del alcance del servidor web, donde solo un pedido pagado puede leerlo.</target>
+            </trans-unit>
+            <trans-unit id="_ayvGuQ">
+                <source>narration.guided_step_shop_export_import</source>
+                <target>La pantalla de importación del otro sitio toma el archivo tal cual. El grupo «Exportar» contiguo, en cambio, vuelca la tabla en bruto, que ninguna importación relee.</target>
+            </trans-unit>
+            <trans-unit id="rlasIbt">
+                <source>narration.guided_step_shop_export_open</source>
+                <target>La exportación trabaja sobre una selección, así que se parte de la lista: el panel le lleva a los productos.</target>
+            </trans-unit>
+            <trans-unit id="kx1hB9_">
+                <source>narration.guided_step_shop_export_run</source>
+                <target>Exporte la selección: se descarga un archivo que contiene los productos, sus imágenes, sus artículos y los archivos por los que se compran.</target>
+            </trans-unit>
+            <trans-unit id="rT3vjGd">
+                <source>narration.guided_step_shop_export_select</source>
+                <target>Marque lo que se lleva: la casilla de cabecera toma toda la página, una selección más fina se marca fila a fila.</target>
+            </trans-unit>
+            <trans-unit id="K8lAPqO">
+                <source>narration.guided_step_shop_gift_card_edit</source>
+                <target>Modifique el producto que vende la tarjeta, ya sea recién creado o ya presente en el catálogo.</target>
+            </trans-unit>
+            <trans-unit id="Tu3D87l">
+                <source>narration.guided_step_shop_gift_card_issued</source>
+                <target>El código se crea con la venta. Nada más que hacer aquí: la tarjeta se emite una vez pagado el pedido, y es en el bundle de pago donde se consulta después.</target>
+            </trans-unit>
+            <trans-unit id="9EiidUH">
+                <source>narration.guided_step_shop_gift_card_open</source>
+                <target>Una tarjeta regalo se crea como cualquier producto: el panel le lleva a la misma lista.</target>
+            </trans-unit>
+            <trans-unit id="BqEZzc.">
+                <source>narration.guided_step_shop_gift_card_save</source>
+                <target>Guarde: la ficha ahora vende una tarjeta en lugar de un paquete.</target>
+            </trans-unit>
+            <trans-unit id="qX0RYrj">
+                <source>narration.guided_step_shop_gift_card_scratch</source>
+                <target>Oculte el código: la capa rascable lo cubre hasta que quien recibe la tarjeta la rasca.</target>
+            </trans-unit>
+            <trans-unit id="Utr41AM">
+                <source>narration.guided_step_shop_gift_card_text</source>
+                <target>Escriba lo que va impreso en ella: la línea que lleva la tarjeta junto a su importe, un deseo, un nombre de tienda, una temporada.</target>
+            </trans-unit>
+            <trans-unit id="OLHcHyD">
+                <source>narration.guided_step_shop_gift_card_value</source>
+                <target>Fije lo que vale. El importe vive en el artículo, junto a su precio: una tarjeta puede venderse por menos de lo que vale.</target>
+            </trans-unit>
+            <trans-unit id="HbdoHvF">
+                <source>narration.guided_step_shop_index_blocks</source>
+                <target>Componga lo que va por encima de la lista. Envío, argumentos, mensaje de bienvenida: los mismos tipos que los de una página del sitio.</target>
+            </trans-unit>
+            <trans-unit id="OSmRTvL">
+                <source>narration.guided_step_shop_index_intro</source>
+                <target>Escriba la frase de bienvenida. Es la frase propia de la tienda, mostrada por encima de todo lo demás; si se deja vacía, la página recupera la que describe la tienda en el menú.</target>
+            </trans-unit>
+            <trans-unit id="voTRx.8">
+                <source>narration.guided_step_shop_index_open</source>
+                <target>Abra la página de la tienda, en el menú de la izquierda. Es una pantalla para una sola fila, y se abre directamente en su formulario.</target>
+            </trans-unit>
+            <trans-unit id=".GIPefZ">
+                <source>narration.guided_step_shop_index_save</source>
+                <target>Guarde. El índice de la tienda muestra la frase y los bloques en cuanto se guarda la fila.</target>
+            </trans-unit>
+            <trans-unit id="XJyQ1RX">
+                <source>narration.guided_step_shop_product_age</source>
+                <target>Indique a quién se dirige. Escriba la edad como un intervalo de cifras, tres guion ocho, o quince guion a partir de quince años: la ficha saca de ahí su advertencia, y los buscadores su público.</target>
+            </trans-unit>
+            <trans-unit id="pT6vXhz">
+                <source>narration.guided_step_shop_product_available_at</source>
+                <target>Diga a partir de cuándo está disponible. Es la fecha que la tienda anuncia, en la ficha y en los datos estructurados que leen los buscadores.</target>
+            </trans-unit>
+            <trans-unit id="V_UMVne">
+                <source>narration.guided_step_shop_product_categories</source>
+                <target>Clasifíquelo. Un producto puede pertenecer a varias categorías, y aparece en cada una de ellas.</target>
+            </trans-unit>
+            <trans-unit id="NyrbGAq">
+                <source>narration.guided_step_shop_product_hidden</source>
+                <target>Muéstrelo desmarcando «Oculto»: un producto oculto sigue siendo visible aquí y en ningún otro sitio.</target>
+            </trans-unit>
+            <trans-unit id="F72rUnX">
+                <source>narration.guided_step_shop_product_item_add</source>
+                <target>Añada el primer artículo: un producto sin artículo no tiene precio, ni forma alguna de entrar en la cesta.</target>
+            </trans-unit>
+            <trans-unit id="1wuchEH">
+                <source>narration.guided_step_shop_product_items</source>
+                <target>Baje hasta los artículos. El producto dice qué es; sus artículos dicen qué se compra, a qué precio y en qué estado. El peso de cada artículo es aquel sobre el que se calculan los gastos de envío.</target>
+            </trans-unit>
+            <trans-unit id="bCvcdBL">
+                <source>narration.guided_step_shop_product_new</source>
+                <target>Añada un producto. Un solo formulario lleva la ficha, sus medios, sus precios y los bloques que los rodean.</target>
+            </trans-unit>
+            <trans-unit id="e6oATdD">
+                <source>narration.guided_step_shop_product_open</source>
+                <target>El panel le lleva a los productos: el catálogo tal como lo lee la tienda, sin los productos en la papelera.</target>
+            </trans-unit>
+            <trans-unit id="1kFR1aL">
+                <source>narration.guided_step_shop_product_price</source>
+                <target>Introduzca su precio, su tipo de IVA y su moneda, y después su peso, que determina el precio del paquete. El precio tachado solo se rellena si se aplicó realmente en los últimos treinta días.</target>
+            </trans-unit>
+            <trans-unit id="mWlPKHR">
+                <source>narration.guided_step_shop_product_save</source>
+                <target>Guarde: la ficha está en línea en cuanto se guarda sin ocultar.</target>
+            </trans-unit>
+            <trans-unit id="sWHzX2s">
+                <source>narration.guided_step_shop_product_title</source>
+                <target>Póngale un título: es lo que el visitante lee primero, y aquello a partir de lo cual se construye la dirección.</target>
+            </trans-unit>
+            <trans-unit id="cWMR.ej">
+                <source>narration.guided_step_shop_test_mode_banner</source>
+                <target>El visitante ve entonces un banner en cada página de la tienda, que dice que se está montando. Los pagos tienen su propio modo de prueba, y ambos son distintos.</target>
+            </trans-unit>
+            <trans-unit id="wm5GV4w">
+                <source>narration.guided_step_shop_test_mode_disable</source>
+                <target>Desactívelo con el mismo botón, el día en que el catálogo esté listo para leerse tal cual.</target>
+            </trans-unit>
+            <trans-unit id="WbfdxFm">
+                <source>narration.guided_step_shop_test_mode_enable</source>
+                <target>Active el modo de prueba: un clic, sin confirmación, y la tienda pasa a él desde la siguiente carga de página.</target>
+            </trans-unit>
+            <trans-unit id="7qu_xj3">
+                <source>narration.guided_step_shop_test_mode_open</source>
+                <target>El panel le devuelve al tablero: el acceso directo está entre los demás, encima de las secciones.</target>
+            </trans-unit>
+            <trans-unit id="HLvPJUP">
+                <source>narration.guided_step_shop_translate_action</source>
+                <target>Este botón abre la ficha directamente en el primer idioma por traducir, sin pasar por la pantalla de redacción. Solo está si el sitio declara más de un idioma.</target>
+            </trans-unit>
+            <trans-unit id="p0kZrHY">
+                <source>narration.guided_step_shop_translate_description</source>
+                <target>Es el mismo editor que en la pantalla de redacción: sus párrafos, sus listas y sus enlaces se conservan en el idioma traducido.</target>
+            </trans-unit>
+            <trans-unit id="nN.BMz6">
+                <source>narration.guided_step_shop_translate_gift_card_text</source>
+                <target>Si este producto se vende como tarjeta regalo, traduzca también el texto impreso en el anverso. En un producto ordinario el campo queda vacío: no hay nada que hacer.</target>
+            </trans-unit>
+            <trans-unit id="qGhrmhb">
+                <source>narration.guided_step_shop_translate_open</source>
+                <target>El panel le lleva a los productos: una traducción empieza precisamente en esta lista.</target>
+            </trans-unit>
+            <trans-unit id="ErvJqwk">
+                <source>narration.guided_step_shop_translate_save</source>
+                <target>Guarde: la traducción se publica de inmediato, en la dirección de ese idioma. El precio, el stock y las referencias siguen siendo los mismos en todas partes.</target>
+            </trans-unit>
+            <trans-unit id="bQJNo3W">
+                <source>narration.guided_step_shop_translate_tabs</source>
+                <target>Las pestañas pasan de un idioma a otro. La primera es aquella en la que se escribió la tienda: es la que sirve de fuente.</target>
+            </trans-unit>
+            <trans-unit id="2ws2nZa">
+                <source>narration.guided_step_shop_translate_title</source>
+                <target>El título mostrado entre corchetes es el del idioma de redacción. Permanece igual mientras no escriba nada: una ficha traducida a medias sigue siendo legible.</target>
+            </trans-unit>
+            <trans-unit id="kTwJa4V">
+                <source>narration.products</source>
+                <target>«Productos» lleva el catálogo. La tienda los muestra por posición ascendente y luego por título.</target>
+            </trans-unit>
+            <trans-unit id="Ax50ox2">
+                <source>narration.shop</source>
+                <target>«Tienda» abre la tienda tal como la lee un visitante, en una nueva pestaña.</target>
+            </trans-unit>
+            <trans-unit id="wchKwdG">
+                <source>narration.shop_index</source>
+                <target>«Página de la tienda» es lo que la tienda dice por encima de las categorías y los productos que lista, compuesto con los mismos bloques que una ficha de producto.</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

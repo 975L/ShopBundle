@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-blocks
-description: "Use this skill when putting the shop's catalog on a page composed in the back office of a Symfony application built on the c975L ecosystem — the nine shop block kinds, composing the shop's index, its category pages and a product sheet out of blocks, the three kinds that read the product of the sheet they sit on, the render cache and its catalog tags, and the block showcase. Covers why these kinds store no product and why one of them declines its cache entry. Triggers on: shop_products, shop_gift_cards, shop_categories, shop_product, shop_product_button, shop_search, shop_recommendations, shop_product_items, shop_product_slider, ShopBlockExtension, shop_block_products, shop_block_gift_cards, shop_block_categories, shop_block_product, shop_block_recommendations, shop_block_sheet_kinds, ShopBlockChoices, ShopBlockCacheTagProvider, hasScheduled, ShopCacheInvalidationListener, ShopBlockCacheInvalidator, ShopBlockOwnerResolver, ShopShowcaseProvider, shop_product context, shop_product_block, shop_product_category_block, shop_settings_block, ShopSettings, StylesheetProvider, getManagementStylesheets, BundleStylesheetManagementProviderInterface, block-thumbs, ui-block-thumb, block picker, silhouette, block-section, section-wrap, framed, ShopPageMeasureTest."
+description: "Use this skill when putting the shop's catalog on a page composed in the back office of a Symfony application built on the c975L ecosystem — the nine shop block kinds, composing the shop's index, its category pages and a product sheet out of blocks, the three kinds that read the product of the sheet they sit on, the render cache and its catalog tags, and the block showcase. Covers why these kinds store no product and why one of them declines its cache entry. Triggers on: shop_products, shop_gift_cards, shop_categories, shop_product, shop_product_button, shop_search, shop_recommendations, shop_product_items, shop_product_slider, ShopBlockExtension, shop_block_products, shop_block_gift_cards, shop_block_categories, shop_block_product, shop_block_recommendations, shop_block_sheet_kinds, ShopBlockChoices, ShopBlockCacheTagProvider, hasScheduled, ShopCacheInvalidationListener, ShopBlockCacheInvalidator, ShopBlockOwnerResolver, ShopShowcaseProvider, shop_product context, shop_product_block, shop_product_category_block, shop_settings_block, ShopSettings, StylesheetProvider, getManagementStylesheets, BundleStylesheetManagementProviderInterface, block-thumbs, ui-block-thumb, block picker, silhouette, block-section, section-wrap, framed, ShopPageMeasureTest, ShopTranslator, translated, apply."
 ---
 
 # c975L ShopBundle — blocks
@@ -41,6 +41,8 @@ which is `display: contents`, so nothing above it measures it and a bare one run
 carry none and need none — `shop_products` is framed by its own component (prop `framed`), and
 `shop_product_slider` is laid out on `--reading-max-width` by UiBundle's slider. `ShopPageMeasureTest` holds
 the contract.
+
+**Every accessor lays the language being read over what it is about to show** (`ShopBlockExtension::translated()`, calling `ShopTranslator::apply()`), for that render and no longer: a block naming a category queries on its own, and what it hands a template has to be translated whatever it happened to read it from.
 
 **A block stores a slug and a maximum, never the products themselves.** `ShopBlockExtension` resolves
 them live at render time, which is what keeps a block from going stale against the catalog: a product
@@ -85,7 +87,9 @@ no product to read on a category page or on the index, and are kept out of those
 The kinds resolve their content live, which no `Block` or `Media` event ever signals a change of — so
 UiBundle's own invalidation listener cannot close the gap. Each entry carries a **catalog tag**
 (`ShopBlockCacheTagProvider`), and `ShopCacheInvalidationListener` drops it whenever a `Product`,
-`ProductItem`, `ProductMedia`, `ProductCategory` or `ProductAffinity` changes.
+`ProductItem`, `ProductMedia`, `ProductCategory` or `ProductAffinity` changes — and whenever a UiBundle
+`Translation` owned by `shop_product`, `shop_item` or `shop_category` does, a language screen writing those
+rows alone, its fields being unmapped.
 `c975l:shop:affinity:calculate` invalidates them explicitly: its bulk `DELETE` fires no Doctrine event.
 
 Three deliberate exceptions:

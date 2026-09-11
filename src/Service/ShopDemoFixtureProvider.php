@@ -15,17 +15,23 @@ use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Entity\ProductItemFile;
 use c975L\ShopBundle\Entity\ProductMedia;
+use c975L\UiBundle\Contract\DemoFixtureLinkerInterface;
 use c975L\UiBundle\Contract\DemoFixtureProviderInterface;
 use c975L\UiBundle\Registry\PlaceholderMediaRegistry;
+use c975L\UiBundle\Service\DemoFixtureTranslator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
 // The catalog a demo site is seeded with, persisted from the very data the block showcase renders in memory (see ShopSampleCatalog)
-class ShopDemoFixtureProvider implements DemoFixtureProviderInterface
+class ShopDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixtureProviderInterface
 {
+    // The catalogue every sample text is read from, in the language the site is written in and in each of the others
+    private const string DOMAIN = 'shop';
+
     public function __construct(
         private readonly ShopSampleCatalog $catalog,
+        private readonly DemoFixtureTranslator $demoFixtureTranslator,
         private readonly TranslatorInterface $translator,
         private readonly PlaceholderMediaRegistry $placeholderMediaRegistry,
         #[Autowire(param: 'kernel.project_dir')]
@@ -47,6 +53,8 @@ class ShopDemoFixtureProvider implements DemoFixtureProviderInterface
 
             $categories[$slug] = $category;
 
+            $this->demoFixtureTranslator->stage($category, ShopTranslator::OWNER_CATEGORY, self::DOMAIN, ['name' => $nameKey]);
+
             yield $category;
         }
 
@@ -57,6 +65,13 @@ class ShopDemoFixtureProvider implements DemoFixtureProviderInterface
         foreach ($this->catalog->getProducts() as $index => $spec) {
             yield $this->product($spec, $categories, $images, $document, $index, ++$position);
         }
+    }
+
+    // The very same catalog said in each of the other languages the site declares - its keys are already written there, so a demo shows a translated shop without a word being written twice (see DemoFixtureTranslator)
+    /** @return iterable<object> */
+    public function getLinkedDemoFixtures(): iterable
+    {
+        return $this->demoFixtureTranslator->translations();
     }
 
     /**
@@ -80,6 +95,8 @@ class ShopDemoFixtureProvider implements DemoFixtureProviderInterface
         if (isset($categories[$spec['category']])) {
             $product->addCategory($categories[$spec['category']]);
         }
+
+        $this->demoFixtureTranslator->stage($product, ShopTranslator::OWNER_PRODUCT, self::DOMAIN, ['title' => $spec['title'], 'description' => $spec['description']]);
 
         foreach ($this->pictures($spec['slug'], $images, $index) as $mediaPosition => $picture) {
             $file = $this->temporaryCopy($picture);
@@ -132,6 +149,8 @@ class ShopDemoFixtureProvider implements DemoFixtureProviderInterface
         $item->setHidden(false);
         $item->setCreation($creation);
 
+        $this->demoFixtureTranslator->stage($item, ShopTranslator::OWNER_ITEM, self::DOMAIN, ['title' => $spec['title'], 'description' => $spec['description']]);
+
         // A site declaring no placeholder document leaves the item file-less, hence sold as a posted one rather than announced as downloadable with nothing to download
         if (null !== $spec['file'] && null !== $document) {
             $file = $this->temporaryCopy($document);
@@ -158,6 +177,6 @@ class ShopDemoFixtureProvider implements DemoFixtureProviderInterface
 
     private function trans(string $key): string
     {
-        return $this->translator->trans($key, [], 'shop');
+        return $this->translator->trans($key, [], self::DOMAIN);
     }
 }

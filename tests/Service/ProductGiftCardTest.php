@@ -10,6 +10,8 @@
 
 namespace c975L\ShopBundle\Tests\Service;
 
+use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\PaymentBundle\Contract\GiftCardDesign;
 use c975L\PaymentBundle\Entity\Basket;
 use c975L\PaymentBundle\Entity\GiftCard;
@@ -19,6 +21,7 @@ use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -183,6 +186,6 @@ class ProductGiftCardTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
 
-        return new ProductBasketItemProvider($itemService, $this->createStub(MessageBusInterface::class), $giftCardService, $translator, $this->createStub(UrlGeneratorInterface::class));
+        return new ProductBasketItemProvider($itemService, $this->createStub(MessageBusInterface::class), $giftCardService, $translator, new LocalizedUrlGenerator($this->createStub(UrlGeneratorInterface::class), new SiteLocales(['fr'], 'fr'), new RequestStack()));
     }
 }

@@ -5,7 +5,7 @@
 {% set format = filters.format|default(null) %}
 {% set stock = filters.stock|default(null) %}
 {% set brackets = priceBrackets|default([]) %}
-<form class="product-filters" method="get" action="{{ path('shop_index') }}#products">
+<form class="product-filters" method="get" action="{{ localized_path('shop_index') }}#products">
     {# The order the visitor came with is carried through rather than reset by filtering, which is not a request to reorder anything #}
     {% if order is not empty %}
         <input type="hidden" name="order" value="{{ order }}">
@@ -53,7 +53,7 @@
         <button type="submit" class="btn btn-secondary product-filter-submit">{{ 'label.filter'|trans({}, 'shop') }}</button>
         {# Offered only once something is actually narrowed, an always-present "clear" reading as a filter of its own #}
         {% if price or format or stock %}
-            <a href="{{ path('shop_index', order is not empty ? {'order': order} : {}) }}#products" class="product-filter-reset">{{ 'label.filter_reset'|trans({}, 'shop') }}</a>
+            <a href="{{ localized_path('shop_index', order is not empty ? {'order': order} : {}) }}#products" class="product-filter-reset">{{ 'label.filter_reset'|trans({}, 'shop') }}</a>
         {% endif %}
     </div>
 </form>

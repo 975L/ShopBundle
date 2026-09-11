@@ -10,10 +10,12 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
+use c975L\ConfigBundle\Management\ContentLocaleScreen;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ShopBundle\Entity\ShopSettings;
 use c975L\ShopBundle\Management\ShopBlockOwnerResolver;
 use c975L\ShopBundle\Repository\ShopSettingsRepository;
+use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Service\BlockFocusUrl;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
@@ -23,13 +25,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Intl\Locales;
 
 use function Symfony\Component\Translation\t;
 
@@ -43,6 +49,8 @@ class ShopSettingsCrudController extends AbstractCrudController
         private readonly ConfigServiceInterface $configService,
         private readonly EntityManagerInterface $entityManager,
         private readonly ShopSettingsRepository $shopSettingsRepository,
+        private readonly ContentLocaleScreen $contentLocaleScreen,
+        private readonly ShopTranslator $shopTranslator,
     ) {
     }
 
@@ -69,6 +77,12 @@ class ShopSettingsCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        // The very same edit screen, opened on another language: the shop's own line as that language says it, the blocks below being translated on their own screens (see ContentLocaleScreen)
+        $contentLocale = Crud::PAGE_EDIT === $pageName ? $this->contentLocale() : null;
+        if (null !== $contentLocale) {
+            return $this->translationFields($contentLocale);
+        }
+
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
 
         return [
@@ -127,5 +141,69 @@ class ShopSettingsCrudController extends AbstractCrudController
             ->overrideTemplate('crud/edit', '@c975LShop/management/shop_settings_crud_edit.html.twig')
             ->setEntityPermission($this->configService->get('site-role-admin'))
         ;
+    }
+
+    // The language this row is being written in, when it is not the one the site was written in (see ContentLocaleScreen)
+    private function contentLocale(): ?string
+    {
+        return $this->contentLocaleScreen->locale($this->shopTranslator->getTranslatableLocales());
+    }
+
+    // The shop's own line, holding what that language already says or the source between brackets where it says nothing yet - unmapped, what is written here belonging to the translation table and mapped back overwriting the text the shop was written in
+    /** @return list<FieldInterface> */
+    private function translationFields(string $locale): array
+    {
+        $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
+        // Every field keyed, empty rather than absent, on a screen reached without the entity it describes: the fields below read the answer promptValues() promises whichever way this was entered
+        $values = $entity instanceof ShopSettings ? $this->shopTranslator->promptValues($entity, $locale) : array_fill_keys(ShopTranslator::SETTINGS_FIELDS, null);
+
+        return [
+            FormField::addFieldset(t('label.fieldset_this_language', ['%language%' => Locales::getName($locale, $locale)], 'shop'))
+                ->setHelp(t('label.fieldset_this_language_help', [], 'shop')),
+            TextareaField::new('intro')
+                ->setLabel(t('label.shop_intro', [], 'shop'))
+                ->setRequired(false)
+                ->setNumOfRows(2)
+                ->setFormTypeOption('mapped', false)
+                ->setFormTypeOption('data', $values['intro'])
+                // Opt-in marker read by the block form theme, which is what puts Donovan under a plain textarea
+                ->setFormTypeOption('attr', ['data-ai-rephrase' => true]),
+        ];
+    }
+
+    // What the language tabs at the top of the edit screen need, and nothing at all where the row is not saved yet or the site declares a single language
+    #[\Override]
+    public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
+    {
+        $responseParameters = parent::configureResponseParameters($responseParameters);
+
+        $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
+        $id = $entity instanceof ShopSettings ? $entity->getId() : null;
+        if (null !== $id && $this->shopTranslator->isActive()) {
+            $this->contentLocaleScreen->addParameters($responseParameters, self::class, $id, $this->shopTranslator->getTranslatableLocales(), $this->contentLocale());
+        }
+
+        return $responseParameters;
+    }
+
+    // What a language screen wrote, handed over to be stored on the flush that saves the row and never before it (see ContentLocaleScreen::stageOnSubmit)
+    #[\Override]
+    public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
+        $contentLocale = $this->contentLocale();
+
+        $this->contentLocaleScreen->stageOnSubmit(
+            $formBuilder,
+            $contentLocale,
+            ShopTranslator::SETTINGS_FIELDS,
+            function (object $entity, array $values) use ($contentLocale): void {
+                if ($entity instanceof ShopSettings && null !== $contentLocale) {
+                    $this->shopTranslator->stage($entity, $contentLocale, $values);
+                }
+            }
+        );
+
+        return $formBuilder;
     }
 }

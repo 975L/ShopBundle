@@ -12,6 +12,7 @@ namespace c975L\ShopBundle\Management;
 
 use c975L\ConfigBundle\Management\LinkableRouteProviderInterface;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
+use c975L\ShopBundle\Service\ShopTranslatedLocales;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Exposes the shop's public pages as SiteBundle Menu targets: the catalog itself, and one entry per category - only the target is stored, the url being generated at render time, so a renamed route prefix or slug leaves no menu item behind
@@ -23,6 +24,7 @@ class LinkableRouteProvider implements LinkableRouteProviderInterface
     public function __construct(
         private readonly ProductCategoryRepository $productCategoryRepository,
         private readonly TranslatorInterface $translator,
+        private readonly ShopTranslatedLocales $translatedLocales,
     ) {
     }
 
@@ -32,6 +34,8 @@ class LinkableRouteProvider implements LinkableRouteProviderInterface
             'shop_index' => [
                 'label' => 'label.shop',
                 'translation_domain' => 'shop',
+                // Read in another language, a menu item pointing here is written in that language's url - which only holds while the index really answers there (see ShopTranslatedLocales)
+                'locales' => $this->translatedLocales->forShop(),
             ],
         ];
 
@@ -47,6 +51,8 @@ class LinkableRouteProvider implements LinkableRouteProviderInterface
                 'picker_label' => $category . ' - ' . $entity->getName(),
                 'route' => 'category_display',
                 'params' => ['slug' => (string) $entity->getSlug()],
+                // Read in another language the item is written in that language's url, a category sheet answering in every language the site declares (see ShopTranslatedLocales)
+                'locales' => $this->translatedLocales->forCategory($entity),
             ];
         }
 

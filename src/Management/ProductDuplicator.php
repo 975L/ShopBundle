@@ -16,9 +16,12 @@ use c975L\ShopBundle\Entity\ProductItemFile;
 use c975L\ShopBundle\Entity\ProductItemMedia;
 use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Repository\ProductRepository;
+use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media as BlockMedia;
+use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Listener\VichPdfThumbnailListener;
+use c975L\UiBundle\Service\TranslationCopier;
 use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -43,6 +46,7 @@ class ProductDuplicator
         private readonly SluggerInterface $slugger,
         private readonly TranslatorInterface $translator,
         ParameterBagInterface $parameterBag,
+        private readonly TranslationCopier $translationCopier,
     ) {
         $this->filesystem = new Filesystem();
         $this->projectDir = (string) $parameterBag->get('kernel.project_dir');
@@ -89,6 +93,9 @@ class ProductDuplicator
         foreach ($product->getBlocks() as $block) {
             $copy->addBlock($this->duplicateBlock($block, (string) $product->getSlug(), (string) $copy->getSlug()));
         }
+
+        // What it says in the site's other languages goes with it, written once the copy is saved (see TranslationCopier)
+        $this->translationCopier->copy(ShopTranslator::OWNER_PRODUCT, $product, $copy);
 
         $this->entityManager->persist($copy);
         $this->entityManager->flush();
@@ -149,6 +156,7 @@ class ProductDuplicator
 
         // Attached first, as both the picture and the file walk back to the product through the item
         $copy->addItem($itemCopy);
+        $this->translationCopier->copy(ShopTranslator::OWNER_ITEM, $item, $itemCopy);
 
         $media = $item->getMedia();
         if (null !== $media) {
@@ -192,6 +200,9 @@ class ProductDuplicator
             $blockCopy->addSlot($this->duplicateBlock($slot, $slug, $copySlug));
         }
 
+        // What it says in the site's other languages goes with it, written once the copy is saved (see TranslationCopier)
+        $this->translationCopier->copy(Translation::OWNER_BLOCK, $block, $blockCopy);
+
         return $blockCopy;
     }
 
@@ -226,6 +237,7 @@ class ProductDuplicator
         ;
 
         $blockCopy->addMedia($mediaCopy);
+        $this->translationCopier->copy(Translation::OWNER_MEDIA, $media, $mediaCopy);
         $mediaCopy->setFilename($this->copyFile($media->getFilename(), $this->blockMediaBasePath($mediaCopy), 'public'));
     }
 

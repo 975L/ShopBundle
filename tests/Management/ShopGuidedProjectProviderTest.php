@@ -66,10 +66,10 @@ class ShopGuidedProjectProviderTest extends TestCase
         $projects = $this->createProvider()->getGuidedProjects();
 
         $this->assertSame(
-            ['shop-category', 'shop-index', 'shop-product', 'shop-downloadable', 'shop-gift-card', 'shop-test-mode', 'shop-export'],
+            ['shop-category', 'shop-index', 'shop-product', 'shop-translate', 'shop-downloadable', 'shop-gift-card', 'shop-test-mode', 'shop-export'],
             array_column($projects, 'slug'),
         );
-        $this->assertSame([8010, 8015, 8020, 8030, 8040, 8050, 8060], array_column($projects, 'order'));
+        $this->assertSame([8010, 8015, 8020, 8025, 8030, 8040, 8050, 8060], array_column($projects, 'order'));
     }
 
     public function testEverySlugIsPrefixedWithTheBundleName(): void
@@ -128,7 +128,7 @@ class ShopGuidedProjectProviderTest extends TestCase
         $this->createProvider($controllers)->getGuidedProjects();
 
         $this->assertSame(
-            ['ProductCategoryCrudController', 'ShopSettingsCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController'],
+            ['ProductCategoryCrudController', 'ShopSettingsCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController'],
             array_map(static fn (string $fqcn): string => basename(str_replace('\\', '/', $fqcn)), $controllers),
         );
     }
@@ -187,12 +187,12 @@ class ShopGuidedProjectProviderTest extends TestCase
         )), ...$this->customActionNames()];
     }
 
-    // The names this bundle's CRUD controllers declare themselves, read off their source: EasyAdmin renders `action-<name>` for them just the same, and a highlight pointing at one would fail the check above otherwise
+    // The names this bundle's CRUD controllers declare themselves, read off their source: EasyAdmin renders `action-<name>` for them just the same, and a highlight pointing at one would fail the check above otherwise. Both ways of declaring one are read - `Action::new()` and the actions ContentLocaleScreen builds, which carry their name the very same way
     private function customActionNames(): array
     {
         $names = [];
         foreach (glob(\dirname(__DIR__, 2) . '/src/Controller/Management/*CrudController.php') ?: [] as $file) {
-            preg_match_all("/Action::new\\('(\\w+)'/", (string) file_get_contents($file), $matches);
+            preg_match_all("/(?:Action::new|->action)\\('(\\w+)'/", (string) file_get_contents($file), $matches);
             $names = [...$names, ...$matches[1]];
         }
 

@@ -17,6 +17,30 @@ use PHPUnit\Framework\TestCase;
 // The two states a product is read through: what the shop stands behind, and what it has taken back
 class ProductTest extends TestCase
 {
+    // A language laid over a product is what its getters read, a field left untranslated falling back on the text it was written with, which getUntranslated() always gives
+    public function testATranslationIsLaidOverTheProductTexts(): void
+    {
+        $product = new Product()->setTitle('Table basse')->setDescription('Chêne massif');
+        $product->setTranslated(['title' => 'Coffee table']);
+
+        $this->assertSame('Coffee table', $product->getTitle());
+        $this->assertSame('Chêne massif', $product->getDescription());
+        $this->assertSame('Table basse', $product->getUntranslated('title'));
+        $this->assertNull($product->getUntranslated('slug'));
+    }
+
+    // Same overlay on a variant, read beside its product's
+    public function testATranslationIsLaidOverTheItemTexts(): void
+    {
+        $item = new ProductItem()->setTitle('Grand')->setDescription('Bleu');
+        $item->setTranslated(['description' => 'Blue']);
+
+        $this->assertSame('Grand', $item->getTitle());
+        $this->assertSame('Blue', $item->getDescription());
+        $this->assertSame('Bleu', $item->getUntranslated('description'));
+        $this->assertNull($item->getUntranslated('sku'));
+    }
+
     // A product is written before it is sold, so it starts hidden whatever the column default says for the rows that were there before it
     public function testANewProductStartsHidden(): void
     {

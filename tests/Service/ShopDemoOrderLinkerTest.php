@@ -11,6 +11,8 @@
 namespace c975L\ShopBundle\Tests\Service;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\PaymentBundle\Entity\Basket;
 use c975L\PaymentBundle\Entity\Payment;
 use c975L\PaymentBundle\Service\GiftCardService;
@@ -21,6 +23,7 @@ use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use c975L\ShopBundle\Service\ShopDemoOrderLinker;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -70,7 +73,7 @@ class ShopDemoOrderLinkerTest extends TestCase
             $this->createStub(MessageBusInterface::class),
             $this->createStub(GiftCardService::class),
             $this->createStub(TranslatorInterface::class),
-            $this->createStub(UrlGeneratorInterface::class),
+            new LocalizedUrlGenerator($this->createStub(UrlGeneratorInterface::class), new SiteLocales(['fr'], 'fr'), new RequestStack()),
         );
     }
 

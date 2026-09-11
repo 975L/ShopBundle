@@ -10,6 +10,8 @@
 
 namespace c975L\ShopBundle\Tests\Service;
 
+use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\PaymentBundle\Entity\Basket;
 use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\ShopBundle\Entity\Product;
@@ -17,6 +19,7 @@ use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -38,7 +41,7 @@ class ProductBasketItemProviderTest extends TestCase
             $this->createStub(MessageBusInterface::class),
             $this->createStub(GiftCardService::class),
             $translator,
-            $this->urlGenerator(),
+            new LocalizedUrlGenerator($this->urlGenerator(), new SiteLocales(['fr'], 'fr'), new RequestStack()),
         );
     }
 
@@ -81,6 +84,19 @@ class ProductBasketItemProviderTest extends TestCase
 
         $this->assertSame(3600, $data['total']);
         $this->assertSame(600, $data['totalVat']);
+    }
+
+    // A basket names its lines as they were at the moment they were added: what a screen was being rendered in has no business travelling into a frozen order (see ShopTranslator, the only thing setting it)
+    public function testTheRenderedTranslationDoesNotTravelIntoTheBasket(): void
+    {
+        $item = $this->item(false)->setPrice(1200)->setVat(20.0)->setCurrency('eur')->setTitle('Affiche A2');
+        $item->getProduct()->setTitle('Affiche')->setSlug('affiche');
+        $item->setTranslated(['title' => 'Poster A2', 'description' => null]);
+
+        $data = $this->createProvider()->toBasketData($item, 1);
+
+        $this->assertArrayNotHasKey('translated', $data['item']);
+        $this->assertSame('Affiche A2', $data['item']['title']);
     }
 
     public function testAnItemOfAShownProductIsAdded(): void

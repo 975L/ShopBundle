@@ -19,7 +19,9 @@ use c975L\ShopBundle\Entity\ProductItemMedia;
 use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Listener\ShopCacheInvalidationListener;
 use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
+use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Entity\Translation;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
@@ -80,6 +82,35 @@ class ShopCacheInvalidationListenerTest extends TestCase
             [[ShopBlockCacheInvalidator::CACHE_TAG_CATEGORIES, ShopBlockCacheInvalidator::CACHE_TAG_PRODUCTS]],
             $this->invalidated
         );
+    }
+
+    // A language screen writes Translation rows alone, so the translated text has to drop the blocks it shows in - an item's reading on the product blocks like a product's
+    public function testAProductOrItemTranslationDropsTheProductBlocks(): void
+    {
+        foreach ([ShopTranslator::OWNER_PRODUCT, ShopTranslator::OWNER_ITEM] as $owner) {
+            $this->invalidated = [];
+            $this->listen(new Translation($owner, 7, 'title', 'en'));
+
+            $this->assertSame([[ShopBlockCacheInvalidator::CACHE_TAG_PRODUCTS]], $this->invalidated, $owner);
+        }
+    }
+
+    public function testACategoryTranslationDropsBothTags(): void
+    {
+        $this->listen(new Translation(ShopTranslator::OWNER_CATEGORY, 7, 'name', 'en'));
+
+        $this->assertSame(
+            [[ShopBlockCacheInvalidator::CACHE_TAG_CATEGORIES, ShopBlockCacheInvalidator::CACHE_TAG_PRODUCTS]],
+            $this->invalidated
+        );
+    }
+
+    // A page's or a block's translation belongs to another bundle's cache
+    public function testATranslationOfAnotherOwnerDropsNothing(): void
+    {
+        $this->listen(new Translation('page', 7, 'title', 'en'));
+
+        $this->assertSame([], $this->invalidated);
     }
 
     // Every entity of the site travels through these events, and the catalog is not concerned by most of them

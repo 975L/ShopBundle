@@ -127,6 +127,10 @@ class Product implements \Stringable, HasBlocksInterface
         return (string) $this->title;
     }
 
+    // What this row says in the language being rendered, laid over the texts below and stored nowhere on the row: unmapped on purpose, Doctrine computing its changeset from the mapped properties and never from these getters, so a screen rendered in English cannot write English over the text the row was written in (see ShopTranslator, the only thing that sets it)
+    /** @var array<string, string|null>|null */
+    private ?array $translated = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -146,7 +150,7 @@ class Product implements \Stringable, HasBlocksInterface
 
     public function getTitle(): ?string
     {
-        return $this->title;
+        return $this->translated['title'] ?? $this->title;
     }
 
     public function setTitle(string $title): static
@@ -170,7 +174,7 @@ class Product implements \Stringable, HasBlocksInterface
 
     public function getDescription(): ?string
     {
-        return $this->description;
+        return $this->translated['description'] ?? $this->description;
     }
 
     public function setDescription(string $description): static
@@ -261,7 +265,7 @@ class Product implements \Stringable, HasBlocksInterface
 
     public function getGiftCardText(): ?string
     {
-        return $this->giftCardText;
+        return $this->translated['giftCardText'] ?? $this->giftCardText;
     }
 
     public function setGiftCardText(?string $giftCardText): static
@@ -462,5 +466,23 @@ class Product implements \Stringable, HasBlocksInterface
         $this->relatedProducts->removeElement($product);
 
         return $this;
+    }
+
+    // Lays what a language says over the texts this row was written with, for the render being built and no longer than that - only ShopTranslator calls it, and only on the front, a form screen having to go on reading the row
+    /** @param array<string, string|null> $values field => value */
+    public function setTranslated(array $values): void
+    {
+        $this->translated = $values;
+    }
+
+    // The text the row itself carries, whatever language is being rendered - what a language screen offers as the thing to translate, and what tells an untouched field from a written one (see ShopTranslator)
+    public function getUntranslated(string $field): ?string
+    {
+        return match ($field) {
+            'title' => $this->title,
+            'description' => $this->description,
+            'giftCardText' => $this->giftCardText,
+            default => null,
+        };
     }
 }
