@@ -280,10 +280,22 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'highlight' => '#Product_giftCardText',
                 ],
                 [
+                    'label' => 'label.guided_step_shop_translate_items',
+                    'description' => 'description.guided_step_shop_translate_items',
+                    'narration' => 'narration.guided_step_shop_translate_items',
+                    // Set by ProductCrudController on the first variant fieldset, none of them being rendered on a product without variants - which is what the step's description says
+                    'highlight' => '[data-shop-item-translations]',
+                ],
+                [
                     'label' => 'label.guided_step_shop_translate_save',
                     'description' => 'description.guided_step_shop_translate_save',
                     'narration' => 'narration.guided_step_shop_translate_save',
                     'highlight' => '.action-saveAndReturn',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_translate_categories',
+                    'description' => 'description.guided_step_shop_translate_categories',
+                    'narration' => 'narration.guided_step_shop_translate_categories',
                 ],
             ],
         ];

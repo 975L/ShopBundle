@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.8.2
+
+The health check probe announces itself under the shared agent
+
+- `ProductJsonLdClient` sends the ecosystem's shared health-check User-Agent, as a class constant (12/09/2026)
+- A test pins the agent substring `HealthCheck::isProbe()` looks for (12/09/2026)
+- The translate project walks the variant translations (12/09/2026)
+- The translate project names the categories screen on its last step (12/09/2026)
+- The first variant fieldset of the language screen carries `data-shop-item-translations` (12/09/2026)
+- A test checks every narration is written in every locale, menu rows included (12/09/2026)
+
 ## v2.8.1
 
 Sort directions use SortDirection instead of deprecated strings

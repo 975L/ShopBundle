@@ -784,7 +784,12 @@ class ProductCrudController extends AbstractCrudController
         foreach ($this->translatableItems($product) as $id => $item) {
             $values = $this->shopTranslator->promptValues($item, $locale);
 
-            $fields[] = FormField::addFieldset((string) $item->getUntranslated('title'));
+            // The first fieldset carries the anchor the guided project points at: EasyAdmin numbers them, and there is nothing else on the screen that names where the variant translations start
+            $fieldset = FormField::addFieldset((string) $item->getUntranslated('title'));
+            if ([] === $fields) {
+                $fieldset->setFormTypeOption('attr', ['data-shop-item-translations' => '1']);
+            }
+            $fields[] = $fieldset;
             $fields[] = TextField::new(self::itemFieldName($id, 'title'))
                 ->setLabel(t('label.title', [], 'shop'))
                 ->setRequired(false)

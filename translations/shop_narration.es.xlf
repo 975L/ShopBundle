@@ -186,6 +186,10 @@
                 <source>narration.guided_step_shop_translate_action</source>
                 <target>Este botón abre la ficha directamente en el primer idioma por traducir, sin pasar por la pantalla de redacción. Solo está si el sitio declara más de un idioma.</target>
             </trans-unit>
+            <trans-unit id="UBAr21O">
+                <source>narration.guided_step_shop_translate_categories</source>
+                <target>Las categorías se traducen exactamente igual: el mismo botón, en la pantalla de categorías, abre su nombre y su descripción en el idioma elegido.</target>
+            </trans-unit>
             <trans-unit id="p0kZrHY">
                 <source>narration.guided_step_shop_translate_description</source>
                 <target>Es el mismo editor que en la pantalla de redacción: sus párrafos, sus listas y sus enlaces se conservan en el idioma traducido.</target>
@@ -193,6 +197,10 @@
             <trans-unit id="nN.BMz6">
                 <source>narration.guided_step_shop_translate_gift_card_text</source>
                 <target>Si este producto se vende como tarjeta regalo, traduzca también el texto impreso en el anverso. En un producto ordinario el campo queda vacío: no hay nada que hacer.</target>
+            </trans-unit>
+            <trans-unit id="yUp1a4c">
+                <source>narration.guided_step_shop_translate_items</source>
+                <target>Si el producto se ofrece en variantes, cada una tiene su propio bloque debajo de los campos de la ficha: su título y su descripción también se traducen ahí. Un producto sin variantes no muestra ninguno.</target>
             </trans-unit>
             <trans-unit id="qGhrmhb">
                 <source>narration.guided_step_shop_translate_open</source>

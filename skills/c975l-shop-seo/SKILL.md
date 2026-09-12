@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-seo
-description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork, url_metadata_title, url_metadata_summary, UrlMetadataProvider, Url descriptions, ShopPublicUrlResolver, resolveAlternates, resolveLocalizedUrl, alternates, hreflang, ShopTranslatedLocales, localized urls."
+description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, USER_AGENT, c975LHealthCheck, isProbe, site-rate-limit, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork, url_metadata_title, url_metadata_summary, UrlMetadataProvider, Url descriptions, ShopPublicUrlResolver, resolveAlternates, resolveLocalizedUrl, alternates, hreflang, ShopTranslatedLocales, localized urls."
 ---
 
 # c975L ShopBundle — structured data, sitemap, health, recommendations
@@ -165,6 +165,11 @@ product sheet through `ProductJsonLdClient` and reports the ones serving no stru
 does not parse, or one that parses without describing a `Product`. **The check belongs to whoever emits
 the markup** — the builder being right proves nothing about a site whose own template stopped calling
 `product_json_ld()`.
+
+**The probe announces itself as the ecosystem's shared health-check agent** — `ProductJsonLdClient::USER_AGENT`,
+the same string every c975L probe sends, which is what `HealthCheck::isProbe()` recognises and what exempts a
+run from the front rate limiter. A site behind `site-rate-limit` would otherwise answer a full catalogue sweep
+with 429s, and every row would read as a failed call.
 
 ## Recommendations
 

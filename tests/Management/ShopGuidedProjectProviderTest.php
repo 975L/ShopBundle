@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Tests\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ShopBundle\Management\MenuProvider;
 use c975L\ShopBundle\Management\ShopGuidedProjectProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
@@ -234,6 +235,14 @@ class ShopGuidedProjectProviderTest extends TestCase
         $this->assertStringContainsString("'data-shop-product-items' => '1'", $source);
     }
 
+    // The fieldsets of the language screen are numbered by EasyAdmin just the same, so the translate project points at the attribute ProductCrudController sets on the first variant one
+    public function testTheItemTranslationFieldsetIsHighlightedByItsOwnAttribute(): void
+    {
+        $source = (string) file_get_contents(\dirname(__DIR__, 2) . '/src/Controller/Management/ProductCrudController.php');
+
+        $this->assertStringContainsString("'data-shop-item-translations' => '1'", $source);
+    }
+
     // The blocks of the shop's own page are numbered by EasyAdmin just the same, so the project points at the attribute ShopSettingsCrudController sets on the collection
     public function testTheShopBlocksCollectionIsHighlightedByItsOwnAttribute(): void
     {
@@ -259,10 +268,45 @@ class ShopGuidedProjectProviderTest extends TestCase
         }
     }
 
-    private function translatedKeys(string $locale): array
+    // The voice-over lives in its own catalogue, and a narration missing from one locale is only ever heard - never read - so nothing else catches it. The menu rows are read here too, their narrations being reached by no other test
+    public function testEveryNarrationIsWrittenInEveryLocale(): void
+    {
+        foreach (['en', 'fr', 'es'] as $locale) {
+            $narrated = $this->translatedKeys($locale, 'shop_narration');
+
+            foreach ($this->narrationKeys() as $key) {
+                $this->assertContains($key, $narrated, sprintf('"%s" is missing from the %s narration catalogue', $key, $locale));
+            }
+        }
+    }
+
+    // Every narration the bundle declares: the projects and their steps, plus the menu sections and links MenuProvider contributes to the shared dashboard
+    private function narrationKeys(): array
+    {
+        $keys = [];
+
+        foreach ($this->createProvider()->getGuidedProjects() as $project) {
+            foreach ([$project, ...$project['steps']] as $item) {
+                if (isset($item['narration'])) {
+                    $keys[] = $item['narration'];
+                }
+            }
+        }
+
+        $menuProvider = new MenuProvider();
+        foreach ([...$menuProvider->getMenus(), ...$menuProvider->getLinks()] as $entry) {
+            if (isset($entry['narration'])) {
+                $keys[] = $entry['narration'];
+            }
+        }
+
+        return array_values(array_unique($keys));
+    }
+
+    private function translatedKeys(string $locale, string $domain = 'shop'): array
     {
         $xliff = new \DOMDocument();
-        $xliff->load(\dirname(__DIR__, 2) . '/translations/shop.' . $locale . '.xlf');
+        $xliff->load(\dirname(__DIR__, 2) . '/translations/' . $domain . '.' . $locale . '.xlf');
 
         $keys = [];
         foreach ($xliff->getElementsByTagName('source') as $source) {

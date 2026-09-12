@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-09-12",
+        "description": [
+            {
+                "en": "The guided tour for translating a product now also shows where each variant's own title and description are written, and reminds you that categories are translated the same way.",
+                "fr": "La visite guidée pour traduire un produit montre aussi où se saisissent le titre et la description de chaque variante, et rappelle que les catégories se traduisent de la même façon.",
+                "es": "La visita guiada para traducir un producto muestra también dónde se escriben el título y la descripción de cada variante, y recuerda que las categorías se traducen de la misma manera."
+            }
+        ]
+    },
+    {
         "date": "2026-09-10",
         "description": [
             {

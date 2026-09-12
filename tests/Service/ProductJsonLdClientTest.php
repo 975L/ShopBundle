@@ -82,6 +82,21 @@ class ProductJsonLdClientTest extends TestCase
         $this->assertSame(['Product'], $found['types']);
     }
 
+    // The substring HealthCheck::isProbe() looks for, and not the whole string, which moves with the version: a run announcing itself under another name loses the front rate limiter exemption and reads as a wall of failed calls
+    public function testTheProbeAnnouncesItselfAsTheSharedHealthCheckAgent(): void
+    {
+        $sent = null;
+        $client = new MockHttpClient(function (string $method, string $url, array $options) use (&$sent): MockResponse {
+            $sent = $options['normalized_headers']['user-agent'][0] ?? null;
+
+            return new MockResponse('');
+        });
+
+        new ProductJsonLdClient($client)->readStructuredData('https://example.com/shop/products/a-poster');
+
+        $this->assertStringContainsString('c975LHealthCheck', (string) $sent);
+    }
+
     private function script(string $json): string
     {
         return '<script type="application/ld+json">' . $json . '</script>';

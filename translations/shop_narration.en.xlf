@@ -186,6 +186,10 @@
                 <source>narration.guided_step_shop_translate_action</source>
                 <target>This button opens the sheet straight into the first language to translate, without going through the writing screen. It is only there where the site declares more than one language.</target>
             </trans-unit>
+            <trans-unit id="UBAr21O">
+                <source>narration.guided_step_shop_translate_categories</source>
+                <target>Categories are translated in exactly the same way: the same button, on the categories screen, opens their name and their description in the chosen language.</target>
+            </trans-unit>
             <trans-unit id="p0kZrHY">
                 <source>narration.guided_step_shop_translate_description</source>
                 <target>This is the same editor as on the writing screen: your paragraphs, your lists and your links are kept in the translated language.</target>
@@ -193,6 +197,10 @@
             <trans-unit id="nN.BMz6">
                 <source>narration.guided_step_shop_translate_gift_card_text</source>
                 <target>If this product is sold as a gift card, translate the text printed on its front as well. On an ordinary product the field stays empty: there is nothing to do.</target>
+            </trans-unit>
+            <trans-unit id="yUp1a4c">
+                <source>narration.guided_step_shop_translate_items</source>
+                <target>If the product comes in variants, each one has its own block below the sheet's fields: its title and its description are translated there too. A product without variants shows none of them.</target>
             </trans-unit>
             <trans-unit id="qGhrmhb">
                 <source>narration.guided_step_shop_translate_open</source>

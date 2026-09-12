@@ -270,6 +270,10 @@
                 <source>description.guided_step_shop_translate_action</source>
                 <target>Le bouton ouvre la fiche directement dans la première langue à traduire. Il n'apparaît que si le site déclare plus d'une langue.</target>
             </trans-unit>
+            <trans-unit id="TuGVnPb">
+                <source>description.guided_step_shop_translate_categories</source>
+                <target>Les catégories se traduisent du même bouton, depuis leur propre écran : le nom et la description.</target>
+            </trans-unit>
             <trans-unit id="Ufjm5Cj">
                 <source>description.guided_step_shop_translate_description</source>
                 <target>Le même éditeur que sur l'écran d'écriture : les paragraphes et les liens sont conservés.</target>
@@ -277,6 +281,10 @@
             <trans-unit id="U.6BPK7">
                 <source>description.guided_step_shop_translate_gift_card_text</source>
                 <target>La phrase imprimée sur la carte cadeau, quand le produit en vend une : vide sur un produit ordinaire, il n'y a rien à traduire.</target>
+            </trans-unit>
+            <trans-unit id="m99s1WP">
+                <source>description.guided_step_shop_translate_items</source>
+                <target>Quand le produit a des variantes, chacune porte son titre et sa description sous les champs de la fiche : un produit sans variante n'en affiche aucune.</target>
             </trans-unit>
             <trans-unit id="aaEQErZ">
                 <source>description.guided_step_shop_translate_open</source>
@@ -866,6 +874,10 @@
                 <source>label.guided_step_shop_translate_action</source>
                 <target>Ouvrir l'écran de langue</target>
             </trans-unit>
+            <trans-unit id="ohM2pqm">
+                <source>label.guided_step_shop_translate_categories</source>
+                <target>Traduire les catégories</target>
+            </trans-unit>
             <trans-unit id="f3bDFuK">
                 <source>label.guided_step_shop_translate_description</source>
                 <target>Traduire la description</target>
@@ -873,6 +885,10 @@
             <trans-unit id="3x74kY8">
                 <source>label.guided_step_shop_translate_gift_card_text</source>
                 <target>Traduire le texte du recto</target>
+            </trans-unit>
+            <trans-unit id="8fCzjaA">
+                <source>label.guided_step_shop_translate_items</source>
+                <target>Traduire les variantes</target>
             </trans-unit>
             <trans-unit id="x1sfH28">
                 <source>label.guided_step_shop_translate_open</source>
