@@ -6,6 +6,42 @@
                 <source>narration.categories</source>
                 <target>« Catégories » regroupe les produits. Une catégorie n'apparaît dans la boutique qu'à partir du moment où elle contient au moins un produit.</target>
             </trans-unit>
+            <trans-unit id="VKNc6rA">
+                <source>narration.guided_project_shop_category</source>
+                <target>Classons le catalogue avant de le remplir. Un produit sans catégorie n'est jamais atteint que depuis l'index de la boutique.</target>
+            </trans-unit>
+            <trans-unit id="yk37JEj">
+                <source>narration.guided_project_shop_downloadable</source>
+                <target>Vendons un fichier plutôt qu'un colis. Rien n'est jamais expédié, et la livraison est un email contenant des liens qui expirent.</target>
+            </trans-unit>
+            <trans-unit id="3RinKsz">
+                <source>narration.guided_project_shop_export</source>
+                <target>Déplaçons un catalogue vers un autre site, avec les images, les articles et les catégories qui les classent.</target>
+            </trans-unit>
+            <trans-unit id="mwcSBE1">
+                <source>narration.guided_project_shop_gift_card</source>
+                <target>Vendons une carte cadeau. C'est un produit comme un autre, sauf que ce qu'elle vaut se saisit sur son article.</target>
+            </trans-unit>
+            <trans-unit id="XAFGpMV">
+                <source>narration.guided_project_shop_index</source>
+                <target>Réglons la page sur laquelle la boutique s'ouvre : la phrase qui accueille le visiteur, et les blocks composés au-dessus de la liste.</target>
+            </trans-unit>
+            <trans-unit id="rs8nYa9">
+                <source>narration.guided_project_shop_product</source>
+                <target>Écrivons une fiche produit, et l'article qui porte ce que le visiteur paie. L'une sans l'autre ne vend rien.</target>
+            </trans-unit>
+            <trans-unit id="pjNb4kg">
+                <source>narration.guided_project_shop_test_mode</source>
+                <target>Disons tout haut que le catalogue est en cours d'installation, pour qu'un visiteur précoce ne prenne pas une répétition pour une vraie commande.</target>
+            </trans-unit>
+            <trans-unit id="asPpzfF">
+                <source>narration.guided_project_shop_translate</source>
+                <target>Disons la même fiche dans une autre langue. Les textes seuls lui appartiennent : le prix, le stock et les références sont les mêmes partout.</target>
+            </trans-unit>
+            <trans-unit id="awbshU9">
+                <source>narration.guided_project_shop_trash</source>
+                <target>Sortons un produit du catalogue sans le perdre, puis faisons-le revenir, ou supprimons-le pour de bon.</target>
+            </trans-unit>
             <trans-unit id="EhMylBu">
                 <source>narration.guided_step_shop_category_description</source>
                 <target>Présentez la catégorie en quelques lignes : elles sont affichées au-dessus des produits, et lues par les moteurs de recherche.</target>
@@ -217,6 +253,30 @@
             <trans-unit id="2ws2nZa">
                 <source>narration.guided_step_shop_translate_title</source>
                 <target>Le titre affiché entre crochets est celui de la langue d'écriture. Il reste tel quel tant que vous n'avez rien saisi : une fiche à moitié traduite reste lisible.</target>
+            </trans-unit>
+            <trans-unit id="R36fidL">
+                <source>narration.guided_step_shop_trash_delete</source>
+                <target>Supprimez un produit : ici le mot est doux, il ne fait que mettre la fiche à la corbeille et la retirer de la boutique. Rien n'est encore perdu.</target>
+            </trans-unit>
+            <trans-unit id="_lSEV0I">
+                <source>narration.guided_step_shop_trash_delete_permanently</source>
+                <target>Supprimez-le pour de bon : c'est le seul geste qui détruit quelque chose. Le produit, ses images et ses fichiers partent, et la confirmation est là pour ça.</target>
+            </trans-unit>
+            <trans-unit id="5QiFhct">
+                <source>narration.guided_step_shop_trash_hidden</source>
+                <target>Un produit vaut mieux laissé à la corbeille que supprimé : une fiche déjà vendue continue d'être lue par les commandes qui la portent.</target>
+            </trans-unit>
+            <trans-unit id="NFom4bA">
+                <source>narration.guided_step_shop_trash_open</source>
+                <target>La corbeille s'atteint depuis la liste du catalogue, et le geste qui la remplit aussi : le panneau vous emmène sur les produits.</target>
+            </trans-unit>
+            <trans-unit id="kfJs15W">
+                <source>narration.guided_step_shop_trash_open_bin</source>
+                <target>Ouvrez la corbeille : le même bouton la montre depuis le catalogue, et affiche « Produits » depuis l'intérieur pour vous ramener.</target>
+            </trans-unit>
+            <trans-unit id="KsH_9n3">
+                <source>narration.guided_step_shop_trash_restore</source>
+                <target>Faites revenir le produit : il revient avec ses images, ses articles et ses blocks, masqué de la boutique jusqu'à ce que vous le remontriez.</target>
             </trans-unit>
             <trans-unit id="kTwJa4V">
                 <source>narration.products</source>

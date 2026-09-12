@@ -1,11 +1,12 @@
 name: CI
 
+# main only, as the whole Symfony ecosystem does: dev carries the same commit, so watching both branches meant two twin jobs downloading the same dependencies from the same runner IP pool
 on:
     push:
         branches: [main]
     pull_request:
 
-# main only, as the whole Symfony ecosystem does: dev carries the same commit, and running both branches meant two twin jobs resolving and downloading the same dependencies at the same second, from the same runner IP pool
+# A run the next push has superseded is cancelled rather than left to finish
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
@@ -30,7 +31,7 @@ jobs:
               with:
                   php-version: '8.4'
                   coverage: pcov
-                  tools: phpcs, php-cs-fixer, rector, phpmd
+                  tools: phpcs, php-cs-fixer, rector
 
             # Composer decides where it keeps the downloaded archives; asking it beats hard-coding a path that depends on the runner image
             - name: Répertoire de cache de Composer
@@ -66,9 +67,6 @@ jobs:
             # The scaffold is copied as is into the applications, where Rector runs over src/ on a Symfony migration: whatever is left to modernise here is rewritten there, and the rewritten file no longer matches the hash ScaffoldInstaller recorded - the site is then told forever it customized a file it never touched
             - name: Modernisation
               run: composer rector
-
-            - name: Code douteux
-              run: composer mess
 
             # Lizard is a Python tool, and it is pinned where the PHP ones take their latest release: its counting changed between versions and this is the one Codacy runs, which the thresholds composer.json hands it are read against
             - uses: actions/setup-python@v5

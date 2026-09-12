@@ -29,4 +29,27 @@
     <rule ref="PSR1.Files.SideEffects">
         <exclude-pattern>*/tests/*</exclude-pattern>
     </rule>
+
+    <!-- What phpmd used to report before its parser was left behind by PHP 8.4: a debug call or an exit() forgotten in the code. Stated here rather than left to phpmd's own DevelopmentCodeFragment, which reads a function image together with its namespace and therefore never matched a single call in namespaced code -->
+    <rule ref="Generic.PHP.ForbiddenFunctions">
+        <properties>
+            <property name="forbiddenFunctions" type="array">
+                <element key="var_dump" value="null"/>
+                <element key="print_r" value="null"/>
+                <element key="debug_zval_dump" value="null"/>
+                <element key="debug_print_backtrace" value="null"/>
+                <element key="exit" value="null"/>
+                <element key="die" value="null"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- eval() needs its own sniff, being a construct and not a function ForbiddenFunctions could name -->
+    <rule ref="Squiz.PHP.Eval"/>
+
+    <!-- A caught exception silently dropped, which phpmd reported as EmptyCatchBlock -->
+    <rule ref="Generic.CodeAnalysis.EmptyStatement"/>
+
+    <!-- count() in the condition of a loop, called once per turn, which phpmd reported as CountInLoopExpression -->
+    <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall"/>
 </ruleset>

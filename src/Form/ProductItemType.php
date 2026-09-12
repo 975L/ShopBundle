@@ -27,7 +27,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ProductItemType extends AbstractType
 {
     // A declaration of fields, one block per field: its length says how much the form asks for, not how much the method decides
-    /** @SuppressWarnings(PHPMD.ExcessiveMethodLength) */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

@@ -42,7 +42,7 @@ class CalculateProductAffinityCommand extends Command
     {
         $this
             ->addOption('reset', null, InputOption::VALUE_NONE, 'Reset all affinity data before calculation')
-            ->addOption('days', null, InputOption::VALUE_OPTIONAL, 'Only analyze baskets from last N days', null)
+            ->addOption('days', null, InputOption::VALUE_OPTIONAL, 'Only analyze baskets from last N days')
         ;
     }
 

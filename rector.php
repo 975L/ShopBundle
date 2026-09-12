@@ -13,7 +13,7 @@ use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\Php80\Rector\ClassMethod\AddParamBasedOnParentClassMethodRector;
 use Rector\Php82\Rector\Class_\ReadOnlyClassRector;
 
-// The same sets a site gets from SymfonyMigrate.sh, deliberately: the scaffold is copied as is into the applications, where that configuration is what runs over it. Anything this bundle leaves behind is rewritten there, and the rewritten file no longer matches the hash ScaffoldInstaller recorded, so the site is told forever it customized a file it never touched. Hence scaffold/ in the paths below, next to the bundle's own code
+// The same sets a site gets from SymfonyMigrate.sh, plus the dead code set on top, which carries here the unused local variable phpmd used to report, so the sites' own run finds nothing left to rewrite in the scaffold: the scaffold is copied as is into the applications, where that configuration is what runs over it. Anything this bundle leaves behind is rewritten there, and the rewritten file no longer matches the hash ScaffoldInstaller recorded, so the site is told forever it customized a file it never touched. Hence scaffold/ in the paths below, next to the bundle's own code
 // withPhpSets() takes its target from composer.json rather than naming a version here: the bundles and the sites both require ">=8.4", so both resolve to the same rules and neither can drift ahead of the other
 // Since Rector 2.6.2 the versioned Symfony sets (SymfonySetList::SYMFONY_XX) no longer exist: withComposerBased() binds every rule to the version of the package actually installed, read from composer.json, so no version has to be renamed here when Symfony moves on
 return RectorConfig::configure()
@@ -23,6 +23,7 @@ return RectorConfig::configure()
         __DIR__ . '/scaffold',
     ])
     ->withPhpSets()
+    ->withPreparedSets(deadCode: true)
     // The cache lives in the repository rather than in sys_get_temp_dir(), one directory shared by every repository on the machine: a run here no longer competes with, nor empties, the cache of the other repositories. bin/ci.sh keeps its cold cache by leaving this directory out of the copy
     ->withCache(cacheDirectory: __DIR__ . '/.rector.cache')
     ->withComposerBased(symfony: true, doctrine: true)

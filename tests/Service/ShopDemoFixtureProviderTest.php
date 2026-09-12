@@ -235,10 +235,10 @@ class ShopDemoFixtureProviderTest extends TestCase
         $rows = iterator_to_array($provider->getLinkedDemoFixtures(), false);
 
         $this->assertNotSame([], $rows, 'The demo catalog was not staged for translation at all.');
-        $this->assertSame(['en'], $this->distinct($rows, static fn (Translation $row): string => (string) $row->getLocale()));
+        $this->assertSame(['en'], $this->distinct($rows, static fn (Translation $row): string => $row->getLocale()));
         $this->assertSame(
             [ShopTranslator::OWNER_CATEGORY, ShopTranslator::OWNER_ITEM, ShopTranslator::OWNER_PRODUCT],
-            $this->distinct($rows, static fn (Translation $row): string => (string) $row->getOwnerType())
+            $this->distinct($rows, static fn (Translation $row): string => $row->getOwnerType())
         );
     }
 

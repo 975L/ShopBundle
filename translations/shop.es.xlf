@@ -90,6 +90,10 @@
                 <source>description.guided_project_shop_translate</source>
                 <target>La misma ficha dicha en otro idioma: solo los textos le pertenecen, ya que el precio, el stock y las referencias son los mismos en todas partes.</target>
             </trans-unit>
+            <trans-unit id="KJxz0V3">
+                <source>description.guided_project_shop_trash</source>
+                <target>Sacar un producto del catálogo sin perderlo, y luego traerlo de vuelta o eliminarlo definitivamente.</target>
+            </trans-unit>
             <trans-unit id="TvAfPjx">
                 <source>description.guided_step_shop_category_description</source>
                 <target>Unas líneas mostradas encima de los productos y leídas por los buscadores.</target>
@@ -301,6 +305,30 @@
             <trans-unit id="eYMlYQ0">
                 <source>description.guided_step_shop_translate_title</source>
                 <target>El título entre corchetes es el del idioma de redacción: sigue mostrándose mientras no se escriba nada.</target>
+            </trans-unit>
+            <trans-unit id="9inURXg">
+                <source>description.guided_step_shop_trash_delete</source>
+                <target>Aquí «Eliminar» solo envía el producto a la papelera y lo retira de la tienda: nada se ha perdido todavía.</target>
+            </trans-unit>
+            <trans-unit id="H1.2khY">
+                <source>description.guided_step_shop_trash_delete_permanently</source>
+                <target>El único gesto que destruye algo: el producto, sus imágenes y sus archivos se van, y ningún pedido los vuelve a mostrar.</target>
+            </trans-unit>
+            <trans-unit id="qsvJO9b">
+                <source>description.guided_step_shop_trash_hidden</source>
+                <target>Un producto ya vendido conviene dejarlo en la papelera antes que eliminarlo: los pedidos que lo llevan siguen leyendo su ficha.</target>
+            </trans-unit>
+            <trans-unit id="8IkkMgb">
+                <source>description.guided_step_shop_trash_open</source>
+                <target>La papelera se alcanza desde la lista del catálogo, y el gesto que la llena también.</target>
+            </trans-unit>
+            <trans-unit id="YFUVmZB">
+                <source>description.guided_step_shop_trash_open_bin</source>
+                <target>El mismo botón muestra la papelera desde el catálogo, y dice «Productos» desde dentro para traerte de vuelta.</target>
+            </trans-unit>
+            <trans-unit id="QE39moN">
+                <source>description.guided_step_shop_trash_restore</source>
+                <target>El producto vuelve al catálogo con sus imágenes, sus artículos y sus bloques, oculto de la tienda.</target>
             </trans-unit>
             <trans-unit id="O4ItfqQ">
                 <source>flash.product_deleted_permanently</source>
@@ -694,6 +722,10 @@
                 <source>label.guided_project_shop_translate</source>
                 <target>Traducir un producto</target>
             </trans-unit>
+            <trans-unit id="f2dRMLi">
+                <source>label.guided_project_shop_trash</source>
+                <target>Vaciar la papelera</target>
+            </trans-unit>
             <trans-unit id="d71lE0c">
                 <source>label.guided_step_shop_category_description</source>
                 <target>Presentar la categoría</target>
@@ -905,6 +937,30 @@
             <trans-unit id="GOW__Q1">
                 <source>label.guided_step_shop_translate_title</source>
                 <target>Traducir el título</target>
+            </trans-unit>
+            <trans-unit id="4SpgxyJ">
+                <source>label.guided_step_shop_trash_delete</source>
+                <target>Enviar un producto a la papelera</target>
+            </trans-unit>
+            <trans-unit id="fSnPCms">
+                <source>label.guided_step_shop_trash_delete_permanently</source>
+                <target>Eliminarlo definitivamente</target>
+            </trans-unit>
+            <trans-unit id="KajQ_4C">
+                <source>label.guided_step_shop_trash_hidden</source>
+                <target>Lo que queda detrás</target>
+            </trans-unit>
+            <trans-unit id="tcZMvCK">
+                <source>label.guided_step_shop_trash_open</source>
+                <target>Abrir los productos</target>
+            </trans-unit>
+            <trans-unit id=".cJxouw">
+                <source>label.guided_step_shop_trash_open_bin</source>
+                <target>Abrir la papelera</target>
+            </trans-unit>
+            <trans-unit id="SpILA5w">
+                <source>label.guided_step_shop_trash_restore</source>
+                <target>Recuperar un producto</target>
             </trans-unit>
             <trans-unit id="i0R_Ccz">
                 <source>label.health_check_advice_shop_offender</source>

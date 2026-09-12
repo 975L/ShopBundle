@@ -11,8 +11,10 @@
 namespace c975L\ShopBundle\Tests\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ShopBundle\Controller\Management\ShopShortcutController;
 use c975L\ShopBundle\Management\MenuProvider;
 use c975L\ShopBundle\Management\ShopGuidedProjectProvider;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use PHPUnit\Framework\TestCase;
@@ -67,10 +69,10 @@ class ShopGuidedProjectProviderTest extends TestCase
         $projects = $this->createProvider()->getGuidedProjects();
 
         $this->assertSame(
-            ['shop-category', 'shop-index', 'shop-product', 'shop-translate', 'shop-downloadable', 'shop-gift-card', 'shop-test-mode', 'shop-export'],
+            ['shop-category', 'shop-index', 'shop-product', 'shop-translate', 'shop-downloadable', 'shop-gift-card', 'shop-test-mode', 'shop-export', 'shop-trash'],
             array_column($projects, 'slug'),
         );
-        $this->assertSame([8010, 8015, 8020, 8025, 8030, 8040, 8050, 8060], array_column($projects, 'order'));
+        $this->assertSame([8010, 8015, 8020, 8025, 8030, 8040, 8050, 8060, 8070], array_column($projects, 'order'));
     }
 
     public function testEverySlugIsPrefixedWithTheBundleName(): void
@@ -122,14 +124,14 @@ class ShopGuidedProjectProviderTest extends TestCase
         }
     }
 
-    // Each parcours opens on the listing its task starts from, the four written from the products one included - the shop's own page having a screen of its own, which opens straight on the single row it edits
+    // Each parcours opens on the listing its task starts from, the six written from the products one included - the shop's own page having a screen of its own, which opens straight on the single row it edits
     public function testEachCrudProjectOpensOnItsOwnListing(): void
     {
         $controllers = [];
         $this->createProvider($controllers)->getGuidedProjects();
 
         $this->assertSame(
-            ['ProductCategoryCrudController', 'ShopSettingsCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController'],
+            ['ProductCategoryCrudController', 'ShopSettingsCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController'],
             array_map(static fn (string $fqcn): string => basename(str_replace('\\', '/', $fqcn)), $controllers),
         );
     }
@@ -144,17 +146,26 @@ class ShopGuidedProjectProviderTest extends TestCase
         $this->assertSame(['management'], $routes);
     }
 
-    // Both toggle steps highlight the button ShopShortcutController's own route renders on the dashboard
+    // Both toggle steps highlight the button ShopShortcutController's own route renders on the dashboard, the selector read against the path that controller declares rather than against itself - a renamed path has to break the test, not the highlight
     public function testTheTestModeToggleStepsHighlightTheShortcutButton(): void
     {
+        $expected = sprintf('form[action$="%s"] button', $this->toggleTestModePath());
+
         // Read by slug and not by rank: a project slipped into the sequence would silently move the one this checks
         $projects = array_column($this->createProvider()->getGuidedProjects(), null, 'slug');
         $highlights = array_values(array_filter(array_column($projects['shop-test-mode']['steps'], 'highlight')));
 
-        $this->assertSame(
-            ['form[action$="/shop/test-mode-toggle"] button', 'form[action$="/shop/test-mode-toggle"] button'],
-            $highlights,
-        );
+        $this->assertSame([$expected, $expected], $highlights);
+    }
+
+    // The path of the toggle, read off the #[AdminRoute] attribute by its argument name rather than by the attribute's own properties, which EasyAdmin is free to rename
+    private function toggleTestModePath(): string
+    {
+        $attributes = new \ReflectionMethod(ShopShortcutController::class, 'toggleTestMode')->getAttributes(AdminRoute::class);
+
+        $this->assertCount(1, $attributes, 'ShopShortcutController::toggleTestMode() no longer declares a single admin route');
+
+        return $attributes[0]->getArguments()['path'];
     }
 
     // EasyAdmin renders a button as `action-<actionName>`, so a highlight guessing at the name points at nothing

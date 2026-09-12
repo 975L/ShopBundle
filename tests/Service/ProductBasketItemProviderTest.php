@@ -157,7 +157,7 @@ class ProductBasketItemProviderTest extends TestCase
 
     public function testABasketHoldingAnItemDeletedOutrightIsRefused(): void
     {
-        $this->assertSame('label.unavailable', $this->createProvider(null)->validateCheckout(new Basket(), $this->basketItems(1)));
+        $this->assertSame('label.unavailable', $this->createProvider()->validateCheckout(new Basket(), $this->basketItems(1)));
     }
 
     // A line weighs the article as many times as it was ordered - the sum a shipping grid is priced on, not the weight of one article

@@ -6,6 +6,42 @@
                 <source>narration.categories</source>
                 <target>«Categorías» agrupa los productos. Una categoría solo aparece en la tienda a partir del momento en que contiene al menos un producto.</target>
             </trans-unit>
+            <trans-unit id="VKNc6rA">
+                <source>narration.guided_project_shop_category</source>
+                <target>Clasifiquemos el catálogo antes de llenarlo. Un producto sin categoría solo se alcanza desde el índice de la tienda.</target>
+            </trans-unit>
+            <trans-unit id="yk37JEj">
+                <source>narration.guided_project_shop_downloadable</source>
+                <target>Vendamos un archivo en lugar de un paquete. Nunca se envía nada, y la entrega es un correo con enlaces que caducan.</target>
+            </trans-unit>
+            <trans-unit id="3RinKsz">
+                <source>narration.guided_project_shop_export</source>
+                <target>Movamos un catálogo a otro sitio, con las imágenes, los artículos y las categorías que los clasifican.</target>
+            </trans-unit>
+            <trans-unit id="mwcSBE1">
+                <source>narration.guided_project_shop_gift_card</source>
+                <target>Vendamos una tarjeta regalo. Es un producto como otro, salvo que lo que vale se escribe en su artículo.</target>
+            </trans-unit>
+            <trans-unit id="XAFGpMV">
+                <source>narration.guided_project_shop_index</source>
+                <target>Ajustemos la página con la que abre la tienda: la frase que acoge al visitante y los bloques compuestos encima de la lista.</target>
+            </trans-unit>
+            <trans-unit id="rs8nYa9">
+                <source>narration.guided_project_shop_product</source>
+                <target>Escribamos una ficha de producto y el artículo que lleva lo que paga el visitante. Uno sin el otro no vende nada.</target>
+            </trans-unit>
+            <trans-unit id="pjNb4kg">
+                <source>narration.guided_project_shop_test_mode</source>
+                <target>Digamos en voz alta que el catálogo se está montando, para que un visitante temprano no tome un ensayo por un pedido real.</target>
+            </trans-unit>
+            <trans-unit id="asPpzfF">
+                <source>narration.guided_project_shop_translate</source>
+                <target>Digamos la misma ficha en otro idioma. Solo los textos le pertenecen: el precio, el stock y las referencias son los mismos en todas partes.</target>
+            </trans-unit>
+            <trans-unit id="awbshU9">
+                <source>narration.guided_project_shop_trash</source>
+                <target>Saquemos un producto del catálogo sin perderlo, y luego traigámoslo de vuelta, o eliminémoslo definitivamente.</target>
+            </trans-unit>
             <trans-unit id="EhMylBu">
                 <source>narration.guided_step_shop_category_description</source>
                 <target>Presente la categoría en unas líneas: se muestran encima de los productos y las leen los buscadores.</target>
@@ -217,6 +253,30 @@
             <trans-unit id="2ws2nZa">
                 <source>narration.guided_step_shop_translate_title</source>
                 <target>El título mostrado entre corchetes es el del idioma de redacción. Permanece igual mientras no escriba nada: una ficha traducida a medias sigue siendo legible.</target>
+            </trans-unit>
+            <trans-unit id="R36fidL">
+                <source>narration.guided_step_shop_trash_delete</source>
+                <target>Elimina un producto: aquí la palabra es suave, solo envía la ficha a la papelera y la retira de la tienda. Nada se ha perdido todavía.</target>
+            </trans-unit>
+            <trans-unit id="_lSEV0I">
+                <source>narration.guided_step_shop_trash_delete_permanently</source>
+                <target>Elimínalo definitivamente: es el único gesto que destruye algo. El producto, sus imágenes y sus archivos se van, y la confirmación está para eso.</target>
+            </trans-unit>
+            <trans-unit id="5QiFhct">
+                <source>narration.guided_step_shop_trash_hidden</source>
+                <target>A un producto conviene dejarlo en la papelera antes que eliminarlo: una ficha ya vendida sigue siendo leída por los pedidos que la llevan.</target>
+            </trans-unit>
+            <trans-unit id="NFom4bA">
+                <source>narration.guided_step_shop_trash_open</source>
+                <target>La papelera se alcanza desde la lista del catálogo, y el gesto que la llena también: el panel te lleva a los productos.</target>
+            </trans-unit>
+            <trans-unit id="kfJs15W">
+                <source>narration.guided_step_shop_trash_open_bin</source>
+                <target>Abre la papelera: el mismo botón la muestra desde el catálogo, y dice «Productos» desde dentro para traerte de vuelta.</target>
+            </trans-unit>
+            <trans-unit id="KsH_9n3">
+                <source>narration.guided_step_shop_trash_restore</source>
+                <target>Recupera el producto: vuelve con sus imágenes, sus artículos y sus bloques, oculto de la tienda hasta que lo vuelvas a mostrar.</target>
             </trans-unit>
             <trans-unit id="kTwJa4V">
                 <source>narration.products</source>

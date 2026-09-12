@@ -6,6 +6,42 @@
                 <source>narration.categories</source>
                 <target>"Categories" groups the products. A category only appears in the shop from the moment it holds at least one product.</target>
             </trans-unit>
+            <trans-unit id="VKNc6rA">
+                <source>narration.guided_project_shop_category</source>
+                <target>Let's classify the catalog before filling it. A product with no category is only ever reached from the shop's own index.</target>
+            </trans-unit>
+            <trans-unit id="yk37JEj">
+                <source>narration.guided_project_shop_downloadable</source>
+                <target>Let's sell a file rather than a parcel. Nothing is ever shipped, and the delivery is an email holding links that expire.</target>
+            </trans-unit>
+            <trans-unit id="3RinKsz">
+                <source>narration.guided_project_shop_export</source>
+                <target>Let's move a catalog to another site, with the pictures, the items and the categories that class them.</target>
+            </trans-unit>
+            <trans-unit id="mwcSBE1">
+                <source>narration.guided_project_shop_gift_card</source>
+                <target>Let's sell a gift card. It is a product like any other, except that what it is worth is typed on its item.</target>
+            </trans-unit>
+            <trans-unit id="XAFGpMV">
+                <source>narration.guided_project_shop_index</source>
+                <target>Let's settle the page the shop opens on: the sentence it greets a visitor with, and the blocks composed above the listing.</target>
+            </trans-unit>
+            <trans-unit id="rs8nYa9">
+                <source>narration.guided_project_shop_product</source>
+                <target>Let's write a product sheet, and the item that carries what the visitor pays. One without the other sells nothing.</target>
+            </trans-unit>
+            <trans-unit id="pjNb4kg">
+                <source>narration.guided_project_shop_test_mode</source>
+                <target>Let's say out loud that the catalog is being set up, so an early visitor does not take a rehearsal for a real order.</target>
+            </trans-unit>
+            <trans-unit id="asPpzfF">
+                <source>narration.guided_project_shop_translate</source>
+                <target>Let's say the same sheet in another language. The texts alone belong to it: the price, the stock and the references are the same everywhere.</target>
+            </trans-unit>
+            <trans-unit id="awbshU9">
+                <source>narration.guided_project_shop_trash</source>
+                <target>Let's take a product out of the catalog without losing it, then either bring it back or remove it for good.</target>
+            </trans-unit>
             <trans-unit id="EhMylBu">
                 <source>narration.guided_step_shop_category_description</source>
                 <target>Introduce the category in a few lines: they are shown above the products, and read by the search engines.</target>
@@ -217,6 +253,30 @@
             <trans-unit id="2ws2nZa">
                 <source>narration.guided_step_shop_translate_title</source>
                 <target>The title shown between brackets is the writing language's own. It stays as it is until you type something: a half-translated sheet stays readable.</target>
+            </trans-unit>
+            <trans-unit id="R36fidL">
+                <source>narration.guided_step_shop_trash_delete</source>
+                <target>Delete a product: here the word is kind, it only moves the sheet to the recycle bin and takes it out of the shop. Nothing is lost yet.</target>
+            </trans-unit>
+            <trans-unit id="_lSEV0I">
+                <source>narration.guided_step_shop_trash_delete_permanently</source>
+                <target>Remove it for good: this is the only gesture that destroys anything. The product, its pictures and its files go, and the confirmation is there for that.</target>
+            </trans-unit>
+            <trans-unit id="5QiFhct">
+                <source>narration.guided_step_shop_trash_hidden</source>
+                <target>One product is better left in the bin than removed: a sheet that was already sold keeps being read by the orders holding it.</target>
+            </trans-unit>
+            <trans-unit id="NFom4bA">
+                <source>narration.guided_step_shop_trash_open</source>
+                <target>The recycle bin is reached from the catalog listing, and so is the gesture that fills it: the panel takes you to the products.</target>
+            </trans-unit>
+            <trans-unit id="kfJs15W">
+                <source>narration.guided_step_shop_trash_open_bin</source>
+                <target>Open the recycle bin: the same button shows it from the catalog, and reads "Products" from inside it to bring you back.</target>
+            </trans-unit>
+            <trans-unit id="KsH_9n3">
+                <source>narration.guided_step_shop_trash_restore</source>
+                <target>Bring the product back: it returns with its pictures, its items and its blocks, hidden from the shop until you show it again.</target>
             </trans-unit>
             <trans-unit id="kTwJa4V">
                 <source>narration.products</source>

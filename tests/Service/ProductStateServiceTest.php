@@ -72,7 +72,7 @@ class ProductStateServiceTest extends TestCase
 
     public function testAnItemWithNoLimitIsAlwaysBuyable(): void
     {
-        $product = $this->product([$this->item(1900, null)]);
+        $product = $this->product([$this->item(1900)]);
 
         $this->assertFalse($this->service->getState($product)['soldOut']);
     }

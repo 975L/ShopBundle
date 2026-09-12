@@ -6,6 +6,11 @@
                 "en": "The guided tour for translating a product now also shows where each variant's own title and description are written, and reminds you that categories are translated the same way.",
                 "fr": "La visite guidée pour traduire un produit montre aussi où se saisissent le titre et la description de chaque variante, et rappelle que les catégories se traduisent de la même façon.",
                 "es": "La visita guiada para traducir un producto muestra también dónde se escriben el título y la descripción de cada variante, y recuerda que las categorías se traducen de la misma manera."
+            },
+            {
+                "en": "A guided tour walks you through the recycle bin: how a deleted product is only set aside, how to bring it back with everything it holds, and the one button that really removes it.",
+                "fr": "Une visite guidée vous accompagne dans la corbeille : comment un produit supprimé n'est que mis de côté, comment le faire revenir avec tout ce qu'il contient, et le seul bouton qui le supprime vraiment.",
+                "es": "Una visita guiada le acompaña en la papelera: cómo un producto eliminado solo se aparta, cómo recuperarlo con todo lo que contiene, y el único botón que lo elimina de verdad."
             }
         ]
     },

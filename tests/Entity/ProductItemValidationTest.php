@@ -28,7 +28,7 @@ class ProductItemValidationTest extends TestCase
     // The back-office submits its forms without the browser's own check, so the refusal has to come from the entity
     public function testAnItemWithoutATitleIsRefused(): void
     {
-        $violations = $this->validator()->validate(new ProductItem(), null, null);
+        $violations = $this->validator()->validate(new ProductItem());
 
         $this->assertGreaterThan(0, $violations->count());
         $this->assertSame('title', $violations->get(0)->getPropertyPath());
@@ -39,7 +39,7 @@ class ProductItemValidationTest extends TestCase
     {
         $item = new ProductItem()->setTitle('Standard')->setPrice(1900);
 
-        $violations = $this->validator()->validate($item, null, null);
+        $violations = $this->validator()->validate($item);
 
         $this->assertGreaterThan(0, $violations->count());
         $this->assertSame('description', $violations->get(0)->getPropertyPath());
@@ -50,11 +50,11 @@ class ProductItemValidationTest extends TestCase
     {
         $item = new ProductItem()->setTitle('Standard')->setDescription('Sold as is');
 
-        $violations = $this->validator()->validate($item, null, null);
+        $violations = $this->validator()->validate($item);
 
         $this->assertGreaterThan(0, $violations->count());
         $this->assertSame('price', $violations->get(0)->getPropertyPath());
-        $this->assertCount(0, $this->validator()->validate($item->setPrice(0), null, null));
+        $this->assertCount(0, $this->validator()->validate($item->setPrice(0)));
     }
 
     // Refusing the row is only worth something if the sheet it was added to looks inside its own collection

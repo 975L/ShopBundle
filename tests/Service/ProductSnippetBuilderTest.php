@@ -244,7 +244,7 @@ class ProductSnippetBuilderTest extends TestCase
     // A grid saying nothing about that parcel declares nothing, rather than a zero rate which reads as free shipping
     public function testAGridSayingNothingPublishesNoShippingRate(): void
     {
-        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur'], shipping: null);
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur']);
         $product = $this->product();
         $product->getItems()->first()->setWeight(850);
 

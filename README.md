@@ -28,7 +28,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 ## Contents
 
 - **Setup** — [requirements](#requirements) · [installation](#installation) · [upgrading from v1](#upgrading)
-- **Using it** — [usage](#usage) · [block kinds](#block-kinds) · [composing the shop](#composing-the-shop) · [languages](#languages) · [commands](#commands) · [export / import products](#export--import-products) · [sitemap, llms.txt and health check](#sitemap-llmstxt-and-health-check) · [structured data](#structured-data) · [wish list](#wish-list) · [back-in-stock alerts](#back-in-stock-alerts) · [customer ratings](#customer-ratings) · [test mode](#test-mode) · [the demo catalog](#the-demo-catalog) · [what the site's dashboard gets](#what-the-sites-dashboard-gets)
+- **Using it** — [usage](#usage) · [block kinds](#block-kinds) · [composing the shop](#composing-the-shop) · [languages](#languages) · [commands](#commands) · [export / import products](#export--import-products) · [sitemap, llms.txt and health check](#sitemap-llmstxt-and-health-check) · [structured data](#structured-data) · [wish list](#wish-list) · [back-in-stock alerts](#back-in-stock-alerts) · [customer ratings](#customer-ratings) · [test mode](#test-mode) · [the demo catalog](#the-demo-catalog) · [what the site's dashboard gets](#what-the-sites-dashboard-gets) · [guided projects](#guided-projects)
 
 ## Features
 
@@ -63,6 +63,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
   back-office and copied onto the card (see [gift cards](#gift-cards))
 - Test mode switched from the dashboard, warning every visitor that nothing is really sold
 - Made-up catalog shipped as data, rendering the block showcase and seeding a demo site's shop (see [the demo catalog](#the-demo-catalog))
+- Nine replayable guided projects contributed to the dashboard, via ConfigBundle's `GuidedProjectProviderInterface`, walking a category, the shop's own page, a product, its translation, the downloadable, the gift card, the test mode, the export and the recycle bin (see [guided projects](#guided-projects))
 - Four skills written for the coding agents of the sites installing this bundle, shipped in the package and read straight from `vendor/`
 
 ---
@@ -836,10 +837,47 @@ Installed alongside ConfigBundle, this bundle contributes on its own, with nothi
 | `ProductCategoryExportProvider` / `ProductCategoryImportProvider` | The categories with the blocks composed on their page, carried the same way and importable in any order |
 | `ShopBackupPathProvider` | `public/medias/shop` and `private/medias/shop` declared as irreplaceable - **the private one holds the files your customers paid for** |
 | `ShopShortcutProvider` | The shop test mode tile, under Maintenance, toggling `shop-test-mode` |
+| `ShopGuidedProjectProvider` | The nine parcours of the "Guided projects" panel (see [guided projects](#guided-projects)) |
 | `ShopStatusProvider` | Whether the shop shows its test banner, the orders waiting to be shipped, how long the oldest has waited, the payments started but never confirmed, and the four counts of a catalog published but not finished - a sheet with no picture, a description too thin to rank, a picture with no `alt`, a category with no description - in the `extra` section of `/status/report` |
 | `ShopMaintenanceTaskProvider` | This bundle's two scheduled commands, so your site does not list them itself |
 | `WhatsNewProvider` | This bundle's entries on the "What's new" screen |
 | `StylesheetProvider` | The bundle's stylesheet, served in the site's single concatenated request, and the silhouettes of its block kinds, loaded on the back-office block picker |
+
+---
+
+## Guided projects
+
+`ShopGuidedProjectProvider` (ConfigBundle's `GuidedProjectProviderInterface`) contributes nine replayable
+exercises to the dashboard's "Guided projects" panel, in the order a catalog is actually filled: **creating a
+category**, which classes the products and is the one thing a shop needs before it holds anything to sell,
+**setting up the shop's own page**, the sentence a visitor is greeted with and the blocks composed above the
+listing, **creating a product** with the item carrying its price — one sheet without the other sells nothing —,
+**translating a product** from its language screen, **selling a file** rather than a parcel, **selling a gift
+card**, whose worth is typed on its item, **rehearsing the shop** through the test mode tile, **moving a catalog**
+to another site, and **the recycle bin**, which walks the deletion that is not one, the way back out and the one
+that destroys. Nothing to register — the provider is picked up automatically.
+
+Only the opening step of each carries an `url`, which is why creating a category and creating a product are two
+parcours rather than the one task they feel like: from there the panel walks the screen the user has been sent to,
+highlighting the button or the field they are meant to use next — one they click themselves, which brings the panel
+back on that very step:
+
+| Pointed at | What it is |
+| --- | --- |
+| `.action-new`, `.action-edit`, `.action-saveAndReturn`, `.action-translate`, `.action-exportSelection`, `.action-delete`, `.action-trash`, `.action-restore`, `.action-deletePermanently` | EasyAdmin builds an `action-<name>` class from the action's own name — `saveAndReturn`, not `save`. The translate one is only drawn where the site declares several languages, and the step reads as well without the outline |
+| `#Product_title`, `#Product_categories + .ts-wrapper`, `#Product_age`, `#Product_availableAt`, `#Product_hidden`, `#Product_giftCardText`, `#Product_giftCardScratch`, `#ProductCategory_name`, `#ProductCategory_slug`, `#ProductCategory_position`, `#ShopSettings_intro` | plain form fields, pointed at through their rendered id — an `AssociationField` rendered by TomSelect through the wrapper it inserts after the original select |
+| `trix-editor[input="Product_description"]`, `trix-editor[input="ProductCategory_description"]` | the editor itself, `#…_description` being the hidden input trix writes into |
+| `[data-shop-product-items]`, `[data-shop-item-translations]`, `[data-shop-settings-blocks]` | markers this bundle's own CRUD controllers set on collections EasyAdmin numbers, which therefore carry no stable id |
+| `[data-content-locales]` | the language tabs ConfigBundle draws above an edit screen |
+| `#form-batch-checkbox-all` | EasyAdmin's own select-all of the index, checked before the export button: the batch actions stay hidden until a row is |
+| `form[action$="/shop/test-mode-toggle"] button` | the dashboard shortcut of the test mode, the one step leaving this bundle's own screens |
+
+All nine are gated by `site-role-admin`, the bar the three management screens set on their own index: a parcours is
+never offered to someone its very first step turns away. Their `order` (8010 to 8070) runs the 8000 block
+`GuidedProjectProviderInterface` reserves this bundle — the same docblock naming every other bundle's block, so a
+range is read there rather than recopied here. The step of 10 it states leaves room to slip a parcours where it
+belongs rather than appending it at the end, which is what 8015 and 8025 are. Each step carries a `narration` of its
+own, and each parcours one for its title, so the back-office films say a text written to be heard rather than read.
 
 ---
 

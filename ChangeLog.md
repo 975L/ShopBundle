@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.8.3
+
+PHP Mess Detector leaves the quality gate to phpcs and rector
+
+- `phpmd.xml.dist` removed, with its `composer mess` script and its CI step (12/09/2026)
+- `phpcs.xml.dist` forbids `var_dump`, `print_r`, `debug_zval_dump`, `debug_print_backtrace`, `exit`, `die` and `eval()` (12/09/2026)
+- `phpcs.xml.dist` reports an empty catch block and a `count()` in a loop condition (12/09/2026)
+- `rector.php` adds the dead code set (12/09/2026)
+- Redundant `null` arguments and casts the dead code set reports are gone (12/09/2026)
+- The guided project of the recycle bin, `shop-trash` at 8070 (12/09/2026)
+- Every guided project carries a narration of its own (12/09/2026)
+- The test-mode toggle steps are checked against the path `#[AdminRoute]` declares (12/09/2026)
+- A `Guided projects` section in the README (12/09/2026)
+
 ## v2.8.2
 
 The health check probe announces itself under the shared agent

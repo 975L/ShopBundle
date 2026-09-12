@@ -19,7 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-// This bundle's guided projects, running the 8000 block GuidedProjectProviderInterface reserves them - the same docblock stating every other bundle's, so a range is read there rather than recopied here. They follow the order a catalog is actually filled: the category classes the products, so it comes first, then the product and the item carrying its price, then the two things an item can be beyond a parcel, and last the two occasional tasks. Creating a category and creating a product are two projects rather than the one task they feel like: only the opening step of a project carries an url, everything after it walking the screen the user has been sent to, highlighting the button or the field they are meant to use next - one they click themselves, which brings the panel back on that very step (see ConfigBundle's assets/js/guided-project.js)
+// This bundle's guided projects, running the 8000 block GuidedProjectProviderInterface reserves them - the same docblock stating every other bundle's, so a range is read there rather than recopied here. They follow the order a catalog is actually filled: the category classes the products, so it comes first, then the product and the item carrying its price, then the two things an item can be beyond a parcel, and last the three occasional tasks. Creating a category and creating a product are two projects rather than the one task they feel like: only the opening step of a project carries an url, everything after it walking the screen the user has been sent to, highlighting the button or the field they are meant to use next - one they click themselves, which brings the panel back on that very step (see ConfigBundle's assets/js/guided-project.js)
 class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
 {
     public function __construct(
@@ -41,6 +41,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             $this->giftCardProject(),
             $this->testModeProject(),
             $this->exportProject(),
+            $this->trashProject(),
         ];
     }
 
@@ -51,6 +52,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             'slug' => 'shop-category',
             'label' => 'label.guided_project_shop_category',
             'description' => 'description.guided_project_shop_category',
+            'narration' => 'narration.guided_project_shop_category',
             'translation_domain' => 'shop',
             'order' => 8010,
             'role' => $this->roleNeeded(),
@@ -114,6 +116,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             'slug' => 'shop-index',
             'label' => 'label.guided_project_shop_index',
             'description' => 'description.guided_project_shop_index',
+            'narration' => 'narration.guided_project_shop_index',
             'translation_domain' => 'shop',
             // Between the category and the product: the shop's own page is what one settles before filling the catalogue it lists
             'order' => 8015,
@@ -155,6 +158,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             'slug' => 'shop-product',
             'label' => 'label.guided_project_shop_product',
             'description' => 'description.guided_project_shop_product',
+            'narration' => 'narration.guided_project_shop_product',
             'translation_domain' => 'shop',
             'order' => 8020,
             'role' => $this->roleNeeded(),
@@ -236,6 +240,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             'slug' => 'shop-translate',
             'label' => 'label.guided_project_shop_translate',
             'description' => 'description.guided_project_shop_translate',
+            'narration' => 'narration.guided_project_shop_translate',
             'translation_domain' => 'shop',
             'order' => 8025,
             'role' => $this->roleNeeded(),
@@ -308,6 +313,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             'slug' => 'shop-downloadable',
             'label' => 'label.guided_project_shop_downloadable',
             'description' => 'description.guided_project_shop_downloadable',
+            'narration' => 'narration.guided_project_shop_downloadable',
             'translation_domain' => 'shop',
             'order' => 8030,
             'role' => $this->roleNeeded(),
@@ -357,6 +363,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             'slug' => 'shop-gift-card',
             'label' => 'label.guided_project_shop_gift_card',
             'description' => 'description.guided_project_shop_gift_card',
+            'narration' => 'narration.guided_project_shop_gift_card',
             'translation_domain' => 'shop',
             'order' => 8040,
             'role' => $this->roleNeeded(),
@@ -413,6 +420,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             'slug' => 'shop-test-mode',
             'label' => 'label.guided_project_shop_test_mode',
             'description' => 'description.guided_project_shop_test_mode',
+            'narration' => 'narration.guided_project_shop_test_mode',
             'translation_domain' => 'shop',
             'order' => 8050,
             'role' => $this->roleNeeded(),
@@ -451,6 +459,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             'slug' => 'shop-export',
             'label' => 'label.guided_project_shop_export',
             'description' => 'description.guided_project_shop_export',
+            'narration' => 'narration.guided_project_shop_export',
             'translation_domain' => 'shop',
             'order' => 8060,
             'role' => $this->roleNeeded(),
@@ -477,6 +486,59 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_shop_export_import',
                     'description' => 'description.guided_step_shop_export_import',
                     'narration' => 'narration.guided_step_shop_export_import',
+                ],
+            ],
+        ];
+    }
+
+    // Taking a product out of the catalogue without losing it, the one task where the gesture that looks like a deletion is not one - and where the gesture that is one lives behind a second screen
+    private function trashProject(): array
+    {
+        return [
+            'slug' => 'shop-trash',
+            'label' => 'label.guided_project_shop_trash',
+            'description' => 'description.guided_project_shop_trash',
+            'narration' => 'narration.guided_project_shop_trash',
+            'translation_domain' => 'shop',
+            'order' => 8070,
+            'role' => $this->roleNeeded(),
+            'steps' => [
+                [
+                    'label' => 'label.guided_step_shop_trash_open',
+                    'description' => 'description.guided_step_shop_trash_open',
+                    'narration' => 'narration.guided_step_shop_trash_open',
+                    'url' => $this->indexUrl(ProductCrudController::class),
+                ],
+                [
+                    'label' => 'label.guided_step_shop_trash_delete',
+                    'description' => 'description.guided_step_shop_trash_delete',
+                    'narration' => 'narration.guided_step_shop_trash_delete',
+                    // ProductCrudController relabels EasyAdmin's own delete to "move to the recycle bin", which is what it does here, and hides it on a product already there
+                    'highlight' => '.action-delete',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_trash_open_bin',
+                    'description' => 'description.guided_step_shop_trash_open_bin',
+                    'narration' => 'narration.guided_step_shop_trash_open_bin',
+                    // The same global action both ways: it reads "recycle bin" on the catalogue and "products" from inside the bin, which is what the step's description says
+                    'highlight' => '.action-trash',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_trash_restore',
+                    'description' => 'description.guided_step_shop_trash_restore',
+                    'narration' => 'narration.guided_step_shop_trash_restore',
+                    'highlight' => '.action-restore',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_trash_delete_permanently',
+                    'description' => 'description.guided_step_shop_trash_delete_permanently',
+                    'narration' => 'narration.guided_step_shop_trash_delete_permanently',
+                    'highlight' => '.action-deletePermanently',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_trash_hidden',
+                    'description' => 'description.guided_step_shop_trash_hidden',
+                    'narration' => 'narration.guided_step_shop_trash_hidden',
                 ],
             ],
         ];
