@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.8.4
+
+The basket bar is placed by UiBundle's layout
+
+- `Basket:Navbar` is placed by UiBundle's layout, no longer by the site's (21/09/2026) **See [UPGRADE.md](UPGRADE.md)**
+- Requires `c975l/core-bundle` `^1.31.0`, the first layout placing it (21/09/2026)
+
 ## v2.8.3
 
 PHP Mess Detector leaves the quality gate to phpcs and rector

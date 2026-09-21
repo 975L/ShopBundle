@@ -18,6 +18,7 @@ use c975L\UiBundle\Management\BlockDataImporter;
 use c975L\UiBundle\Registry\FormBlockDependencyRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductCategoryImportProviderTest extends TestCase
 {
@@ -85,6 +86,6 @@ class ProductCategoryImportProviderTest extends TestCase
 
     private function createBlockDataImporter(): BlockDataImporter
     {
-        return new BlockDataImporter($this->createStub(EntityManagerInterface::class), $this->createStub(FormBlockDependencyRegistry::class));
+        return new BlockDataImporter($this->createStub(EntityManagerInterface::class), $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class));
     }
 }

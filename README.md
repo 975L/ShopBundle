@@ -272,7 +272,7 @@ On the product sheet, the pictures sit beside the decision from 900px up and the
 which opens at a time - HTML's own exclusive accordion through `<details name="product-items">`, so the bundle
 ships no JavaScript for it. Quantity is added one click at a time by PaymentBundle's `basket` controller, which
 also fills the basket bar at the bottom of the page. That bar is PaymentBundle's own `Basket:Navbar`, placed once
-in the site's layout: the shop's pages no longer emit it, a second one on the page leaving its counters stale.
+by UiBundle's layout: the shop's pages do not emit it, a second one on the page leaving its counters stale.
 
 An editor browsing the shop is offered UiBundle's own hover button on what they are looking at, exactly as on a
 page's blocks: a card on the shop's index or on a category page leads to the product it stands for, a category's

@@ -2,6 +2,12 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.8.4
+
+**The basket bar is placed by UiBundle's layout** (CoreBundle `^1.31.0`), which reverts what v2.5.2 asked: remove
+the `<twig:c975LPayment:Basket:Navbar/>` your site's layout added, or the page gets two bars and the second one is
+never filled.
+
 ### v2.6
 
 **The shop's pages measure themselves.** A new `@c975LShop/layout.html.twig`, which every public template of this
@@ -45,7 +51,7 @@ prints nothing. A site declaring several languages says it in each from that set
 ### v2.5.2
 
 **The basket bar is placed by the site's layout, not by the shop's pages.** `shop/index`, `category/display` and
-`product/display` no longer emit it; add PaymentBundle's own component once in the layout instead:
+`product/display` no longer emit it; add PaymentBundle's own component once in the layout instead (no longer needed since v2.8.4, UiBundle's layout placing it):
 
 ```twig
 <twig:c975LPayment:Basket:Navbar/>

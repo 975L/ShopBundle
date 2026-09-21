@@ -91,7 +91,7 @@ worth and what it looks like.
 part of the contract — **dropping one silently disables the stock check on the client.**
 
 `Basket:Navbar` (PaymentBundle) is the bar shown as soon as the basket holds something, and it carries
-PaymentBundle's own `Basket:ViewButton`. It is **placed once, in the site's layout**: this bundle's pages no
+PaymentBundle's own `Basket:ViewButton`. It is **placed once, by UiBundle's layout**: this bundle's pages no
 longer emit it, and `Shop:NavbarBasket` survives only as a one-line wrapper for the sites that overrode it.
 That button already holds the `data-basket-target="total"` and `"quantity"` elements the controller fills.
 **Do not add a second element carrying either target** — Stimulus fills only the first, leaving the other
@@ -238,7 +238,7 @@ apiece — a product to its edit screen, an order to its own read-only detail.
 - **Do not leave a never-downloaded copy behind** — the purge goes by the expiry date, not by whether the link was clicked.
 - **Do not email a link for a source file that no longer exists.**
 - **Do not duplicate a `data-basket-target`** already carried by PaymentBundle's own button.
-- **Do not emit the basket bar from a shop page** — `Basket:Navbar` is placed once in the site's layout, and a second one on the page is never filled.
+- **Do not emit the basket bar from a shop page** — `Basket:Navbar` is placed once by UiBundle's layout, and a second one on the page is never filled.
 - **Do not offer a stock alert on an item withdrawn from sale** (`limitedQuantity` at 0) — nobody is waiting for what is not coming back.
 - **Do not send the alerts from a Doctrine listener** — it would fire inside the back-office flush and make the shopkeeper wait on the mailer.
 - **Do not send a whole waiting list in one pass** — the command is batched on purpose.

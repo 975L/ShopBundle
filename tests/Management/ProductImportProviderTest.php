@@ -23,6 +23,7 @@ use c975L\UiBundle\Registry\FormBlockDependencyRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
 class ProductImportProviderTest extends TestCase
@@ -337,7 +338,7 @@ class ProductImportProviderTest extends TestCase
             $productRepository,
             $categoryRepository,
             $mediaRepository,
-            new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)),
+            new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)),
             $projectDir,
         );
     }
