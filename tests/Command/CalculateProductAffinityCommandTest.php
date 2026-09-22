@@ -32,6 +32,9 @@ class CalculateProductAffinityCommandTest extends TestCase
     /** @var list<ProductAffinity> */
     private array $persisted = [];
 
+    /** @var array<int, int> ProductItem id => Product id, when they differ */
+    private array $productOf = [];
+
     // Two articles bought in the same order are what an affinity is, and the pair is filed once whichever way round the basket listed them
     public function testTwoArticlesBoughtTogetherAreFiledAsOnePair(): void
     {
@@ -101,6 +104,18 @@ class CalculateProductAffinityCommandTest extends TestCase
         $this->assertSame([], $this->persisted);
     }
 
+    // Two variants of the same article in one order count it once, and the gap it leaves among the ids must not lose the other article
+    public function testTwoVariantsOfTheSameArticleCountItOnce(): void
+    {
+        $this->productOf = [10 => 1, 11 => 1, 20 => 2];
+
+        $tester = $this->calculate([$this->basket([10, 11, 20])]);
+
+        $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
+        $this->assertCount(1, $this->persisted);
+        $this->assertSame(1, $this->persisted[0]->getCoPurchaseCount());
+    }
+
     // One basket, its "product" lines keyed by ProductItem id exactly as BasketService writes them
     private function basket(array $productIds): Basket
     {
@@ -147,17 +162,17 @@ class CalculateProductAffinityCommandTest extends TestCase
         return $repository;
     }
 
-    // Every ProductItem asked for stands for the product of the same id, which is all this command reads of it
+    // Every ProductItem asked for stands for the product of the same id unless mapped otherwise, which is all this command reads of it
     private function productItemRepository(): ProductItemRepository
     {
         $repository = $this->createStub(ProductItemRepository::class);
-        $repository->method('findBy')->willReturnCallback(static function (array $criteria): array {
+        $repository->method('findBy')->willReturnCallback(function (array $criteria): array {
             $items = [];
 
             foreach ($criteria['id'] as $id) {
                 $product = new Product();
                 $reflection = new \ReflectionProperty(Product::class, 'id');
-                $reflection->setValue($product, $id);
+                $reflection->setValue($product, $this->productOf[$id] ?? $id);
 
                 $item = new ProductItem();
                 $item->setProduct($product);

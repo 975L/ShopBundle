@@ -648,12 +648,13 @@ for its merchant listings, but a graph claiming "new" over a second-hand item is
 nothing.
 
 Each offer also carries what the sheet already displays about delivery and returns: the shipping rate
-PaymentBundle's grid charges for this very item's weight, to the one country `shop-shipping-country` names, on
-the items that are actually posted - a downloaded file and a rendered service carry none - and a
-`merchantReturnLink` pointing at `url-terms-of-sales`. Nothing is published for an item nobody weighed, for a
-shop naming no default country, or for a grid answering nothing: a tier published as if it covered every parcel
-is a guess. No return window is published either: nothing in the ecosystem holds one, and a guessed one is a
-promise the shop never made.
+PaymentBundle's grid charges for this very item's weight, to the one country `shop-shipping-country` names -
+a zero rate on a downloaded file and on a tier priced at zero, which is free shipping, and none on a rendered
+service. Nothing is published for an item nobody weighed, for a shop naming no default country, or for a grid
+answering nothing: a tier published as if it covered every parcel is a guess. The return policy states the
+window PaymentBundle's `shop-return-days` holds for that same country, `0` meaning no returns, with a
+`merchantReturnLink` to `url-terms-of-sales` when there is one; a downloaded file is never returnable. Without
+a window or a country no policy is published at all, an incomplete one being what Google flags.
 
 The shop's index and a category page publish an `ItemList` of the cards they print, through a second function
 taking the products the page shows and, where it paginates, how many the pages before it already listed:

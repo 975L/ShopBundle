@@ -241,7 +241,7 @@ class ProductSnippetBuilderTest extends TestCase
         $this->assertArrayNotHasKey('shippingDetails', $builder->buildProduct($product)['offers'][0]);
     }
 
-    // A grid saying nothing about that parcel declares nothing, rather than a zero rate which reads as free shipping
+    // A grid saying nothing about that parcel declares nothing: a zero rate would read as free shipping
     public function testAGridSayingNothingPublishesNoShippingRate(): void
     {
         $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur']);
@@ -269,37 +269,72 @@ class ProductSnippetBuilderTest extends TestCase
         $this->assertSame('OfferShippingDetails', $builder->buildProduct($product)['offers'][0]['shippingDetails']['@type']);
     }
 
-    // A named file is downloaded rather than posted, and the grid pricing its weight for a named country changes nothing to that
-    public function testADownloadedItemIsNotShipped(): void
+    // A named file is downloaded rather than posted: it costs nothing to deliver, whatever the grid prices its weight at
+    public function testADownloadedItemIsDeliveredForFree(): void
     {
         $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur'], shipping: 490);
         $product = new Product()->setTitle('Affiche')->setSlug('affiche')->addItem($this->item('a2', 1250)->setFile(new ProductItemFile()->setName('affiche.pdf'))->setWeight(850));
+        $shipping = $builder->buildProduct($product)['offers'][0]['shippingDetails'];
 
-        $this->assertArrayNotHasKey('shippingDetails', $builder->buildProduct($product)['offers'][0]);
+        $this->assertSame('0.00', $shipping['shippingRate']['value']);
+        $this->assertSame('FR', $shipping['shippingDestination']['addressCountry']);
     }
 
-    // A shop that charges nothing has nothing to declare here rather than a zero rate, which reads as free shipping
-    public function testAShopChargingNothingForShippingDeclaresNoRate(): void
+    // A tier priced at zero is free shipping, which Google reads from a zero rate
+    public function testATierPricedAtZeroIsPublishedAsFreeShipping(): void
     {
         $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur'], shipping: 0);
         $product = $this->product();
         $product->getItems()->first()->setWeight(850);
 
-        $this->assertArrayNotHasKey('shippingDetails', $builder->buildProduct($product)['offers'][0]);
+        $this->assertSame('0.00', $builder->buildProduct($product)['offers'][0]['shippingDetails']['shippingRate']['value']);
     }
 
-    // The link and nothing else: no column of this ecosystem holds the return window, and a guessed one is a promise the shop never made
-    public function testAnOfferPointsAtTheReturnPolicyWhenTheShopPublishedOne(): void
+    // The window the shop configured, for the country it sells to, plus the link to the terms stating it
+    public function testAnOfferStatesTheConfiguredReturnWindow(): void
     {
-        $builder = $this->builder(['url-terms-of-sales' => 'https://example.org/terms-of-sales']);
+        $builder = $this->builder(['shop-shipping-country' => 'fr', 'shop-return-days' => 14, 'url-terms-of-sales' => 'https://example.org/terms-of-sales']);
         $policy = $builder->buildProduct($this->product())['offers'][0]['hasMerchantReturnPolicy'];
 
         $this->assertSame('MerchantReturnPolicy', $policy['@type']);
+        $this->assertSame('FR', $policy['applicableCountry']);
+        $this->assertSame('https://schema.org/MerchantReturnFiniteReturnWindow', $policy['returnPolicyCategory']);
+        $this->assertSame(14, $policy['merchantReturnDays']);
         $this->assertSame('https://example.org/terms-of-sales', $policy['merchantReturnLink']);
-        $this->assertArrayNotHasKey('merchantReturnDays', $policy);
     }
 
-    public function testAShopWithoutTermsOfSalesPublishesNoReturnPolicy(): void
+    // Zero days is a shop taking no returns, said as such rather than as a window of nothing
+    public function testAShopTakingNoReturnsSaysSo(): void
+    {
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-return-days' => 0]);
+        $policy = $builder->buildProduct($this->product())['offers'][0]['hasMerchantReturnPolicy'];
+
+        $this->assertSame('https://schema.org/MerchantReturnNotPermitted', $policy['returnPolicyCategory']);
+        $this->assertArrayNotHasKey('merchantReturnDays', $policy);
+        $this->assertArrayNotHasKey('merchantReturnLink', $policy);
+    }
+
+    // The right of withdrawal ends once a download starts, whatever window the shop grants its posted articles
+    public function testADownloadedItemIsNotReturnable(): void
+    {
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-return-days' => 14]);
+        $product = new Product()->setTitle('Affiche')->setSlug('affiche')->addItem($this->item('a2', 1250)->setFile(new ProductItemFile()->setName('affiche.pdf')));
+
+        $this->assertSame('https://schema.org/MerchantReturnNotPermitted', $builder->buildProduct($product)['offers'][0]['hasMerchantReturnPolicy']['returnPolicyCategory']);
+    }
+
+    // An incomplete policy is what Google flags: without a window or a country, no node at all, the terms link alone included
+    public function testAReturnPolicyMissingItsWindowOrCountryIsLeftOut(): void
+    {
+        $withoutDays = $this->builder(['shop-shipping-country' => 'FR', 'url-terms-of-sales' => 'https://example.org/terms-of-sales']);
+        $withoutCountry = $this->builder(['shop-return-days' => 14]);
+
+        $this->assertArrayNotHasKey('hasMerchantReturnPolicy', $withoutDays->buildProduct($this->product())['offers'][0]);
+        $this->assertArrayNotHasKey('hasMerchantReturnPolicy', $withoutCountry->buildProduct($this->product())['offers'][0]);
+    }
+
+    // A shop configuring nothing publishes no return policy
+    public function testAShopConfiguringNothingPublishesNoReturnPolicy(): void
     {
         $this->assertArrayNotHasKey('hasMerchantReturnPolicy', $this->builder->buildProduct($this->product())['offers'][0]);
     }

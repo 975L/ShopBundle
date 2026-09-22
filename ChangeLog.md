@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.8.5
+
+Product offers state the configured return window
+
+- Offers state the return window of PaymentBundle's `shop-return-days` for `shop-shipping-country` (22/09/2026)
+- No return policy is published without a window or a country (22/09/2026)
+- A downloaded file is published as not returnable (22/09/2026)
+- A downloaded file and a tier priced at zero publish a zero shipping rate (22/09/2026)
+- Affinity pairs are no longer lost when two variants of one article share an order (22/09/2026)
+
 ## v2.8.4
 
 The basket bar is placed by UiBundle's layout

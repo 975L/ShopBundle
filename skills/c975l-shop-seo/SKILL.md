@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-seo
-description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, USER_AGENT, c975LHealthCheck, isProbe, site-rate-limit, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork, url_metadata_title, url_metadata_summary, UrlMetadataProvider, Url descriptions, ShopPublicUrlResolver, resolveAlternates, resolveLocalizedUrl, alternates, hreflang, ShopTranslatedLocales, localized urls."
+description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, hasMerchantReturnPolicy, MerchantReturnPolicy, merchantReturnDays, MerchantReturnNotPermitted, shop-return-days, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, USER_AGENT, c975LHealthCheck, isProbe, site-rate-limit, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork, url_metadata_title, url_metadata_summary, UrlMetadataProvider, Url descriptions, ShopPublicUrlResolver, resolveAlternates, resolveLocalizedUrl, alternates, hreflang, ShopTranslatedLocales, localized urls."
 ---
 
 # c975L ShopBundle — structured data, sitemap, health, recommendations
@@ -45,11 +45,18 @@ else `InStock`. **Those rules live in one place per concern** — the graph here
 
 `shippingDetails` is priced by PaymentBundle's `ShippingRateResolverInterface` on **that item's own
 weight**, for the one country `shop-shipping-country` names, which the node states as its
-`shippingDestination`. Five cases publish **nothing at all** rather than a guess: a downloaded file, a
-rendered service, an item nobody weighed, a shop naming no country, and a grid answering nothing for
-that parcel. What tells a posted item from the rest is `ProductBasketItemProvider`'s rule, so a graph
-and a delivery note never disagree. **Do not publish a tier of the grid as if it covered every parcel**,
-and do not publish a zero rate, which reads as free shipping.
+`shippingDestination`. A downloaded file publishes a **zero rate**, as does a tier priced at zero —
+that is free shipping, and Google reads it from the rate. Four cases publish **nothing at all** rather
+than a guess: a rendered service, an item nobody weighed, a shop naming no country, and a grid
+answering nothing for that parcel. What tells a posted item from the rest is `ProductBasketItemProvider`'s
+rule, so a graph and a delivery note never disagree. **Do not publish a tier of the grid as if it
+covered every parcel.**
+
+`hasMerchantReturnPolicy` states PaymentBundle's `shop-return-days` for the `shop-shipping-country`
+as its `applicableCountry`: `MerchantReturnFiniteReturnWindow` with `merchantReturnDays`, or
+`MerchantReturnNotPermitted` at `0` and on any downloaded file, plus a `merchantReturnLink` to
+`url-terms-of-sales` when set. **Without a window or a country, no node at all** — the link alone is
+an incomplete policy, which is what Google flags.
 
 `sku` is the shop's own reference, and **falls back on the item's slug** when the column is left empty,
 which is what every offer carried before the column existed. `gtin` is the barcode number — an EAN-13

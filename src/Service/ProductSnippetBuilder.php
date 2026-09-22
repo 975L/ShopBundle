@@ -242,7 +242,7 @@ class ProductSnippetBuilder
                 // Left out when the shop does not state it: a graph claiming "new" over a second-hand item is worse than a graph saying nothing
                 'itemCondition' => self::CONDITIONS[(string) $item->getItemCondition()] ?? '',
                 'shippingDetails' => $this->shippingDetails($item),
-                'hasMerchantReturnPolicy' => $this->returnPolicy(),
+                'hasMerchantReturnPolicy' => $this->returnPolicy($item),
             ]);
         }
 
@@ -269,29 +269,37 @@ class ProductSnippetBuilder
     // What the Shipping component of the sheet already states, said again where a search engine reads it. Priced on the grid for this very article's weight, and to the one destination the shop names - a rate published without saying where it posts to is a rate for nowhere, and no delivery time is stated because none is configured anywhere
     private function shippingDetails(ProductItem $item): array
     {
-        // The rule telling a shipped item from the rest is ProductBasketItemProvider's, so a graph and a delivery note never disagree: a file is downloaded, a service is rendered, everything else is posted
-        if (null !== $item->getFile()?->getName() || true === $item->isService()) {
-            return [];
-        }
-
-        // Nothing is claimed for an article nobody weighed or a shop naming no default country: the grid answers per weight and per zone, and publishing one of its tiers as if it covered every parcel would be a guess
+        // A service is rendered, never posted: the rule is ProductBasketItemProvider's, so a graph and a delivery note never disagree
         $country = trim((string) $this->configService->get('shop-shipping-country'));
+        if ('' === $country || true === $item->isService()) {
+            return [];
+        }
+
+        // A downloaded file costs nothing to deliver, which Google reads from a zero rate rather than from a missing node
+        if ($this->isDownloaded($item)) {
+            return $this->shippingNode(0, $country);
+        }
+
+        // Nothing is claimed for an article nobody weighed: the grid answers per weight and per zone, and publishing one of its tiers as if it covered every parcel would be a guess
         $weight = $item->getWeight();
-        if ('' === $country || null === $weight) {
+        if (null === $weight) {
             return [];
         }
 
-        // A shop that charges nothing has nothing to declare here rather than a zero rate, which reads as free shipping
+        // A grid saying nothing about that parcel declares nothing, while a tier priced at zero is free shipping and said as such
         $shipping = $this->shippingRateResolver->resolve($country, $weight);
-        if (null === $shipping || $shipping <= 0) {
-            return [];
-        }
 
+        return null === $shipping || $shipping < 0 ? [] : $this->shippingNode($shipping, $country);
+    }
+
+    // The OfferShippingDetails node for a rate in cents and the one country it posts to
+    private function shippingNode(int $rate, string $country): array
+    {
         return [
             '@type' => 'OfferShippingDetails',
             'shippingRate' => [
                 '@type' => 'MonetaryAmount',
-                'value' => number_format($shipping / 100, 2, '.', ''),
+                'value' => number_format($rate / 100, 2, '.', ''),
                 'currency' => strtoupper(trim((string) $this->configService->get('shop-currency'))),
             ],
             'shippingDestination' => [
@@ -301,19 +309,41 @@ class ProductSnippetBuilder
         ];
     }
 
-    // The link and nothing else: the return window and the country are written in the terms of sales, which no column of this ecosystem parses - publishing a window nobody configured would be a promise the shop never made
-    private function returnPolicy(): array
+    // The return window the shop configured, for the country it sells to - no node at all when either is missing, an incomplete policy being what Google flags, and a guessed window a promise the shop never made
+    private function returnPolicy(ProductItem $item): array
     {
-        $url = trim((string) $this->configService->get('url-terms-of-sales'));
+        $country = trim((string) $this->configService->get('shop-shipping-country'));
+        $days = $this->configService->get('shop-return-days');
 
-        if ('' === $url) {
+        // A downloaded file is not returnable, the right of withdrawal ending once the download starts
+        $downloaded = $this->isDownloaded($item);
+        if ('' === $country || (!$downloaded && !is_numeric($days))) {
             return [];
         }
 
-        return [
+        $days = $downloaded ? 0 : max(0, (int) $days);
+        $policy = [
             '@type' => 'MerchantReturnPolicy',
-            'merchantReturnLink' => $url,
+            'applicableCountry' => strtoupper($country),
+            'returnPolicyCategory' => 0 === $days ? 'https://schema.org/MerchantReturnNotPermitted' : 'https://schema.org/MerchantReturnFiniteReturnWindow',
         ];
+
+        if ($days > 0) {
+            $policy['merchantReturnDays'] = $days;
+        }
+
+        $url = trim((string) $this->configService->get('url-terms-of-sales'));
+        if ('' !== $url) {
+            $policy['merchantReturnLink'] = $url;
+        }
+
+        return $policy;
+    }
+
+    // A named file is downloaded rather than posted - the empty placeholder ProductItemListener attaches to every new item is not one, here as in ProductBasketItemProvider
+    private function isDownloaded(ProductItem $item): bool
+    {
+        return null !== $item->getFile()?->getName();
     }
 
     // The very rules AddButton.html.twig disables its button on, plus the product's own release date - a graph saying "in stock" over a button that cannot be clicked is worse than no graph

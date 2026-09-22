@@ -198,7 +198,7 @@ class CalculateProductAffinityCommand extends Command
             }
         }
 
-        return array_unique($productIds);
+        return array_values(array_unique($productIds));
     }
 
     private function generateProductPairs(array $productIds): array

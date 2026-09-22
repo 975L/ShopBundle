@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-09-22",
+        "description": [
+            {
+                "en": "Search engines now see how many days your customers have to return a posted article, and that downloads are delivered free and cannot be returned.",
+                "fr": "Les moteurs de recherche voient désormais de combien de jours vos clients disposent pour retourner un article expédié, et que les téléchargements sont livrés gratuitement et ne se retournent pas.",
+                "es": "Los motores de búsqueda ven ahora de cuántos días disponen sus clientes para devolver un artículo enviado, y que las descargas se entregan gratis y no se devuelven."
+            },
+            {
+                "en": "Product recommendations no longer miss an article bought alongside two variants of another one.",
+                "fr": "Les recommandations de produits n'oublient plus un article acheté en même temps que deux variantes d'un autre.",
+                "es": "Las recomendaciones de productos ya no olvidan un artículo comprado junto con dos variantes de otro."
+            }
+        ]
+    },
+    {
         "date": "2026-09-12",
         "description": [
             {
