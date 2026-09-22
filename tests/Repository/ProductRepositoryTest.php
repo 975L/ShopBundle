@@ -62,6 +62,28 @@ class ProductRepositoryTest extends TestCase
         $this->assertStringContainsString('LEFT JOIN i.file', (string) $dql);
     }
 
+    // The site search cards are drawn only from what a visitor may still buy, with the items the basket button needs read in the same query
+    public function testTheSiteSearchCardsReadOnlyAvailableProductsWithTheirItems(): void
+    {
+        $dql = null;
+        $this->createRepository($dql)->findAvailableBySlugs(['affiche']);
+
+        $this->assertStringContainsString('p.hidden = false', (string) $dql);
+        $this->assertStringContainsString('p.isDeleted = false', (string) $dql);
+        $this->assertStringContainsString('p.availableAt < :now', (string) $dql);
+        $this->assertStringContainsString('SELECT p, m, i', (string) $dql);
+        $this->assertStringContainsString('p.slug IN (:slugs)', (string) $dql);
+    }
+
+    // No slug, no query
+    public function testNoSlugRunsNoQuery(): void
+    {
+        $dql = null;
+
+        $this->assertSame([], $this->createRepository($dql)->findAvailableBySlugs([]));
+        $this->assertNull($dql);
+    }
+
     // A repository wired on an entity manager that runs no query, only records the DQL it was handed
     private function createRepository(?string &$dql): ProductRepository
     {

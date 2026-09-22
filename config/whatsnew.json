@@ -3,6 +3,11 @@
         "date": "2026-09-22",
         "description": [
             {
+                "en": "When your site search answers from a product, the visitor now sees it as a shop card, with its price and, when it comes in a single format, a button to add it to the basket.",
+                "fr": "Quand la recherche du site répond à partir d'un produit, le visiteur le voit désormais sous forme de carte de la boutique, avec son prix et, s'il n'existe qu'en un seul format, un bouton pour l'ajouter au panier.",
+                "es": "Cuando la búsqueda del sitio responde a partir de un producto, el visitante lo ve ahora como una tarjeta de la tienda, con su precio y, si existe en un solo formato, un botón para añadirlo a la cesta."
+            },
+            {
                 "en": "Search engines now see how many days your customers have to return a posted article, and that downloads are delivered free and cannot be returned.",
                 "fr": "Les moteurs de recherche voient désormais de combien de jours vos clients disposent pour retourner un article expédié, et que les téléchargements sont livrés gratuitement et ne se retournent pas.",
                 "es": "Los motores de búsqueda ven ahora de cuántos días disponen sus clientes para devolver un artículo enviado, y que las descargas se entregan gratis y no se devuelven."

@@ -558,6 +558,10 @@ php bin/console c975l:health-check:run --kind=urls-shop
 
 Nothing to implement for any of the three: declaring the sitemap is the whole contract.
 
+### In the site search
+
+The same titled urls are what UiBundle's **site search** (`ai_search` block) indexes, so a visitor asking about a product gets an answer from its sheet. `ShopAiSearchCardProvider` (UiBundle's `AiSearchCardProviderInterface`) then draws each product the answer read as the shop's own card - `templates/ai_search/card.html.twig`, the catalog's `Product:Product` card plus its basket button when the product is sold as a single item, a product in several formats being chosen on its own page. The product urls are told apart by the router (`product_display`, `product_display_localized`), and only what `findAvailableBySlugs()` still sells is drawn: a hidden, trashed or unreleased product stays a plain link. Override the template to draw it otherwise.
+
 A second check of its own, `product-json-ld`, reads every product sheet the way a search engine does and reports
 what it finds there: no structured data at all, a block that does not parse, or one that parses without
 describing a `Product`. It is the counterpart of writing that markup — the builder being right proves nothing

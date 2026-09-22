@@ -1,0 +1,7 @@
+{# A product the site search answered from (see ShopAiSearchCardProvider): the shop's card, plus the basket button when there is a single item, inside a "basket" controller of its own as the answer lands in a page that may hold none #}
+<div class="ai-search-product" data-controller="basket">
+    <twig:c975LShop:Product:Product product="{{ product }}"/>
+    {% if product.items|length == 1 %}
+        <twig:c975LShop:ProductItem:AddButton productItem="{{ product.items|first }}"/>
+    {% endif %}
+</div>

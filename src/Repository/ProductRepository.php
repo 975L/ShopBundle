@@ -181,6 +181,31 @@ class ProductRepository extends ServiceEntityRepository
         ;
     }
 
+    // The products a visitor may still buy behind a set of slugs, with their pictures and items - what the site search draws its product cards from (see ShopAiSearchCardProvider)
+    /**
+     * @param string[] $slugs
+     *
+     * @return Product[]
+     */
+    public function findAvailableBySlugs(array $slugs): array
+    {
+        if ([] === $slugs) {
+            return [];
+        }
+
+        return $this->available($this->createQueryBuilder('p'))
+            ->select('p, m, i')
+            ->leftJoin('p.medias', 'm')
+            ->leftJoin('p.items', 'i')
+            ->andWhere('p.slug IN (:slugs)')
+            ->setParameter('slugs', $slugs)
+            ->orderBy('m.position', \SortDirection::Ascending)
+            ->addOrderBy('i.position', \SortDirection::Ascending)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // Whether a product waits for a date still ahead, which is what tells a listing moving on its own from one only ever changed by a save: the answer is what ShopBlockCacheTagProvider caches or renders live on. A product with no date at all is on sale already, and is none of them
     public function hasScheduled(): bool
     {

@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.9.0
+
+A product the site search answers from is drawn as a card
+
+- `ShopAiSearchCardProvider` draws a product the site search answered from as the shop's own card, with its basket button when it is sold as a single item (22/09/2026)
+- `ProductRepository::findAvailableBySlugs()` reads those products with their pictures and items in one query (22/09/2026)
+- `c975l/core-bundle` is required at `^1.32.0`, where `AiSearchCardProviderInterface` comes from (22/09/2026)
+
 ## v2.8.5
 
 Product offers state the configured return window
