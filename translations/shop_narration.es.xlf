@@ -30,6 +30,10 @@
                 <source>narration.guided_project_shop_product</source>
                 <target>Escribamos una ficha de producto y el artículo que lleva lo que paga el visitante. Uno sin el otro no vende nada.</target>
             </trans-unit>
+            <trans-unit id="UikNn88">
+                <source>narration.guided_project_shop_template</source>
+                <target>Conservemos un producto como plantilla y saquemos de ella nuevas fichas que retoman sus textos, sus artículos y sus traducciones.</target>
+            </trans-unit>
             <trans-unit id="pjNb4kg">
                 <source>narration.guided_project_shop_test_mode</source>
                 <target>Digamos en voz alta que el catálogo se está montando, para que un visitante temprano no tome un ensayo por un pedido real.</target>
@@ -92,7 +96,7 @@
             </trans-unit>
             <trans-unit id="B8T1mi3">
                 <source>narration.guided_step_shop_downloadable_open</source>
-                <target>El archivo se adjunta a un artículo, así que se parte del producto que lo contiene: el panel le lleva a los productos.</target>
+                <target>El archivo se adjunta a un artículo, así que se parte del producto que lo contiene: el panel te lleva a los productos.</target>
             </trans-unit>
             <trans-unit id="pcuQsr8">
                 <source>narration.guided_step_shop_downloadable_save</source>
@@ -104,7 +108,7 @@
             </trans-unit>
             <trans-unit id="rlasIbt">
                 <source>narration.guided_step_shop_export_open</source>
-                <target>La exportación trabaja sobre una selección, así que se parte de la lista: el panel le lleva a los productos.</target>
+                <target>La exportación trabaja sobre una selección, así que se parte de la lista: el panel te lleva a los productos.</target>
             </trans-unit>
             <trans-unit id="kx1hB9_">
                 <source>narration.guided_step_shop_export_run</source>
@@ -201,6 +205,30 @@
             <trans-unit id="sWHzX2s">
                 <source>narration.guided_step_shop_product_title</source>
                 <target>Póngale un título: es lo que el visitante lee primero, y aquello a partir de lo cual se construye la dirección.</target>
+            </trans-unit>
+            <trans-unit id="WNS.5xD">
+                <source>narration.guided_step_shop_template_create_product</source>
+                <target>Crea un producto a partir de la plantilla: retoma sus textos, sus artículos y sus traducciones.</target>
+            </trans-unit>
+            <trans-unit id="ETBR5rW">
+                <source>narration.guided_step_shop_template_create_template</source>
+                <target>Crea una plantilla a partir de un producto: el producto se queda tal cual, es una copia la que se convierte en plantilla, nunca mostrada en el sitio.</target>
+            </trans-unit>
+            <trans-unit id="GKyvsPV">
+                <source>narration.guided_step_shop_template_hidden</source>
+                <target>El producto creado sigue oculto: dale su nombre y sus precios, y luego publícalo cuando esté listo.</target>
+            </trans-unit>
+            <trans-unit id="d.UJx6e">
+                <source>narration.guided_step_shop_template_open</source>
+                <target>Una plantilla se crea a partir de un producto existente, nunca desde un formulario vacío: el panel te lleva a los productos.</target>
+            </trans-unit>
+            <trans-unit id="sVdG06s">
+                <source>narration.guided_step_shop_template_save</source>
+                <target>La plantilla se abre en cuanto se crea: guárdala, y la tienda te devuelve a la lista de plantillas.</target>
+            </trans-unit>
+            <trans-unit id="qzr.mtG">
+                <source>narration.guided_step_shop_template_templates</source>
+                <target>Esta es la lista de plantillas, aparte del catálogo: el mismo botón, «Plantillas» desde los productos, muestra aquí «Productos» para traerte de vuelta.</target>
             </trans-unit>
             <trans-unit id="cWMR.ej">
                 <source>narration.guided_step_shop_test_mode_banner</source>

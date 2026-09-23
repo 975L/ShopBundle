@@ -83,7 +83,7 @@ class ShopServiceTest extends TestCase
     public function testTheCategoriesAreCounted(): void
     {
         $categoryRepository = $this->createStub(ProductCategoryRepository::class);
-        $categoryRepository->method('findAll')->willReturn(['a', 'b', 'c']);
+        $categoryRepository->method('count')->willReturn(3);
 
         $this->assertSame(3, $this->service([], $categoryRepository)->countCategories());
     }
@@ -170,6 +170,21 @@ class ShopServiceTest extends TestCase
         $this->assertCount(3, $this->paginated);
     }
 
+    // Nothing asked that reads the items: the page and the total are read in SQL, the catalogue is never loaded whole
+    public function testAnUnfilteredListingIsCutInSql(): void
+    {
+        $productRepository = $this->createMock(ProductRepository::class);
+        $productRepository->expects($this->never())->method('findAllSorted');
+        $productRepository->expects($this->once())->method('findPageSorted')->with('newest', 12, 12)->willReturn([]);
+        $productRepository->expects($this->once())->method('countAvailable')->willReturn(30);
+
+        $service = new ShopService($productRepository, $this->createStub(ProductCategoryRepository::class), new ProductStateService(), new Paginator(new RequestStack()));
+        $pagination = $service->findAllProductsPaginated(new InputBag(['order' => 'newest', 'p' => '2']));
+
+        $this->assertSame(30, $pagination->getTotalItemCount());
+        $this->assertSame(2, $pagination->getCurrentPageNumber());
+    }
+
     // The filters and the order apply together rather than one cancelling the other
     public function testAFilteredListingIsStillOrdered(): void
     {
@@ -189,6 +204,8 @@ class ShopServiceTest extends TestCase
     {
         $productRepository = $this->createStub(ProductRepository::class);
         $productRepository->method('findAllSorted')->willReturn($products);
+        $productRepository->method('findPageSorted')->willReturnCallback(static fn (?string $sort, int $offset, int $limit): array => array_slice($products, $offset, $limit));
+        $productRepository->method('countAvailable')->willReturn(count($products));
         $productRepository->method('findMaxLowestItemPrice')->willReturn($maxItemPrice);
 
         return new ShopService(

@@ -56,24 +56,18 @@ class ShopController extends AbstractController
         // Read once for the two things the index takes from it, the row being absent on a shop that never opened the back-office screen
         $settings = $this->shopSettingsRepository->findSingle();
 
-        $products = $this->shopService->findAllProductsPaginated($request->query);
-
-        // The language being read laid over the names and descriptions, for this render and no longer: called here rather than on postLoad, the back office having to go on showing the text a row was written in (see ShopTranslator::apply)
-        $this->shopTranslator->apply($products);
+        // The language being read laid over the settings' intro, for this render and no longer: called here rather than on postLoad, the back office having to go on showing the text a row was written in (see ShopTranslator::apply). The listing, its count and its price bands are read by the template, inside the fragments caching them (see ShopListingExtension)
         $this->shopTranslator->apply(null === $settings ? [] : [$settings]);
 
         return $this->negotiator->vary($request, $this->render(
             '@c975LShop/shop/index.html.twig',
             [
-                'products' => $products,
-                'categoriesCount' => $this->shopService->countCategories(),
                 'order' => $this->shopService->getOrder($request->query),
                 'filters' => $this->shopService->getFilters($request->query),
-                'priceBrackets' => $this->shopService->getPriceBrackets(),
                 // The shop's own line - null until the editor writes one, the template then falling back to the sentence the back-office menu describes the shop link with
                 'shopIntro' => $settings?->getIntro(),
-                // What the editor composed above the listing - an empty collection on a shop that never opened the screen, which renders nothing rather than failing on a row that was never created
-                'shopBlocks' => $settings?->getBlocks() ?? [],
+                // What the editor composed above the listing - null on a shop that never opened the screen, which renders nothing rather than failing on a row that was never created
+                'shopSettings' => $settings,
             ]
         ));
     }

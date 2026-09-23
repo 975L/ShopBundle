@@ -2,6 +2,23 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.10
+
+**One column arrives.** Generate the migration with `doctrine:migrations:diff` and run it; there is nothing to
+backfill, every existing product staying a product:
+
+```sql
+ALTER TABLE shop_product ADD template TINYINT(1) DEFAULT 0 NOT NULL;
+```
+
+`shop_product.template` marks a product as a template, which the back office lists apart under the *Templates*
+button of the products screen and never publishes.
+
+**A template of yours overriding `shop/index.html.twig`, `category/display.html.twig` or `product/display.html.twig`**
+no longer receives `products`, `categoriesCount`, `priceBrackets`, `shopBlocks` nor `similarProducts`: read them
+through `shop_listing()`, `shop_categories_count()`, `shop_price_brackets()`, `shop_category_products(category)`,
+`shopSettings` and `shop_similar_products(product)`, inside a `{% cache %}` fragment as the bundle's own templates do.
+
 ### v2.8.4
 
 **The basket bar is placed by UiBundle's layout** (CoreBundle `^1.31.0`), which reverts what v2.5.2 asked: remove

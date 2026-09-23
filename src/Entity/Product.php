@@ -76,6 +76,10 @@ class Product implements \Stringable, HasBlocksInterface
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $isDeleted = false;
 
+    // A model a product is copied from rather than a product: listed apart in the back-office, and hidden for good, so it never reaches the catalogue (see ProductCrudController and ProductDuplicator)
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $template = false;
+
     // The words printed on the recto of the card this product sells, beside its picture and the amount, i.e. what makes it a birthday card rather than a voucher. Held on the product and not on its items: the visual is what a customer picks, the amounts under it being that very card at three prices (see ProductItem::$giftCardValue). Null on everything that is not a gift card
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $giftCardText = null;
@@ -304,9 +308,10 @@ class Product implements \Stringable, HasBlocksInterface
         return $this->hidden;
     }
 
+    // A template stays hidden whatever its switch says: the form of a template writes that switch like any other
     public function setHidden(bool $hidden): static
     {
-        $this->hidden = $hidden;
+        $this->hidden = $hidden || $this->template;
 
         return $this;
     }
@@ -322,6 +327,23 @@ class Product implements \Stringable, HasBlocksInterface
         $this->isDeleted = $isDeleted;
 
         if ($isDeleted) {
+            $this->hidden = true;
+        }
+
+        return $this;
+    }
+
+    public function isTemplate(): bool
+    {
+        return $this->template;
+    }
+
+    // Making a template hides it, a template having no public page
+    public function setTemplate(bool $template): static
+    {
+        $this->template = $template;
+
+        if ($template) {
             $this->hidden = true;
         }
 

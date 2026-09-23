@@ -52,8 +52,8 @@ class ProductDuplicator
         $this->projectDir = (string) $parameterBag->get('kernel.project_dir');
     }
 
-    // Persists the copy and returns it, hidden - the position, the dates and the author are left to the listeners, which fill them on the flush as they do for a product created by hand
-    public function duplicate(Product $product): Product
+    // Persists the copy and returns it, hidden and a template or a product as asked - the position, the dates and the author are left to the listeners, which fill them on the flush as they do for a product created by hand
+    public function duplicate(Product $product, bool $template = false): Product
     {
         $suffix = ' ' . $this->translator->trans('label.copy_suffix', [], 'shop');
         $title = mb_substr((string) $product->getTitle(), 0, self::TITLE_LENGTH - mb_strlen($suffix)) . $suffix;
@@ -70,6 +70,8 @@ class ProductDuplicator
             ->setGiftCardScratch($product->hasGiftCardScratch())
             // A copy is hidden, whatever the original was: it carries its title and its prices, and nothing else says it is meant to be sold as it stands
             ->setHidden(true)
+            // What the copy is, whatever the original was: a product is made from a template, and a template from a product
+            ->setTemplate($template)
         ;
 
         // The very same categories, which are shared rather than owned by the product

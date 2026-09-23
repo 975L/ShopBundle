@@ -10,6 +10,14 @@
                 <source>Slug</source>
                 <target>Slug</target>
             </trans-unit>
+            <trans-unit id="S0BL_.r">
+                <source>action.create_product</source>
+                <target>Créer un produit</target>
+            </trans-unit>
+            <trans-unit id="CQ7wnMr">
+                <source>action.create_template</source>
+                <target>Créer un modèle</target>
+            </trans-unit>
             <trans-unit id="sSgetpg">
                 <source>action.delete_permanently</source>
                 <target>Supprimer définitivement</target>
@@ -46,6 +54,14 @@
                 <source>action.view_on_site</source>
                 <target>Voir sur le site</target>
             </trans-unit>
+            <trans-unit id="nm4g0K4">
+                <source>confirm.create_product</source>
+                <target>Créer un nouveau produit, masqué, à partir de ce modèle ?</target>
+            </trans-unit>
+            <trans-unit id="P4qZjTI">
+                <source>confirm.create_template</source>
+                <target>Créer un modèle à partir de ce produit ? Le produit reste inchangé.</target>
+            </trans-unit>
             <trans-unit id="X4j.TeG">
                 <source>confirm.delete_permanently</source>
                 <target>Supprimer définitivement ce produit, ses images et ses fichiers ? Cette action est irréversible.</target>
@@ -81,6 +97,10 @@
             <trans-unit id="ucGRCvp">
                 <source>description.guided_project_shop_product</source>
                 <target>La fiche que lit le visiteur, et l'article qui porte ce qu'il paie : l'une sans l'autre ne vend rien.</target>
+            </trans-unit>
+            <trans-unit id="T4sG0.j">
+                <source>description.guided_project_shop_template</source>
+                <target>Garder un produit comme modèle, puis en tirer de nouvelles fiches qui reprennent ses textes, ses articles et leurs traductions.</target>
             </trans-unit>
             <trans-unit id="gC63sPJ">
                 <source>description.guided_project_shop_test_mode</source>
@@ -254,6 +274,30 @@
                 <source>description.guided_step_shop_product_title</source>
                 <target>Ce que le visiteur lit en premier, et ce à partir de quoi l'adresse est construite.</target>
             </trans-unit>
+            <trans-unit id="uwottfS">
+                <source>description.guided_step_shop_template_create_product</source>
+                <target>Un nouveau produit, copié du modèle avec ses textes, ses articles et leurs traductions.</target>
+            </trans-unit>
+            <trans-unit id="XLUKR4d">
+                <source>description.guided_step_shop_template_create_template</source>
+                <target>Le produit reste tel quel : c'est une copie qui devient le modèle, masquée et jamais affichée sur le site.</target>
+            </trans-unit>
+            <trans-unit id="jtzc1P2">
+                <source>description.guided_step_shop_template_hidden</source>
+                <target>Le produit créé est masqué : donnez-lui son nom et ses prix, puis publiez-le.</target>
+            </trans-unit>
+            <trans-unit id="0YJ3gDM">
+                <source>description.guided_step_shop_template_open</source>
+                <target>Un modèle se crée depuis un produit existant, jamais depuis un formulaire vide.</target>
+            </trans-unit>
+            <trans-unit id="IwyRZoZ">
+                <source>description.guided_step_shop_template_save</source>
+                <target>Le modèle s'ouvre à peine créé : enregistrez-le, et vous voilà dans la liste des modèles.</target>
+            </trans-unit>
+            <trans-unit id="aYdC96C">
+                <source>description.guided_step_shop_template_templates</source>
+                <target>Les modèles ont leur propre liste. Le même bouton, « Modèles » depuis le catalogue, affiche ici « Produits » pour vous ramener.</target>
+            </trans-unit>
             <trans-unit id="2_nEywQ">
                 <source>description.guided_step_shop_test_mode_banner</source>
                 <target>Un bandeau sur chaque page de la boutique, disant qu'elle est en cours d'installation - les paiements ont leur propre mode test, et les deux sont distincts.</target>
@@ -330,6 +374,10 @@
                 <source>description.guided_step_shop_trash_restore</source>
                 <target>Le produit revient au catalogue avec ses images, ses articles et ses blocks, masqué de la boutique.</target>
             </trans-unit>
+            <trans-unit id="ZFRC0kd">
+                <source>flash.product_created_from_template</source>
+                <target>Le produit a été créé à partir du modèle. Il est masqué jusqu'à ce que vous le publiiez.</target>
+            </trans-unit>
             <trans-unit id="O4ItfqQ">
                 <source>flash.product_deleted_permanently</source>
                 <target>Le produit a été supprimé définitivement, avec ses images et ses fichiers.</target>
@@ -349,6 +397,10 @@
             <trans-unit id="KUXhXBZ">
                 <source>flash.shop_test_mode_enabled</source>
                 <target>La boutique est en mode test : chaque page prévient le visiteur que rien n'est réellement vendu.</target>
+            </trans-unit>
+            <trans-unit id="3cn7PB1">
+                <source>flash.template_created</source>
+                <target>Le modèle a été créé. Il reste masqué et n'apparaît que dans la liste des modèles.</target>
             </trans-unit>
             <trans-unit id="icfsMlU">
                 <source>label.add</source>
@@ -714,6 +766,10 @@
                 <source>label.guided_project_shop_product</source>
                 <target>Créer un produit</target>
             </trans-unit>
+            <trans-unit id="2GVEjXl">
+                <source>label.guided_project_shop_template</source>
+                <target>Créer des produits à partir d'un modèle</target>
+            </trans-unit>
             <trans-unit id="WhDofZ9">
                 <source>label.guided_project_shop_test_mode</source>
                 <target>Répéter la boutique</target>
@@ -885,6 +941,30 @@
             <trans-unit id="XvTng1B">
                 <source>label.guided_step_shop_product_title</source>
                 <target>Lui donner un titre</target>
+            </trans-unit>
+            <trans-unit id="OTGhWr8">
+                <source>label.guided_step_shop_template_create_product</source>
+                <target>Créer un produit</target>
+            </trans-unit>
+            <trans-unit id="8Fnm3x5">
+                <source>label.guided_step_shop_template_create_template</source>
+                <target>Créer un modèle</target>
+            </trans-unit>
+            <trans-unit id="kPqi1O0">
+                <source>label.guided_step_shop_template_hidden</source>
+                <target>Ce qui reste à faire</target>
+            </trans-unit>
+            <trans-unit id="dtvuL0_">
+                <source>label.guided_step_shop_template_open</source>
+                <target>Ouvrir les produits</target>
+            </trans-unit>
+            <trans-unit id="arKHINE">
+                <source>label.guided_step_shop_template_save</source>
+                <target>Enregistrer le modèle</target>
+            </trans-unit>
+            <trans-unit id="VF89UIS">
+                <source>label.guided_step_shop_template_templates</source>
+                <target>La liste des modèles</target>
             </trans-unit>
             <trans-unit id="kPFMCJm">
                 <source>label.guided_step_shop_test_mode_banner</source>
@@ -1061,6 +1141,10 @@
             <trans-unit id="EkFFPCh">
                 <source>label.info_shop_link</source>
                 <target>Tous nos articles, à commander en ligne et à recevoir chez vous.</target>
+            </trans-unit>
+            <trans-unit id="OCHL2hS">
+                <source>label.info_templates</source>
+                <target>Un modèle ne s'affiche jamais sur le site. Il sert à créer des produits qui reprennent ses textes, ses articles et leurs traductions : utilisez « Créer un produit ». Pour créer un modèle, utilisez « Créer un modèle » sur un produit.</target>
             </trans-unit>
             <trans-unit id="Bw6Jk.r">
                 <source>label.item_already_downloaded</source>
@@ -1417,6 +1501,10 @@
             <trans-unit id="04zDTq_">
                 <source>label.success</source>
                 <target>Succès</target>
+            </trans-unit>
+            <trans-unit id="Gwnseqp">
+                <source>label.templates</source>
+                <target>Modèles</target>
             </trans-unit>
             <trans-unit id="ua7HEiS">
                 <source>label.terms_of_sales</source>

@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-blocks
-description: "Use this skill when putting the shop's catalog on a page composed in the back office of a Symfony application built on the c975L ecosystem — the nine shop block kinds, composing the shop's index, its category pages and a product sheet out of blocks, the three kinds that read the product of the sheet they sit on, the render cache and its catalog tags, and the block showcase. Covers why these kinds store no product and why one of them declines its cache entry. Triggers on: shop_products, shop_gift_cards, shop_categories, shop_product, shop_product_button, shop_search, shop_recommendations, shop_product_items, shop_product_slider, ShopBlockExtension, shop_block_products, shop_block_gift_cards, shop_block_categories, shop_block_product, shop_block_recommendations, shop_block_sheet_kinds, ShopBlockChoices, ShopBlockCacheTagProvider, hasScheduled, ShopCacheInvalidationListener, ShopBlockCacheInvalidator, ShopBlockOwnerResolver, ShopShowcaseProvider, shop_product context, shop_product_block, shop_product_category_block, shop_settings_block, ShopSettings, StylesheetProvider, getManagementStylesheets, BundleStylesheetManagementProviderInterface, block-thumbs, ui-block-thumb, block picker, silhouette, block-section, section-wrap, framed, ShopPageMeasureTest, ShopTranslator, translated, apply."
+description: "Use this skill when putting the shop's catalog on a page composed in the back office of a Symfony application built on the c975L ecosystem — the nine shop block kinds, composing the shop's index, its category pages and a product sheet out of blocks, the three kinds that read the product of the sheet they sit on, the render cache and its catalog tags, and the block showcase. Covers why these kinds store no product and why one of them declines its cache entry. Triggers on: shop_products, shop_gift_cards, shop_categories, shop_product, shop_product_button, shop_search, shop_recommendations, shop_product_items, shop_product_slider, ShopBlockExtension, shop_block_products, shop_block_gift_cards, shop_block_categories, shop_block_product, shop_block_recommendations, shop_block_sheet_kinds, ShopBlockChoices, ShopBlockCacheTagProvider, hasScheduled, ShopCacheInvalidationListener, ShopBlockCacheInvalidator, ShopBlockOwnerResolver, ShopShowcaseProvider, shop_product context, shop_product_block, shop_product_category_block, shop_settings_block, ShopSettings, StylesheetProvider, getManagementStylesheets, BundleStylesheetManagementProviderInterface, block-thumbs, ui-block-thumb, block picker, silhouette, block-section, section-wrap, framed, ShopPageMeasureTest, ShopTranslator, translated, apply, ShopListingExtension, shop_listing, shop_listing_key, shop_listing_ttl, shop_categories_count, shop_price_brackets, shop_category_products, shop_product_sheet_data, shop_similar_products, shop_translate, page fragments, cache tag."
 ---
 
 # c975L ShopBundle — blocks
@@ -10,7 +10,7 @@ description: "Use this skill when putting the shop's catalog on a page composed 
 **Package:** `c975l/shop-bundle` · **Bundle:** `c975L\ShopBundle\` · **Twig namespace:** `@c975LShop` · **Translation domain:** `shop`
 
 **Key source paths:**
-`config/services.yaml`, `src/Form/Block/`, `src/Twig/Extension/ShopBlockExtension.php`, `src/Service/ShopBlockChoices.php`, `src/Service/ShopBlockCacheTagProvider.php`, `src/Service/ShopBlockCacheInvalidator.php`, `src/Listener/ShopCacheInvalidationListener.php`, `src/Management/ShopBlockOwnerResolver.php`, `src/Management/ShopBlockEditUrlProvider.php`, `src/Service/ShopShowcaseProvider.php`, `src/Service/StylesheetProvider.php`, `sass/block-thumbs.scss`, `templates/blocks/`, `templates/product/display.html.twig`, `templates/category/display.html.twig`, `templates/shop/index.html.twig`
+`config/services.yaml`, `src/Form/Block/`, `src/Twig/Extension/ShopBlockExtension.php`, `src/Twig/Extension/ShopListingExtension.php`, `src/Service/ShopBlockChoices.php`, `src/Service/ShopBlockCacheTagProvider.php`, `src/Service/ShopBlockCacheInvalidator.php`, `src/Listener/ShopCacheInvalidationListener.php`, `src/Management/ShopBlockOwnerResolver.php`, `src/Management/ShopBlockEditUrlProvider.php`, `src/Service/ShopShowcaseProvider.php`, `src/Service/StylesheetProvider.php`, `sass/block-thumbs.scss`, `templates/blocks/`, `templates/product/display.html.twig`, `templates/category/display.html.twig`, `templates/shop/index.html.twig`
 
 **Related skills:** `c975l-shop-catalog`, `c975l-shop-checkout`, `c975l-shop-seo` in this same bundle, and `c975l-blocks`, `c975l-media` in UiBundle beside it.
 
@@ -106,6 +106,17 @@ Three deliberate exceptions:
 Adding a kind that reads the catalog means adding it to `ShopBlockCacheTagProvider::PRODUCT_KINDS`, or
 declaring it `cacheable: false`. Forgetting both serves a stale catalog until the next `cache:clear`.
 
+The three pages cache **their own fragments** too (`{% cache %}` in `shop/index.html.twig`,
+`category/display.html.twig`, `product/display.html.twig`), tagged `shop_products` / `shop_categories` and the
+owner's run of blocks. What they draw is read **inside** the fragment through Twig functions — `shop_listing()`,
+`shop_categories_count()`, `shop_price_brackets()`, `shop_category_products()` (`ShopListingExtension`),
+`shop_similar_products()`, `shop_product_sheet_data()`, `shop_translate()` (`ShopBlockExtension`) — never handed
+by the controller, or a hit would still query. Every key carries the locale, `_editor` for an editor (the edit
+urls) and **the day** wherever `availableAt` filters the rows: a release date fires no event.
+`shop_product_sheet_data()` is also tagged `block_{id}` for each of the sheet's blocks, a slot added to a
+container reaching only that tag. The index keys on the query (`shop_listing_key()`), and `shop_listing_ttl()`
+gives an hour to a query carrying a parameter the listing does not read.
+
 ## The showcase
 
 `ShopShowcaseProvider` renders the nine kinds for a block showcase page. None of them fits
@@ -135,6 +146,7 @@ carrying it everywhere.
 - **Do not store a product's data in a block** — store its slug and resolve it at render time.
 - **Do not render a sheet's section without checking `shop_block_sheet_kinds()`** first.
 - **Do not cache a kind that renders a Live Component** or draws at random.
+- **Do not hand a cached page what it draws from the controller** — read it through a Twig function inside the fragment.
 - **Do not add a catalog-reading kind** without a tag resolver or `cacheable: false`.
 - **Do not duplicate a component in a block template** — the block is an adapter onto the same one.
 - **Do not write a block template without its `.block-section` and its `.section-wrap`** — nothing above it measures it.

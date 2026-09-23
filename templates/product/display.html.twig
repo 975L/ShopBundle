@@ -1,18 +1,21 @@
 {% extends '@c975LShop/layout.html.twig' %}
 {% trans_default_domain 'shop' %}
 
+{# What the sheet reads off its medias and its blocks before drawing anything, cached with it: a hit reads neither (see ShopBlockExtension::getSheetData) #}
+{% set sheetData = shop_product_sheet_data(product) %}
+
 {# Defines specific variables #}
 {% set title = product.title %}
-{% if product.medias is not empty %}
-    {% set ogImage = absolute_url(asset(product.medias[0].name)) %}
+{% if sheetData.ogImage %}
+    {% set ogImage = absolute_url(asset(sheetData.ogImage)) %}
     {# The template setting the share image is the only one that knows what it shows, so it says it here rather than leaving the layout to read a media column this bundle's own medias do not have #}
-    {% set ogImageAlt = product.medias[0].alt ?: product.title %}
+    {% set ogImageAlt = sheetData.ogImageAlt ?: product.title %}
 {% endif %}
 
 {% set summarySocialNetwork = product.description %}
 
 {# The three sections a block of this bundle can take over: placed on the sheet, the block is where the editor put it, and the hardcoded section below steps aside rather than showing it twice #}
-{% set sheetKinds = shop_block_sheet_kinds(product.blocks) %}
+{% set sheetKinds = sheetData.sheetKinds %}
 
 {# Editor-only: the sheet leads to the product's own edit screen, and each of the sections below to the very field it is printed from - the blocks composed on it carry their own row's url already, UiBundle resolving it through ShopBlockEditUrlProvider. The hover button being the one of UiBundle, its controller is mounted on the sheet rather than left to the Blocks component, which a product without any block never renders #}
 {% set canEdit = is_granted(config('site-role-editor')) %}
@@ -20,6 +23,10 @@
 
 {# Read once and used twice: the widget below and the graph at the bottom of the page have to agree, a rich result showing stars nobody can find on the sheet being worse than none #}
 {% set showsRating = config('shop-rating')|to_bool %}
+
+{# The fragments below, one entry per product, language and reader - an editor's carry the edit urls. "shop_products" is emptied by a product, an item (its stock and prices), a media or an affinity saved, "shop_categories" by a category (see ShopCacheInvalidationListener) #}
+{% set sheetKey = 'shop_product_' ~ product.id ~ '_' ~ app.request.locale ~ (canEdit ? '_editor' : '') %}
+{% set sheetTags = ['shop_products', 'shop_categories'] %}
 
 {% block content %}
     {# The page measure, stated once around the whole sheet: the layout no longer wraps a page's content (see @c975LShop/layout.html.twig). The blocks composed on the sheet stay where the editor put them, inside the column below, so they are wrapped here rather than run bare as an index's are #}
@@ -31,7 +38,9 @@
         <twig:c975LShop:Shop:TestMode/>
         {# One "basket" controller for the whole sheet: the items, the messages and the basket bar are all part of the same purchase #}
         <div data-controller="basket{{ canEdit ? ' blockEditOverlay' : '' }}" class="product-sheet"{% if editUrl %} data-edit-label="{{ 'label.edit'|trans({}, 'ui') }}" data-block-edit-url="{{ editUrl }}"{% endif %}>
-            <twig:c975LShop:Shop:Breadcrumb subject="{{ product }}"/>
+            {% cache sheetKey ~ '_breadcrumb' tags(sheetTags) %}
+                <twig:c975LShop:Shop:Breadcrumb subject="{{ product }}"/>
+            {% endcache %}
 
             {# Above what the visitor decides on, for a product declaring an age the sheet otherwise only publishes as a schema.org audience. The sentence itself is the site's, written once for the whole of it (config "site-age-warning"). The fragment carries the guards, so a product declaring no age, and a site leaving the setting empty, render nothing here #}
             <twig:c975LUi:Alert:AgeWarning age="{{ product.age }}"/>
@@ -39,22 +48,27 @@
             {# Picture on one side, everything the visitor decides on together on the other - a single column below 900px, the grid folding on its own #}
             <div class="product-sheet-main">
                 {# The column is only written when there is something to put in it: an empty one would still hold half the row #}
-                {% if 'shop_product_slider' not in sheetKinds and product.medias is not empty %}
-                    <div class="product-sheet-gallery"{% if editUrl %} data-block-edit-url="{{ shop_product_edit_url(product, 'medias') }}"{% endif %}>
-                        <twig:c975LUi:Slider:Slider media="{{ product.medias }}" id="slider" duration="3500"/>
-                    </div>
+                {% if 'shop_product_slider' not in sheetKinds and sheetData.ogImage %}
+                    {% cache sheetKey ~ '_gallery' tags(sheetTags) %}
+                        <div class="product-sheet-gallery"{% if editUrl %} data-block-edit-url="{{ shop_product_edit_url(product, 'medias') }}"{% endif %}>
+                            <twig:c975LUi:Slider:Slider media="{{ product.medias }}" id="slider" duration="3500"/>
+                        </div>
+                    {% endcache %}
                 {% endif %}
 
                 <div class="product-sheet-info">
-                    <twig:c975LShop:Product:Categories categories="{{ product.categories }}"/>
-                    {# Between the categories and the description, where a sheet is read from the top: what others thought comes before what the shop says about it, and putting the product aside is what a visitor not buying today came to do #}
-                    {# The two on one centred row rather than the heart laid over the picture as a card does it: the gallery is only written when the product carries medias and no slider block took it over, so a heart placed on it would be gone from the sheets that have neither #}
+                    {% cache sheetKey ~ '_categories' tags(sheetTags) %}
+                        <twig:c975LShop:Product:Categories categories="{{ product.categories }}"/>
+                    {% endcache %}
+                    {# Between the categories and the description, where a sheet is read from the top: what others thought comes before what the shop says about it, and putting the product aside is what a visitor not buying today came to do. The two on one centred row rather than the heart laid over the picture as a card does it: the gallery is only written when the product carries medias and no slider block took it over, so a heart placed on it would be gone from the sheets that have neither #}
                     {% set showsFavorite = config('shop-favorites')|to_bool %}
                     {% if showsRating or showsFavorite %}
                         <div class="product-sheet-actions">
-                            {# Off unless the site turned it on, an update having no business making every sheet ask for a vote - the icon and the scale are UiBundle's own settings #}
+                            {# Off unless the site turned it on, an update having no business making every sheet ask for a vote - the icon and the scale are UiBundle's own settings. The average only, the voter's own score being read from the browser - emptied by any vote on this product #}
                             {% if showsRating %}
-                                <twig:c975LUi:Rating:Rating ownerType="shop_product" ownerId="{{ product.id }}"/>
+                                {% cache sheetKey ~ '_rating' tags([ui_rating_cache_tag('shop_product', product.id)]) %}
+                                    <twig:c975LUi:Rating:Rating ownerType="shop_product" ownerId="{{ product.id }}"/>
+                                {% endcache %}
                             {% endif %}
                             {% if showsFavorite %}
                                 <twig:c975LUi:Favorite:Button ownerType="shop_product" ownerId="{{ product.id }}"/>
@@ -62,35 +76,41 @@
                         </div>
                     {% endif %}
                     {# UiBundle's own wrapper class: display:contents, so it hosts the hover button's attributes while the heading and its text stay the two items the column lays out #}
-                    <div class="block-editable"{% if editUrl %} data-block-edit-url="{{ shop_product_edit_url(product, 'description') }}"{% endif %}>
-                        <twig:c975LShop:Product:Description description="{{ product.description }}"/>
-                    </div>
+                    {% cache sheetKey ~ '_description' tags(sheetTags) %}
+                        <div class="block-editable"{% if editUrl %} data-block-edit-url="{{ shop_product_edit_url(product, 'description') }}"{% endif %}>
+                            <twig:c975LShop:Product:Description description="{{ product.description }}"/>
+                        </div>
+                    {% endcache %}
 
-                    {# What the sheet says around its items - composed in the back-office, nothing to add here when the product has no block #}
-                    <twig:c975LUi:Blocks:Blocks blocks="{{ product.blocks }}"/>
+                    {# What the sheet says around its items - composed in the back-office, nothing to add here when the product has no block. The whole run as one entry, emptied by UiBundle's OwnedBlocksCacheListener when a block is added, removed or moved #}
+                    {{ render_owned_blocks(product) }}
 
                     {% if 'shop_product_items' not in sheetKinds %}
                         <div class="block-editable"{% if editUrl %} data-block-edit-url="{{ shop_product_edit_url(product, 'items') }}"{% endif %}>
                             <h2 id="items">{{ 'label.items'|trans }}</h2>
-                            {% if product.availableAt == null or product.availableAt|date('Ymd') <= "now"|date("Ymd") %}
-                                <twig:c975LShop:Product:Items items="{{ product.visibleItems }}"/>
-                            {% else %}
-                                <twig:c975LUi:Alert:Alert type="warning">
-                                    {{ 'label.product_not_yet_available'|trans({}, 'shop') }} {{ product.availableAt|date('d/m/Y') }}.
-                                </twig:c975LUi:Alert:Alert>
-                            {% endif %}
+                            {# The day in the key: the product comes out on a date no save marks #}
+                            {% cache sheetKey ~ '_items_' ~ 'now'|date('Ymd') tags(sheetTags) %}
+                                {% if product.availableAt == null or product.availableAt|date('Ymd') <= "now"|date("Ymd") %}
+                                    <twig:c975LShop:Product:Items items="{{ shop_translate(product.visibleItems) }}"/>
+                                {% else %}
+                                    <twig:c975LUi:Alert:Alert type="warning">
+                                        {{ 'label.product_not_yet_available'|trans({}, 'shop') }} {{ product.availableAt|date('d/m/Y') }}.
+                                    </twig:c975LUi:Alert:Alert>
+                                {% endif %}
+                            {% endcache %}
                         </div>
                     {% endif %}
                 </div>
             </div>
 
-            {# What buyers wrote about this product, before the recommendations: those send the reader to something else, where the reviews still speak of the sheet being read #}
-            {# Nothing at all until the site turns "ui-enable-reviews" on: the function answers an empty string and the section is not drawn #}
-            {# Held in the very cache the sheet's blocks are held in, tagged to be cleared as soon as a review is published - nothing in it belongs to a visitor (see ReviewRuntime::section()) #}
+            {# What buyers wrote about this product, before the recommendations: those send the reader to something else, where the reviews still speak of the sheet being read. Nothing at all until the site turns "ui-enable-reviews" on: the function answers an empty string and the section is not drawn. Held in the very cache the sheet's blocks are held in, tagged to be cleared as soon as a review is published - nothing in it belongs to a visitor (see ReviewRuntime::section()) #}
             {{ ui_reviews_section('shop_product', product.id) }}
 
+            {# Computed inside the fragment, so a hit scores nothing - the affinities are emptied with the products #}
             {% if 'shop_recommendations' not in sheetKinds %}
-                <twig:c975LShop:Product:Recommendations recommendations="{{ similarProducts }}" />
+                {% cache sheetKey ~ '_recommendations_' ~ 'now'|date('Ymd') tags(sheetTags) %}
+                    <twig:c975LShop:Product:Recommendations recommendations="{{ shop_similar_products(product) }}" />
+                {% endcache %}
             {% endif %}
 
             <twig:c975LPayment:Basket:ContinueShoppingButton/>
@@ -98,15 +118,18 @@
         </div>
     </div>
 
-    {# The product's structured data, built by ProductSnippetBuilder from the very fields displayed above - the only "offers" node of the ecosystem, see BookSnippetBuilder. "raw" because the payload goes through a variable, which drops the function's own is_safe marking - the builder already escaped every character that could close the tag #}
-    {% set jsonLd = product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug}), showsRating) %}
-    {% if jsonLd %}
-        <script type="application/ld+json">{{ jsonLd|raw }}</script>
-    {% endif %}
+    {# The product's structured data, built by ProductSnippetBuilder from the very fields displayed above - the only "offers" node of the ecosystem, see BookSnippetBuilder. "raw" because the payload goes through a variable, which drops the function's own is_safe marking - the builder already escaped every character that could close the tag. Its offers read the items and its aggregateRating the votes, hence both tags; the day in the key for the availability #}
+    {% cache sheetKey ~ '_jsonld_' ~ 'now'|date('Ymd') tags([...sheetTags, ui_rating_cache_tag('shop_product', product.id)]) %}
+        {% do shop_translate(product.items) %}
+        {% set jsonLd = product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug}), showsRating) %}
+        {% if jsonLd %}
+            <script type="application/ld+json">{{ jsonLd|raw }}</script>
+        {% endif %}
 
-    {# The trail printed above the sheet, said again where a search engine reads it - it is what Google shows in its results in place of the url #}
-    {% set breadcrumbJsonLd = shop_breadcrumb_json_ld(product) %}
-    {% if breadcrumbJsonLd %}
-        <script type="application/ld+json">{{ breadcrumbJsonLd|raw }}</script>
-    {% endif %}
+        {# The trail printed above the sheet, said again where a search engine reads it - it is what Google shows in its results in place of the url #}
+        {% set breadcrumbJsonLd = shop_breadcrumb_json_ld(product) %}
+        {% if breadcrumbJsonLd %}
+            <script type="application/ld+json">{{ breadcrumbJsonLd|raw }}</script>
+        {% endif %}
+    {% endcache %}
 {% endblock %}

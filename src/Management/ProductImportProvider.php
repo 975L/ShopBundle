@@ -128,11 +128,12 @@ class ProductImportProvider implements ImportProviderInterface
             ->setGiftCardScratch($item['giftCardScratch'] ?? true);
     }
 
-    // Hidden first, trashed second: trashing hides (see Product::setIsDeleted), and the other order would put a product of the recycle bin back into the catalogue
+    // Template first, hidden second, trashed third: a template and a trashed product are both kept hidden (see Product::setTemplate and Product::setIsDeleted), and a template turned back into a product must be one before its switch is read
     // An archive written before the switch was turned round carries "isPublished" instead, and is read the same way rather than landing every product in the catalogue
     private function fillProductPublication(Product $product, array $item): void
     {
         $product
+            ->setTemplate($item['template'] ?? false)
             ->setHidden($item['hidden'] ?? !($item['isPublished'] ?? false))
             ->setIsDeleted($item['isDeleted'] ?? false);
     }

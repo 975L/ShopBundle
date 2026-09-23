@@ -58,12 +58,12 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - Products and categories exported/imported as a zip (pictures, items with their paid files, sheet blocks and categories bundled in), plugging into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen
 - Media directories declared for backup, order backlog and catalog gaps reported to the status report
 - Alternative text on every product picture, description of its own on every category
-- EasyAdmin CRUD for products, written hidden, ordered by dragging the index rows, duplicated with everything they hold, kept in a recycle bin once deleted, and exported as SQL/CSV/JSON from their index
+- EasyAdmin CRUD for products, written hidden, ordered by dragging the index rows, duplicated with everything they hold, kept as templates new products are drawn from, kept in a recycle bin once deleted, and exported as SQL/CSV/JSON from their index
 - Gift cards sold as an ordinary item, one card issued per unit once the order is paid, its visual built in the
   back-office and copied onto the card (see [gift cards](#gift-cards))
 - Test mode switched from the dashboard, warning every visitor that nothing is really sold
 - Made-up catalog shipped as data, rendering the block showcase and seeding a demo site's shop (see [the demo catalog](#the-demo-catalog))
-- Nine replayable guided projects contributed to the dashboard, via ConfigBundle's `GuidedProjectProviderInterface`, walking a category, the shop's own page, a product, its translation, the downloadable, the gift card, the test mode, the export and the recycle bin (see [guided projects](#guided-projects))
+- Ten replayable guided projects contributed to the dashboard, via ConfigBundle's `GuidedProjectProviderInterface`, walking a category, the shop's own page, a product, its templates, its translation, the downloadable, the gift card, the test mode, the export and the recycle bin (see [guided projects](#guided-projects))
 - Four skills written for the coding agents of the sites installing this bundle, shipped in the package and read straight from `vendor/`
 
 ---
@@ -187,6 +187,11 @@ their own picture and downloadable file, its categories and the blocks composing
 disk under a name of its own rather than shared with the original. Nothing is sold of the copy - the items' ordered
 quantity is reset - and the copy is hidden, opened straight away to be renamed and priced.
 
+A product can also be kept as a **template** (`Product::$template`): *Create a template* copies it into one, the
+product itself staying as it is, and *Create a product* draws a new hidden product from a template, texts, items
+and their translations included. Templates are listed apart, under the *Templates* button of the products screen,
+and stay hidden whatever their switch says - they never reach the catalogue.
+
 Restrict access in `config/packages/security.yaml`:
 
 ```yaml
@@ -286,6 +291,15 @@ every visitor, and the block's own button already leads there.
 ```twig
 {% set editUrl = is_granted(config('site-role-editor')) ? shop_product_edit_url(product, 'medias') : null %}
 ```
+
+The three pages are cached in fragments (`{% cache %}`), so a hit reads the product's row alone, or nothing at all
+on a listing. What they draw is read from inside those fragments rather than handed by the controllers -
+`shop_listing()`, `shop_categories_count()`, `shop_price_brackets()`, `shop_category_products()`,
+`shop_similar_products()`, `shop_product_sheet_data()` - so a template of yours overriding one of them calls those
+functions too. The keys carry the language, the reader (an editor's fragments hold the edit urls) and the day,
+which brings in a product coming out on its date with no save to mark it; the entries are emptied by the catalog
+tags of the [render cache](#render-cache). The index's key is the query itself: a query carrying a parameter the
+listing does not read (`utm_*`, `fbclid`...) keeps its entry an hour only (`shop_listing_ttl()`).
 
 ---
 
@@ -598,6 +612,15 @@ php bin/console c975l:health-check:run --kind=files-shop
 
 A file of an article **taken off sale** is covered too — its buyers still hold a live link, where the catalogue checks above only ever walk what is currently sellable.
 
+### Posting the catalog on social networks
+
+Where the site installs SocialBundle, its scheduled publication draws from the catalog through
+`ProductSocialContentSource` (`product`), a UiBundle `SocialContentSourceInterface` service, autoconfigured: it
+hands out what the shop lists, in the shop's own order, and recalls each product 90 days after it last went out.
+Each post carries the product's public page, its first picture and its description. A product with no public
+address — `site-url` unset — is never handed out, and one taken off the shop since its post was prepared is
+dropped. Which products went out where is SocialBundle's to record; a site without it never asks.
+
 ---
 
 ## Structured data
@@ -656,8 +679,9 @@ PaymentBundle's grid charges for this very item's weight, to the one country `sh
 a zero rate on a downloaded file and on a tier priced at zero, which is free shipping, and none on a rendered
 service. Nothing is published for an item nobody weighed, for a shop naming no default country, or for a grid
 answering nothing: a tier published as if it covered every parcel is a guess. The return policy states the
-window PaymentBundle's `shop-return-days` holds for that same country, `0` meaning no returns, with a
-`merchantReturnLink` to `url-terms-of-sales` when there is one; a downloaded file is never returnable. Without
+window PaymentBundle's `shop-return-days` holds for that same country, published only above zero - an unfilled
+setting reads as `0` -, with a `merchantReturnLink` to `url-terms-of-sales` when there is one; a downloaded file
+is never returnable. Without
 a window or a country no policy is published at all, an incomplete one being what Google flags.
 
 The shop's index and a category page publish an `ItemList` of the cards they print, through a second function
@@ -852,12 +876,12 @@ Installed alongside ConfigBundle, this bundle contributes on its own, with nothi
 
 ## Guided projects
 
-`ShopGuidedProjectProvider` (ConfigBundle's `GuidedProjectProviderInterface`) contributes nine replayable
+`ShopGuidedProjectProvider` (ConfigBundle's `GuidedProjectProviderInterface`) contributes ten replayable
 exercises to the dashboard's "Guided projects" panel, in the order a catalog is actually filled: **creating a
 category**, which classes the products and is the one thing a shop needs before it holds anything to sell,
 **setting up the shop's own page**, the sentence a visitor is greeted with and the blocks composed above the
 listing, **creating a product** with the item carrying its price — one sheet without the other sells nothing —,
-**translating a product** from its language screen, **selling a file** rather than a parcel, **selling a gift
+**creating products from a template**, which is never made from *New*, **translating a product** from its language screen, **selling a file** rather than a parcel, **selling a gift
 card**, whose worth is typed on its item, **rehearsing the shop** through the test mode tile, **moving a catalog**
 to another site, and **the recycle bin**, which walks the deletion that is not one, the way back out and the one
 that destroys. Nothing to register — the provider is picked up automatically.
@@ -869,7 +893,7 @@ back on that very step:
 
 | Pointed at | What it is |
 | --- | --- |
-| `.action-new`, `.action-edit`, `.action-saveAndReturn`, `.action-translate`, `.action-exportSelection`, `.action-delete`, `.action-trash`, `.action-restore`, `.action-deletePermanently` | EasyAdmin builds an `action-<name>` class from the action's own name — `saveAndReturn`, not `save`. The translate one is only drawn where the site declares several languages, and the step reads as well without the outline |
+| `.action-new`, `.action-edit`, `.action-saveAndReturn`, `.action-createTemplate`, `.action-templates`, `.action-createProduct`, `.action-translate`, `.action-exportSelection`, `.action-delete`, `.action-trash`, `.action-restore`, `.action-deletePermanently` | EasyAdmin builds an `action-<name>` class from the action's own name — `saveAndReturn`, not `save`. The translate one is only drawn where the site declares several languages, and the step reads as well without the outline |
 | `#Product_title`, `#Product_categories + .ts-wrapper`, `#Product_age`, `#Product_availableAt`, `#Product_hidden`, `#Product_giftCardText`, `#Product_giftCardScratch`, `#ProductCategory_name`, `#ProductCategory_slug`, `#ProductCategory_position`, `#ShopSettings_intro` | plain form fields, pointed at through their rendered id — an `AssociationField` rendered by TomSelect through the wrapper it inserts after the original select |
 | `trix-editor[input="Product_description"]`, `trix-editor[input="ProductCategory_description"]` | the editor itself, `#…_description` being the hidden input trix writes into |
 | `[data-shop-product-items]`, `[data-shop-item-translations]`, `[data-shop-settings-blocks]` | markers this bundle's own CRUD controllers set on collections EasyAdmin numbers, which therefore carry no stable id |
@@ -877,11 +901,11 @@ back on that very step:
 | `#form-batch-checkbox-all` | EasyAdmin's own select-all of the index, checked before the export button: the batch actions stay hidden until a row is |
 | `form[action$="/shop/test-mode-toggle"] button` | the dashboard shortcut of the test mode, the one step leaving this bundle's own screens |
 
-All nine are gated by `site-role-admin`, the bar the three management screens set on their own index: a parcours is
+All ten are gated by `site-role-admin`, the bar the three management screens set on their own index: a parcours is
 never offered to someone its very first step turns away. Their `order` (8010 to 8070) runs the 8000 block
 `GuidedProjectProviderInterface` reserves this bundle — the same docblock naming every other bundle's block, so a
 range is read there rather than recopied here. The step of 10 it states leaves room to slip a parcours where it
-belongs rather than appending it at the end, which is what 8015 and 8025 are. Each step carries a `narration` of its
+belongs rather than appending it at the end, which is what 8015, 8022 and 8025 are. Each step carries a `narration` of its
 own, and each parcours one for its title, so the back-office films say a text written to be heard rather than read.
 
 ---

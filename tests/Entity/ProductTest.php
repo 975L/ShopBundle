@@ -71,6 +71,27 @@ class ProductTest extends TestCase
         $this->assertTrue($product->isHidden());
     }
 
+    // A template has no public page, so making one hides it
+    public function testMakingATemplateHidesIt(): void
+    {
+        $product = new Product()->setHidden(false);
+
+        $product->setTemplate(true);
+
+        $this->assertTrue($product->isTemplate());
+        $this->assertTrue($product->isHidden());
+    }
+
+    // The form of a template writes the switch like any other, and must not put it online
+    public function testATemplateCannotBeShown(): void
+    {
+        $product = new Product()->setTemplate(true);
+
+        $product->setHidden(false);
+
+        $this->assertTrue($product->isHidden());
+    }
+
     // An item is written to be sold, unlike the product carrying it: a format typed in the back-office is on the sheet as soon as it is saved
     public function testANewItemIsOnSale(): void
     {

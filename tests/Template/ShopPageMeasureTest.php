@@ -53,7 +53,7 @@ class ShopPageMeasureTest extends TestCase
     {
         foreach (['templates/shop/index.html.twig', 'templates/category/display.html.twig'] as $page) {
             $source = $this->read($page);
-            $blocks = strpos($source, '<twig:c975LUi:Blocks:Blocks');
+            $blocks = strpos($source, 'render_owned_blocks(');
             $this->assertIsInt($blocks, $page . ' composes no block');
 
             // The wrapper opened last before the blocks has to be closed before them

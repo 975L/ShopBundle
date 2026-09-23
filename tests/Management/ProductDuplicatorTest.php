@@ -171,6 +171,27 @@ class ProductDuplicatorTest extends TestCase
         $this->assertFalse($copy->isDeleted());
     }
 
+    // A copy is a product unless asked otherwise, whatever the original was: that is how a product is made from a template
+    public function testACopyOfATemplateIsAProduct(): void
+    {
+        $copy = $this->createDuplicator()->duplicate($this->createProduct()->setTemplate(true));
+
+        $this->assertFalse($copy->isTemplate());
+        $this->assertTrue($copy->isHidden());
+    }
+
+    // The way a template is made from a product, its items and their texts coming along
+    public function testACopyAskedAsATemplateIsOne(): void
+    {
+        $product = $this->createProduct();
+
+        $copy = $this->createDuplicator()->duplicate($product, true);
+
+        $this->assertTrue($copy->isTemplate());
+        $this->assertFalse($product->isTemplate());
+        $this->assertCount($product->getItems()->count(), $copy->getItems());
+    }
+
     public function testTheItemsAreCopiedWithNothingSoldOfThem(): void
     {
         $copy = $this->createDuplicator()->duplicate($this->createProduct());

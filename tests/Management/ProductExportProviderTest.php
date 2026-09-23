@@ -59,6 +59,7 @@ class ProductExportProviderTest extends TestCase
         $this->assertSame([['slug' => 'affiches', 'name' => 'Affiches']], $item['categories']);
         $this->assertSame(['cadre-bois'], $item['relatedProducts']);
         $this->assertFalse($item['isDeleted']);
+        $this->assertFalse($item['template']);
         $this->assertFalse($item['hidden']);
         $this->assertSame('2026-01-15T10:00:00+00:00', $item['creation']);
     }

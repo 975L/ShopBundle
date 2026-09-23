@@ -69,10 +69,10 @@ class ShopGuidedProjectProviderTest extends TestCase
         $projects = $this->createProvider()->getGuidedProjects();
 
         $this->assertSame(
-            ['shop-category', 'shop-index', 'shop-product', 'shop-translate', 'shop-downloadable', 'shop-gift-card', 'shop-test-mode', 'shop-export', 'shop-trash'],
+            ['shop-category', 'shop-index', 'shop-product', 'shop-template', 'shop-translate', 'shop-downloadable', 'shop-gift-card', 'shop-test-mode', 'shop-export', 'shop-trash'],
             array_column($projects, 'slug'),
         );
-        $this->assertSame([8010, 8015, 8020, 8025, 8030, 8040, 8050, 8060, 8070], array_column($projects, 'order'));
+        $this->assertSame([8010, 8015, 8020, 8022, 8025, 8030, 8040, 8050, 8060, 8070], array_column($projects, 'order'));
     }
 
     public function testEverySlugIsPrefixedWithTheBundleName(): void
@@ -124,14 +124,14 @@ class ShopGuidedProjectProviderTest extends TestCase
         }
     }
 
-    // Each parcours opens on the listing its task starts from, the six written from the products one included - the shop's own page having a screen of its own, which opens straight on the single row it edits
+    // Each parcours opens on the listing its task starts from, the seven written from the products one included - the shop's own page having a screen of its own, which opens straight on the single row it edits
     public function testEachCrudProjectOpensOnItsOwnListing(): void
     {
         $controllers = [];
         $this->createProvider($controllers)->getGuidedProjects();
 
         $this->assertSame(
-            ['ProductCategoryCrudController', 'ShopSettingsCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController'],
+            ['ProductCategoryCrudController', 'ShopSettingsCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController'],
             array_map(static fn (string $fqcn): string => basename(str_replace('\\', '/', $fqcn)), $controllers),
         );
     }

@@ -36,6 +36,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             $this->categoryProject(),
             $this->indexProject(),
             $this->productProject(),
+            $this->templateProject(),
             $this->translateProject(),
             $this->downloadableProject(),
             $this->giftCardProject(),
@@ -228,6 +229,60 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'description' => 'description.guided_step_shop_product_save',
                     'narration' => 'narration.guided_step_shop_product_save',
                     'highlight' => '.action-saveAndReturn',
+                ],
+            ],
+        ];
+    }
+
+    // A product kept as a template, and the new sheets drawn from it: neither is made from "New", which is what makes the gesture worth a project of its own
+    private function templateProject(): array
+    {
+        return [
+            'slug' => 'shop-template',
+            'label' => 'label.guided_project_shop_template',
+            'description' => 'description.guided_project_shop_template',
+            'narration' => 'narration.guided_project_shop_template',
+            'translation_domain' => 'shop',
+            // Right after the product it is made from, before its translation
+            'order' => 8022,
+            'role' => $this->roleNeeded(),
+            'steps' => [
+                [
+                    'label' => 'label.guided_step_shop_template_open',
+                    'description' => 'description.guided_step_shop_template_open',
+                    'narration' => 'narration.guided_step_shop_template_open',
+                    'url' => $this->indexUrl(ProductCrudController::class),
+                ],
+                [
+                    'label' => 'label.guided_step_shop_template_create_template',
+                    'description' => 'description.guided_step_shop_template_create_template',
+                    'narration' => 'narration.guided_step_shop_template_create_template',
+                    'highlight' => '.action-createTemplate',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_template_save',
+                    'description' => 'description.guided_step_shop_template_save',
+                    'narration' => 'narration.guided_step_shop_template_save',
+                    // The copy opens on its edit screen, flagged as a template's, so saving it comes back to the templates' list (see ProductCrudController::templatesEditLink())
+                    'highlight' => '.action-saveAndReturn',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_template_templates',
+                    'description' => 'description.guided_step_shop_template_templates',
+                    'narration' => 'narration.guided_step_shop_template_templates',
+                    // The same global action both ways: it reads "templates" on the catalogue and "products" from inside the templates
+                    'highlight' => '.action-templates',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_template_create_product',
+                    'description' => 'description.guided_step_shop_template_create_product',
+                    'narration' => 'narration.guided_step_shop_template_create_product',
+                    'highlight' => '.action-createProduct',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_template_hidden',
+                    'description' => 'description.guided_step_shop_template_hidden',
+                    'narration' => 'narration.guided_step_shop_template_hidden',
                 ],
             ],
         ];

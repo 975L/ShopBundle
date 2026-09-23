@@ -1,7 +1,7 @@
 {% extends '@EasyAdmin/crud/index.html.twig' %}
 
 {% block main %}
-    <p>{{ ('label.info_product'|trans({}, 'shop')) }}</p>
+    <p>{{ ((app.request.query.get('templates') is empty ? 'label.info_product' : 'label.info_templates')|trans({}, 'shop')) }}</p>
 
     {{ parent() }}
 {% endblock main %}

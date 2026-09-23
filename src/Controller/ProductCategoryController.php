@@ -12,7 +12,6 @@ namespace c975L\ShopBundle\Controller;
 
 use c975L\ConfigBundle\Service\LocalizedRouteNegotiator;
 use c975L\ShopBundle\Entity\ProductCategory;
-use c975L\ShopBundle\Service\ProductServiceInterface;
 use c975L\ShopBundle\Service\ShopTranslatedLocales;
 use c975L\ShopBundle\Service\ShopTranslator;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -24,7 +23,6 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProductCategoryController extends AbstractController
 {
     public function __construct(
-        private readonly ProductServiceInterface $productService,
         private readonly LocalizedRouteNegotiator $negotiator,
         private readonly ShopTranslatedLocales $translatedLocales,
         private readonly ShopTranslator $shopTranslator,
@@ -64,17 +62,13 @@ class ProductCategoryController extends AbstractController
             return $this->negotiator->vary($request, $askedLanguage);
         }
 
-        // Read through the repository rather than off the association: a category holds its hidden and its trashed products too, which the page would otherwise card up and link to a 404
-        $products = $this->productService->findByCategorySlug($category->getSlug());
-
-        // The category and its cards in the language being read (see ShopTranslator::apply)
-        $this->shopTranslator->apply([$category, ...$products]);
+        // The category in the language being read (see ShopTranslator::apply) - its cards are read and translated by the template, inside the fragment caching them (see ShopListingExtension::getCategoryProducts)
+        $this->shopTranslator->apply([$category]);
 
         return $this->negotiator->vary($request, $this->render(
             '@c975LShop/category/display.html.twig',
             [
                 'category' => $category,
-                'products' => $products,
             ]
         ));
     }

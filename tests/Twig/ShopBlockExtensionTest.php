@@ -19,6 +19,8 @@ use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\ShopBundle\Twig\Extension\ShopBlockExtension;
 use c975L\UiBundle\Entity\Block;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 // What the block templates of this bundle resolve at render time: the kinds a sheet holds, which is what tells its hardcoded sections to step aside, and the visuals a card is bought on
@@ -35,6 +37,7 @@ class ShopBlockExtensionTest extends TestCase
             new RequestStack(),
             // A double rather than the real one: what it lays over is ShopTranslator's own test, and a single-language site lays nothing
             $this->createStub(ShopTranslator::class),
+            new TagAwareAdapter(new ArrayAdapter()),
         );
     }
 
@@ -103,6 +106,7 @@ class ShopBlockExtensionTest extends TestCase
             $this->createStub(ProductRecommendationServiceInterface::class),
             new RequestStack(),
             $this->createStub(ShopTranslator::class),
+            new TagAwareAdapter(new ArrayAdapter()),
         );
     }
 
@@ -118,5 +122,58 @@ class ShopBlockExtensionTest extends TestCase
     private function block(string $kind): Block
     {
         return new Block()->setKind($kind);
+    }
+
+    // Read once per product and served from the cache afterwards: a hit loads neither the medias nor the blocks
+    public function testTheSheetDataIsReadOnceUntilTheProductsAreEmptied(): void
+    {
+        $cache = new TagAwareAdapter(new ArrayAdapter());
+        $extension = new ShopBlockExtension(
+            $this->createStub(ProductRepository::class),
+            $this->createStub(ProductCategoryRepository::class),
+            $this->createStub(ProductRecommendationServiceInterface::class),
+            new RequestStack(),
+            $this->createStub(ShopTranslator::class),
+            $cache,
+        );
+
+        $product = new Product();
+        new \ReflectionProperty(Product::class, 'id')->setValue($product, 5);
+        $product->addBlock(new Block()->setKind('shop_product_items'));
+
+        $this->assertSame(['shop_product_items'], $extension->getSheetData($product)['sheetKinds']);
+
+        $product->addBlock(new Block()->setKind('shop_recommendations'));
+        $this->assertSame(['shop_product_items'], $extension->getSheetData($product)['sheetKinds']);
+
+        $cache->invalidateTags(['shop_products']);
+        $this->assertSame(['shop_product_items', 'shop_recommendations'], $extension->getSheetData($product)['sheetKinds']);
+        $this->assertNull($extension->getSheetData($product)['ogImage']);
+    }
+
+    // A slot added to one of the sheet's containers reaches the entry through that container's own tag, which neither the product nor its run of blocks reports
+    public function testTheSheetDataIsEmptiedByItsContainersTag(): void
+    {
+        $cache = new TagAwareAdapter(new ArrayAdapter());
+        $extension = new ShopBlockExtension(
+            $this->createStub(ProductRepository::class),
+            $this->createStub(ProductCategoryRepository::class),
+            $this->createStub(ProductRecommendationServiceInterface::class),
+            new RequestStack(),
+            $this->createStub(ShopTranslator::class),
+            $cache,
+        );
+
+        $product = new Product();
+        new \ReflectionProperty(Product::class, 'id')->setValue($product, 5);
+        $container = new Block()->setKind('flex_columns');
+        new \ReflectionProperty(Block::class, 'id')->setValue($container, 12);
+        $product->addBlock($container);
+
+        $this->assertSame(['flex_columns'], $extension->getSheetData($product)['sheetKinds']);
+
+        $container->addSlot(new Block()->setKind('shop_product_items'));
+        $cache->invalidateTags(['block_12']);
+        $this->assertSame(['flex_columns', 'shop_product_items'], $extension->getSheetData($product)['sheetKinds']);
     }
 }

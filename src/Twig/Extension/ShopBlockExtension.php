@@ -15,9 +15,13 @@ use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductRecommendationServiceInterface;
+use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Twig\OwnedBlocksExtension;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\Service\ResetInterface;
 use Twig\Attribute\AsTwigFunction;
 
@@ -42,6 +46,7 @@ class ShopBlockExtension implements ResetInterface
         private readonly ProductRecommendationServiceInterface $recommendationService,
         private readonly RequestStack $requestStack,
         private readonly ShopTranslator $shopTranslator,
+        private readonly TagAwareCacheInterface $cache,
     ) {
     }
 
@@ -134,6 +139,52 @@ class ShopBlockExtension implements ResetInterface
         $product = $this->getProduct($slug);
 
         return null !== $product ? $this->translated($this->recommendationService->getSimilarProducts($product, $max)) : [];
+    }
+
+    // The language being read laid over rows a cached fragment draws, on its miss alone - a product's items, which the controller no longer translates up front
+    /**
+     * @template T of object
+     *
+     * @param iterable<T> $rows
+     *
+     * @return list<T>
+     */
+    #[AsTwigFunction('shop_translate')]
+    public function translate(iterable $rows): array
+    {
+        $rows = array_values(\is_array($rows) ? $rows : iterator_to_array($rows));
+        $this->shopTranslator->apply($rows);
+
+        return $rows;
+    }
+
+    // The products shown under a sheet, what the editor picked or the affinities computed - called from inside the sheet's cached fragment, so a hit scores nothing
+    /** @return list<Product> */
+    #[AsTwigFunction('shop_similar_products')]
+    public function getSimilarProducts(Product $product, int $max = 4): array
+    {
+        return $this->translated($this->recommendationService->getSimilarProducts($product, $max));
+    }
+
+    // What a sheet reads off its medias and its blocks before drawing anything - its share image and the kinds its blocks hold (see getSheetKinds()) - kept as plain values so a hit loads neither. Emptied with the products (a media saved), with the sheet's own run of blocks (see UiBundle's OwnedBlocksCacheListener) and with each of its blocks, a slot added to or taken from a container reaching the top block's "block_{id}" (see UiBundle's BlockCacheInvalidationListener)
+    /** @return array{ogImage: ?string, ogImageAlt: ?string, sheetKinds: list<string>} */
+    #[AsTwigFunction('shop_product_sheet_data')]
+    public function getSheetData(Product $product): array
+    {
+        return $this->cache->get('shop_product_sheet_' . $product->getId(), function (ItemInterface $item) use ($product): array {
+            $blockTags = [];
+            foreach ($product->getBlocks() as $block) {
+                $blockTags[] = 'block_' . $block->getId();
+            }
+            $item->tag([ShopBlockCacheInvalidator::CACHE_TAG_PRODUCTS, OwnedBlocksExtension::ownerTag($product), ...$blockTags]);
+            $media = $product->getMedias()->first() ?: null;
+
+            return [
+                'ogImage' => $media?->getName(),
+                'ogImageAlt' => $media?->getAlt(),
+                'sheetKinds' => $this->getSheetKinds($product->getBlocks()),
+            ];
+        });
     }
 
     // Every kind held by a sheet, its containers' slots included, over two levels - as deep as a container of a container goes: what a hardcoded section of product/display.html.twig reads to step aside when the editor has placed the block taking it over

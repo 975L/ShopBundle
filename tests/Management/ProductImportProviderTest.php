@@ -274,6 +274,26 @@ class ProductImportProviderTest extends TestCase
         new Filesystem()->remove([$projectDir, $filesDir]);
     }
 
+    // A template exported from one site is a template in the next, and one taken before the column existed comes back a product
+    public function testTheProductComesBackATemplateWhenTheArchiveSaysSo(): void
+    {
+        $projectDir = $this->createDir();
+        $filesDir = $this->createDir();
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+
+        $data = $this->productData();
+        unset($data['items'][0]['file']);
+        $data['template'] = true;
+
+        $this->createProvider($projectDir)->import([$data], $filesDir);
+
+        $product = $this->persistedOf(Product::class)[0];
+        $this->assertTrue($product->isTemplate());
+        $this->assertTrue($product->isHidden());
+
+        new Filesystem()->remove([$projectDir, $filesDir]);
+    }
+
     private function productData(): array
     {
         return [

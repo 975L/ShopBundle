@@ -51,6 +51,7 @@ class ShopStatusProvider implements StatusProviderInterface
             ->select('COUNT(p.id)')
             ->where('p.medias IS EMPTY')
             ->andWhere('p.isDeleted = false')
+            ->andWhere('p.template = false')
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -62,6 +63,7 @@ class ShopStatusProvider implements StatusProviderInterface
             ->select('COUNT(p.id)')
             ->where('p.description IS NULL OR LENGTH(p.description) < :chars')
             ->andWhere('p.isDeleted = false')
+            ->andWhere('p.template = false')
             ->setParameter('chars', self::THIN_DESCRIPTION_CHARS)
             ->getQuery()
             ->getSingleScalarResult();

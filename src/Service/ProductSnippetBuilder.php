@@ -309,35 +309,47 @@ class ProductSnippetBuilder
         ];
     }
 
-    // The return window the shop configured, for the country it sells to - no node at all when either is missing, an incomplete policy being what Google flags, and a guessed window a promise the shop never made
+    // The return window the shop configured, for the country it sells to - no node at all when either is missing, an incomplete policy being what Google flags, and a guessed window a promise the shop never made. An unfilled int setting reads as zero, so only a window above zero is published: nothing is ever claimed for a shop that never answered the question
     private function returnPolicy(ProductItem $item): array
     {
         $country = trim((string) $this->configService->get('shop-shipping-country'));
-        $days = $this->configService->get('shop-return-days');
+        $days = max(0, (int) $this->configService->get('shop-return-days'));
 
-        // A downloaded file is not returnable, the right of withdrawal ending once the download starts
+        // A downloaded file is not returnable, the right of withdrawal ending once the download starts - and it says so whatever window the posted articles are granted
         $downloaded = $this->isDownloaded($item);
-        if ('' === $country || (!$downloaded && !is_numeric($days))) {
+        if ('' === $country || (!$downloaded && 0 === $days)) {
             return [];
         }
 
-        $days = $downloaded ? 0 : max(0, (int) $days);
         $policy = [
             '@type' => 'MerchantReturnPolicy',
             'applicableCountry' => strtoupper($country),
-            'returnPolicyCategory' => 0 === $days ? 'https://schema.org/MerchantReturnNotPermitted' : 'https://schema.org/MerchantReturnFiniteReturnWindow',
+            'returnPolicyCategory' => $downloaded ? 'https://schema.org/MerchantReturnNotPermitted' : 'https://schema.org/MerchantReturnFiniteReturnWindow',
         ];
 
-        if ($days > 0) {
+        if (!$downloaded) {
             $policy['merchantReturnDays'] = $days;
         }
 
-        $url = trim((string) $this->configService->get('url-terms-of-sales'));
+        // The terms are configured as a path on most sites, and a relative link is not one a search engine can follow
+        $url = $this->absoluteUrl(trim((string) $this->configService->get('url-terms-of-sales')));
         if ('' !== $url) {
             $policy['merchantReturnLink'] = $url;
         }
 
         return $policy;
+    }
+
+    // A configured path turned into the address a search engine can follow, the host coming from "site-url" like everywhere else - an unconfigured host leaves nothing rather than a relative link
+    private function absoluteUrl(string $url): string
+    {
+        if ('' === $url || 1 === preg_match('#^https?://#i', $url)) {
+            return $url;
+        }
+
+        $siteUrl = rtrim(trim((string) $this->configService->get('site-url')), '/');
+
+        return '' === $siteUrl ? '' : $siteUrl . '/' . ltrim($url, '/');
     }
 
     // A named file is downloaded rather than posted - the empty placeholder ProductItemListener attaches to every new item is not one, here as in ProductBasketItemProvider

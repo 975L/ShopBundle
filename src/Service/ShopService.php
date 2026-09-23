@@ -26,6 +26,8 @@ class ShopService implements ShopServiceInterface
     // How many bands the price filter offers. They are cut from the catalogue's own prices rather than from figures written here, which would suit one shop and no other - from the highest "from" price, the very one matchesPrice() compares a band against
     private const int PRICE_BRACKETS = 4;
 
+    private const int PER_PAGE = 12;
+
     public function __construct(
         private readonly ProductRepository $productRepository,
         private readonly ProductCategoryRepository $productCategoryRepository,
@@ -34,23 +36,30 @@ class ShopService implements ShopServiceInterface
     ) {
     }
 
-    // Gets the products paginated
+    // Gets the products paginated - in SQL when nothing asks to read the items, the filters and the price order reading them in PHP
     public function findAllProductsPaginated($query)
     {
         $order = $this->getOrder($query);
-        $products = $this->productRepository->findAllSorted($order);
-        $products = $this->filter($products, $this->getFilters($query));
+        $filters = $this->getFilters($query);
+        $page = $this->paginator->getPage($query);
+
+        if ([] === array_filter($filters) && 'price_asc' !== $order && 'price_desc' !== $order) {
+            return $this->paginator->paginateSlice(
+                $this->productRepository->findPageSorted($order, ($page - 1) * self::PER_PAGE, self::PER_PAGE),
+                $page,
+                self::PER_PAGE,
+                $this->productRepository->countAvailable()
+            );
+        }
+
+        $products = $this->filter($this->productRepository->findAllSorted($order), $filters);
 
         // A product's price is the lowest of its items, which no ORDER BY can read without collapsing the rows the joined medias and items spread it over - a page of products is short enough to order here
         if ('price_asc' === $order || 'price_desc' === $order) {
             $products = $this->sortByPrice($products, 'price_desc' === $order);
         }
 
-        return $this->paginator->paginate(
-            $products,
-            $this->paginator->getPage($query),
-            12
-        );
+        return $this->paginator->paginate($products, $page, self::PER_PAGE);
     }
 
     // Gets the requested order, null when the query asks for one the listing does not offer
@@ -105,7 +114,7 @@ class ShopService implements ShopServiceInterface
     // Counts the categories the shop publishes
     public function countCategories(): int
     {
-        return count($this->productCategoryRepository->findAll());
+        return $this->productCategoryRepository->count([]);
     }
 
     // Narrows the listing on what the filter row asks. All three read the items, which no WHERE can reach without collapsing the rows the joined medias and items spread a product over, so they are applied here as the price ordering already is

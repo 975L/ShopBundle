@@ -10,6 +10,14 @@
                 <source>Slug</source>
                 <target>Slug</target>
             </trans-unit>
+            <trans-unit id="S0BL_.r">
+                <source>action.create_product</source>
+                <target>Create a product</target>
+            </trans-unit>
+            <trans-unit id="CQ7wnMr">
+                <source>action.create_template</source>
+                <target>Create a template</target>
+            </trans-unit>
             <trans-unit id="sSgetpg">
                 <source>action.delete_permanently</source>
                 <target>Delete permanently</target>
@@ -46,6 +54,14 @@
                 <source>action.view_on_site</source>
                 <target>View on site</target>
             </trans-unit>
+            <trans-unit id="nm4g0K4">
+                <source>confirm.create_product</source>
+                <target>Create a new hidden product from this template?</target>
+            </trans-unit>
+            <trans-unit id="P4qZjTI">
+                <source>confirm.create_template</source>
+                <target>Create a template from this product? The product stays unchanged.</target>
+            </trans-unit>
             <trans-unit id="X4j.TeG">
                 <source>confirm.delete_permanently</source>
                 <target>Permanently delete this product, its pictures and its files? This cannot be undone.</target>
@@ -81,6 +97,10 @@
             <trans-unit id="ucGRCvp">
                 <source>description.guided_project_shop_product</source>
                 <target>The sheet the visitor reads, and the item carrying what they pay - one without the other sells nothing.</target>
+            </trans-unit>
+            <trans-unit id="T4sG0.j">
+                <source>description.guided_project_shop_template</source>
+                <target>Keeping a product as a template, then drawing new sheets from it that take over its texts, its items and their translations.</target>
             </trans-unit>
             <trans-unit id="gC63sPJ">
                 <source>description.guided_project_shop_test_mode</source>
@@ -254,6 +274,30 @@
                 <source>description.guided_step_shop_product_title</source>
                 <target>What the visitor reads first, and what the address is built from.</target>
             </trans-unit>
+            <trans-unit id="uwottfS">
+                <source>description.guided_step_shop_template_create_product</source>
+                <target>A new product, copied from the template with its texts, its items and their translations.</target>
+            </trans-unit>
+            <trans-unit id="XLUKR4d">
+                <source>description.guided_step_shop_template_create_template</source>
+                <target>The product stays as it is: a copy becomes the template, hidden and never shown on the site.</target>
+            </trans-unit>
+            <trans-unit id="jtzc1P2">
+                <source>description.guided_step_shop_template_hidden</source>
+                <target>The product created is hidden: give it its name and its prices, then publish it.</target>
+            </trans-unit>
+            <trans-unit id="0YJ3gDM">
+                <source>description.guided_step_shop_template_open</source>
+                <target>A template is made from an existing product, never from an empty form.</target>
+            </trans-unit>
+            <trans-unit id="IwyRZoZ">
+                <source>description.guided_step_shop_template_save</source>
+                <target>The template opens as soon as it is created: save it, and you are on the list of templates.</target>
+            </trans-unit>
+            <trans-unit id="aYdC96C">
+                <source>description.guided_step_shop_template_templates</source>
+                <target>Templates have a list of their own. The same button, "Templates" from the catalog, reads "Products" here to bring you back.</target>
+            </trans-unit>
             <trans-unit id="2_nEywQ">
                 <source>description.guided_step_shop_test_mode_banner</source>
                 <target>A banner on every page of the shop, saying it is being set up - the payments have a test mode of their own, and the two are separate.</target>
@@ -330,6 +374,10 @@
                 <source>description.guided_step_shop_trash_restore</source>
                 <target>The product returns to the catalog with its pictures, its items and its blocks, hidden from the shop.</target>
             </trans-unit>
+            <trans-unit id="ZFRC0kd">
+                <source>flash.product_created_from_template</source>
+                <target>The product has been created from the template. It stays hidden until you publish it.</target>
+            </trans-unit>
             <trans-unit id="O4ItfqQ">
                 <source>flash.product_deleted_permanently</source>
                 <target>The product has been permanently deleted, with its pictures and its files.</target>
@@ -349,6 +397,10 @@
             <trans-unit id="KUXhXBZ">
                 <source>flash.shop_test_mode_enabled</source>
                 <target>The shop is in test mode: every page warns the visitor that nothing is really sold.</target>
+            </trans-unit>
+            <trans-unit id="3cn7PB1">
+                <source>flash.template_created</source>
+                <target>The template has been created. It stays hidden and only appears in the templates list.</target>
             </trans-unit>
             <trans-unit id="icfsMlU">
                 <source>label.add</source>
@@ -714,6 +766,10 @@
                 <source>label.guided_project_shop_product</source>
                 <target>Create a product</target>
             </trans-unit>
+            <trans-unit id="2GVEjXl">
+                <source>label.guided_project_shop_template</source>
+                <target>Create products from a template</target>
+            </trans-unit>
             <trans-unit id="WhDofZ9">
                 <source>label.guided_project_shop_test_mode</source>
                 <target>Rehearse the shop</target>
@@ -885,6 +941,30 @@
             <trans-unit id="XvTng1B">
                 <source>label.guided_step_shop_product_title</source>
                 <target>Title it</target>
+            </trans-unit>
+            <trans-unit id="OTGhWr8">
+                <source>label.guided_step_shop_template_create_product</source>
+                <target>Create a product</target>
+            </trans-unit>
+            <trans-unit id="8Fnm3x5">
+                <source>label.guided_step_shop_template_create_template</source>
+                <target>Create a template</target>
+            </trans-unit>
+            <trans-unit id="kPqi1O0">
+                <source>label.guided_step_shop_template_hidden</source>
+                <target>What is left to do</target>
+            </trans-unit>
+            <trans-unit id="dtvuL0_">
+                <source>label.guided_step_shop_template_open</source>
+                <target>Open the products</target>
+            </trans-unit>
+            <trans-unit id="arKHINE">
+                <source>label.guided_step_shop_template_save</source>
+                <target>Save the template</target>
+            </trans-unit>
+            <trans-unit id="VF89UIS">
+                <source>label.guided_step_shop_template_templates</source>
+                <target>The list of templates</target>
             </trans-unit>
             <trans-unit id="kPFMCJm">
                 <source>label.guided_step_shop_test_mode_banner</source>
@@ -1061,6 +1141,10 @@
             <trans-unit id="EkFFPCh">
                 <source>label.info_shop_link</source>
                 <target>All our items, ordered online and delivered to your door.</target>
+            </trans-unit>
+            <trans-unit id="OCHL2hS">
+                <source>label.info_templates</source>
+                <target>A template is never shown on the site. It is used to create products that take over its texts, its items and their translations: use "Create a product". To create a template, use "Create a template" on a product.</target>
             </trans-unit>
             <trans-unit id="Bw6Jk.r">
                 <source>label.item_already_downloaded</source>
@@ -1417,6 +1501,10 @@
             <trans-unit id="04zDTq_">
                 <source>label.success</source>
                 <target>Success</target>
+            </trans-unit>
+            <trans-unit id="Gwnseqp">
+                <source>label.templates</source>
+                <target>Templates</target>
             </trans-unit>
             <trans-unit id="ua7HEiS">
                 <source>label.terms_of_sales</source>

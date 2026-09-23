@@ -1,5 +1,30 @@
 [
     {
+        "date": "2026-09-23",
+        "description": [
+            {
+                "en": "A product can now be kept as a template: new products drawn from it take over its texts, its items and their translations, and a guided project walks you through it.",
+                "fr": "Un produit peut désormais être gardé comme modèle : les nouveaux produits créés à partir de lui reprennent ses textes, ses articles et leurs traductions, et un projet guidé vous accompagne.",
+                "es": "Un producto puede ahora conservarse como plantilla: los nuevos productos creados a partir de ella retoman sus textos, sus artículos y sus traducciones, y un proyecto guiado le acompaña."
+            },
+            {
+                "en": "Where your site posts on social networks, your products can now be posted too.",
+                "fr": "Si votre site publie sur les réseaux sociaux, vos produits peuvent désormais l'être aussi.",
+                "es": "Si su sitio publica en las redes sociales, sus productos pueden publicarse ahora también."
+            },
+            {
+                "en": "The shop's pages open faster.",
+                "fr": "Les pages de la boutique s'affichent plus vite.",
+                "es": "Las páginas de la tienda se muestran más rápido."
+            },
+            {
+                "en": "A shop that never set a return window no longer tells search engines it takes no returns.",
+                "fr": "Une boutique qui n'a jamais indiqué de délai de retour n'annonce plus aux moteurs de recherche qu'elle refuse les retours.",
+                "es": "Una tienda que nunca indicó un plazo de devolución ya no anuncia a los motores de búsqueda que no acepta devoluciones."
+            }
+        ]
+    },
+    {
         "date": "2026-09-22",
         "description": [
             {

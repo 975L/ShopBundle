@@ -303,15 +303,28 @@ class ProductSnippetBuilderTest extends TestCase
         $this->assertSame('https://example.org/terms-of-sales', $policy['merchantReturnLink']);
     }
 
-    // Zero days is a shop taking no returns, said as such rather than as a window of nothing
-    public function testAShopTakingNoReturnsSaysSo(): void
+    // The terms are configured as a path on most sites, and a search engine follows an address, not a path
+    public function testTheReturnLinkIsPublishedAbsolute(): void
     {
-        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-return-days' => 0]);
-        $policy = $builder->buildProduct($this->product())['offers'][0]['hasMerchantReturnPolicy'];
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-return-days' => 14, 'site-url' => 'https://example.org/', 'url-terms-of-sales' => '/pages/terms-of-sales']);
 
-        $this->assertSame('https://schema.org/MerchantReturnNotPermitted', $policy['returnPolicyCategory']);
-        $this->assertArrayNotHasKey('merchantReturnDays', $policy);
-        $this->assertArrayNotHasKey('merchantReturnLink', $policy);
+        $this->assertSame('https://example.org/pages/terms-of-sales', $builder->buildProduct($this->product())['offers'][0]['hasMerchantReturnPolicy']['merchantReturnLink']);
+    }
+
+    // A path is no link at all while the host is unconfigured, a relative one being worse than none
+    public function testAReturnLinkWithoutAConfiguredHostIsLeftOut(): void
+    {
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-return-days' => 14, 'url-terms-of-sales' => '/pages/terms-of-sales']);
+
+        $this->assertArrayNotHasKey('merchantReturnLink', $builder->buildProduct($this->product())['offers'][0]['hasMerchantReturnPolicy']);
+    }
+
+    // An unfilled int setting reads as zero, and a shop that never answered the question claims nothing - least of all that it takes no returns
+    public function testAShopWithoutAConfiguredWindowPublishesNoReturnPolicy(): void
+    {
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-return-days' => 0, 'url-terms-of-sales' => 'https://example.org/terms-of-sales']);
+
+        $this->assertArrayNotHasKey('hasMerchantReturnPolicy', $builder->buildProduct($this->product())['offers'][0]);
     }
 
     // The right of withdrawal ends once a download starts, whatever window the shop grants its posted articles

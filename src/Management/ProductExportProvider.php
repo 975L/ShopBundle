@@ -92,6 +92,8 @@ class ProductExportProvider implements ExportProviderInterface
             'hidden' => $product->isHidden(),
             // The archive is a faithful copy: a product exported out of the recycle bin comes back to the recycle bin, not into the catalogue
             'isDeleted' => $product->isDeleted(),
+            // A template exported from one site is imported as a template in the next, which is what it is carried for
+            'template' => $product->isTemplate(),
             'availableAt' => $product->getAvailableAt()?->format(\DateTimeInterface::ATOM),
             // What the card this product sells is printed with, its amounts travelling on the items below
             'giftCardText' => $product->getGiftCardText(),

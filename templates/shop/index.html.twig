@@ -6,11 +6,13 @@
 {% set title = url_metadata_title('label.shop'|trans) %}
 {% set summarySocialNetwork = url_metadata_summary('label.all_our_items'|trans) %}
 
-{% set perPage = products.getItemNumberPerPage %}
-{% set total = products.getTotalItemCount %}
-
 {# Editor-only: the hover button's controller is mounted on the page rather than left to UiBundle's Blocks component, which a shop holding no block never renders - each card carries the url of the product it stands for (see components/Product/Product.html.twig) #}
 {% set canEdit = is_granted(config('site-role-editor')) %}
+
+{# The listing and its structured data, one entry per query, language, day and reader - an editor's cards carry their edit urls, and the day brings in a product coming out on a date no save marks. Emptied by a product or a category saved (see ShopCacheInvalidationListener) and by a vote on any product, the cards showing their average #}
+{% set listingKey = 'shop_index_' ~ shop_listing_key() ~ '_' ~ app.request.locale ~ '_' ~ 'now'|date('Ymd') ~ (canEdit ? '_editor' : '') %}
+{% set listingTtl = shop_listing_ttl() %}
+{% set listingTags = ['shop_products', 'shop_categories', ui_rating_type_cache_tag('shop_product')] %}
 
 {% block content %}
     <div data-controller="basket{{ canEdit ? ' blockEditOverlay' : '' }}" class="shop"{% if canEdit %} data-edit-label="{{ 'label.edit'|trans({}, 'ui') }}"{% endif %}>
@@ -23,14 +25,21 @@
         </div>
 
         {# What the shop says above its listing - delivery, welcome message, arguments - composed in the back-office with UiBundle's kinds, nothing to add here when the shop holds no block #}
-        <twig:c975LUi:Blocks:Blocks blocks="{{ shopBlocks }}"/>
+        {% if shopSettings %}
+            {{ render_owned_blocks(shopSettings) }}
+        {% endif %}
 
         <div class="section-wrap">
+            {% cache listingKey ttl(listingTtl) tags(listingTags) %}
+            {% set products = shop_listing() %}
+            {% set perPage = products.getItemNumberPerPage %}
+            {% set total = products.getTotalItemCount %}
+            {% set categoriesCount = shop_categories_count() %}
             {# The search first and alone: naming what one came for is the shortest way through a shop, and it is the only control worth a full row of a phone screen #}
             <twig:c975LShop:Product:Search/>
 
             {# Everything that narrows the listing under one folded panel - category, price, format, availability, order. See components/Product/Refine.html.twig for why it is folded #}
-            <twig:c975LShop:Product:Refine order="{{ order }}" filters="{{ filters }}" priceBrackets="{{ priceBrackets }}"/>
+            <twig:c975LShop:Product:Refine order="{{ order }}" filters="{{ filters }}" priceBrackets="{{ shop_price_brackets() }}"/>
 
             {# What the listing below holds, read as its caption rather than as a figure standing above the filters: filtering changes it, and it has to be next to what it counts #}
             <p class="shop-counters">
@@ -63,13 +72,18 @@
                 </div>
             </div>
 
+            {% endcache %}
+
             <twig:c975LPayment:Basket:Message/>
         </div>
     </div>
 
     {# The cards this page prints, as the list a search engine reads a catalog through - the sheets it points at carry the prices, so nothing is published twice. The offset is the paginator's own: the second page numbers its cards from where the first stopped. "raw" because the payload goes through a variable, which drops the function's own is_safe marking - the builder already escaped every character that could close the tag #}
-    {% set productsJsonLd = shop_products_json_ld(products, (products.getCurrentPageNumber - 1) * perPage) %}
-    {% if productsJsonLd %}
-        <script type="application/ld+json">{{ productsJsonLd|raw }}</script>
-    {% endif %}
+    {% cache listingKey ~ '_jsonld' ttl(listingTtl) tags(listingTags) %}
+        {% set products = shop_listing() %}
+        {% set productsJsonLd = shop_products_json_ld(products, (products.getCurrentPageNumber - 1) * products.getItemNumberPerPage) %}
+        {% if productsJsonLd %}
+            <script type="application/ld+json">{{ productsJsonLd|raw }}</script>
+        {% endif %}
+    {% endcache %}
 {% endblock %}

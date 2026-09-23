@@ -10,6 +10,14 @@
                 <source>Slug</source>
                 <target>Slug</target>
             </trans-unit>
+            <trans-unit id="S0BL_.r">
+                <source>action.create_product</source>
+                <target>Crear un producto</target>
+            </trans-unit>
+            <trans-unit id="CQ7wnMr">
+                <source>action.create_template</source>
+                <target>Crear una plantilla</target>
+            </trans-unit>
             <trans-unit id="sSgetpg">
                 <source>action.delete_permanently</source>
                 <target>Eliminar definitivamente</target>
@@ -46,6 +54,14 @@
                 <source>action.view_on_site</source>
                 <target>Ver en el sitio</target>
             </trans-unit>
+            <trans-unit id="nm4g0K4">
+                <source>confirm.create_product</source>
+                <target>¿Crear un nuevo producto oculto a partir de esta plantilla?</target>
+            </trans-unit>
+            <trans-unit id="P4qZjTI">
+                <source>confirm.create_template</source>
+                <target>¿Crear una plantilla a partir de este producto? El producto no cambia.</target>
+            </trans-unit>
             <trans-unit id="X4j.TeG">
                 <source>confirm.delete_permanently</source>
                 <target>¿Eliminar definitivamente este producto, sus imágenes y sus archivos? Esta acción es irreversible.</target>
@@ -81,6 +97,10 @@
             <trans-unit id="ucGRCvp">
                 <source>description.guided_project_shop_product</source>
                 <target>La ficha que lee el visitante y el artículo que lleva lo que paga: uno sin el otro no vende nada.</target>
+            </trans-unit>
+            <trans-unit id="T4sG0.j">
+                <source>description.guided_project_shop_template</source>
+                <target>Conservar un producto como plantilla y sacar de ella nuevas fichas que retoman sus textos, sus artículos y sus traducciones.</target>
             </trans-unit>
             <trans-unit id="gC63sPJ">
                 <source>description.guided_project_shop_test_mode</source>
@@ -254,6 +274,30 @@
                 <source>description.guided_step_shop_product_title</source>
                 <target>Lo que el visitante lee primero y a partir de lo cual se construye la dirección.</target>
             </trans-unit>
+            <trans-unit id="uwottfS">
+                <source>description.guided_step_shop_template_create_product</source>
+                <target>Un nuevo producto, copiado de la plantilla con sus textos, sus artículos y sus traducciones.</target>
+            </trans-unit>
+            <trans-unit id="XLUKR4d">
+                <source>description.guided_step_shop_template_create_template</source>
+                <target>El producto se queda tal cual: es una copia la que se convierte en plantilla, oculta y nunca mostrada en el sitio.</target>
+            </trans-unit>
+            <trans-unit id="jtzc1P2">
+                <source>description.guided_step_shop_template_hidden</source>
+                <target>El producto creado está oculto: dale su nombre y sus precios, y luego publícalo.</target>
+            </trans-unit>
+            <trans-unit id="0YJ3gDM">
+                <source>description.guided_step_shop_template_open</source>
+                <target>Una plantilla se crea a partir de un producto existente, nunca desde un formulario vacío.</target>
+            </trans-unit>
+            <trans-unit id="IwyRZoZ">
+                <source>description.guided_step_shop_template_save</source>
+                <target>La plantilla se abre en cuanto se crea: guárdala, y estás en la lista de plantillas.</target>
+            </trans-unit>
+            <trans-unit id="aYdC96C">
+                <source>description.guided_step_shop_template_templates</source>
+                <target>Las plantillas tienen su propia lista. El mismo botón, «Plantillas» desde el catálogo, muestra aquí «Productos» para traerte de vuelta.</target>
+            </trans-unit>
             <trans-unit id="2_nEywQ">
                 <source>description.guided_step_shop_test_mode_banner</source>
                 <target>Un banner en cada página de la tienda que indica que se está montando; los pagos tienen su propio modo de prueba y ambos son distintos.</target>
@@ -330,6 +374,10 @@
                 <source>description.guided_step_shop_trash_restore</source>
                 <target>El producto vuelve al catálogo con sus imágenes, sus artículos y sus bloques, oculto de la tienda.</target>
             </trans-unit>
+            <trans-unit id="ZFRC0kd">
+                <source>flash.product_created_from_template</source>
+                <target>El producto se ha creado a partir de la plantilla. Permanece oculto hasta que lo publique.</target>
+            </trans-unit>
             <trans-unit id="O4ItfqQ">
                 <source>flash.product_deleted_permanently</source>
                 <target>El producto ha sido eliminado definitivamente, con sus imágenes y sus archivos.</target>
@@ -349,6 +397,10 @@
             <trans-unit id="KUXhXBZ">
                 <source>flash.shop_test_mode_enabled</source>
                 <target>La tienda está en modo de prueba: cada página avisa al visitante de que no se vende nada realmente.</target>
+            </trans-unit>
+            <trans-unit id="3cn7PB1">
+                <source>flash.template_created</source>
+                <target>La plantilla se ha creado. Permanece oculta y solo aparece en la lista de plantillas.</target>
             </trans-unit>
             <trans-unit id="icfsMlU">
                 <source>label.add</source>
@@ -714,6 +766,10 @@
                 <source>label.guided_project_shop_product</source>
                 <target>Crear un producto</target>
             </trans-unit>
+            <trans-unit id="2GVEjXl">
+                <source>label.guided_project_shop_template</source>
+                <target>Crear productos a partir de una plantilla</target>
+            </trans-unit>
             <trans-unit id="WhDofZ9">
                 <source>label.guided_project_shop_test_mode</source>
                 <target>Ensayar la tienda</target>
@@ -885,6 +941,30 @@
             <trans-unit id="XvTng1B">
                 <source>label.guided_step_shop_product_title</source>
                 <target>Ponerle un título</target>
+            </trans-unit>
+            <trans-unit id="OTGhWr8">
+                <source>label.guided_step_shop_template_create_product</source>
+                <target>Crear un producto</target>
+            </trans-unit>
+            <trans-unit id="8Fnm3x5">
+                <source>label.guided_step_shop_template_create_template</source>
+                <target>Crear una plantilla</target>
+            </trans-unit>
+            <trans-unit id="kPqi1O0">
+                <source>label.guided_step_shop_template_hidden</source>
+                <target>Lo que queda por hacer</target>
+            </trans-unit>
+            <trans-unit id="dtvuL0_">
+                <source>label.guided_step_shop_template_open</source>
+                <target>Abrir los productos</target>
+            </trans-unit>
+            <trans-unit id="arKHINE">
+                <source>label.guided_step_shop_template_save</source>
+                <target>Guardar la plantilla</target>
+            </trans-unit>
+            <trans-unit id="VF89UIS">
+                <source>label.guided_step_shop_template_templates</source>
+                <target>La lista de plantillas</target>
             </trans-unit>
             <trans-unit id="kPFMCJm">
                 <source>label.guided_step_shop_test_mode_banner</source>
@@ -1061,6 +1141,10 @@
             <trans-unit id="EkFFPCh">
                 <source>label.info_shop_link</source>
                 <target>Todos nuestros artículos, para pedir en línea y recibir en casa.</target>
+            </trans-unit>
+            <trans-unit id="OCHL2hS">
+                <source>label.info_templates</source>
+                <target>Una plantilla nunca se muestra en el sitio. Sirve para crear productos que retoman sus textos, sus artículos y sus traducciones: use «Crear un producto». Para crear una plantilla, use «Crear una plantilla» en un producto.</target>
             </trans-unit>
             <trans-unit id="Bw6Jk.r">
                 <source>label.item_already_downloaded</source>
@@ -1417,6 +1501,10 @@
             <trans-unit id="04zDTq_">
                 <source>label.success</source>
                 <target>Éxito</target>
+            </trans-unit>
+            <trans-unit id="Gwnseqp">
+                <source>label.templates</source>
+                <target>Plantillas</target>
             </trans-unit>
             <trans-unit id="ua7HEiS">
                 <source>label.terms_of_sales</source>

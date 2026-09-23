@@ -13,7 +13,6 @@ namespace c975L\ShopBundle\Controller;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\LocalizedRouteNegotiator;
 use c975L\ShopBundle\Entity\Product;
-use c975L\ShopBundle\Service\ProductRecommendationServiceInterface;
 use c975L\ShopBundle\Service\ShopTranslatedLocales;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Service\BlockRenderContext;
@@ -27,7 +26,6 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProductController extends AbstractController
 {
     public function __construct(
-        private readonly ProductRecommendationServiceInterface $recommendationService,
         private readonly ConfigServiceInterface $configService,
         private readonly BlockRenderContext $blockRenderContext,
         private readonly LocalizedRouteNegotiator $negotiator,
@@ -79,15 +77,11 @@ class ProductController extends AbstractController
             return $this->negotiator->vary($request, $askedLanguage);
         }
 
-        $similarProducts = $this->recommendationService->getSimilarProducts($product, 4);
-
-        // The sheet, its variants and the cards under it, in the language being read (see ShopTranslator::apply)
-        $this->shopTranslator->apply([$product, ...$similarProducts]);
-        $this->shopTranslator->apply($product->getItems());
+        // The sheet in the language being read (see ShopTranslator::apply) - its items and the cards under it are translated inside the fragments drawing them, so a hit reads none (see ShopBlockExtension)
+        $this->shopTranslator->apply([$product]);
 
         return $this->negotiator->vary($request, $this->render('@c975LShop/product/display.html.twig', [
             'product' => $product,
-            'similarProducts' => $similarProducts,
         ]));
     }
 
@@ -114,7 +108,6 @@ class ProductController extends AbstractController
 
         return $this->render('@c975LShop/product/display.html.twig', [
             'product' => $product,
-            'similarProducts' => $this->recommendationService->getSimilarProducts($product, 4),
             'isPreview' => true,
         ])->setPrivate();
     }

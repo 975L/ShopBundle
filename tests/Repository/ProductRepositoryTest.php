@@ -32,6 +32,16 @@ class ProductRepositoryTest extends TestCase
         $this->assertStringContainsString('p.isDeleted = false', (string) $dql);
     }
 
+    // What the block forms pick from: a template is no product to name on a page
+    public function testTheBackOfficeCatalogueLeavesOutTemplates(): void
+    {
+        $dql = null;
+        $this->createRepository($dql)->findNotDeleted();
+
+        $this->assertStringContainsString('p.isDeleted = false', (string) $dql);
+        $this->assertStringContainsString('p.template = false', (string) $dql);
+    }
+
     // The same guarantee on the sorted listing findAll() delegates to
     public function testFindAllSortedLeavesOutHiddenAndTrashedProducts(): void
     {
@@ -39,6 +49,27 @@ class ProductRepositoryTest extends TestCase
         $this->createRepository($dql)->findAllSorted('newest');
 
         $this->assertStringContainsString('p.hidden = false', (string) $dql);
+        $this->assertStringContainsString('p.isDeleted = false', (string) $dql);
+    }
+
+    // The page is cut on the products alone: a LIMIT on the joined rows would cut through one product's medias and items
+    public function testThePageIsCutOnTheProductsAloneAndStaysBehindTheSameGuarantee(): void
+    {
+        $dql = null;
+        $this->createRepository($dql)->findPageSorted('newest', 12, 12);
+
+        $this->assertStringStartsWith('SELECT p.id FROM', (string) $dql);
+        $this->assertStringNotContainsString('JOIN', (string) $dql);
+        $this->assertStringContainsString('p.hidden = false', (string) $dql);
+        $this->assertStringContainsString('ORDER BY p.creation DESC, p.id ASC', (string) $dql);
+    }
+
+    public function testTheTotalIsCountedBehindTheSameGuarantee(): void
+    {
+        $dql = null;
+        $this->createRepository($dql)->countAvailable();
+
+        $this->assertStringStartsWith('SELECT COUNT(p.id) FROM', (string) $dql);
         $this->assertStringContainsString('p.isDeleted = false', (string) $dql);
     }
 

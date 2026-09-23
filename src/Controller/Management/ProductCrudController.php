@@ -123,12 +123,15 @@ class ProductCrudController extends AbstractCrudController
 
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
 
-        // Trashed products are hidden by definition (see deleteEntity() and Product::setIsDeleted()), so the column would hold "yes" for every row of that view - taken off rather than left there saying nothing
+        // Trashed products and templates are hidden by definition (see Product::setIsDeleted() and Product::setTemplate()), so the column would hold "yes" for every row of those views - taken off rather than left there saying nothing, and off a template's form, where it would change nothing
         $hiddenField = BooleanField::new('hidden')
             ->setLabel(t('label.hidden', [], 'shop'))
             ->setHelp(t('text.hidden', [], 'shop'));
-        if ($this->isTrash()) {
+        if ($this->isTrash() || $this->isTemplates()) {
             $hiddenField->hideOnIndex();
+        }
+        if ($entity instanceof Product && $entity->isTemplate()) {
+            $hiddenField->hideOnForm();
         }
 
         return [
@@ -176,6 +179,7 @@ class ProductCrudController extends AbstractCrudController
                 ->setQueryBuilder(
                     fn ($queryBuilder) => $queryBuilder
                         ->andWhere('entity.isDeleted = false')
+                        ->andWhere('entity.template = false')
                         ->orderBy('entity.title', \SortDirection::Ascending)
                 ),
 
@@ -266,11 +270,27 @@ class ProductCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary')
         ;
 
-        // Copies the product with its pictures, its items and its blocks, then opens the copy - what a catalogue of near-identical sheets is written with, rather than by retyping each one
+        // Copies the product with its pictures, its items and its blocks, then opens the copy - what a catalogue of near-identical sheets is written with, rather than by retyping each one. A template is copied as a template
         $duplicateAction = Action::new('duplicate', t('action.duplicate', [], 'shop'), 'fa fa-copy')
-            ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('duplicate', $product, self::DUPLICATE_CSRF_TOKEN))
+            ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('duplicate', $product, self::DUPLICATE_CSRF_TOKEN, query: ['template' => (int) $product->isTemplate()]))
             ->displayIf(static fn (Product $product): bool => !$product->isDeleted())
             ->askConfirmation(t('confirm.duplicate', [], 'shop'))
+            ->addCssClass('btn btn-secondary')
+        ;
+
+        // The same copy, made a template: the product stays as it is, and the texts of its items are kept for the next ones
+        $createTemplateAction = Action::new('createTemplate', t('action.create_template', [], 'shop'), 'fa fa-clone')
+            ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('duplicate', $product, self::DUPLICATE_CSRF_TOKEN, query: ['template' => 1]))
+            ->displayIf(static fn (Product $product): bool => !$product->isDeleted() && !$product->isTemplate())
+            ->askConfirmation(t('confirm.create_template', [], 'shop'))
+            ->addCssClass('btn btn-secondary')
+        ;
+
+        // The other way round: a product copied from a template, hidden until it is named and priced
+        $createProductAction = Action::new('createProduct', t('action.create_product', [], 'shop'), 'fa fa-file-circle-plus')
+            ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('duplicate', $product, self::DUPLICATE_CSRF_TOKEN, query: ['template' => 0]))
+            ->displayIf(static fn (Product $product): bool => !$product->isDeleted() && $product->isTemplate())
+            ->askConfirmation(t('confirm.create_product', [], 'shop'))
             ->addCssClass('btn btn-secondary')
         ;
 
@@ -305,22 +325,32 @@ class ProductCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary')
         ;
 
+        // A template is made from a product (see $createTemplateAction), never from an empty form, which would come back as a product
+        if ($this->isTemplates()) {
+            $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+        }
+
         return $actions
             ->add(Crud::PAGE_INDEX, $exportGroup)
             ->add(Crud::PAGE_INDEX, $this->trashAction())
+            ->add(Crud::PAGE_INDEX, $this->templatesAction())
             ->add(Crud::PAGE_INDEX, $viewOnSiteAction)
             ->add(Crud::PAGE_INDEX, $previewAction)
             ->add(Crud::PAGE_INDEX, $duplicateAction)
+            ->add(Crud::PAGE_INDEX, $createTemplateAction)
+            ->add(Crud::PAGE_INDEX, $createProductAction)
             ->add(Crud::PAGE_INDEX, $translateAction)
             ->add(Crud::PAGE_INDEX, $restoreAction)
             ->add(Crud::PAGE_INDEX, $deletePermanentlyAction)
             ->add(Crud::PAGE_EDIT, $viewOnSiteAction)
             ->add(Crud::PAGE_EDIT, $previewAction)
             ->add(Crud::PAGE_EDIT, $duplicateAction)
+            ->add(Crud::PAGE_EDIT, $createTemplateAction)
+            ->add(Crud::PAGE_EDIT, $createProductAction)
             // A product is sent to the recycle bin from its own sheet too, rather than only from the row button of the list - this version of EasyAdmin puts no delete button on the edit page
             ->add(Crud::PAGE_EDIT, Action::DELETE)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action->displayIf(static fn (Product $product): bool => !$product->isDeleted()),
+                $this->templatesEditLink($action)->displayIf(static fn (Product $product): bool => !$product->isDeleted()),
                 $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
             ))
             ->update(Crud::PAGE_INDEX, 'viewOnSite', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
@@ -334,6 +364,14 @@ class ProductCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, 'duplicate', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
                 $this->translator->trans('action.duplicate', [], 'shop'),
+            ))
+            ->update(Crud::PAGE_INDEX, 'createTemplate', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.create_template', [], 'shop'),
+            ))
+            ->update(Crud::PAGE_INDEX, 'createProduct', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.create_product', [], 'shop'),
             ))
             ->update(Crud::PAGE_INDEX, 'translate', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
@@ -362,8 +400,8 @@ class ProductCrudController extends AbstractCrudController
                 ->askConfirmation(t('confirm.move_to_trash', [], 'shop'))
                 ->displayIf(static fn (Product $product): bool => !$product->isDeleted()))
             // reorder() turns priority ordering off page-wide, so "exportSelection" leads the batch bar too - "batchDelete" is left unnamed, as naming it throws where it is disabled
-            ->reorder(Crud::PAGE_INDEX, ['exportSelection', Action::EDIT, 'viewOnSite', 'preview', 'duplicate', 'restore', Action::DELETE, 'deletePermanently'])
-            ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'preview', 'duplicate'])
+            ->reorder(Crud::PAGE_INDEX, ['exportSelection', Action::EDIT, 'viewOnSite', 'preview', 'duplicate', 'createTemplate', 'createProduct', 'restore', Action::DELETE, 'deletePermanently'])
+            ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'preview', 'duplicate', 'createTemplate', 'createProduct'])
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)
@@ -371,6 +409,9 @@ class ProductCrudController extends AbstractCrudController
             ->setPermission('viewOnSite', $role)
             ->setPermission('preview', $role)
             ->setPermission('duplicate', $role)
+            ->setPermission('createTemplate', $role)
+            ->setPermission('createProduct', $role)
+            ->setPermission('templates', $role)
             ->setPermission('trash', $role)
             ->setPermission('restore', $role)
             ->setPermission('deletePermanently', $role)
@@ -389,16 +430,72 @@ class ProductCrudController extends AbstractCrudController
         return (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
     }
 
+    // Whether the index is showing the templates rather than the catalogue - read like the recycle bin, the menu linking a controller and never a query string
+    private function isTemplates(): bool
+    {
+        return (bool) $this->requestStack->getCurrentRequest()?->query->get('templates');
+    }
+
+    // A template's sheet carries the flag of its list, which EasyAdmin drops from its own edit link: saving it then comes back to the templates rather than to the products
+    private function templatesEditLink(Action $action): Action
+    {
+        return $this->isTemplates()
+            ? $action->linkToUrl(fn (Product $product): string => $this->editUrl($product))
+            : $action;
+    }
+
+    // The edit screen of a product, flagged as a template's where it is one
+    private function editUrl(Product $product): string
+    {
+        $urlGenerator = $this->adminUrlGenerator
+            ->unsetAll()
+            ->setController(self::class)
+            ->setAction(Action::EDIT)
+            ->setEntityId($product->getId());
+
+        if ($product->isTemplate()) {
+            $urlGenerator->set('templates', 1);
+        }
+
+        return $urlGenerator->generateUrl();
+    }
+
+    // Toggles between "templates" and "back to the products", the same way the recycle bin does
+    private function templatesAction(): Action
+    {
+        $action = $this->isTemplates()
+            ? Action::new('templates', t('label.products', [], 'shop'), 'fa fa-box-open')
+                ->linkToUrl(fn (): string => $this->indexUrl())
+            : Action::new('templates', t('label.templates', [], 'shop'), 'fa fa-clone')
+                ->linkToUrl(fn (): string => $this->indexUrl(['templates' => 1]));
+
+        return $action
+            ->createAsGlobalAction()
+            ->addCssClass('btn btn-secondary')
+        ;
+    }
+
+    // The index, with the flag of the view it opens on
+    private function indexUrl(array $query = []): string
+    {
+        $urlGenerator = $this->adminUrlGenerator
+            ->unsetAll()
+            ->setController(self::class)
+            ->setAction(Action::INDEX);
+
+        foreach ($query as $key => $value) {
+            $urlGenerator->set($key, $value);
+        }
+
+        return $urlGenerator->generateUrl();
+    }
+
     // Toggles between "recycle bin" and "back to the products", depending on which of the two is being shown
     private function trashAction(): Action
     {
         $action = $this->isTrash()
             ? Action::new('trash', t('label.products', [], 'shop'), 'fa fa-box-open')
-                ->linkToUrl(fn (): string => $this->adminUrlGenerator
-                    ->unsetAll()
-                    ->setController(self::class)
-                    ->setAction(Action::INDEX)
-                    ->generateUrl())
+                ->linkToUrl(fn (): string => $this->indexUrl())
             : Action::new('trash', t('action.trash', [], 'shop'), 'fa fa-trash-alt')
                 ->linkToUrl(fn (): string => $this->trashIndexUrl());
 
@@ -409,7 +506,7 @@ class ProductCrudController extends AbstractCrudController
     }
 
     // The url of a row action, its csrf token in the query string - the trash ones come back to the recycle bin, so they carry the flag that view is read from
-    private function tokenizedUrl(string $action, Product $product, string $tokenId, bool $trash = false): string
+    private function tokenizedUrl(string $action, Product $product, string $tokenId, bool $trash = false, array $query = []): string
     {
         $urlGenerator = $this->adminUrlGenerator
             ->unsetAll()
@@ -422,21 +519,20 @@ class ProductCrudController extends AbstractCrudController
             $urlGenerator->set('trash', 1);
         }
 
+        foreach ($query as $key => $value) {
+            $urlGenerator->set($key, $value);
+        }
+
         return $urlGenerator->generateUrl();
     }
 
     // The recycle bin both trash actions come back to, whether they ran or were refused
     private function trashIndexUrl(): string
     {
-        return $this->adminUrlGenerator
-            ->unsetAll()
-            ->setController(self::class)
-            ->setAction(Action::INDEX)
-            ->set('trash', 1)
-            ->generateUrl();
+        return $this->indexUrl(['trash' => 1]);
     }
 
-    // The catalogue, or the recycle bin - never the two mixed
+    // The catalogue, the templates or the recycle bin - never mixed, the recycle bin holding both kinds
     #[\Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
@@ -444,10 +540,18 @@ class ProductCrudController extends AbstractCrudController
         FieldCollection $fields,
         FilterCollection $filters,
     ): QueryBuilder {
-        return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
+        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
             ->andWhere('entity.isDeleted = :isDeleted')
             ->setParameter('isDeleted', $this->isTrash())
         ;
+
+        if (!$this->isTrash()) {
+            $queryBuilder
+                ->andWhere('entity.template = :template')
+                ->setParameter('template', $this->isTemplates());
+        }
+
+        return $queryBuilder;
     }
 
     // Deleting a product only moves it to the recycle bin, with everything it holds: its url answers 410 from there, and it is restored or removed for good from that view alone
@@ -573,7 +677,7 @@ class ProductCrudController extends AbstractCrudController
             ->showEntityActionsInlined()
             // Named in the editor's own language: with no label, EasyAdmin falls back on the class name and prints "Product" on every screen and every button
             ->setEntityLabelInSingular(t('label.product', [], 'shop'))
-            ->setEntityLabelInPlural(t('label.products', [], 'shop'))
+            ->setEntityLabelInPlural(t($this->isTemplates() ? 'label.templates' : 'label.products', [], 'shop'))
             ->setEntityPermission($this->configService->get('site-role-admin'))
             // Carries the language tabs above the form, and nothing at all on a site declaring a single language (see ContentLocaleScreen)
             ->overrideTemplate('crud/edit', '@c975LShop/management/product_crud_edit.html.twig')
@@ -664,7 +768,7 @@ class ProductCrudController extends AbstractCrudController
         return $positions;
     }
 
-    // Copies the product the action was clicked on and opens the copy, which is the screen it has to be named and priced on before it is left in the catalogue: the copy is hidden, so nothing of it is on sale before that screen is filled in
+    // Copies the product the action was clicked on and opens the copy, which is the screen it has to be named and priced on before it is left in the catalogue: the copy is hidden, so nothing of it is on sale before that screen is filled in. The query says whether the copy is a template (see ProductDuplicator)
     #[AdminRoute(options: ['methods' => ['GET']])]
     public function duplicate(Request $request, ProductRepository $productRepository, ProductDuplicator $productDuplicator): Response
     {
@@ -679,15 +783,17 @@ class ProductCrudController extends AbstractCrudController
             throw $this->createNotFoundException();
         }
 
-        $copy = $productDuplicator->duplicate($product);
-        $this->addFlash('success', $this->translator->trans('flash.product_duplicated', [], 'shop'));
+        $template = $request->query->getBoolean('template');
+        $copy = $productDuplicator->duplicate($product, $template);
 
-        return $this->redirect($this->adminUrlGenerator
-            ->unsetAll()
-            ->setController(self::class)
-            ->setAction(Action::EDIT)
-            ->setEntityId($copy->getId())
-            ->generateUrl());
+        $flash = match (true) {
+            $template === $product->isTemplate() => 'flash.product_duplicated',
+            $template => 'flash.template_created',
+            default => 'flash.product_created_from_template',
+        };
+        $this->addFlash('success', $this->translator->trans($flash, [], 'shop'));
+
+        return $this->redirect($this->editUrl($copy));
     }
 
     // Exports the checked products (with their pictures, their items and the files those are bought for, their blocks and their categories) as a downloadable zip, meant to be re-uploaded elsewhere via ConfigBundle's ContentImportController (see ProductImportProvider) - restricted to the site's admin role, see configureActions()

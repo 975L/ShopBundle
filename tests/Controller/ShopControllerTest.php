@@ -69,11 +69,7 @@ class ShopControllerTest extends TestCase
         $container = new Container();
         $container->set('twig', $twig);
 
-        // The listing is a page of products, empty here: the test is about the shop's own line beside it
-        $shopService = $this->createStub(ShopServiceInterface::class);
-        $shopService->method('findAllProductsPaginated')->willReturn([]);
-
-        $controller = new ShopController($shopService, $settingsRepository, $this->createNegotiator(), new ShopTranslatedLocales($this->createSiteLocales()), $this->createStub(ShopTranslator::class));
+        $controller = new ShopController($this->createStub(ShopServiceInterface::class), $settingsRepository, $this->createNegotiator(), new ShopTranslatedLocales($this->createSiteLocales()), $this->createStub(ShopTranslator::class));
         $controller->setContainer($container);
         $controller->index(new Request());
 
@@ -92,6 +88,16 @@ class ShopControllerTest extends TestCase
     public function testIndexPassesNoIntroWhenTheShopHasNoSettingsRow(): void
     {
         $this->assertNull($this->renderIndexWith(null)['shopIntro']);
+    }
+
+    // The row itself, whose blocks the template renders above the listing - and nothing of the listing, read by the template inside its cached fragments
+    public function testIndexPassesTheSettingsRowAndNoListing(): void
+    {
+        $settings = new ShopSettings();
+        $parameters = $this->renderIndexWith($settings);
+
+        $this->assertSame($settings, $parameters['shopSettings']);
+        $this->assertArrayNotHasKey('products', $parameters);
     }
 
     public function testTermsOfSalesRendersTheModelWhenSiteBundleIsAbsent(): void

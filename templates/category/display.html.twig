@@ -10,12 +10,18 @@
 {% set canEdit = is_granted(config('site-role-editor')) %}
 {% set editUrl = canEdit ? shop_product_category_edit_url(category) : null %}
 
+{# The page's own fragments, one entry per category, language, day and reader - an editor's carry the edit urls, and the day brings in a product coming out on a date no save marks. Emptied by a product or a category saved (see ShopCacheInvalidationListener) #}
+{% set categoryKey = 'shop_category_' ~ category.id ~ '_' ~ app.request.locale ~ '_' ~ 'now'|date('Ymd') ~ (canEdit ? '_editor' : '') %}
+{% set categoryTags = ['shop_products', 'shop_categories'] %}
+
 {% block content %}
     <div data-controller="basket{{ canEdit ? ' blockEditOverlay' : '' }}" class="shop"{% if editUrl %} data-edit-label="{{ 'label.edit'|trans({}, 'ui') }}" data-block-edit-url="{{ editUrl }}"{% endif %}>
         {# The page measure, stated on what the category writes itself: the layout no longer wraps the whole content, so the blocks composed below run bare and keep the single gutter each of them already carries (see @c975LShop/layout.html.twig) #}
         <div class="section-wrap">
             <twig:c975LShop:Shop:TestMode/>
-            <twig:c975LShop:Shop:Breadcrumb subject="{{ category }}"/>
+            {% cache categoryKey ~ '_breadcrumb' tags(categoryTags) %}
+                <twig:c975LShop:Shop:Breadcrumb subject="{{ category }}"/>
+            {% endcache %}
             {# What the category says of itself, the only content of this page that is its own - the shop's welcome message belongs to the shop's index, not here #}
             {% if category.description %}
                 <div class="text text-center"{% if editUrl %} data-block-edit-url="{{ shop_product_category_edit_url(category, 'description') }}"{% endif %}>
@@ -25,30 +31,33 @@
         </div>
 
         {# What the category page says around its listing - composed in the back-office with UiBundle's kinds, nothing to add here when it holds no block #}
-        <twig:c975LUi:Blocks:Blocks blocks="{{ category.blocks }}"/>
+        {{ render_owned_blocks(category) }}
 
         <div class="section-wrap">
-            {# The same two controls as the shop's index, in the same order and with no folded panel: a category page narrows by nothing else, and two controls do not need to be put away #}
-            {# The selector is handed the category being read, so it shows where the visitor is rather than "the whole shop" #}
-            <twig:c975LShop:Product:Search categorySlug="{{ category.slug }}"/>
-            <div class="shop-filters">
-                <twig:c975LShop:Product:CategoriesSelect selectedCategory="{{ category.slug }}"/>
-            </div>
+            {# The same two controls as the shop's index, in the same order and with no folded panel: a category page narrows by nothing else, and two controls do not need to be put away. The selector is handed the category being read, so it shows where the visitor is rather than "the whole shop" #}
+            {% cache categoryKey ~ '_listing' tags(categoryTags) %}
+                <twig:c975LShop:Product:Search categorySlug="{{ category.slug }}"/>
+                <div class="shop-filters">
+                    <twig:c975LShop:Product:CategoriesSelect selectedCategory="{{ category.slug }}"/>
+                </div>
 
-            <twig:c975LShop:Product:Products products="{{ products }}" title="{{ 'label.products_in_category'|trans({'%category%': category.name}, 'shop') }}" editable="{{ canEdit }}"/>
+                <twig:c975LShop:Product:Products products="{{ shop_category_products(category) }}" title="{{ 'label.products_in_category'|trans({'%category%': category.name}, 'shop') }}" editable="{{ canEdit }}"/>
+            {% endcache %}
             <twig:c975LPayment:Basket:Message/>
         </div>
     </div>
 
     {# The products filed under this category, as the list a search engine reads them through - the same summary form as the shop's index, on one page and so numbered from one. "raw" because the payload goes through a variable, which drops the function's own is_safe marking - the builder already escaped every character that could close the tag #}
-    {% set productsJsonLd = shop_products_json_ld(products) %}
-    {% if productsJsonLd %}
-        <script type="application/ld+json">{{ productsJsonLd|raw }}</script>
-    {% endif %}
+    {% cache categoryKey ~ '_jsonld' tags(categoryTags) %}
+        {% set productsJsonLd = shop_products_json_ld(shop_category_products(category)) %}
+        {% if productsJsonLd %}
+            <script type="application/ld+json">{{ productsJsonLd|raw }}</script>
+        {% endif %}
 
-    {# The trail above the page, which Google prints in place of the url #}
-    {% set breadcrumbJsonLd = shop_breadcrumb_json_ld(category) %}
-    {% if breadcrumbJsonLd %}
-        <script type="application/ld+json">{{ breadcrumbJsonLd|raw }}</script>
-    {% endif %}
+        {# The trail above the page, which Google prints in place of the url #}
+        {% set breadcrumbJsonLd = shop_breadcrumb_json_ld(category) %}
+        {% if breadcrumbJsonLd %}
+            <script type="application/ld+json">{{ breadcrumbJsonLd|raw }}</script>
+        {% endif %}
+    {% endcache %}
 {% endblock %}

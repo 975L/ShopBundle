@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.10.0
+
+A product can be kept as a template to draw new ones from
+
+- Product templates, their actions and their guided project (23/09/2026) **Needs db migration** see [UPGRADE.md](UPGRADE.md)
+- `ProductSocialContentSource` for SocialBundle (23/09/2026)
+- No return policy is published for a window of zero (23/09/2026)
+- `merchantReturnLink` is published absolute (23/09/2026)
+- The shop's pages are cached in fragments (23/09/2026) [BC-Break]
+- `c975l/core-bundle` is required at `^1.33.0` (23/09/2026)
+
 ## v2.9.0
 
 A product the site search answers from is drawn as a card

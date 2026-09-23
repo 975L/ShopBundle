@@ -30,6 +30,10 @@
                 <source>narration.guided_project_shop_product</source>
                 <target>Écrivons une fiche produit, et l'article qui porte ce que le visiteur paie. L'une sans l'autre ne vend rien.</target>
             </trans-unit>
+            <trans-unit id="UikNn88">
+                <source>narration.guided_project_shop_template</source>
+                <target>Gardons un produit comme modèle, puis tirons-en de nouvelles fiches qui reprennent ses textes, ses articles et leurs traductions.</target>
+            </trans-unit>
             <trans-unit id="pjNb4kg">
                 <source>narration.guided_project_shop_test_mode</source>
                 <target>Disons tout haut que le catalogue est en cours d'installation, pour qu'un visiteur précoce ne prenne pas une répétition pour une vraie commande.</target>
@@ -201,6 +205,30 @@
             <trans-unit id="sWHzX2s">
                 <source>narration.guided_step_shop_product_title</source>
                 <target>Donnez-lui un titre : c'est ce que le visiteur lit en premier, et ce à partir de quoi l'adresse est construite.</target>
+            </trans-unit>
+            <trans-unit id="WNS.5xD">
+                <source>narration.guided_step_shop_template_create_product</source>
+                <target>Créez un produit à partir du modèle : il en reprend les textes, les articles et leurs traductions.</target>
+            </trans-unit>
+            <trans-unit id="ETBR5rW">
+                <source>narration.guided_step_shop_template_create_template</source>
+                <target>Créez un modèle à partir d'un produit : le produit reste tel quel, c'est une copie qui devient le modèle, jamais affichée sur le site.</target>
+            </trans-unit>
+            <trans-unit id="GKyvsPV">
+                <source>narration.guided_step_shop_template_hidden</source>
+                <target>Le produit créé reste masqué : donnez-lui son nom et ses prix, puis publiez-le quand il est prêt.</target>
+            </trans-unit>
+            <trans-unit id="d.UJx6e">
+                <source>narration.guided_step_shop_template_open</source>
+                <target>Un modèle se crée depuis un produit existant, jamais depuis un formulaire vide : le panneau vous emmène sur les produits.</target>
+            </trans-unit>
+            <trans-unit id="sVdG06s">
+                <source>narration.guided_step_shop_template_save</source>
+                <target>Le modèle s'ouvre à peine créé : enregistrez-le, et la boutique vous ramène à la liste des modèles.</target>
+            </trans-unit>
+            <trans-unit id="qzr.mtG">
+                <source>narration.guided_step_shop_template_templates</source>
+                <target>Voici la liste des modèles, à part du catalogue : le même bouton, « Modèles » depuis les produits, affiche ici « Produits » pour vous ramener.</target>
             </trans-unit>
             <trans-unit id="cWMR.ej">
                 <source>narration.guided_step_shop_test_mode_banner</source>

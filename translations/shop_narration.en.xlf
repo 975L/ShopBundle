@@ -30,6 +30,10 @@
                 <source>narration.guided_project_shop_product</source>
                 <target>Let's write a product sheet, and the item that carries what the visitor pays. One without the other sells nothing.</target>
             </trans-unit>
+            <trans-unit id="UikNn88">
+                <source>narration.guided_project_shop_template</source>
+                <target>Let's keep a product as a template, then draw new sheets from it that take over its texts, its items and their translations.</target>
+            </trans-unit>
             <trans-unit id="pjNb4kg">
                 <source>narration.guided_project_shop_test_mode</source>
                 <target>Let's say out loud that the catalog is being set up, so an early visitor does not take a rehearsal for a real order.</target>
@@ -201,6 +205,30 @@
             <trans-unit id="sWHzX2s">
                 <source>narration.guided_step_shop_product_title</source>
                 <target>Give it a title: it is what the visitor reads first, and what the address is built from.</target>
+            </trans-unit>
+            <trans-unit id="WNS.5xD">
+                <source>narration.guided_step_shop_template_create_product</source>
+                <target>Create a product from the template: it takes over its texts, its items and their translations.</target>
+            </trans-unit>
+            <trans-unit id="ETBR5rW">
+                <source>narration.guided_step_shop_template_create_template</source>
+                <target>Create a template from a product: the product stays as it is, a copy becomes the template, never shown on the site.</target>
+            </trans-unit>
+            <trans-unit id="GKyvsPV">
+                <source>narration.guided_step_shop_template_hidden</source>
+                <target>The product created stays hidden: give it its name and its prices, then publish it when it is ready.</target>
+            </trans-unit>
+            <trans-unit id="d.UJx6e">
+                <source>narration.guided_step_shop_template_open</source>
+                <target>A template is made from an existing product, never from an empty form: the panel takes you to the products.</target>
+            </trans-unit>
+            <trans-unit id="sVdG06s">
+                <source>narration.guided_step_shop_template_save</source>
+                <target>The template opens as soon as it is created: save it, and the shop brings you back to the list of templates.</target>
+            </trans-unit>
+            <trans-unit id="qzr.mtG">
+                <source>narration.guided_step_shop_template_templates</source>
+                <target>Here is the list of templates, apart from the catalog: the same button, "Templates" from the products, reads "Products" here to bring you back.</target>
             </trans-unit>
             <trans-unit id="cWMR.ej">
                 <source>narration.guided_step_shop_test_mode_banner</source>

@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-seo
-description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, hasMerchantReturnPolicy, MerchantReturnPolicy, merchantReturnDays, MerchantReturnNotPermitted, shop-return-days, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, USER_AGENT, c975LHealthCheck, isProbe, site-rate-limit, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork, url_metadata_title, url_metadata_summary, UrlMetadataProvider, Url descriptions, ShopPublicUrlResolver, resolveAlternates, resolveLocalizedUrl, alternates, hreflang, ShopTranslatedLocales, localized urls, ShopAiSearchCardProvider, AiSearchCardProviderInterface, findAvailableBySlugs, ai_search, site search."
+description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, hasMerchantReturnPolicy, MerchantReturnPolicy, merchantReturnDays, MerchantReturnNotPermitted, shop-return-days, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, USER_AGENT, c975LHealthCheck, isProbe, site-rate-limit, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork, url_metadata_title, url_metadata_summary, UrlMetadataProvider, Url descriptions, ShopPublicUrlResolver, resolveAlternates, resolveLocalizedUrl, alternates, hreflang, ShopTranslatedLocales, localized urls, ShopAiSearchCardProvider, AiSearchCardProviderInterface, findAvailableBySlugs, ai_search, site search, ProductSocialContentSource, SocialContentSourceInterface, SocialBundle."
 ---
 
 # c975L ShopBundle — structured data, sitemap, health, recommendations
@@ -10,7 +10,7 @@ description: "Use this skill when working on how the shop is read from outside i
 **Package:** `c975l/shop-bundle` · **Bundle:** `c975L\ShopBundle\` · **Twig namespace:** `@c975LShop` · **Translation domain:** `shop`
 
 **Key source paths:**
-`src/Service/ProductSnippetBuilder.php`, `src/Twig/ProductJsonLdExtension.php`, `src/Service/ShopBreadcrumbBuilder.php`, `src/Service/ShopPublicUrlResolver.php`, `src/Management/ShopSitemapProvider.php`, `src/Management/ShopStatusProvider.php`, `src/Management/ProductStructuredDataHealthCheckProvider.php`, `src/Service/ProductJsonLdClient.php`, `src/Management/UrlMetadataProvider.php`, `src/Service/ProductRecommendationService.php`, `src/Entity/ProductAffinity.php`, `src/Command/CalculateProductAffinityCommand.php`, `templates/product/display.html.twig`, `templates/category/display.html.twig`, `templates/shop/index.html.twig`
+`src/Service/ProductSnippetBuilder.php`, `src/Twig/ProductJsonLdExtension.php`, `src/Service/ShopBreadcrumbBuilder.php`, `src/Service/ShopPublicUrlResolver.php`, `src/Management/ShopSitemapProvider.php`, `src/Management/ShopStatusProvider.php`, `src/Management/ProductStructuredDataHealthCheckProvider.php`, `src/Service/ProductJsonLdClient.php`, `src/Management/UrlMetadataProvider.php`, `src/Service/ProductRecommendationService.php`, `src/Service/ProductSocialContentSource.php`, `src/Entity/ProductAffinity.php`, `src/Command/CalculateProductAffinityCommand.php`, `templates/product/display.html.twig`, `templates/category/display.html.twig`, `templates/shop/index.html.twig`
 
 **Related skills:** `c975l-shop-catalog`, `c975l-shop-blocks`, `c975l-shop-checkout` in this same bundle, and `c975l-management`, `c975l-operations` in ConfigBundle beside it.
 
@@ -54,9 +54,11 @@ covered every parcel.**
 
 `hasMerchantReturnPolicy` states PaymentBundle's `shop-return-days` for the `shop-shipping-country`
 as its `applicableCountry`: `MerchantReturnFiniteReturnWindow` with `merchantReturnDays`, or
-`MerchantReturnNotPermitted` at `0` and on any downloaded file, plus a `merchantReturnLink` to
+`MerchantReturnNotPermitted` on any downloaded file, plus a `merchantReturnLink` to
 `url-terms-of-sales` when set. **Without a window or a country, no node at all** — the link alone is
-an incomplete policy, which is what Google flags.
+an incomplete policy, which is what Google flags. An unfilled `int` setting is read as `0`, so a
+window is published only above zero: **a shop that never answered the question claims nothing**,
+least of all that it takes no returns.
 
 `sku` is the shop's own reference, and **falls back on the item's slug** when the column is left empty,
 which is what every offer carried before the column existed. `gtin` is the barcode number — an EAN-13
@@ -182,6 +184,15 @@ the markup** — the builder being right proves nothing about a site whose own t
 the same string every c975L probe sends, which is what `HealthCheck::isProbe()` recognises and what exempts a
 run from the front rate limiter. A site behind `site-rate-limit` would otherwise answer a full catalogue sweep
 with 429s, and every row would read as a failed call.
+
+## Posted on social networks
+
+`Service\ProductSocialContentSource` (`product`, recalled after 90 days) implements UiBundle's
+`SocialContentSourceInterface`, which SocialBundle's scheduled publication reads where the site installs it.
+It reads what the shop lists, in the shop's own order (`findAvailableProductsExcluding()`), skips a product
+with no public url (`ShopPublicUrlResolver::resolve()` null) and answers `null` from `getContent()` for a
+product hidden, trashed or not yet available since its post was prepared. What went out where is
+SocialBundle's to record, never a column here.
 
 ## Recommendations
 

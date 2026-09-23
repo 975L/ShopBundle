@@ -10,13 +10,15 @@
 
 namespace c975L\ShopBundle\Management;
 
+use c975L\ConfigBundle\Management\LinkableRouteCacheTagsInterface;
 use c975L\ConfigBundle\Management\LinkableRouteProviderInterface;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
+use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
 use c975L\ShopBundle\Service\ShopTranslatedLocales;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Exposes the shop's public pages as SiteBundle Menu targets: the catalog itself, and one entry per category - only the target is stored, the url being generated at render time, so a renamed route prefix or slug leaves no menu item behind
-class LinkableRouteProvider implements LinkableRouteProviderInterface
+class LinkableRouteProvider implements LinkableRouteProviderInterface, LinkableRouteCacheTagsInterface
 {
     // What a category entry is keyed on, its id following - the menu item stores it as "route:shop_category.12"
     public const CATEGORY_PREFIX = 'shop_category.';
@@ -57,5 +59,11 @@ class LinkableRouteProvider implements LinkableRouteProviderInterface
         }
 
         return $routes;
+    }
+
+    // The entries stand for rows of this bundle, emptied with them by a category saved (see ShopCacheInvalidationListener)
+    public function getLinkableRouteCacheTags(): array
+    {
+        return [ShopBlockCacheInvalidator::CACHE_TAG_CATEGORIES];
     }
 }

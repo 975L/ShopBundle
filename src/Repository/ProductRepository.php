@@ -62,6 +62,42 @@ class ProductRepository extends ServiceEntityRepository
     // Finds all products sorted, by position or by creation date when the listing asks for it, categories and items joined here rather than left to the cards, which all read them
     public function findAllSorted(?string $sort = null): array
     {
+        return $this->sortedCardsQueryBuilder($sort)->getQuery()->getResult();
+    }
+
+    // One page of the listing, cut in SQL: the ids of the page first, a LIMIT on the joined rows cutting through a product's medias and items, then the cards themselves
+    /** @return Product[] */
+    public function findPageSorted(?string $sort, int $offset, int $limit): array
+    {
+        $ids = $this->sorted($this->available($this->createQueryBuilder('p'))->select('p.id'), $sort)
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        if ([] === $ids) {
+            return [];
+        }
+
+        return $this->sortedCardsQueryBuilder($sort)
+            ->andWhere('p.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+    }
+
+    // How many products the listing holds, what its pagination is cut from
+    public function countAvailable(): int
+    {
+        return (int) $this->available($this->createQueryBuilder('p'))
+            ->select('COUNT(p.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    // The listing's cards with everything they read, in the order asked
+    private function sortedCardsQueryBuilder(?string $sort): QueryBuilder
+    {
         $qb = $this->available($this->createQueryBuilder('p'))
             ->select('p, m, c, i, f')
             ->leftJoin('p.medias', 'm')
@@ -70,18 +106,17 @@ class ProductRepository extends ServiceEntityRepository
             // The file joined with the item: every card asks each of its items whether it carries one, to say digital or physical and to name the format (see ProductStateService), which costs a query per item when the association is left to be resolved one by one. A to-one join, so it multiplies no row
             ->leftJoin('i.file', 'f');
 
-        if ('newest' === $sort) {
-            $qb->orderBy('p.creation', \SortDirection::Descending);
-        } else {
-            $qb->orderBy('p.position', \SortDirection::Ascending);
-        }
-
-        return $qb
+        return $this->sorted($qb, $sort)
             ->addOrderBy('m.position', \SortDirection::Ascending)
-            ->addOrderBy('i.position', \SortDirection::Ascending)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->addOrderBy('i.position', \SortDirection::Ascending);
+    }
+
+    // The listing's own order, the id breaking ties so the page cut in SQL and the cards read afterwards agree
+    private function sorted(QueryBuilder $qb, ?string $sort): QueryBuilder
+    {
+        return 'newest' === $sort
+            ? $qb->orderBy('p.creation', \SortDirection::Descending)->addOrderBy('p.id', \SortDirection::Ascending)
+            : $qb->orderBy('p.position', \SortDirection::Ascending)->addOrderBy('p.id', \SortDirection::Ascending);
     }
 
     // The highest "from" price of the listing, which the price bands are cut from - an item taken offline is left out
@@ -279,11 +314,12 @@ class ProductRepository extends ServiceEntityRepository
         return array_slice($products, 0, $limit);
     }
 
-    // The whole catalogue as the back-office knows it, hidden products included and the recycle bin left out - what the block forms pick from, an editor composing the page of a product that is not shown yet being the very reason the switch exists
+    // The whole catalogue as the back-office knows it, hidden products included and the recycle bin and the templates left out - what the block forms pick from, an editor composing the page of a product that is not shown yet being the very reason the switch exists
     public function findNotDeleted(): array
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.isDeleted = false')
+            ->andWhere('p.template = false')
             ->orderBy('p.position', \SortDirection::Ascending)
             ->getQuery()
             ->getResult()
