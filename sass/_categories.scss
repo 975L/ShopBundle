@@ -44,13 +44,13 @@
 
 // The chevron says which way the click goes, and it sits at the far end of the row, where the thumb finds it
 .shop-refine-summary::after {
-    content: "▾";
+    content: #{"\"\\25BE\""};
     margin-left: auto;
     font-size: 0.9rem;
 }
 
 .shop-refine[open] .shop-refine-summary::after {
-    content: "▴";
+    content: #{"\"\\25B4\""};
 }
 
 .shop-refine-summary:focus-visible {

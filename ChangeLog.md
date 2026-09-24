@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.10.1
+
+The refine chevrons are written as CSS escapes
+
+- The refine chevrons no longer render as a replacement glyph (24/09/2026)
+
 ## v2.10.0
 
 A product can be kept as a template to draw new ones from
