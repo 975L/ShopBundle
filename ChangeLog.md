@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.10.2
+
+CI sets up Python with actions/setup-python v6
+
+- `actions/setup-python` bumped to v6 in the CI (25/09/2026)
+
 ## v2.10.1
 
 The refine chevrons are written as CSS escapes
