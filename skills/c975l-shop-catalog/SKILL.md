@@ -247,7 +247,8 @@ A site declaring neither still gets its catalogue, cards falling back on the bun
 `ShopDemoOrderLinker` (CoreBundle's `DemoFixtureLinkerInterface`) writes the orders that catalogue has
 already taken, once it has been flushed - a linker and not a provider, an order copying its lines off the
 catalogue the way a checkout copies them rather than pointing at it. Two of them, one posted and left
-unshipped for the guided project to mark as sent, one for a service. **The total holds the lines alone**,
+unshipped for the guided project to mark as sent, one for a service, and a third charged below its total -
+dated relative to the load so the basket integrity check still reports it. **The total holds the lines alone**,
 `Basket::getPayable()` adding the shipping on top of it: a total already carrying it is what the basket
 integrity check reads as a mismatch.
 

@@ -17,26 +17,18 @@ use c975L\PaymentBundle\Entity\Payment;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\UiBundle\Contract\DemoFixtureLinkerInterface;
 
-/**
- * The orders a demo shop has already taken, written once its catalogue has been flushed.
- *
- * A linker rather than a provider: an order does not point at what it holds, it copies it - the snapshot frozen the
- * day it was placed is what a years-old order is still displayed, e-mailed and reprinted from - and the copy names
- * items that have no identifier until the catalogue is in the database (see DemoFixtureLinkerInterface).
- *
- * The rows are PaymentBundle's, and are written here all the same: an order is only coherent beside the catalogue
- * it holds, and PaymentBundle installed on its own has no catalogue to take one from. A demo without this bundle
- * then shows a payment screen with nothing in it, which is what such a site is.
- *
- * Two orders, one posted and one for a service: a catalogue seeded without files has nothing downloadable to order,
- * and a workshop session is what it does sell besides its furniture. The posted one is left unshipped - it is the row
- * the guided project marks as sent, and an order that has already gone out teaches nothing.
- */
+// The orders a demo shop has already taken, written once its catalogue is flushed: one posted and left unshipped for the guided project, one for a service, one charged below its total for the basket integrity check to catch
 class ShopDemoOrderLinker implements DemoFixtureLinkerInterface
 {
     // Written down rather than taken from the clock: a demo is reloaded often, and "ordered yesterday" would say something else in every take of the same recorded sequence
     private const string ORDERED_PHYSICAL = '2026-02-24 10:34:00';
     private const string ORDERED_SERVICE = '2026-02-27 21:06:00';
+
+    // Relative, unlike the two above: the basket integrity check reads the last twelve months only, and a date written down would have this order drop out of it a year on. The first day of last month holds still for a whole month of takes
+    private const string ORDERED_MISMATCH = 'first day of last month 14:52';
+
+    // In cents, what a promotional code took off the charge without ever being written onto the order
+    private const int MISMATCH_DISCOUNT = 500;
 
     // What a gateway hands back, made up here - no payment provider has been called, and none may be from a demo
     private const string GATEWAY = 'stripe';
@@ -78,7 +70,21 @@ class ShopDemoOrderLinker implements DemoFixtureLinkerInterface
             0,
         );
 
-        foreach ([$physical, $service] as $order) {
+        // Charged below what it adds up to, which the basket integrity check reports (a promotional code left off the order). A service, so the shipping screen still holds the one parcel its guided project marks as sent
+        $mismatch = $this->order(
+            '2026-0116',
+            self::ORDERED_MISMATCH,
+            ['atelier-decoration' => 1],
+            'lea.martin@example.com',
+            'Léa Martin',
+            '8 avenue de Genève',
+            'Annecy',
+            '74000',
+            0,
+        );
+        $mismatch?->getPayment()?->setAmount($mismatch->getPayable() - self::MISMATCH_DISCOUNT);
+
+        foreach ([$physical, $service, $mismatch] as $order) {
             if (null === $order) {
                 continue;
             }

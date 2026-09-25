@@ -92,12 +92,12 @@ class ShopDemoOrderLinkerTest extends TestCase
         ];
     }
 
-    // Two orders, and the payment of each written before it: the order is the owning side, and a flush needs both
-    public function testItWritesTwoPaidOrdersAndTheirPayments(): void
+    // Three orders, and the payment of each written before it: the order is the owning side, and a flush needs both
+    public function testItWritesThreePaidOrdersAndTheirPayments(): void
     {
         $fixtures = $this->fixtures($this->catalogue());
 
-        $this->assertCount(4, $fixtures);
+        $this->assertCount(6, $fixtures);
         $this->assertInstanceOf(Payment::class, $fixtures[0]);
         $this->assertInstanceOf(Basket::class, $fixtures[1]);
         $this->assertInstanceOf(Payment::class, $fixtures[2]);
@@ -147,6 +147,19 @@ class ShopDemoOrderLinkerTest extends TestCase
         $this->assertSame(Basket::CONTENT_FLAG_SERVICE, $order->getContentFlags() & Basket::CONTENT_FLAG_SERVICE);
         $this->assertSame(0, $order->getContentFlags() & Basket::CONTENT_FLAG_PHYSICAL);
         $this->assertSame(0, $order->getShipping());
+    }
+
+    // The third order is charged below what it adds up to, the one defect the basket integrity check is filmed catching
+    public function testTheThirdOrderIsChargedBelowWhatItAddsUpTo(): void
+    {
+        [$payment, $order] = \array_slice($this->fixtures($this->catalogue()), 4, 2);
+
+        $this->assertSame('2026-0116', $order->getNumber());
+        $this->assertSame($order->getPayable() - 500, $payment->getAmount());
+        $this->assertSame(0, $order->getContentFlags() & Basket::CONTENT_FLAG_PHYSICAL);
+
+        // Within the twelve months the check reads, whenever the demo is loaded
+        $this->assertGreaterThan(new \DateTime('-12 months'), $order->getCreation());
     }
 
     // A shop that seeded no catalogue - no placeholder picture, no sample file - has no order to write either

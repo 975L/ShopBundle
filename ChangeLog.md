@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.10.3
+
+The demo seeds an order charged below its total
+
+- The demo seeds a third order charged below its total (25/09/2026)
+- The README opens on its bundle page, tutorials, block kinds and live demo with its back-office (25/09/2026)
+- The license badge links to `main` (25/09/2026)
+- Rector turns Symfony, Doctrine and Sensio annotations into attributes (25/09/2026)
+
 ## v2.10.2
 
 CI sets up Python with actions/setup-python v6

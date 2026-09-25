@@ -2,10 +2,12 @@
 
 Symfony bundle for e-commerce on the c975L core — product catalog with categories, media, downloadable files and affinity recommendations. Checkout is delegated to [c975L/PaymentBundle](https://github.com/975L/PaymentBundle).
 
-[![GitHub](https://img.shields.io/github/license/975L/ShopBundle)](https://github.com/975L/ShopBundle/blob/master/LICENSE)
+[![GitHub](https://img.shields.io/github/license/975L/ShopBundle)](https://github.com/975L/ShopBundle/blob/main/LICENSE)
 [![Packagist Version](https://img.shields.io/packagist/v/c975l/shop-bundle)](https://packagist.org/packages/c975l/shop-bundle)
 [![PHP Version](https://img.shields.io/packagist/php-v/c975l/shop-bundle)](https://packagist.org/packages/c975l/shop-bundle)
 [![Codacy Grade](https://app.codacy.com/project/badge/Grade/12a75ecfc03748c5a72a631010794932)](https://app.codacy.com/gh/975L/ShopBundle/dashboard)
+
+**[Bundle page](https://bundles.975l.com/en/pages/shop-bundle) · [Tutorials](https://bundles.975l.com/en/tutoriels/shop-bundle) · [Block kinds](https://bundles.975l.com/en/pages/blocks/Shop) · [Live demo](https://bundles.975l.com/demo/) · [Demo back-office](https://bundles.975l.com/demo/login)**
 
 > **BUNDLE UNDER DEVELOPMENT — USE AT YOUR OWN RISK**
 
