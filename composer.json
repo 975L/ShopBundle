@@ -22,7 +22,7 @@
     "require": {
         "php": ">=8.4",
         "c975l/core-bundle": "^1.33.0",
-        "c975l/payment-bundle": "^6.7",
+        "c975l/payment-bundle": "^6.11.1",
         "doctrine/orm": "^3.7",
         "easycorp/easyadmin-bundle": "^5.1",
         "imagine/imagine": "^1.5",

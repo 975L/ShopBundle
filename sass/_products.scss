@@ -159,25 +159,15 @@
 }
 
 .product-price {
+    --price-size: 1.05rem;
     display: flex;
     flex-direction: column;
-}
-
-.product-price-label {
-    color: var(--shop-text-subtle);
-    font-size: 0.68rem;
 }
 
 // Beside the current price and not above it: the two read as one figure corrected, which is what the strikethrough says. The line is drawn by the "s" element itself, so nothing here restates it
 .product-price-before {
     color: var(--shop-text-subtle);
     font-size: 0.8rem;
-}
-
-.product-price strong {
-    font-family: var(--font-family-title);
-    font-weight: var(--font-title-weight);
-    font-size: 1.05rem;
 }
 
 .product-view {

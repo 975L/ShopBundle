@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.10.4
+
+Prices read like every other price
+
+- The product card's and the item's price take PaymentBundle's `price` class (26/09/2026)
+- The product card's "Price" label takes PaymentBundle's `price-label` class (26/09/2026)
+- `c975l/payment-bundle` required at ^6.11.1 (26/09/2026)
+
 ## v2.10.3
 
 The demo seeds an order charged below its total

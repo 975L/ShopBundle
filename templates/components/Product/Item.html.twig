@@ -41,7 +41,7 @@
             {% if priceBefore %}
                 <s class="product-item-price-before"><span class="visuallyhidden">{{ 'label.price_before'|trans({}, 'shop') }} </span>{{ (priceBefore / 100)|format_currency(productItem.currency) }}</s>
             {% endif %}
-            <strong>{{ productItem.price == 0 ? 'label.free'|trans({}, 'shop') : (productItem.price / 100)|format_currency(productItem.currency) }}</strong>
+            <strong class="price">{{ productItem.price == 0 ? 'label.free'|trans({}, 'shop') : (productItem.price / 100)|format_currency(productItem.currency) }}</strong>
             {% set discount = shop_item_discount(productItem) %}
             {% if discount %}
                 <span class="product-item-discount">{{ 'label.discount'|trans({'%discount%': discount}, 'shop') }}</span>

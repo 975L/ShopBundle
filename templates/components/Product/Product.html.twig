@@ -43,12 +43,12 @@
                 {% if state.price is not null %}
                     <span class="product-price">
                         {# "From" only when the items differ: a product sold at a single price says that price, not a range it does not have #}
-                        <span class="product-price-label">{{ (state.singlePrice ? 'label.price' : 'label.from_price')|trans({}, 'shop') }}</span>
+                        <span class="price-label">{{ (state.singlePrice ? 'label.price' : 'label.from_price')|trans({}, 'shop') }}</span>
                         {# Struck through rather than merely greyed: what an "s" element means is a figure that no longer holds, which is the whole point of printing it #}
                         {% if state.priceBefore %}
                             <s class="product-price-before"><span class="visuallyhidden">{{ 'label.price_before'|trans({}, 'shop') }} </span>{{ (state.priceBefore / 100)|format_currency(state.currency) }}</s>
                         {% endif %}
-                        <strong>{{ state.price == 0 ? 'label.free'|trans({}, 'shop') : (state.price / 100)|format_currency(state.currency) }}</strong>
+                        <strong class="price">{{ state.price == 0 ? 'label.free'|trans({}, 'shop') : (state.price / 100)|format_currency(state.currency) }}</strong>
                     </span>
                 {% endif %}
                 <span class="product-view">{{ 'label.view'|trans({}, 'shop') }} →</span>
