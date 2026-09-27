@@ -1,6 +1,12 @@
 # Changelog
 
-## v2.11
+## v2.11.1
+
+The v2.11.0 heading matches its tag
+
+- The v2.11.0 ChangeLog heading matches its tag (27/09/2026)
+
+## v2.11.0
 
 A member's shop data exported and erased with the account
 
