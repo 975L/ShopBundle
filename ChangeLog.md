@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.11
+
+A member's shop data exported and erased with the account
+
+- Stock alerts and download links in the member's data export (27/09/2026)
+- An anonymized account's stock alerts deleted (27/09/2026)
+- `c975l/core-bundle` required at ^1.45 (27/09/2026)
+
 ## v2.10.4
 
 Prices read like every other price

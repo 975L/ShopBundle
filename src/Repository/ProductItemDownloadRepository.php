@@ -24,6 +24,17 @@ class ProductItemDownloadRepository extends ServiceEntityRepository
         parent::__construct($registry, ProductItemDownload::class);
     }
 
+    // Every link made for those baskets, expired or not, for the member's data export
+    /**
+     * @param list<int> $basketIds
+     *
+     * @return ProductItemDownload[]
+     */
+    public function findByBasketIds(array $basketIds): array
+    {
+        return [] === $basketIds ? [] : $this->findBy(['basketId' => $basketIds], ['expiresAt' => 'DESC']);
+    }
+
     // The links of one basket that have not expired yet, newest first: the customer area hands out the copy already made rather than making another on every visit
     public function findLiveByBasket(int $basketId, \DateTimeImmutable $now): array
     {

@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-09-27",
+        "description": [
+            {
+                "en": "Your customers' back-in-stock alerts and download links are now part of their data export, and their alerts are erased when they close their account.",
+                "fr": "Les alertes de retour en stock et les liens de téléchargement de vos clients font désormais partie de l'export de leurs données, et leurs alertes sont effacées quand ils ferment leur compte.",
+                "es": "Las alertas de vuelta al stock y los enlaces de descarga de sus clientes forman ahora parte de la exportación de sus datos, y sus alertas se borran cuando cierran su cuenta."
+            }
+        ]
+    },
+    {
         "date": "2026-09-23",
         "description": [
             {

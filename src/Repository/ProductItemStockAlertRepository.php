@@ -25,6 +25,25 @@ class ProductItemStockAlertRepository extends ServiceEntityRepository
         parent::__construct($registry, ProductItemStockAlert::class);
     }
 
+    // Every alert that address subscribed to, newest first, for the member's data export
+    /** @return ProductItemStockAlert[] */
+    public function findByEmail(string $email): array
+    {
+        return $this->findBy(['email' => $email], ['createdAt' => 'DESC']);
+    }
+
+    // Drops every alert of that address, an account closed leaving no email behind
+    public function deleteByEmail(string $email): int
+    {
+        return (int) $this->createQueryBuilder('a')
+            ->delete()
+            ->andWhere('a.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->execute()
+        ;
+    }
+
     public function findOneByItemAndEmail(ProductItem $productItem, string $email): ?ProductItemStockAlert
     {
         return $this->findOneBy(['productItem' => $productItem, 'email' => $email]);

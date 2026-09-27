@@ -38,6 +38,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - Wish list on the sheet and on every card, behind one setting - UiBundle's own list on `/favorites`, following a signed-in customer from one device to the next (see [wish list](#wish-list))
 - Back-in-stock alerts on a sold-out item, taken by email and sent hourly in batches, each carrying its own
   unsubscribe link (see [back-in-stock alerts](#back-in-stock-alerts))
+- The member's stock alerts and download links in their data export (ConfigBundle's `/account/export`, through `AccountDataProviderInterface`), the alerts of their address deleted with the account
 - Product catalog with categories, media, and downloadable items
 - Shop index, category pages and product sheets composed in the back-office with UiBundle's blocks, no template of your own
 - Nine block kinds of its own, putting the catalog on any page of the site, each drawn as a silhouette in the back-office picker

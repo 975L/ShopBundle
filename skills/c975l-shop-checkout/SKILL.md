@@ -126,6 +126,10 @@ again calls `renew()` on the row that exists rather than creating a second.
 mailer refused leaves `notifiedAt` null and is retried next run. Availability is decided in PHP by
 `ProductStateService`, **not in the DQL** of `findPending()` — one rule, one place.
 
+Alerts are keyed by address, not by user: `Management\AccountDataProvider` exports them (with the download
+links of the member's baskets) under `stock_alerts`/`downloads`, and `EventSubscriber\AccountDeletionSubscriber`
+deletes them on ConfigBundle's `UserAnonymizedEvent`, reading its `email` (the address held before anonymization).
+
 The message is the `back_in_stock` `EmailTemplate` declared by `ShopEmailTemplateProvider`, this bundle's
 only one, seeded by `c975l:ui:email-templates:ensure`. Its sentences are read from the `shop` catalogs,
 its locales are listed in the provider, and it goes out with `wrapLayout: false` — `renderNamed()` has
