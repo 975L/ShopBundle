@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-seo
-description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, hasMerchantReturnPolicy, MerchantReturnPolicy, merchantReturnDays, MerchantReturnNotPermitted, shop-return-days, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, USER_AGENT, c975LHealthCheck, isProbe, site-rate-limit, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork, url_metadata_title, url_metadata_summary, UrlMetadataProvider, Url descriptions, ShopPublicUrlResolver, resolveAlternates, resolveLocalizedUrl, alternates, hreflang, ShopTranslatedLocales, localized urls, ShopAiSearchCardProvider, AiSearchCardProviderInterface, findAvailableBySlugs, ai_search, site search, ProductSocialContentSource, SocialContentSourceInterface, SocialBundle."
+description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, JsonLdBuilder, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, hasMerchantReturnPolicy, MerchantReturnPolicy, merchantReturnDays, MerchantReturnNotPermitted, shop-return-days, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, USER_AGENT, c975LHealthCheck, isProbe, site-rate-limit, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, summarySocialNetwork, url_metadata_title, url_metadata_summary, UrlMetadataProvider, Url descriptions, ShopPublicUrlResolver, resolveAlternates, resolveLocalizedUrl, alternates, hreflang, ShopTranslatedLocales, localized urls, ShopAiSearchCardProvider, AiSearchCardProviderInterface, findAvailableBySlugs, ai_search, site search, ProductSocialContentSource, SocialContentSourceInterface, SocialBundle."
 ---
 
 # c975L ShopBundle — structured data, sitemap, health, recommendations
@@ -104,6 +104,9 @@ stopped. A category page passes none, being a single page. `numberOfItems` count
 page carries**, never the whole catalogue: a count claiming more than the list below it is what a
 validator refuses. A card with no name or no url is dropped rather than numbered, a list whose
 positions skip one being malformed, and a page printing no card publishes nothing at all.
+
+The list, the breadcrumb, the encoding and the plain-text description are **UiBundle's `JsonLdBuilder`**:
+`ProductSnippetBuilder` delegates to it rather than carrying a copy of its own.
 
 ## The breadcrumb
 
@@ -227,6 +230,7 @@ event.
   `ProductStateService`, and must agree.
 - **Do not render structured data from a template** — call `product_json_ld()` and `shop_breadcrumb_json_ld()`.
 - **Do not publish a `gtin` a product does not have**, and do not invent a `sku` — the slug already stands in.
+- **Do not copy `JsonLdBuilder`'s list, breadcrumb or encoding here** — delegate to UiBundle's.
 - **Do not write a breadcrumb by hand** — the printed trail and its markup both come from `ShopBreadcrumbBuilder`.
 - **Do not build sitemap urls before `site-url` is set**, and do not truncate a description there.
 - **Do not compute affinities live** on a page render.

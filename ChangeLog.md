@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.11.2
+
+Structured data encoded through UiBundle
+
+- Breadcrumb, item list, encoding and plain text delegated to UiBundle's `JsonLdBuilder` (28/09/2026)
+- Requires `c975l/core-bundle` ^1.47 (28/09/2026)
+
 ## v2.11.1
 
 The v2.11.0 heading matches its tag

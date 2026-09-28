@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\UiBundle\Service\JsonLdBuilder;
 use c975L\UiBundle\Service\RatingSnippetBuilder;
 
 // Builds the schema.org graph a product sheet publishes as JSON-LD, assembled here rather than as microdata, which leaves an empty node behind on an empty field - the one place of the ecosystem emitting an "offers" node, BookBundle leaving it out of its Book graph so the two never publish a price twice
@@ -39,6 +40,7 @@ class ProductSnippetBuilder
         private readonly ProductStateServiceInterface $productStateService,
         private readonly RatingSnippetBuilder $ratingSnippetBuilder,
         private readonly ShippingRateResolverInterface $shippingRateResolver,
+        private readonly JsonLdBuilder $jsonLdBuilder = new JsonLdBuilder(),
     ) {
     }
 
@@ -57,7 +59,7 @@ class ProductSnippetBuilder
             '@type' => 'Product',
             'name' => $name,
             'url' => trim((string) $url),
-            'description' => $this->plainText($product->getDescription()),
+            'description' => $this->jsonLdBuilder->plainText($product->getDescription()),
             'image' => trim((string) $imageUrl),
             // The slug rather than an identifier of its own: a reference is stated item by item, the same product being sold in several of them, and the slug is what names the product everywhere else
             'sku' => trim((string) $product->getSlug()),
@@ -73,101 +75,27 @@ class ProductSnippetBuilder
         ]);
     }
 
-    /**
-     * The trail leading to the page, as the BreadcrumbList a search engine prints in place of the raw url.
-     *
-     * The levels are handed over already resolved, for the same reason the product's own urls are: only the caller can turn a route into an address.
-     *
-     * @param list<array{name: string, url: string}> $trail the levels in reading order, the page's own included
-     */
+    // The trail leading to a shop page, as the BreadcrumbList a search engine prints in place of the raw url (see UiBundle's JsonLdBuilder)
+    /** @param list<array{name: string, url: string}> $trail the levels in reading order, the page's own included */
     public function buildBreadcrumb(array $trail): array
     {
-        $elements = [];
-        $position = 0;
-
-        foreach ($trail as $level) {
-            $name = trim($level['name']);
-            $url = trim($level['url']);
-
-            // A level with nothing to show is dropped rather than numbered: a list whose positions skip one is a malformed breadcrumb
-            if ('' === $name || '' === $url) {
-                continue;
-            }
-
-            $elements[] = [
-                '@type' => 'ListItem',
-                'position' => ++$position,
-                'name' => $name,
-                'item' => $url,
-            ];
-        }
-
-        // One level is the page itself, and a trail leading nowhere tells a search engine nothing it does not already read in the url
-        if (count($elements) < 2) {
-            return [];
-        }
-
-        return [
-            '@context' => 'https://schema.org',
-            '@type' => 'BreadcrumbList',
-            'itemListElement' => $elements,
-        ];
+        return $this->jsonLdBuilder->breadcrumb($trail);
     }
 
+    // The products a listing prints, as the ItemList a search engine reads a catalog page through: each element points at the sheet holding the product's own Product node, so a price is published once (see UiBundle's JsonLdBuilder)
     /**
-     * The products a listing prints, as the ItemList a search engine reads a catalog page through.
-     *
-     * The summary form and not the whole graph: each element points at the sheet where the product's own Product node lives, so a price is published once, on the page that sells it, and a listing of thirty cards stays a handful of lines rather than thirty nested graphs.
-     *
-     * The levels are handed over already resolved, like the breadcrumb's own: only the caller can turn a route into an address.
-     *
      * @param list<array{name: string, url: string}> $products the cards in the order the page shows them
-     * @param int                                    $offset   how many products the pages before this one already listed, so the second page numbers its cards from where the first stopped rather than from one again
+     * @param int                                    $offset   how many products the pages before this one already listed
      */
     public function buildItemList(array $products, int $offset = 0): array
     {
-        $elements = [];
-        $position = max(0, $offset);
-
-        foreach ($products as $product) {
-            $name = trim($product['name']);
-            $url = trim($product['url']);
-
-            // A card with nothing to point at is dropped rather than numbered, for the same reason as a breadcrumb level: a list whose positions skip one is malformed
-            if ('' === $name || '' === $url) {
-                continue;
-            }
-
-            $elements[] = [
-                '@type' => 'ListItem',
-                'position' => ++$position,
-                'name' => $name,
-                'url' => $url,
-            ];
-        }
-
-        if ([] === $elements) {
-            return [];
-        }
-
-        return [
-            '@context' => 'https://schema.org',
-            '@type' => 'ItemList',
-            // What this page holds and not what the whole shop does: the next page publishes its own list, and a count claiming more than the elements below it is what a validator refuses
-            'numberOfItems' => count($elements),
-            'itemListElement' => $elements,
-        ];
+        return $this->jsonLdBuilder->itemList($products, $offset);
     }
 
     // The same graph, encoded for a <script type="application/ld+json">; empty string when there is nothing to publish
     public function buildJson(array $snippet): string
     {
-        if ([] === $snippet) {
-            return '';
-        }
-
-        // JSON_HEX_TAG keeps a "</script>" typed into a field from closing the tag, JSON_INVALID_UTF8_SUBSTITUTE keeps a stray byte from emptying the whole graph
-        return json_encode($snippet, \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE | \JSON_INVALID_UTF8_SUBSTITUTE);
+        return $this->jsonLdBuilder->encode($snippet);
     }
 
     // The two ages schema.org reads, off the one range an editor types ("3-8", "15-" from 15 up): a bare minimum is a range of its own, an empty or unreadable one publishes no node at all rather than a node saying nothing
@@ -230,7 +158,7 @@ class ProductSnippetBuilder
                 // The barcode number, which is what lets a comparison engine recognize the same product sold by someone else. A product made in-house carries none, and claiming one it does not have is worse than publishing nothing
                 'gtin' => trim((string) $item->getGtin()),
                 // What the item's card says under its title, carried as the words only, like the product's own description
-                'description' => $this->plainText($item->getDescription()),
+                'description' => $this->jsonLdBuilder->plainText($item->getDescription()),
                 // The item's own picture, which is not the product's: a format, a colour or an edition is shown by its own image on the sheet
                 'image' => trim((string) ($itemImageUrls[$slug] ?? '')),
                 // Prices are stored in cents, schema.org expects the amount as it is charged
@@ -375,14 +303,6 @@ class ProductSnippetBuilder
         }
 
         return self::IN_STOCK;
-    }
-
-    // The description is rich text; a graph carries the words only
-    private function plainText(mixed $html): string
-    {
-        $text = html_entity_decode(strip_tags((string) $html), \ENT_QUOTES | \ENT_HTML5, 'UTF-8');
-
-        return trim((string) preg_replace('/\s+/u', ' ', $text));
     }
 
     // Drops everything left empty, so an unfilled field never reaches the graph as a blank property
