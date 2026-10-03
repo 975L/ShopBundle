@@ -47,6 +47,8 @@ class ProductItemType extends AbstractType
             ->add('description', TextareaType::class, [
                 'required' => true,
                 'label' => 'label.description',
+                // Opt-in marker read by the block form theme, which is what puts Donovan under a plain textarea
+                'attr' => ['data-ai-rephrase' => true],
             ])
             ->add('limitedQuantity', IntegerType::class, [
                 'required' => false,

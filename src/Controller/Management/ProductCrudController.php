@@ -905,7 +905,9 @@ class ProductCrudController extends AbstractCrudController
                 ->setLabel(t('label.description', [], 'shop'))
                 ->setRequired(false)
                 ->setFormTypeOption('mapped', false)
-                ->setFormTypeOption('data', $values['description']);
+                ->setFormTypeOption('data', $values['description'])
+                // Opt-in marker read by the block form theme, which is what puts Donovan under a plain textarea
+                ->setFormTypeOption('attr', ['data-ai-rephrase' => true]);
         }
 
         return $fields;

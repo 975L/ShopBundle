@@ -93,7 +93,9 @@ class ShopSettingsCrudController extends AbstractCrudController
                 ->setHelp(t('text.shop_intro_help', [], 'shop'))
                 ->setNumOfRows(2)
                 ->setColumns('col-12')
-                ->setRequired(false),
+                ->setRequired(false)
+                // Opt-in marker read by the block form theme, which is what puts Donovan under a plain textarea
+                ->setFormTypeOption('attr', ['data-ai-rephrase' => true]),
 
             // Blocks: what the shop's index says above its listing, composed with UiBundle's kinds - the same collection a product sheet and a category page hold, minus the context that offers the two sheet-only kinds, which have no product to read here
             FormField::addFieldset(t('label.blocks', [], 'shop')),

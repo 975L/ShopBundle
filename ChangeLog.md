@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.11.3
+
+Plain description textareas opt in to Donovan
+
+- `data-ai-rephrase` marker on the shop intro, item description and item translation textareas (03/10/2026)
+
 ## v2.11.2
 
 Structured data encoded through UiBundle
