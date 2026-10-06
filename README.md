@@ -531,6 +531,10 @@ Two things are deliberately left out of the archive, both being rebuilt rather t
 between products, which `c975l:shop:affinity:calculate` recomputes from the orders of the site they belong
 to, and the download links of the baskets, which belong to the payments rather than to the catalogue.
 
+### Written by another bundle's catalog
+
+`ProductCatalogWriter` is the shop's side of UiBundle's `ProductCatalogWriterInterface`: a bundle holding a catalog of its own (BookBundle and its book files) writes its products here, each found again under the `catalogKey` it was written with. The product is created once, hidden like any new one, its title and text the shop's from then on; its items follow the catalog - price, and the file, copied in again only when its size or date changed. An item the catalog stops listing is hidden, never deleted, and an item the editor hid stays hidden. A new item the catalog sends without a price is written at 0, for the editor to set.
+
 ---
 
 ## Languages
@@ -869,7 +873,7 @@ Installed alongside ConfigBundle, this bundle contributes on its own, with nothi
 | `ProductCategoryExportProvider` / `ProductCategoryImportProvider` | The categories with the blocks composed on their page, carried the same way and importable in any order |
 | `ShopBackupPathProvider` | `public/medias/shop` and `private/medias/shop` declared as irreplaceable - **the private one holds the files your customers paid for** |
 | `ShopShortcutProvider` | The shop test mode tile, under Maintenance, toggling `shop-test-mode` |
-| `ShopGuidedProjectProvider` | The nine parcours of the "Guided projects" panel (see [guided projects](#guided-projects)) |
+| `ShopGuidedProjectProvider` | The ten parcours of the "Guided projects" panel (see [guided projects](#guided-projects)) |
 | `ShopStatusProvider` | Whether the shop shows its test banner, the orders waiting to be shipped, how long the oldest has waited, the payments started but never confirmed, and the four counts of a catalog published but not finished - a sheet with no picture, a description too thin to rank, a picture with no `alt`, a category with no description - in the `extra` section of `/status/report` |
 | `ShopMaintenanceTaskProvider` | This bundle's two scheduled commands, so your site does not list them itself |
 | `WhatsNewProvider` | This bundle's entries on the "What's new" screen |

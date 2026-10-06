@@ -156,7 +156,7 @@
             </trans-unit>
             <trans-unit id="8BXVMnX">
                 <source>description.guided_step_shop_downloadable_file</source>
-                <target>The item's file field takes the upload; none of it is ever served straight from a public url.</target>
+                <target>The item's file field takes the upload; none of it is ever served straight from a public url. An item coming from the book catalogue takes its price and file from there.</target>
             </trans-unit>
             <trans-unit id="DFruAGa">
                 <source>description.guided_step_shop_downloadable_items</source>
@@ -238,9 +238,17 @@
                 <source>description.guided_step_shop_product_available_at</source>
                 <target>The date the shop states, on the sheet and in the structured data the search engines read.</target>
             </trans-unit>
+            <trans-unit id="ydurPgw">
+                <source>description.guided_step_shop_product_brand</source>
+                <target>Optional: the brand, or the publisher, search engines show beside the product.</target>
+            </trans-unit>
             <trans-unit id="j00fYqU">
                 <source>description.guided_step_shop_product_categories</source>
                 <target>A product can belong to several categories, and shows up under each of them.</target>
+            </trans-unit>
+            <trans-unit id="rBwASX8">
+                <source>description.guided_step_shop_product_description</source>
+                <target>The sheet's text, under its title: it is required, and it is what search engines read.</target>
             </trans-unit>
             <trans-unit id="hvGjmhN">
                 <source>description.guided_step_shop_product_hidden</source>
@@ -254,6 +262,10 @@
                 <source>description.guided_step_shop_product_items</source>
                 <target>The product says what it is; its items say what is bought, at what price, in which condition. The weight of each item is the one the shipping cost is computed on, so an item left at zero is shipped for nothing.</target>
             </trans-unit>
+            <trans-unit id=".QC10dg">
+                <source>description.guided_step_shop_product_medias</source>
+                <target>The sheet's pictures, the first one serving as its thumbnail in the catalogue.</target>
+            </trans-unit>
             <trans-unit id="rAyhDoU">
                 <source>description.guided_step_shop_product_new</source>
                 <target>One single form for the sheet, its media, its prices and the blocks around them.</target>
@@ -264,7 +276,11 @@
             </trans-unit>
             <trans-unit id="pZNb0_8">
                 <source>description.guided_step_shop_product_price</source>
-                <target>The price, its VAT rate and its currency, the weight the parcel is charged on, plus the struck-through price only if it really was charged over the last thirty days.</target>
+                <target>The price, its VAT rate and its currency, the weight the parcel is charged on, plus the struck-through price only if it really was charged over the last thirty days. An item coming from the book catalogue takes its price and file from there.</target>
+            </trans-unit>
+            <trans-unit id="nYg2UQS">
+                <source>description.guided_step_shop_product_related_products</source>
+                <target>Optional: the products offered alongside this one, picked by hand until sales suggest some on their own.</target>
             </trans-unit>
             <trans-unit id="rBwfZj2">
                 <source>description.guided_step_shop_product_save</source>
@@ -320,7 +336,7 @@
             </trans-unit>
             <trans-unit id="TuGVnPb">
                 <source>description.guided_step_shop_translate_categories</source>
-                <target>Categories are translated from the same button, on their own screen: the name and the description.</target>
+                <target>Categories are translated from the same button, on their own screen: the name and the description; the shop page's welcome sentence is translated from its own screen, through its language tabs.</target>
             </trans-unit>
             <trans-unit id="Ufjm5Cj">
                 <source>description.guided_step_shop_translate_description</source>
@@ -780,7 +796,7 @@
             </trans-unit>
             <trans-unit id="f2dRMLi">
                 <source>label.guided_project_shop_trash</source>
-                <target>Empty the recycle bin</target>
+                <target>Move a product to the recycle bin</target>
             </trans-unit>
             <trans-unit id="d71lE0c">
                 <source>label.guided_step_shop_category_description</source>
@@ -906,9 +922,17 @@
                 <source>label.guided_step_shop_product_available_at</source>
                 <target>Say when it is available</target>
             </trans-unit>
+            <trans-unit id="D2tTqXZ">
+                <source>label.guided_step_shop_product_brand</source>
+                <target>State its brand</target>
+            </trans-unit>
             <trans-unit id="yLR4.BL">
                 <source>label.guided_step_shop_product_categories</source>
                 <target>Classify it</target>
+            </trans-unit>
+            <trans-unit id="utAk51k">
+                <source>label.guided_step_shop_product_description</source>
+                <target>Describe it</target>
             </trans-unit>
             <trans-unit id=".Yx97JL">
                 <source>label.guided_step_shop_product_hidden</source>
@@ -922,6 +946,10 @@
                 <source>label.guided_step_shop_product_items</source>
                 <target>Down to the items</target>
             </trans-unit>
+            <trans-unit id="KkZxe54">
+                <source>label.guided_step_shop_product_medias</source>
+                <target>Add its pictures</target>
+            </trans-unit>
             <trans-unit id="TmM1lIv">
                 <source>label.guided_step_shop_product_new</source>
                 <target>Add a product</target>
@@ -933,6 +961,10 @@
             <trans-unit id="vXhca05">
                 <source>label.guided_step_shop_product_price</source>
                 <target>Fill in its price</target>
+            </trans-unit>
+            <trans-unit id="Xu75FUa">
+                <source>label.guided_step_shop_product_related_products</source>
+                <target>Link other products to it</target>
             </trans-unit>
             <trans-unit id="7ozDsTN">
                 <source>label.guided_step_shop_product_save</source>

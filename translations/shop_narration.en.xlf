@@ -170,9 +170,17 @@
                 <source>narration.guided_step_shop_product_available_at</source>
                 <target>Say when it becomes available. That is the date the shop states, on the sheet and in the structured data the search engines read.</target>
             </trans-unit>
+            <trans-unit id="7ZfEE.v">
+                <source>narration.guided_step_shop_product_brand</source>
+                <target>If the product has a brand, or a publisher, type it here. Otherwise move on: the field is optional.</target>
+            </trans-unit>
             <trans-unit id="V_UMVne">
                 <source>narration.guided_step_shop_product_categories</source>
                 <target>Classify it. A product can belong to several categories, and it shows up under each of them.</target>
+            </trans-unit>
+            <trans-unit id="M3dccMn">
+                <source>narration.guided_step_shop_product_description</source>
+                <target>Next, write the product's description, in the editor under the title: the sheet won't save without it.</target>
             </trans-unit>
             <trans-unit id="NyrbGAq">
                 <source>narration.guided_step_shop_product_hidden</source>
@@ -186,6 +194,10 @@
                 <source>narration.guided_step_shop_product_items</source>
                 <target>Move down to the items. The product says what it is; its items say what is bought, at what price, in which condition. The weight of each item is what the shipping cost is computed on.</target>
             </trans-unit>
+            <trans-unit id="ekzkn6X">
+                <source>narration.guided_step_shop_product_medias</source>
+                <target>Add the product's pictures. The first one serves as its thumbnail in the catalogue.</target>
+            </trans-unit>
             <trans-unit id="bCvcdBL">
                 <source>narration.guided_step_shop_product_new</source>
                 <target>Add a product. One single form holds the sheet, its media, its prices and the blocks around them.</target>
@@ -197,6 +209,10 @@
             <trans-unit id="1kFR1aL">
                 <source>narration.guided_step_shop_product_price</source>
                 <target>Fill in its price, its VAT rate and its currency, then its weight, which the parcel is charged on. The struck-through price is only filled if it really was charged over the last thirty days.</target>
+            </trans-unit>
+            <trans-unit id="sgryOS_">
+                <source>narration.guided_step_shop_product_related_products</source>
+                <target>Pick, if you wish, the products to offer alongside this one. Sales will suggest others later on.</target>
             </trans-unit>
             <trans-unit id="mWlPKHR">
                 <source>narration.guided_step_shop_product_save</source>

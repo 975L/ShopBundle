@@ -113,6 +113,6 @@ class ShopListingExtension implements ResetInterface
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        return null === $request ? new InputBag() : $request->query;
+        return $request->query ?? new InputBag();
     }
 }

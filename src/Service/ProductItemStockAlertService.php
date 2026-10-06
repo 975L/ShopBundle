@@ -106,7 +106,7 @@ class ProductItemStockAlertService implements ProductItemStockAlertServiceInterf
         }
 
         $product = $productItem->getProduct();
-        $availableAt = null === $product ? null : $product->getAvailableAt();
+        $availableAt = $product?->getAvailableAt();
 
         return null !== $product
             && !$product->isHidden()
@@ -118,7 +118,7 @@ class ProductItemStockAlertService implements ProductItemStockAlertServiceInterf
     private function send(ProductItemStockAlert $stockAlert): bool
     {
         $productItem = $stockAlert->getProductItem();
-        $product = null === $productItem ? null : $productItem->getProduct();
+        $product = $productItem?->getProduct();
 
         if (null === $productItem || null === $product) {
             return false;

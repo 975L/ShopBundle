@@ -156,7 +156,7 @@
             </trans-unit>
             <trans-unit id="8BXVMnX">
                 <source>description.guided_step_shop_downloadable_file</source>
-                <target>El campo Archivo del artículo recibe la subida; nada de él se sirve nunca directamente desde una url pública.</target>
+                <target>El campo Archivo del artículo recibe la subida; nada de él se sirve nunca directamente desde una url pública. Un artículo venido del catálogo de libros toma allí su precio y su archivo.</target>
             </trans-unit>
             <trans-unit id="DFruAGa">
                 <source>description.guided_step_shop_downloadable_items</source>
@@ -238,9 +238,17 @@
                 <source>description.guided_step_shop_product_available_at</source>
                 <target>La fecha que la tienda anuncia, en la ficha y en los datos estructurados que leen los buscadores.</target>
             </trans-unit>
+            <trans-unit id="ydurPgw">
+                <source>description.guided_step_shop_product_brand</source>
+                <target>Opcional: la marca, o la editorial, que los motores de búsqueda muestran junto al producto.</target>
+            </trans-unit>
             <trans-unit id="j00fYqU">
                 <source>description.guided_step_shop_product_categories</source>
                 <target>Un producto puede pertenecer a varias categorías y aparece en cada una de ellas.</target>
+            </trans-unit>
+            <trans-unit id="rBwASX8">
+                <source>description.guided_step_shop_product_description</source>
+                <target>El texto de la ficha, bajo el título: es obligatorio, y es el que leen los motores de búsqueda.</target>
             </trans-unit>
             <trans-unit id="hvGjmhN">
                 <source>description.guided_step_shop_product_hidden</source>
@@ -254,6 +262,10 @@
                 <source>description.guided_step_shop_product_items</source>
                 <target>El producto dice qué es; sus artículos dicen qué se compra, a qué precio y en qué estado. El peso de cada artículo es aquel sobre el que se calculan los gastos de envío: un artículo dejado a cero se envía gratis.</target>
             </trans-unit>
+            <trans-unit id=".QC10dg">
+                <source>description.guided_step_shop_product_medias</source>
+                <target>Las imágenes de la ficha, la primera sirve de miniatura en el catálogo.</target>
+            </trans-unit>
             <trans-unit id="rAyhDoU">
                 <source>description.guided_step_shop_product_new</source>
                 <target>Un solo formulario para la ficha, sus medios, sus precios y los blocks que los rodean.</target>
@@ -264,7 +276,11 @@
             </trans-unit>
             <trans-unit id="pZNb0_8">
                 <source>description.guided_step_shop_product_price</source>
-                <target>El precio, su tipo de IVA y su moneda, el peso que determina el precio del paquete, y el precio tachado solo si se aplicó realmente en los últimos treinta días.</target>
+                <target>El precio, su tipo de IVA y su moneda, el peso que determina el precio del paquete, y el precio tachado solo si se aplicó realmente en los últimos treinta días. Un artículo venido del catálogo de libros toma allí su precio y su archivo.</target>
+            </trans-unit>
+            <trans-unit id="nYg2UQS">
+                <source>description.guided_step_shop_product_related_products</source>
+                <target>Opcional: los productos propuestos con este, elegidos a mano mientras las ventas no sugieran otros por sí mismas.</target>
             </trans-unit>
             <trans-unit id="rBwfZj2">
                 <source>description.guided_step_shop_product_save</source>
@@ -320,7 +336,7 @@
             </trans-unit>
             <trans-unit id="TuGVnPb">
                 <source>description.guided_step_shop_translate_categories</source>
-                <target>Las categorías se traducen con el mismo botón, desde su propia pantalla: el nombre y la descripción.</target>
+                <target>Las categorías se traducen con el mismo botón, desde su propia pantalla: el nombre y la descripción; la frase de bienvenida de la página de la tienda se traduce desde su propia pantalla, con sus pestañas de idioma.</target>
             </trans-unit>
             <trans-unit id="Ufjm5Cj">
                 <source>description.guided_step_shop_translate_description</source>
@@ -780,7 +796,7 @@
             </trans-unit>
             <trans-unit id="f2dRMLi">
                 <source>label.guided_project_shop_trash</source>
-                <target>Vaciar la papelera</target>
+                <target>Enviar un producto a la papelera</target>
             </trans-unit>
             <trans-unit id="d71lE0c">
                 <source>label.guided_step_shop_category_description</source>
@@ -906,9 +922,17 @@
                 <source>label.guided_step_shop_product_available_at</source>
                 <target>Indicar desde cuándo</target>
             </trans-unit>
+            <trans-unit id="D2tTqXZ">
+                <source>label.guided_step_shop_product_brand</source>
+                <target>Indicar su marca</target>
+            </trans-unit>
             <trans-unit id="yLR4.BL">
                 <source>label.guided_step_shop_product_categories</source>
                 <target>Clasificarlo</target>
+            </trans-unit>
+            <trans-unit id="utAk51k">
+                <source>label.guided_step_shop_product_description</source>
+                <target>Describirlo</target>
             </trans-unit>
             <trans-unit id=".Yx97JL">
                 <source>label.guided_step_shop_product_hidden</source>
@@ -922,6 +946,10 @@
                 <source>label.guided_step_shop_product_items</source>
                 <target>Bajar a los artículos</target>
             </trans-unit>
+            <trans-unit id="KkZxe54">
+                <source>label.guided_step_shop_product_medias</source>
+                <target>Añadir sus imágenes</target>
+            </trans-unit>
             <trans-unit id="TmM1lIv">
                 <source>label.guided_step_shop_product_new</source>
                 <target>Añadir un producto</target>
@@ -933,6 +961,10 @@
             <trans-unit id="vXhca05">
                 <source>label.guided_step_shop_product_price</source>
                 <target>Rellenar su precio</target>
+            </trans-unit>
+            <trans-unit id="Xu75FUa">
+                <source>label.guided_step_shop_product_related_products</source>
+                <target>Asociarle otros productos</target>
             </trans-unit>
             <trans-unit id="7ozDsTN">
                 <source>label.guided_step_shop_product_save</source>

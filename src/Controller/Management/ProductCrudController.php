@@ -203,7 +203,9 @@ class ProductCrudController extends AbstractCrudController
             CollectionField::new('medias')
                 ->setLabel(t('label.media', [], 'shop'))
                 ->hideOnIndex()
-                ->setEntryType(ProductMediaType::class),
+                ->setEntryType(ProductMediaType::class)
+                // What the guided product project points at, for the same reason as the items below
+                ->setFormTypeOption('row_attr', ['data-shop-product-medias' => '1']),
 
             // Items
             FormField::addFieldset(t('label.items', [], 'shop'))

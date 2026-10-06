@@ -246,6 +246,24 @@ class ShopGuidedProjectProviderTest extends TestCase
         $this->assertStringContainsString("'data-shop-product-items' => '1'", $source);
     }
 
+    // The medias collection is numbered just the same, so the product project points at its own attribute too
+    public function testTheMediasCollectionIsHighlightedByItsOwnAttribute(): void
+    {
+        $source = (string) file_get_contents(\dirname(__DIR__, 2) . '/src/Controller/Management/ProductCrudController.php');
+
+        $this->assertStringContainsString("'data-shop-product-medias' => '1'", $source);
+    }
+
+    // The price, the file and the card value sit inside numbered entries, so their steps point at the attributes ProductItemType sets on their rows
+    public function testTheItemFieldsAreHighlightedByTheirOwnAttributes(): void
+    {
+        $source = (string) file_get_contents(\dirname(__DIR__, 2) . '/src/Form/ProductItemType.php');
+
+        foreach (['data-shop-item-price', 'data-shop-item-file', 'data-shop-item-gift-card-value'] as $attribute) {
+            $this->assertStringContainsString("'{$attribute}' => '1'", $source);
+        }
+    }
+
     // The fieldsets of the language screen are numbered by EasyAdmin just the same, so the translate project points at the attribute ProductCrudController sets on the first variant one
     public function testTheItemTranslationFieldsetIsHighlightedByItsOwnAttribute(): void
     {

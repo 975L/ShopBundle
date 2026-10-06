@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-10-06",
+        "description": [
+            {
+                "en": "Books from your catalog now arrive in the shop on their own, with their price and file kept up to date.",
+                "fr": "Les livres de votre catalogue arrivent désormais d'eux-mêmes dans la boutique, avec leur prix et leur fichier tenus à jour.",
+                "es": "Los libros de su catálogo llegan ahora solos a la tienda, con su precio y su archivo siempre al día."
+            },
+            {
+                "en": "The product guided project now also shows the description, brand, related products and pictures, and points at the exact price, file and card value fields.",
+                "fr": "Le projet guidé du produit montre aussi la description, la marque, les produits associés et les images, et désigne précisément les champs prix, fichier et valeur de carte.",
+                "es": "El proyecto guiado del producto muestra también la descripción, la marca, los productos asociados y las imágenes, y señala exactamente los campos de precio, archivo y valor de la tarjeta."
+            },
+            {
+                "en": "A product saved without a description now shows a message on the field instead of an error page.",
+                "fr": "Un produit enregistré sans description affiche maintenant un message sur le champ plutôt qu'une page d'erreur.",
+                "es": "Un producto guardado sin descripción muestra ahora un mensaje en el campo en lugar de una página de error."
+            }
+        ]
+    },
+    {
         "date": "2026-09-27",
         "description": [
             {

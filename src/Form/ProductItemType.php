@@ -57,6 +57,8 @@ class ProductItemType extends AbstractType
                 'help' => 'label.limited_quantity_help',
             ])
             ->add('price', MoneyType::class, [
+                // What the guided projects point at, the entry's ids being numbered by the collection (see ShopGuidedProjectProvider)
+                'row_attr' => ['data-shop-item-price' => '1'],
                 'required' => true,
                 'label' => 'label.price',
                 'divisor' => 100,
@@ -112,6 +114,7 @@ class ProductItemType extends AbstractType
                 'required' => false,
                 'label' => 'label.gift_card_value',
                 'help' => 'label.gift_card_value_help',
+                'row_attr' => ['data-shop-item-gift-card-value' => '1'],
                 // Stored in cents like every other amount of this bundle, typed in the currency the customer reads - same reading as the price above
                 'divisor' => 100,
             ])
@@ -130,6 +133,7 @@ class ProductItemType extends AbstractType
                 'help' => 'label.product_item_hidden_help',
             ])
             ->add('file', ProductItemFileType::class, [
+                'row_attr' => ['data-shop-item-file' => '1'],
                 'label' => false,
                 'required' => false,
                 'help' => 'label.product_item_file_help',

@@ -69,4 +69,21 @@ class ProductItemRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Every item whose file has a name, its file and its product loaded with it - whether the file is still on disk is the caller's to check.
+     *
+     * @return list<ProductItem>
+     */
+    public function findWithFile(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->innerJoin('i.file', 'f')
+            ->addSelect('f')
+            ->leftJoin('i.product', 'p')
+            ->addSelect('p')
+            ->andWhere('f.name IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
 }

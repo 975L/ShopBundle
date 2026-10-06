@@ -170,9 +170,17 @@
                 <source>narration.guided_step_shop_product_available_at</source>
                 <target>Dites à partir de quand il est disponible. C'est la date que la boutique annonce, sur la fiche et dans les données structurées que lisent les moteurs de recherche.</target>
             </trans-unit>
+            <trans-unit id="7ZfEE.v">
+                <source>narration.guided_step_shop_product_brand</source>
+                <target>Si le produit a une marque, ou un éditeur, écrivez-la ici. Sinon, passez : le champ est facultatif.</target>
+            </trans-unit>
             <trans-unit id="V_UMVne">
                 <source>narration.guided_step_shop_product_categories</source>
                 <target>Classez-le. Un produit peut appartenir à plusieurs catégories, et il apparaît sous chacune d'elles.</target>
+            </trans-unit>
+            <trans-unit id="M3dccMn">
+                <source>narration.guided_step_shop_product_description</source>
+                <target>Écrivez ensuite la description du produit, dans l'éditeur sous le titre : la fiche ne s'enregistre pas sans elle.</target>
             </trans-unit>
             <trans-unit id="NyrbGAq">
                 <source>narration.guided_step_shop_product_hidden</source>
@@ -186,6 +194,10 @@
                 <source>narration.guided_step_shop_product_items</source>
                 <target>Descendez aux articles. Le produit dit ce que c'est ; ses articles disent ce qui est acheté, à quel prix, dans quel état. Le poids de chaque article est celui sur lequel les frais de port sont calculés.</target>
             </trans-unit>
+            <trans-unit id="ekzkn6X">
+                <source>narration.guided_step_shop_product_medias</source>
+                <target>Ajoutez les images du produit. La première sert de vignette dans le catalogue.</target>
+            </trans-unit>
             <trans-unit id="bCvcdBL">
                 <source>narration.guided_step_shop_product_new</source>
                 <target>Ajoutez un produit. Un seul formulaire porte la fiche, ses médias, ses prix et les blocks qui les entourent.</target>
@@ -197,6 +209,10 @@
             <trans-unit id="1kFR1aL">
                 <source>narration.guided_step_shop_product_price</source>
                 <target>Renseignez son prix, son taux de TVA et sa devise, puis son poids, qui décide du prix du colis. Le prix barré ne se remplit que s'il a réellement été pratiqué ces trente derniers jours.</target>
+            </trans-unit>
+            <trans-unit id="sgryOS_">
+                <source>narration.guided_step_shop_product_related_products</source>
+                <target>Choisissez, si vous le souhaitez, les produits à proposer avec celui-ci. Les ventes en suggéreront d'autres plus tard.</target>
             </trans-unit>
             <trans-unit id="mWlPKHR">
                 <source>narration.guided_step_shop_product_save</source>

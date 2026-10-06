@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-catalog
-description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: age, AgeWarning, site-age-warning, label.age_invalid, label.age_range_reversed, validateAgeRange, section-wrap, Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, weight, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, template, isTemplate, setTemplate, createTemplate, createProduct, product template, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-country, shop-shipping-free, shop-return-days, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, ShopDemoOrderLinker, DemoFixtureLinkerInterface, demo catalogue, ReplacingFile, PlaceholderMediaProviderInterface, ShopTranslator, ShopTranslatedLocales, ShopLinkLocalizer, ShopPublicUrlResolver, ShopTranslationPurgeListener, ContentLocaleScreen, contenu, data-content-locales, action-translate, shop_index_localized, product_display_localized, category_display_localized, PRODUCT_FIELDS, CATEGORY_FIELDS, ITEM_FIELDS, SETTINGS_FIELDS, promptValues, translatedLocales, forShop, forProduct, forCategory, LocalizedUrlGenerator, hreflang, alternates, price-label, --price-size."
+description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: age, AgeWarning, site-age-warning, label.age_invalid, label.age_range_reversed, validateAgeRange, section-wrap, Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, weight, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, template, isTemplate, setTemplate, createTemplate, createProduct, product template, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-country, shop-shipping-free, shop-return-days, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, ShopDemoOrderLinker, DemoFixtureLinkerInterface, demo catalogue, ReplacingFile, ProductCatalogWriter, ProductCatalogWriterInterface, catalogKey, itemsWithFile, setKeys, findWithFile, PlaceholderMediaProviderInterface, ShopTranslator, ShopTranslatedLocales, ShopLinkLocalizer, ShopPublicUrlResolver, ShopTranslationPurgeListener, ContentLocaleScreen, contenu, data-content-locales, action-translate, shop_index_localized, product_display_localized, category_display_localized, PRODUCT_FIELDS, CATEGORY_FIELDS, ITEM_FIELDS, SETTINGS_FIELDS, promptValues, translatedLocales, forShop, forProduct, forCategory, LocalizedUrlGenerator, hreflang, alternates, price-label, --price-size."
 ---
 
 # c975L ShopBundle — catalog
@@ -10,7 +10,7 @@ description: "Use this skill when working with the shop's catalog in a Symfony a
 **Package:** `c975l/shop-bundle` · **Bundle:** `c975L\ShopBundle\` · **Twig namespace:** `@c975LShop` · **Translation domain:** `shop`
 
 **Key source paths:**
-`src/Entity/Product.php`, `src/Entity/ProductCategory.php`, `src/Entity/ProductItem.php`, `src/Entity/Media.php`, `src/Repository/ProductRepository.php`, `src/Service/ProductStateService.php`, `src/Service/ShopService.php`, `src/Management/ProductDuplicator.php`, `src/Management/ProductExportProvider.php`, `src/Management/ProductImportProvider.php`, `src/Twig/ProductStateExtension.php`, `src/Twig/Components/`, `src/Service/ShopTranslator.php`, `src/Service/ShopTranslatedLocales.php`, `src/Service/ShopLinkLocalizer.php`, `src/Service/ShopPublicUrlResolver.php`, `src/Listener/ShopTranslationPurgeListener.php`, `templates/shop/`, `templates/product/`, `templates/category/`, `templates/components/`, `sass/`
+`src/Entity/Product.php`, `src/Entity/ProductCategory.php`, `src/Entity/ProductItem.php`, `src/Entity/Media.php`, `src/Repository/ProductRepository.php`, `src/Service/ProductStateService.php`, `src/Service/ShopService.php`, `src/Management/ProductDuplicator.php`, `src/Management/ProductExportProvider.php`, `src/Management/ProductImportProvider.php`, `src/Service/ProductCatalogWriter.php`, `src/Twig/ProductStateExtension.php`, `src/Twig/Components/`, `src/Service/ShopTranslator.php`, `src/Service/ShopTranslatedLocales.php`, `src/Service/ShopLinkLocalizer.php`, `src/Service/ShopPublicUrlResolver.php`, `src/Listener/ShopTranslationPurgeListener.php`, `templates/shop/`, `templates/product/`, `templates/category/`, `templates/components/`, `sass/`
 
 **Related skills:** `c975l-shop-blocks`, `c975l-shop-checkout`, `c975l-shop-seo` in this same bundle, and `c975l-blocks`, `c975l-media` in UiBundle beside it.
 
@@ -18,8 +18,8 @@ description: "Use this skill when working with the shop's catalog in a Symfony a
 
 | Entity | Holds | Never holds |
 | --- | --- | --- |
-| `Product` | title, slug, description, `brand`, `age`, `availableAt`, position, `hidden`, `isDeleted`, medias, categories, blocks, `relatedProducts`, `giftCardText`, `giftCardScratch` | a price |
-| `ProductItem` | price and `priceBefore` (**cents**), currency, vat, `sku`, `gtin`, `limitedQuantity`, `orderedQuantity`, `service`, `itemCondition`, `weight` (**grams**), `hidden`, `giftCardValue`, one media, one file | its own page, a recycle bin |
+| `Product` | title, slug, description, `brand`, `age`, `availableAt`, position, `hidden`, `isDeleted`, medias, categories, blocks, `relatedProducts`, `giftCardText`, `giftCardScratch`, `catalogKey` | a price |
+| `ProductItem` | price and `priceBefore` (**cents**), currency, vat, `sku`, `gtin`, `limitedQuantity`, `orderedQuantity`, `service`, `itemCondition`, `weight` (**grams**), `hidden`, `giftCardValue`, `catalogKey`, one media, one file | its own page, a recycle bin |
 | `ProductCategory` | name, slug, description, products (`ManyToMany`) | a price |
 
 `Product` implements `HasBlocksInterface` — its sheet is composed in the back office, see
@@ -230,6 +230,16 @@ An import **never deletes what it cannot put back**: a product or an item the ar
 left where it is, its file being what a customer has paid for. Affinities are recomputed rather than
 carried, and the baskets' download links belong to the payments.
 
+## Written by another bundle's catalog
+
+`ProductCatalogWriter` implements UiBundle's `ProductCatalogWriterInterface`: a catalog (BookBundle) writes
+its products here under a `catalogKey`, unique over each table. The product is created once and is the
+shop's from then on; its items follow the catalog's price and file, the file copied in through a
+`ReplacingFile` only when its size or date changed. An item is looked up by its key over the whole table and
+moved to the product written, so a product key that changed does not write it twice. A dropped item is
+hidden, never deleted, and a hidden one is never shown again by the writer. `itemsWithFile()` and
+`setKeys()` serve a one-shot import, `setKeys()` leaving a key another row already carries where it is.
+
 ## Seeding a demo catalogue
 
 `ShopSampleCatalog` holds a made-up catalogue once as plain data — six products over three categories,
@@ -287,6 +297,8 @@ charging one price and displaying another.
   `ReplacingFile`, the way `ProductImportProvider` does.
 - **Do not have a fixture provider empty a table** — a demo site keeps its own content in those very tables.
 - **Do not write a demo order's shipping into its total** — `getPayable()` adds it, and a doubled total lights up the integrity check.
+- **Do not move an item with `removeItem()`** — `items` is `orphanRemoval`, so the row is deleted; `addItem()` on the new product is the whole move.
+- **Do not persist a new `ProductItem` before its file and slug are set** — Vich uploads in `prePersist`, and builds the path from both slugs.
 - **Do not store a price on `Product`** — it is the lowest of its items, resolved at read time.
 - **Do not store prices as floats**, and do not store a currency per product.
 - **Do not treat `limitedQuantity: 0` as unlimited.**

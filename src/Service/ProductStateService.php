@@ -111,7 +111,7 @@ class ProductStateService implements ProductStateServiceInterface
     public function getItemFileFormat(ProductItem $item): ?string
     {
         $file = $item->getFile();
-        $name = null !== $file ? $file->getName() : null;
+        $name = $file?->getName();
         if (null === $name) {
             return null;
         }

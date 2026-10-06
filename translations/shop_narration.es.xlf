@@ -170,9 +170,17 @@
                 <source>narration.guided_step_shop_product_available_at</source>
                 <target>Diga a partir de cuándo está disponible. Es la fecha que la tienda anuncia, en la ficha y en los datos estructurados que leen los buscadores.</target>
             </trans-unit>
+            <trans-unit id="7ZfEE.v">
+                <source>narration.guided_step_shop_product_brand</source>
+                <target>Si el producto tiene una marca, o una editorial, escríbala aquí. Si no, continúe: el campo es opcional.</target>
+            </trans-unit>
             <trans-unit id="V_UMVne">
                 <source>narration.guided_step_shop_product_categories</source>
                 <target>Clasifíquelo. Un producto puede pertenecer a varias categorías, y aparece en cada una de ellas.</target>
+            </trans-unit>
+            <trans-unit id="M3dccMn">
+                <source>narration.guided_step_shop_product_description</source>
+                <target>Escriba después la descripción del producto, en el editor bajo el título: la ficha no se guarda sin ella.</target>
             </trans-unit>
             <trans-unit id="NyrbGAq">
                 <source>narration.guided_step_shop_product_hidden</source>
@@ -186,6 +194,10 @@
                 <source>narration.guided_step_shop_product_items</source>
                 <target>Baje hasta los artículos. El producto dice qué es; sus artículos dicen qué se compra, a qué precio y en qué estado. El peso de cada artículo es aquel sobre el que se calculan los gastos de envío.</target>
             </trans-unit>
+            <trans-unit id="ekzkn6X">
+                <source>narration.guided_step_shop_product_medias</source>
+                <target>Añada las imágenes del producto. La primera sirve de miniatura en el catálogo.</target>
+            </trans-unit>
             <trans-unit id="bCvcdBL">
                 <source>narration.guided_step_shop_product_new</source>
                 <target>Añada un producto. Un solo formulario lleva la ficha, sus medios, sus precios y los bloques que los rodean.</target>
@@ -197,6 +209,10 @@
             <trans-unit id="1kFR1aL">
                 <source>narration.guided_step_shop_product_price</source>
                 <target>Introduzca su precio, su tipo de IVA y su moneda, y después su peso, que determina el precio del paquete. El precio tachado solo se rellena si se aplicó realmente en los últimos treinta días.</target>
+            </trans-unit>
+            <trans-unit id="sgryOS_">
+                <source>narration.guided_step_shop_product_related_products</source>
+                <target>Elija, si lo desea, los productos que se propondrán con este. Las ventas sugerirán otros más adelante.</target>
             </trans-unit>
             <trans-unit id="mWlPKHR">
                 <source>narration.guided_step_shop_product_save</source>

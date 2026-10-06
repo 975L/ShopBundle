@@ -19,7 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-// This bundle's guided projects, running the 8000 block GuidedProjectProviderInterface reserves them - the same docblock stating every other bundle's, so a range is read there rather than recopied here. They follow the order a catalog is actually filled: the category classes the products, so it comes first, then the product and the item carrying its price, then the two things an item can be beyond a parcel, and last the three occasional tasks. Creating a category and creating a product are two projects rather than the one task they feel like: only the opening step of a project carries an url, everything after it walking the screen the user has been sent to, highlighting the button or the field they are meant to use next - one they click themselves, which brings the panel back on that very step (see ConfigBundle's assets/js/guided-project.js)
+// This bundle's guided projects, running the 8000 block GuidedProjectProviderInterface reserves them - the same docblock stating every other bundle's, so a range is read there rather than recopied here. They follow the order a catalog is actually filled: the category classes the products, so it comes first, then the shop's own page, settled before the catalogue it lists, then the product and the item carrying its price, its templates and its translation, then the two things an item can be beyond a parcel, and last the three occasional tasks. Creating a category and creating a product are two projects rather than the one task they feel like: only the opening step of a project carries an url, everything after it walking the screen the user has been sent to, highlighting the button or the field they are meant to use next - one they click themselves, which brings the panel back on that very step (see ConfigBundle's assets/js/guided-project.js)
 class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
 {
     public function __construct(
@@ -164,43 +164,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             'order' => 8020,
             'role' => $this->roleNeeded(),
             'steps' => [
-                [
-                    'label' => 'label.guided_step_shop_product_open',
-                    'description' => 'description.guided_step_shop_product_open',
-                    'narration' => 'narration.guided_step_shop_product_open',
-                    'url' => $this->indexUrl(ProductCrudController::class),
-                ],
-                [
-                    'label' => 'label.guided_step_shop_product_new',
-                    'description' => 'description.guided_step_shop_product_new',
-                    'narration' => 'narration.guided_step_shop_product_new',
-                    'highlight' => '.action-new',
-                ],
-                [
-                    'label' => 'label.guided_step_shop_product_title',
-                    'description' => 'description.guided_step_shop_product_title',
-                    'narration' => 'narration.guided_step_shop_product_title',
-                    'highlight' => '#Product_title',
-                ],
-                [
-                    'label' => 'label.guided_step_shop_product_categories',
-                    'description' => 'description.guided_step_shop_product_categories',
-                    'narration' => 'narration.guided_step_shop_product_categories',
-                    // AssociationField is rendered by tom-select, which hides the original select behind the wrapper it inserts right after it
-                    'highlight' => '#Product_categories + .ts-wrapper',
-                ],
-                [
-                    'label' => 'label.guided_step_shop_product_age',
-                    'description' => 'description.guided_step_shop_product_age',
-                    'narration' => 'narration.guided_step_shop_product_age',
-                    'highlight' => '#Product_age',
-                ],
-                [
-                    'label' => 'label.guided_step_shop_product_available_at',
-                    'description' => 'description.guided_step_shop_product_available_at',
-                    'narration' => 'narration.guided_step_shop_product_available_at',
-                    'highlight' => '#Product_availableAt',
-                ],
+                ...$this->productSheetSteps(),
                 [
                     'label' => 'label.guided_step_shop_product_items',
                     'description' => 'description.guided_step_shop_product_items',
@@ -217,6 +181,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_shop_product_price',
                     'description' => 'description.guided_step_shop_product_price',
                     'narration' => 'narration.guided_step_shop_product_price',
+                    'highlight' => '[data-shop-product-items] [data-shop-item-price]',
                 ],
                 [
                     'label' => 'label.guided_step_shop_product_hidden',
@@ -230,6 +195,75 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'narration' => 'narration.guided_step_shop_product_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
+            ],
+        ];
+    }
+
+    // The steps of productProject() walking the sheet itself, down to its pictures - the items follow there
+    private function productSheetSteps(): array
+    {
+        return [
+            [
+                'label' => 'label.guided_step_shop_product_open',
+                'description' => 'description.guided_step_shop_product_open',
+                'narration' => 'narration.guided_step_shop_product_open',
+                'url' => $this->indexUrl(ProductCrudController::class),
+            ],
+            [
+                'label' => 'label.guided_step_shop_product_new',
+                'description' => 'description.guided_step_shop_product_new',
+                'narration' => 'narration.guided_step_shop_product_new',
+                'highlight' => '.action-new',
+            ],
+            [
+                'label' => 'label.guided_step_shop_product_title',
+                'description' => 'description.guided_step_shop_product_title',
+                'narration' => 'narration.guided_step_shop_product_title',
+                'highlight' => '#Product_title',
+            ],
+            [
+                'label' => 'label.guided_step_shop_product_categories',
+                'description' => 'description.guided_step_shop_product_categories',
+                'narration' => 'narration.guided_step_shop_product_categories',
+                // AssociationField is rendered by tom-select, which hides the original select behind the wrapper it inserts right after it
+                'highlight' => '#Product_categories + .ts-wrapper',
+            ],
+            [
+                'label' => 'label.guided_step_shop_product_description',
+                'description' => 'description.guided_step_shop_product_description',
+                'narration' => 'narration.guided_step_shop_product_description',
+                'highlight' => 'trix-editor[input="Product_description"]',
+            ],
+            [
+                'label' => 'label.guided_step_shop_product_brand',
+                'description' => 'description.guided_step_shop_product_brand',
+                'narration' => 'narration.guided_step_shop_product_brand',
+                'highlight' => '#Product_brand',
+            ],
+            [
+                'label' => 'label.guided_step_shop_product_age',
+                'description' => 'description.guided_step_shop_product_age',
+                'narration' => 'narration.guided_step_shop_product_age',
+                'highlight' => '#Product_age',
+            ],
+            [
+                'label' => 'label.guided_step_shop_product_available_at',
+                'description' => 'description.guided_step_shop_product_available_at',
+                'narration' => 'narration.guided_step_shop_product_available_at',
+                'highlight' => '#Product_availableAt',
+            ],
+            [
+                'label' => 'label.guided_step_shop_product_related_products',
+                'description' => 'description.guided_step_shop_product_related_products',
+                'narration' => 'narration.guided_step_shop_product_related_products',
+                // Rendered by tom-select like the categories above
+                'highlight' => '#Product_relatedProducts + .ts-wrapper',
+            ],
+            [
+                'label' => 'label.guided_step_shop_product_medias',
+                'description' => 'description.guided_step_shop_product_medias',
+                'narration' => 'narration.guided_step_shop_product_medias',
+                'highlight' => '[data-shop-product-medias]',
             ],
         ];
     }
@@ -395,6 +429,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_shop_downloadable_file',
                     'description' => 'description.guided_step_shop_downloadable_file',
                     'narration' => 'narration.guided_step_shop_downloadable_file',
+                    'highlight' => '[data-shop-product-items] [data-shop-item-file]',
                 ],
                 [
                     'label' => 'label.guided_step_shop_downloadable_save',
@@ -451,7 +486,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_shop_gift_card_value',
                     'description' => 'description.guided_step_shop_gift_card_value',
                     'narration' => 'narration.guided_step_shop_gift_card_value',
-                    'highlight' => '[data-shop-product-items]',
+                    'highlight' => '[data-shop-product-items] [data-shop-item-gift-card-value]',
                 ],
                 [
                     'label' => 'label.guided_step_shop_gift_card_save',

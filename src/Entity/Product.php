@@ -43,7 +43,13 @@ class Product implements \Stringable, HasBlocksInterface
     #[ORM\Column(length: 100, unique: true)]
     private ?string $slug = null;
 
+    // The name another bundle's catalog wrote this row under (see ProductCatalogWriter) - never shown, null on a row made in the shop itself
+    #[ORM\Column(length: 100, unique: true, nullable: true)]
+    private ?string $catalogKey = null;
+
+    // Required on the entity, the editor's textarea being hidden behind Trix where the browser cannot check it: the column is NOT NULL, and a form submitted without it fails as a 500 rather than as a field the back-office can point at
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank]
     private ?string $description = null;
 
     // The maker of the product, published as the graph's Brand node - Google Merchant Center declines a branded offer that names none. Left empty on anything made in-house, whose brand is the shop itself
@@ -181,7 +187,7 @@ class Product implements \Stringable, HasBlocksInterface
         return $this->translated['description'] ?? $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
@@ -506,5 +512,17 @@ class Product implements \Stringable, HasBlocksInterface
             'giftCardText' => $this->giftCardText,
             default => null,
         };
+    }
+
+    public function getCatalogKey(): ?string
+    {
+        return $this->catalogKey;
+    }
+
+    public function setCatalogKey(?string $catalogKey): static
+    {
+        $this->catalogKey = $catalogKey;
+
+        return $this;
     }
 }

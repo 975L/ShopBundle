@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.12.0
+
+A catalog writes its products into the shop
+
+- New `ProductCatalogWriter`, the shop's side of UiBundle's `ProductCatalogWriterInterface` (06/10/2026)
+- `Product::$catalogKey` and `ProductItem::$catalogKey` **Needs db update** (06/10/2026)
+- `ProductItemRepository::findWithFile()` (06/10/2026)
+- `Product::$description` validated as required (06/10/2026)
+- Guided product project walks the description, brand, related products and pictures (06/10/2026)
+- Guided price, file and gift card value steps highlight their own field (06/10/2026)
+- Recycle bin project label matches its task (06/10/2026)
+- Guided steps mention the book catalog and the shop page translation (06/10/2026)
+- Requires `c975l/core-bundle` ^1.55 (06/10/2026)
+
 ## v2.11.3
 
 Plain description textareas opt in to Donovan

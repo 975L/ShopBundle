@@ -36,6 +36,10 @@ class ProductItem implements \Stringable
     #[ORM\Column(length: 50)]
     private ?string $slug = null;
 
+    // The name another bundle's catalog wrote this row under (see ProductCatalogWriter) - never shown, null on a row made in the shop itself
+    #[ORM\Column(length: 100, unique: true, nullable: true)]
+    private ?string $catalogKey = null;
+
     // Required on the entity like the title above, and for the same reason: the column is NOT NULL, and a form submitted without it fails as a 500 rather than as a field the back-office can point at
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
@@ -438,5 +442,17 @@ class ProductItem implements \Stringable
             'description' => $this->description,
             default => null,
         };
+    }
+
+    public function getCatalogKey(): ?string
+    {
+        return $this->catalogKey;
+    }
+
+    public function setCatalogKey(?string $catalogKey): static
+    {
+        $this->catalogKey = $catalogKey;
+
+        return $this;
     }
 }
