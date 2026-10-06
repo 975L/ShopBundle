@@ -234,11 +234,12 @@ carried, and the baskets' download links belong to the payments.
 
 `ProductCatalogWriter` implements UiBundle's `ProductCatalogWriterInterface`: a catalog (BookBundle) writes
 its products here under a `catalogKey`, unique over each table. The product is created once and is the
-shop's from then on; its items follow the catalog's price and file, the file copied in through a
+shop's from then on; its items follow the catalog's title, price and file (the slug kept), and its description in each language it gives one, the editor's kept for the others, the file copied in through a
 `ReplacingFile` only when its size or date changed. An item is looked up by its key over the whole table and
 moved to the product written, so a product key that changed does not write it twice. A dropped item is
-hidden, never deleted, and a hidden one is never shown again by the writer. `itemsWithFile()` and
-`setKeys()` serve a one-shot import, `setKeys()` leaving a key another row already carries where it is.
+hidden, never deleted, and a hidden one is never shown again by the writer. The catalog's other languages
+are stored through `ShopTranslator`, one it leaves out keeping the editor's translation. `itemsWithFile()`
+(reading each item's text back in every language) and `setKeys()` serve a one-shot import, `setKeys()` leaving a key another row already carries where it is.
 
 ## Seeding a demo catalogue
 

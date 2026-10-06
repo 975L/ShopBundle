@@ -10,12 +10,14 @@
 
 namespace c975L\ShopBundle\Tests\Service;
 
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Entity\ProductItemFile;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductCatalogWriter;
+use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Model\CatalogProduct;
 use c975L\UiBundle\Model\CatalogProductItem;
 use Doctrine\ORM\EntityManagerInterface;
@@ -108,6 +110,32 @@ class ProductCatalogWriterTest extends TestCase
         $this->assertSame($title, $item->getDescription());
     }
 
+    // A new item's text is the catalog's description when it gives one
+    public function testANewItemTakesTheCatalogsDescription(): void
+    {
+        $product = new Product()->setCatalogKey('book-12')->setSlug('le-loup');
+
+        $persisted = [];
+        $this->writer($product, $persisted)->write(new CatalogProduct('book-12', 'Le Loup', '<p>Un loup.</p>', [
+            new CatalogProductItem('book-12-digital-epub', 'Format EPUB', $this->projectDir . '/loup.epub', 299, description: ['fr' => 'Une voix lit le texte.']),
+        ]));
+
+        $this->assertSame('Une voix lit le texte.', $product->getItems()->first()->getDescription());
+    }
+
+    // A blank text is no text: the new item falls back on its title rather than on a column that refuses it
+    public function testABlankDescriptionFallsBackOnTheTitle(): void
+    {
+        $product = new Product()->setCatalogKey('book-12')->setSlug('le-loup');
+
+        $persisted = [];
+        $this->writer($product, $persisted)->write(new CatalogProduct('book-12', 'Le Loup', '<p>Un loup.</p>', [
+            new CatalogProductItem('book-12-digital-epub', 'Format EPUB', $this->projectDir . '/loup.epub', 299, description: ['fr' => '  ']),
+        ]));
+
+        $this->assertSame('Format EPUB', $product->getItems()->first()->getDescription());
+    }
+
     // The editor's choice to hide an item survives the next write
     public function testAnItemTheEditorHidStaysHidden(): void
     {
@@ -118,6 +146,69 @@ class ProductCatalogWriterTest extends TestCase
         $this->writer($product, $persisted)->write($this->catalogProduct());
 
         $this->assertTrue($item->isHidden());
+    }
+
+    // An item already written takes the catalog's title and text again - an EPUB now read aloud says so - its slug kept for the links given out
+    public function testAnExistingItemFollowsTheCatalogsTitleAndText(): void
+    {
+        $item = new ProductItem()->setCatalogKey('book-12-digital-epub')->setTitle('EPUB')->setSlug('epub')->setFile(new ProductItemFile()->setName('medias/loup.epub'));
+        $product = new Product()->setCatalogKey('book-12')->addItem($item);
+        $catalogProduct = new CatalogProduct('book-12', 'Le Loup', '<p>Un loup.</p>', [
+            new CatalogProductItem('book-12-digital-epub', 'Format EPUB lu à voix haute', $this->projectDir . '/loup.epub', 299, description: ['fr' => 'Une voix lit le texte.']),
+        ]);
+
+        $persisted = [];
+        $this->writer($product, $persisted, found: $item)->write($catalogProduct);
+
+        $this->assertSame('Format EPUB lu à voix haute', $item->getTitle());
+        $this->assertSame('Une voix lit le texte.', $item->getDescription());
+        $this->assertSame('epub', $item->getSlug());
+    }
+
+    // An item already written keeps the editor's text when the catalog gives none, its title alone following the catalog's
+    public function testAnExistingItemKeepsTheEditorsTextWhenTheCatalogGivesNone(): void
+    {
+        $item = new ProductItem()->setCatalogKey('book-12-digital-epub')->setTitle('EPUB')->setSlug('epub')->setDescription('Le texte de l\'éditeur.')->setFile(new ProductItemFile()->setName('medias/loup.epub'));
+        $product = new Product()->setCatalogKey('book-12')->addItem($item);
+
+        $persisted = [];
+        $this->writer($product, $persisted, found: $item)->write(new CatalogProduct('book-12', 'Le Loup', '<p>Un loup.</p>', [
+            new CatalogProductItem('book-12-digital-epub', 'Format EPUB', $this->projectDir . '/loup.epub', 299),
+        ]));
+
+        $this->assertSame('Format EPUB', $item->getTitle());
+        $this->assertSame('Le texte de l\'éditeur.', $item->getDescription());
+    }
+
+    // The catalog's other languages are stored as the item's translations, its default one written on the row
+    public function testOtherLanguagesAreStoredAsTranslations(): void
+    {
+        $item = new ProductItem()->setCatalogKey('book-12-digital-epub')->setTitle('EPUB')->setSlug('epub')->setFile(new ProductItemFile()->setName('medias/loup.epub'));
+        $product = new Product()->setCatalogKey('book-12')->addItem($item);
+        $shopTranslator = $this->createMock(ShopTranslator::class);
+        $shopTranslator->expects($this->once())->method('store')->with($item, 'en', ['description' => 'A voice reads the text.']);
+
+        $persisted = [];
+        $this->writer($product, $persisted, found: $item, shopTranslator: $shopTranslator)->write(new CatalogProduct('book-12', 'Le Loup', '<p>Un loup.</p>', [
+            new CatalogProductItem('book-12-digital-epub', 'Format EPUB', $this->projectDir . '/loup.epub', 299, description: ['fr' => 'Une voix lit le texte.', 'en' => 'A voice reads the text.']),
+        ]));
+
+        $this->assertSame('Une voix lit le texte.', $item->getDescription());
+    }
+
+    // An item read back for an import carries its text in every language it has
+    public function testItemsWithFileReadsTheTextInEveryLanguage(): void
+    {
+        $item = new ProductItem()->setTitle('EPUB')->setSlug('epub')->setDescription('Une voix lit le texte.')->setFile(new ProductItemFile()->setName('medias/loup.epub'));
+        $repository = $this->createStub(ProductItemRepository::class);
+        $repository->method('findWithFile')->willReturn([$item]);
+        $shopTranslator = $this->createStub(ShopTranslator::class);
+        $shopTranslator->method('all')->willReturn(['en' => ['title' => 'EPUB', 'description' => 'A voice reads the text.'], 'es' => ['description' => null]]);
+
+        $persisted = [];
+        $writer = new ProductCatalogWriter($this->entityManager($persisted), $this->createStub(ProductRepository::class), $repository, new AsciiSlugger(), new SiteLocales(['fr', 'en', 'es'], 'fr'), $shopTranslator, $this->projectDir);
+
+        $this->assertSame(['fr' => 'Une voix lit le texte.', 'en' => 'A voice reads the text.'], $writer->itemsWithFile()[0]->description);
     }
 
     // A key another row already carries is left to it, the other key still stamped
@@ -178,14 +269,14 @@ class ProductCatalogWriterTest extends TestCase
      * @param list<object>      $persisted
      * @param list<ProductItem> $otherItems items held by other products, found by their key too
      */
-    private function writer(?Product $existing, array &$persisted, array $otherItems = [], ?ProductItem $found = null): ProductCatalogWriter
+    private function writer(?Product $existing, array &$persisted, array $otherItems = [], ?ProductItem $found = null, ?ShopTranslator $shopTranslator = null): ProductCatalogWriter
     {
         $productRepository = $this->createStub(ProductRepository::class);
         $productRepository->method('findOneBy')->willReturnCallback(static fn (array $criteria): ?Product => isset($criteria['catalogKey']) ? $existing : null);
 
         $items = $existing instanceof Product ? [...$existing->getItems()->toArray(), ...$otherItems] : $otherItems;
 
-        return new ProductCatalogWriter($this->entityManager($persisted), $productRepository, $this->itemRepository($items, $found), new AsciiSlugger(), $this->projectDir);
+        return new ProductCatalogWriter($this->entityManager($persisted), $productRepository, $this->itemRepository($items, $found), new AsciiSlugger(), new SiteLocales(['fr', 'en'], 'fr'), $shopTranslator ?? $this->createStub(ShopTranslator::class), $this->projectDir);
     }
 
     /** @param list<ProductItem> $items */

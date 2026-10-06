@@ -533,7 +533,7 @@ to, and the download links of the baskets, which belong to the payments rather t
 
 ### Written by another bundle's catalog
 
-`ProductCatalogWriter` is the shop's side of UiBundle's `ProductCatalogWriterInterface`: a bundle holding a catalog of its own (BookBundle and its book files) writes its products here, each found again under the `catalogKey` it was written with. The product is created once, hidden like any new one, its title and text the shop's from then on; its items follow the catalog - price, and the file, copied in again only when its size or date changed. An item the catalog stops listing is hidden, never deleted, and an item the editor hid stays hidden. A new item the catalog sends without a price is written at 0, for the editor to set.
+`ProductCatalogWriter` is the shop's side of UiBundle's `ProductCatalogWriterInterface`: a bundle holding a catalog of its own (BookBundle and its book files) writes its products here, each found again under the `catalogKey` it was written with. The product is created once, hidden like any new one, its title and text the shop's from then on; its items follow the catalog - title (the slug kept), text in every language it gives, price, and the file, copied in again only when its size or date changed. An item the catalog stops listing is hidden, never deleted, and an item the editor hid stays hidden. A new item the catalog sends without a price is written at 0, for the editor to set.
 
 ---
 

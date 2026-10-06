@@ -8,6 +8,11 @@
                 "es": "Los libros de su catálogo llegan ahora solos a la tienda, con su precio y su archivo siempre al día."
             },
             {
+                "en": "The formats of a book from your catalog now keep their name and description up to date in the shop, in every language.",
+                "fr": "Les formats d'un livre de votre catalogue tiennent désormais leur nom et leur description à jour dans la boutique, dans toutes les langues.",
+                "es": "Los formatos de un libro de su catálogo mantienen ahora su nombre y su descripción al día en la tienda, en todos los idiomas."
+            },
+            {
                 "en": "The product guided project now also shows the description, brand, related products and pictures, and points at the exact price, file and card value fields.",
                 "fr": "Le projet guidé du produit montre aussi la description, la marque, les produits associés et les images, et désigne précisément les champs prix, fichier et valeur de carte.",
                 "es": "El proyecto guiado del producto muestra también la descripción, la marca, los productos asociados y las imágenes, y señala exactamente los campos de precio, archivo y valor de la tarjeta."

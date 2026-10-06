@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.12.1
+
+An item written by the catalog follows its title and its text
+
+- Catalog items rewrite their title on every write, slug kept, and their text when the catalog gives one, the editor's kept otherwise (06/10/2026)
+- A new item's text is the catalog's `description`, its title for want of one, its other languages stored as translations (06/10/2026)
+- Catalog descriptions in other languages stored as item translations (06/10/2026)
+- `itemsWithFile()` reads each item's text back in every language (06/10/2026)
+- Requires `c975l/core-bundle` ^1.56 (06/10/2026)
+
 ## v2.12.0
 
 A catalog writes its products into the shop

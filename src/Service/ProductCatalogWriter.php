@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Service;
 
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Entity\ProductItemFile;
@@ -35,6 +36,8 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
         private readonly ProductRepository $productRepository,
         private readonly ProductItemRepository $productItemRepository,
         private readonly SluggerInterface $slugger,
+        private readonly SiteLocales $siteLocales,
+        private readonly ShopTranslator $shopTranslator,
         #[Autowire(param: 'kernel.project_dir')]
         private readonly string $projectDir,
     ) {
@@ -51,8 +54,9 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
         $product ??= $this->create($catalogProduct);
 
         $keys = [];
+        $translations = [];
         foreach ($catalogProduct->items as $catalogItem) {
-            $this->writeItem($product, $catalogItem);
+            $translations[] = [$this->writeItem($product, $catalogItem), array_diff_key($this->descriptions($catalogItem), [$this->siteLocales->getDefaultLocale() => true])];
             $keys[] = $catalogItem->key;
         }
 
@@ -64,6 +68,13 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
         }
 
         $this->entityManager->flush();
+
+        // The other languages' texts once each item has its id, only those the catalog gives: one it leaves out keeps what the editor translated
+        foreach ($translations as [$item, $descriptions]) {
+            foreach ($descriptions as $locale => $description) {
+                $this->shopTranslator->store($item, $locale, ['description' => $description]);
+            }
+        }
     }
 
     // Every item holding a file still on disk, for a one-shot import into the catalog
@@ -87,6 +98,7 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
                 slug: $item->getSlug(),
                 productSlug: $item->getProduct()?->getSlug(),
                 productTitle: $item->getProduct()?->getTitle(),
+                description: $this->readDescriptions($item),
             );
         }
 
@@ -131,8 +143,8 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
         return $product;
     }
 
-    // The item written under the catalog's key, created when missing, moved here when another product holds it: its price follows the catalog's, its file is copied in again only when it changed - in size, or since it was copied. Its visibility stays the editor's
-    private function writeItem(Product $product, CatalogProductItem $catalogItem): void
+    // The item written under the catalog's key, created when missing, moved here when another product holds it: its title, its text and its price follow the catalog's, its file is copied in again only when it changed - in size, or since it was copied. Its visibility stays the editor's
+    private function writeItem(Product $product, CatalogProductItem $catalogItem): ProductItem
     {
         // The key is unique over the whole table, so it is looked for there: a product key the catalog changed brings its items along rather than writing them twice. addItem() only, as removeItem() would delete the row (orphanRemoval)
         $item = $this->productItemRepository->findOneBy(['catalogKey' => $catalogItem->key]);
@@ -148,17 +160,32 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
                 ->setCatalogKey($catalogItem->key)
                 ->setTitle(mb_substr($catalogItem->title, 0, 50))
                 ->setSlug($this->slugger->slug(mb_substr($catalogItem->title, 0, 50))->lower()->toString())
-                ->setDescription($catalogItem->title)
+                ->setDescription($this->descriptions($catalogItem)[$this->siteLocales->getDefaultLocale()] ?? $catalogItem->title)
                 ->setPrice($catalogItem->price ?? 0)
                 ->setCurrency(strtolower($catalogItem->currency))
                 ->setFile($file);
             $product->addItem($item);
             $this->entityManager->persist($item);
 
-            return;
+            return $item;
         }
 
-        $item->setCurrency(strtolower($catalogItem->currency));
+        $this->updateItem($item, $catalogItem);
+
+        return $item;
+    }
+
+    // An item already written: its title, its text and its price taken again from the catalog, its file copied in again only when it changed
+    private function updateItem(ProductItem $item, CatalogProductItem $catalogItem): void
+    {
+        // Its title follows the catalog's, which says what the file is (an EPUB read aloud, an earlier version), and its text only when the catalog gives one, the editor's kept otherwise; its slug stays, being in the links already given out
+        $item
+            ->setTitle(mb_substr($catalogItem->title, 0, 50))
+            ->setCurrency(strtolower($catalogItem->currency));
+        $description = $this->descriptions($catalogItem)[$this->siteLocales->getDefaultLocale()] ?? null;
+        if (null !== $description) {
+            $item->setDescription($description);
+        }
         if (null !== $catalogItem->price) {
             $item->setPrice($catalogItem->price);
         }
@@ -170,6 +197,25 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
         if (null === $file->getName() || !is_file($current) || filesize($current) !== filesize($catalogItem->filePath) || filemtime($catalogItem->filePath) > filemtime($current)) {
             $file->setFile(new ReplacingFile($catalogItem->filePath));
         }
+    }
+
+    // The catalog's texts with a blank one dropped, which would otherwise be written over a column that refuses it
+    /** @return array<string, string> */
+    private function descriptions(CatalogProductItem $catalogItem): array
+    {
+        return array_filter($catalogItem->description, static fn (string $description): bool => '' !== trim($description));
+    }
+
+    // The item's text in every language it has, its own first - what an import reads back
+    /** @return array<string, string> */
+    private function readDescriptions(ProductItem $item): array
+    {
+        $descriptions = [$this->siteLocales->getDefaultLocale() => (string) $item->getUntranslated('description')];
+        foreach ($this->shopTranslator->all($item) as $locale => $values) {
+            $descriptions[$locale] = (string) ($values['description'] ?? '');
+        }
+
+        return array_filter($descriptions, static fn (string $description): bool => '' !== trim($description));
     }
 
     // The title's slug, numbered when another product already answers to it
