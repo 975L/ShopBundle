@@ -1606,6 +1606,14 @@
                 <source>text.items_management</source>
                 <target>Add items WITHOUT media/files and then add them afterwards, otherwise it doesn't work.</target>
             </trans-unit>
+            <trans-unit id="HFrOJ4w">
+                <source>text.meta_category</source>
+                <target>%category%: every item in this category of the %site% shop, to order online.</target>
+            </trans-unit>
+            <trans-unit id="HUEddWL">
+                <source>text.meta_shop</source>
+                <target>Every item in the %site% shop, to discover in detail and order online in a few clicks.</target>
+            </trans-unit>
             <trans-unit id="B.vPyMX">
                 <source>text.shop_blocks_help</source>
                 <target>What the shop says above its listing</target>

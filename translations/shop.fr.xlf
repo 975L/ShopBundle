@@ -1606,6 +1606,14 @@
                 <source>text.items_management</source>
                 <target>Ajoutez des éléments SANS médias/fichiers, puis ajoutez-les ensuite, sinon cela ne fonctionne pas.</target>
             </trans-unit>
+            <trans-unit id="HFrOJ4w">
+                <source>text.meta_category</source>
+                <target>%category% : tous les articles de cette catégorie dans la boutique de %site%, à commander en ligne.</target>
+            </trans-unit>
+            <trans-unit id="HUEddWL">
+                <source>text.meta_shop</source>
+                <target>Tous les articles de la boutique de %site%, à découvrir en détail et à commander en ligne en quelques clics.</target>
+            </trans-unit>
             <trans-unit id="B.vPyMX">
                 <source>text.shop_blocks_help</source>
                 <target>Ce que la boutique dit au-dessus de sa liste d'articles</target>

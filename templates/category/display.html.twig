@@ -4,7 +4,8 @@
 {# Defines specific variables #}
 {# The name alone, and not "Category: name": the h1 of the layout is built from it, and a prefix says nothing a search engine or a visitor needs #}
 {% set title = category.name %}
-{% set summarySocialNetwork = category.description %}
+{# A category with no description of its own still says what it holds and where, rather than leaving the meta description empty #}
+{% set summarySocialNetwork = category.description|striptags|trim is not empty ? category.description : 'text.meta_category'|trans({'%category%': category.name, '%site%': config('site-name')}) %}
 
 {# Editor-only: the page leads to the category's own edit screen, its text to the very field it is printed from, and each card to the product it stands for - the same hover button UiBundle draws over a block, mounted here as the shop's index does #}
 {% set canEdit = is_granted(config('site-role-editor')) %}

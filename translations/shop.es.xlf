@@ -1606,6 +1606,14 @@
                 <source>text.items_management</source>
                 <target>Añada elementos SIN medios/archivos, luego agréguelos después, de lo contrario no funciona.</target>
             </trans-unit>
+            <trans-unit id="HFrOJ4w">
+                <source>text.meta_category</source>
+                <target>%category%: todos los artículos de esta categoría en la tienda de %site%, para pedir en línea.</target>
+            </trans-unit>
+            <trans-unit id="HUEddWL">
+                <source>text.meta_shop</source>
+                <target>Todos los artículos de la tienda de %site%, para descubrir en detalle y pedir en línea en pocos clics.</target>
+            </trans-unit>
             <trans-unit id="B.vPyMX">
                 <source>text.shop_blocks_help</source>
                 <target>Lo que la tienda dice encima de su listado</target>

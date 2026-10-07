@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.12.3
+
+Shop listing and categories described in a full sentence
+
+- Shop listing meta description falls back on a sentence naming the site (07/10/2026)
+- Category without description gets a meta description naming it and the site (07/10/2026)
+- Added the `text.meta_shop` and `text.meta_category` translations (07/10/2026)
+- Added `ListingMetaDescriptionTest` (07/10/2026)
+- `c975l-shop-seo` skill mentions both fallbacks (07/10/2026)
+
 ## v2.12.2
 
 Product gallery images described by the product's title
