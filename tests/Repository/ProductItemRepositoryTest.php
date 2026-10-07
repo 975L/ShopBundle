@@ -32,6 +32,19 @@ class ProductItemRepositoryTest extends TestCase
         $this->assertStringContainsString('f.name IS NOT NULL', (string) $dql);
     }
 
+    // What the shipping health check reads: one visible article that is neither a named file nor a service, a single row asked for
+    public function testHasSellableParcelLooksForOneVisibleArticleThatIsPosted(): void
+    {
+        $dql = null;
+        $this->assertFalse($this->createRepository($dql)->hasSellableParcel());
+
+        $this->assertStringContainsString('LEFT JOIN i.file f', (string) $dql);
+        $this->assertStringContainsString('i.hidden = false', (string) $dql);
+        $this->assertStringContainsString('p.isDeleted = false', (string) $dql);
+        $this->assertStringContainsString('f.id IS NULL OR f.name IS NULL', (string) $dql);
+        $this->assertStringContainsString('i.service IS NULL OR i.service = false', (string) $dql);
+    }
+
     private function createRepository(?string &$dql): ProductItemRepository
     {
         $query = $this->createStub(Query::class);
@@ -39,6 +52,7 @@ class ProductItemRepositoryTest extends TestCase
         $query->method('setFirstResult')->willReturnSelf();
         $query->method('setMaxResults')->willReturnSelf();
         $query->method('getResult')->willReturn([]);
+        $query->method('getScalarResult')->willReturn([]);
 
         $entityManager = $this->createStub(EntityManagerInterface::class);
         $entityManager->method('getClassMetadata')->willReturn(new ClassMetadata(ProductItem::class));

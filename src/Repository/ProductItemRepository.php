@@ -70,6 +70,23 @@ class ProductItemRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    // Whether a visible article is posted rather than downloaded or served, one row read at most - an item whose file has no name is delivered like any other article
+    public function hasSellableParcel(): bool
+    {
+        return [] !== $this->createQueryBuilder('i')
+            ->select('i.id')
+            ->innerJoin('i.product', 'p')
+            ->leftJoin('i.file', 'f')
+            ->andWhere('i.hidden = false')
+            ->andWhere('p.hidden = false')
+            ->andWhere('p.isDeleted = false')
+            ->andWhere('f.id IS NULL OR f.name IS NULL')
+            ->andWhere('i.service IS NULL OR i.service = false')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getScalarResult();
+    }
+
     /**
      * Every item whose file has a name, its file and its product loaded with it - whether the file is still on disk is the caller's to check.
      *

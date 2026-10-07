@@ -11,6 +11,11 @@
                 "en": "Your shop and its categories without a description of their own are now presented to search engines by a full sentence naming your site.",
                 "fr": "Votre boutique et ses catégories sans description propre sont désormais présentées aux moteurs de recherche par une phrase complète citant votre site.",
                 "es": "Su tienda y sus categorías sin descripción propia se presentan ahora a los motores de búsqueda con una frase completa que nombra su sitio."
+            },
+            {
+                "en": "A shop selling only downloads or services is no longer asked to fill in a delivery grid it does not need.",
+                "fr": "Une boutique ne vendant que des téléchargements ou des services n'est plus invitée à remplir une grille de livraison dont elle n'a pas besoin.",
+                "es": "Una tienda que solo vende descargas o servicios ya no recibe la invitación a rellenar una tabla de envíos que no necesita."
             }
         ]
     },

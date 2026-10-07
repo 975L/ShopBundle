@@ -16,6 +16,7 @@ use c975L\PaymentBundle\Entity\Basket;
 use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // What may be dropped in a basket: the sheet of a draft or of a trashed product answers 404 or 410, but its items keep the ids an old page still carries
 class ProductBasketItemProviderTest extends TestCase
 {
-    private function createProvider(?ProductItem $found = null): ProductBasketItemProvider
+    private function createProvider(?ProductItem $found = null, bool $hasSellableParcel = true): ProductBasketItemProvider
     {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
@@ -36,12 +37,16 @@ class ProductBasketItemProviderTest extends TestCase
         $itemService = $this->createStub(ProductItemServiceInterface::class);
         $itemService->method('findOneById')->willReturn($found);
 
+        $itemRepository = $this->createStub(ProductItemRepository::class);
+        $itemRepository->method('hasSellableParcel')->willReturn($hasSellableParcel);
+
         return new ProductBasketItemProvider(
             $itemService,
             $this->createStub(MessageBusInterface::class),
             $this->createStub(GiftCardService::class),
             $translator,
             new LocalizedUrlGenerator($this->urlGenerator(), new SiteLocales(['fr'], 'fr'), new RequestStack()),
+            $itemRepository,
         );
     }
 
@@ -158,6 +163,18 @@ class ProductBasketItemProviderTest extends TestCase
     public function testABasketHoldingAnItemDeletedOutrightIsRefused(): void
     {
         $this->assertSame('label.unavailable', $this->createProvider()->validateCheckout(new Basket(), $this->basketItems(1)));
+    }
+
+    // A visible article that is posted is what makes the shipping health check expect a delivery grid
+    public function testTheShopShipsParcelsWhenAnArticleIsPosted(): void
+    {
+        $this->assertTrue($this->createProvider()->shipsParcels());
+    }
+
+    // A shop selling only files or services is not told to fill a delivery grid it does not need
+    public function testTheShopShipsNothingWhenItSellsOnlyFilesOrServices(): void
+    {
+        $this->assertFalse($this->createProvider(null, false)->shipsParcels());
     }
 
     // A line weighs the article as many times as it was ordered - the sum a shipping grid is priced on, not the weight of one article

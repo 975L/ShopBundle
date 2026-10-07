@@ -46,7 +46,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - The site's age warning stated on a product declaring an age — one sentence written once in the back office (CoreBundle's `site-age-warning`), printed on every such sheet
 - Shop index describable from the back office — title and shared sentence written in *Descriptions d'urls*, over the bundle's own labels
 - `ItemList` structured data on the shop's index and its category pages
-- Plugs products into PaymentBundle's Basket/checkout engine via `BasketItemProviderInterface`, and tells it where the catalogue is (`CatalogueBasketItemProviderInterface`) and which template draws the recommended products (`BasketRecommendationProviderInterface`)
+- Plugs products into PaymentBundle's Basket/checkout engine via `BasketItemProviderInterface`, and tells it where the catalogue is (`CatalogueBasketItemProviderInterface`), whether it posts parcels (`ShippingBasketItemProviderInterface`) and which template draws the recommended products (`BasketRecommendationProviderInterface`)
 - Shipping weight per item, in grams, weighing a basket for PaymentBundle's delivery grid and pricing the rate the structured data publishes
 - Product cards stating their own price, formats and availability, read from the items rather than stored
 - Struck-through price and discount badge, on the card as on the sheet, guarded against a figure that no longer holds

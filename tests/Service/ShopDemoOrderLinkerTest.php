@@ -18,6 +18,7 @@ use c975L\PaymentBundle\Entity\Payment;
 use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
@@ -74,6 +75,7 @@ class ShopDemoOrderLinkerTest extends TestCase
             $this->createStub(GiftCardService::class),
             $this->createStub(TranslatorInterface::class),
             new LocalizedUrlGenerator($this->createStub(UrlGeneratorInterface::class), new SiteLocales(['fr'], 'fr'), new RequestStack()),
+            $this->createStub(ProductItemRepository::class),
         );
     }
 

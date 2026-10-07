@@ -14,16 +14,18 @@ use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
 use c975L\PaymentBundle\Contract\BasketItemProviderInterface;
 use c975L\PaymentBundle\Contract\CatalogueBasketItemProviderInterface;
 use c975L\PaymentBundle\Contract\GiftCardDesign;
+use c975L\PaymentBundle\Contract\ShippingBasketItemProviderInterface;
 use c975L\PaymentBundle\Contract\WeighableBasketItemProviderInterface;
 use c975L\PaymentBundle\Entity\Basket;
 use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\PaymentBundle\Service\VatCalculator;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
+use c975L\ShopBundle\Repository\ProductItemRepository;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Plugs product items into PaymentBundle's Basket/checkout engine (see BasketItemProviderInterface)
-class ProductBasketItemProvider implements BasketItemProviderInterface, CatalogueBasketItemProviderInterface, WeighableBasketItemProviderInterface
+class ProductBasketItemProvider implements BasketItemProviderInterface, CatalogueBasketItemProviderInterface, ShippingBasketItemProviderInterface, WeighableBasketItemProviderInterface
 {
     public function __construct(
         private readonly ProductItemServiceInterface $productItemService,
@@ -31,6 +33,7 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
         private readonly GiftCardService $giftCardService,
         private readonly TranslatorInterface $translator,
         private readonly LocalizedUrlGenerator $localizedUrlGenerator,
+        private readonly ProductItemRepository $productItemRepository,
     ) {
     }
 
@@ -150,6 +153,12 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
         }
 
         return Basket::CONTENT_FLAG_PHYSICAL | $giftCard;
+    }
+
+    // Whether a visible article is posted rather than downloaded or served, so a shop selling only files or services is not told to fill a delivery grid - see ShippingBasketItemProviderInterface
+    public function shipsParcels(): bool
+    {
+        return $this->productItemRepository->hasSellableParcel();
     }
 
     // What the line weighs, the article's own weight taken as many times as it was ordered - see WeighableBasketItemProviderInterface

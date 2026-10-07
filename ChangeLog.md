@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.13.0
+
+Products declared as posted to the shipping health check
+
+- `ProductBasketItemProvider` implements PaymentBundle's `ShippingBasketItemProviderInterface` (07/10/2026)
+- A shop selling only files or services ships no parcels (07/10/2026)
+- Requires `c975l/payment-bundle` ^6.18, see its UPGRADE.md for `ShippingRateResolverInterface::exceeds()` (07/10/2026)
+- `c975l-shop-checkout` skill mentions `shipsParcels()` (07/10/2026)
+
 ## v2.12.3
 
 Shop listing and categories described in a full sentence
