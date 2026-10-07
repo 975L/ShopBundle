@@ -51,7 +51,7 @@
                 {% if 'shop_product_slider' not in sheetKinds and sheetData.ogImage %}
                     {% cache sheetKey ~ '_gallery' tags(sheetTags) %}
                         <div class="product-sheet-gallery"{% if editUrl %} data-block-edit-url="{{ shop_product_edit_url(product, 'medias') }}"{% endif %}>
-                            <twig:c975LUi:Slider:Slider media="{{ product.medias }}" id="slider" duration="3500"/>
+                            <twig:c975LUi:Slider:Slider media="{{ product.medias }}" id="slider" duration="3500" fallbackAlt="{{ product.title }}"/>
                         </div>
                     {% endcache %}
                 {% endif %}

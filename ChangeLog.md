@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.12.2
+
+Product gallery images described by the product's title
+
+- The product sheet gallery and the `ProductSlider` block pass the product's title as the slider's `fallbackAlt` (07/10/2026)
+- Added `ProductGalleryAltTest` (07/10/2026)
+- `c975l-shop-seo` skill mentions the gallery's `fallbackAlt` (07/10/2026)
+
 ## v2.12.1
 
 An item written by the catalog follows its title and its text
