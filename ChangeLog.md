@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.13.1
+
+Shop stylesheet no longer centers every alert
+
+- Removed the global `.alert` centering from the shop stylesheet (08/10/2026)
+
 ## v2.13.0
 
 Products declared as posted to the shipping health check

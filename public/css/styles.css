@@ -22,11 +22,6 @@
   --shop-stock-low: color-mix(in srgb, #c98a2e 55%, var(--text));
 }
 
-/* ALERTS */
-.alert {
-  text-align: center;
-}
-
 /* LISTS */
 .circle-numbers {
   counter-reset: item;
