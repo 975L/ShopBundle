@@ -2,6 +2,22 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.14
+
+**Two `user_id` foreign keys become `ON DELETE SET NULL`**, on `shop_product` and `shop_product_item`. Neither
+records an author: they only hold who created the row, and both outlive whoever did. Left restricting, an account
+that had ever created a product or an item could no longer be deleted at all. Generate the migration with
+`doctrine:migrations:diff` and run it, or **run the two alterations**, dropping each key then adding it back:
+
+```sql
+ALTER TABLE shop_product DROP FOREIGN KEY FK_D0794487A76ED395;
+ALTER TABLE shop_product ADD CONSTRAINT FK_D0794487A76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE SET NULL;
+ALTER TABLE shop_product_item DROP FOREIGN KEY FK_8F96602DA76ED395;
+ALTER TABLE shop_product_item ADD CONSTRAINT FK_8F96602DA76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE SET NULL;
+```
+
+Replace `user` with your own user table if it is named otherwise.
+
 ### v2.10
 
 **One column arrives.** Generate the migration with `doctrine:migrations:diff` and run it; there is nothing to

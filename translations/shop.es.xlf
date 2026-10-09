@@ -1310,6 +1310,22 @@
                 <source>label.product_not_yet_available</source>
                 <target>Este producto aún no está disponible. Lo estará el:</target>
             </trans-unit>
+            <trans-unit id="mCiqUuZ">
+                <source>label.product_social</source>
+                <target>Redes sociales</target>
+            </trans-unit>
+            <trans-unit id="vQlxVx2">
+                <source>label.product_social_date_format</source>
+                <target>d/m</target>
+            </trans-unit>
+            <trans-unit id="YURzf0r">
+                <source>label.product_social_published</source>
+                <target>Publicado %date%</target>
+            </trans-unit>
+            <trans-unit id="0Li_HD4">
+                <source>label.product_social_reserved</source>
+                <target>Reservado %date%</target>
+            </trans-unit>
             <trans-unit id="6cK4P9v">
                 <source>label.products</source>
                 <target>Productos</target>

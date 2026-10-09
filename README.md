@@ -628,6 +628,13 @@ Each post carries the product's public page, its first picture and its descripti
 address — `site-url` unset — is never handed out, and one taken off the shop since its post was prepared is
 dropped. Which products went out where is SocialBundle's to record; a site without it never asks.
 
+It is also browsable (UiBundle's `BrowsableSocialContentSourceInterface`): on a draft's screen, SocialBundle's "Changer le
+contenu" takes another product chosen among those still free, the latest added first — the shop has no groups, so
+nothing is narrowed to one. The other way round, the products' list shows a "Réseaux sociaux" column — "Réservé 10/10"
+for a product a draft holds, "Publié 09/10" once it went out — read from UiBundle's
+`SocialContentStatusProviderInterface`, which SocialBundle implements; it is not shown on the trash nor the templates,
+nor at all without SocialBundle.
+
 ---
 
 ## Structured data

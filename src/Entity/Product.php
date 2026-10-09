@@ -104,7 +104,9 @@ class Product implements \Stringable, HasBlocksInterface
     #[Assert\Valid]
     private Collection $items;
 
+    // "SET NULL" and not the default: this only records who created the product, and deleting that account must not be blocked by it
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?UserInterface $user = null;
 
     #[ORM\ManyToMany(targetEntity: ProductCategory::class, inversedBy: 'products')]

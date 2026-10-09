@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-seo
-description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, JsonLdBuilder, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, hasMerchantReturnPolicy, MerchantReturnPolicy, merchantReturnDays, MerchantReturnNotPermitted, shop-return-days, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, USER_AGENT, c975LHealthCheck, isProbe, site-rate-limit, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, fallbackAlt, summarySocialNetwork, url_metadata_title, url_metadata_summary, text.meta_shop, text.meta_category, UrlMetadataProvider, Url descriptions, ShopPublicUrlResolver, resolveAlternates, resolveLocalizedUrl, alternates, hreflang, ShopTranslatedLocales, localized urls, ShopAiSearchCardProvider, AiSearchCardProviderInterface, findAvailableBySlugs, ai_search, site search, ProductSocialContentSource, SocialContentSourceInterface, SocialBundle."
+description: "Use this skill when working on how the shop is read from outside in a Symfony application built on the c975L ecosystem — the schema.org Product graph and its offers, the shop's sitemap and llms.txt section, the health report of the catalog, and the recommendations built from co-purchase affinities. Covers why this is the ecosystem's only offers node and why the affinities are recomputed rather than read live. Triggers on: age, audience, PeopleAudience, suggestedMinAge, suggestedMaxAge, label.age_invalid, label.age_range_reversed, validateAgeRange, ProductSnippetBuilder, product_json_ld, products_json_ld, shop_products_json_ld, buildItemList, ItemList, JsonLdBuilder, numberOfItems, ProductJsonLdExtension, offers, InStock, OutOfStock, SoldOut, PreOrder, itemCondition, shippingDetails, shippingDestination, shippingRate, ShippingRateResolverInterface, shop-shipping-country, weight, merchantReturnLink, hasMerchantReturnPolicy, MerchantReturnPolicy, merchantReturnDays, MerchantReturnNotPermitted, shop-return-days, ShopSitemapProvider, sitemap-shop.xml, llms.txt, SeoFilesWriter, ShopStatusProvider, productsWithoutImage, mediasWithoutAlt, ProductStructuredDataHealthCheckProvider, ProductJsonLdClient, product-json-ld, USER_AGENT, c975LHealthCheck, isProbe, site-rate-limit, ProductAffinity, ProductRecommendationService, BasketRecommendationProviderInterface, getTemplate, c975l:shop:affinity:calculate, ogImage, fallbackAlt, summarySocialNetwork, url_metadata_title, url_metadata_summary, text.meta_shop, text.meta_category, UrlMetadataProvider, Url descriptions, ShopPublicUrlResolver, resolveAlternates, resolveLocalizedUrl, alternates, hreflang, ShopTranslatedLocales, localized urls, ShopAiSearchCardProvider, AiSearchCardProviderInterface, findAvailableBySlugs, ai_search, site search, ProductSocialContentSource, SocialContentSourceInterface, BrowsableSocialContentSourceInterface, findContents, getContentScope, SocialContentStatusProviderInterface, label.product_social, SocialBundle."
 ---
 
 # c975L ShopBundle — structured data, sitemap, health, recommendations
@@ -198,11 +198,17 @@ with 429s, and every row would read as a failed call.
 ## Posted on social networks
 
 `Service\ProductSocialContentSource` (`product`, recalled after 90 days) implements UiBundle's
-`SocialContentSourceInterface`, which SocialBundle's scheduled publication reads where the site installs it.
+`BrowsableSocialContentSourceInterface`, which SocialBundle's scheduled publication reads where the site installs it.
 It reads what the shop lists, in the shop's own order (`findAvailableProductsExcluding()`), skips a product
 with no public url (`ShopPublicUrlResolver::resolve()` null) and answers `null` from `getContent()` for a
-product hidden, trashed or not yet available since its post was prepared. What went out where is
-SocialBundle's to record, never a column here.
+product hidden, trashed or not yet available since its post was prepared. `findContents()` offers a draft
+the free products, latest first (`findAvailableLatestExcluding()`), up to the limit; `getContentScope()` is
+always `null`, the shop having no groups.
+
+What went out where is SocialBundle's to record, never stored here: `ProductCrudController` only reads it
+through UiBundle's `SocialContentStatusProviderInterface`, once per list for `findAvailableIds()`, as a
+"Réservé"/"Publié" badge (`label.product_social_*`) - not on the trash nor the templates, and not at all
+without SocialBundle.
 
 ## Recommendations
 

@@ -27,6 +27,19 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    // The id of every product the shop lists, as a string - what a post can hold, and what the back-office list asks SocialBundle about in one go
+    /** @return list<string> */
+    public function findAvailableIds(): array
+    {
+        $ids = $this->available($this->createQueryBuilder('p'))
+            ->select('p.id')
+            ->getQuery()
+            ->getSingleColumnResult()
+        ;
+
+        return array_map(strval(...), $ids);
+    }
+
     // Finds products based on search
     public function search(string $query, ?string $categorySlug = null): array
     {
@@ -264,6 +277,26 @@ class ProductRepository extends ServiceEntityRepository
             ->orderBy('p.position', \SortDirection::Ascending);
 
         if (!empty($excludeIds)) {
+            $qb->andWhere('p.id NOT IN (:excludeIds)')
+                ->setParameter('excludeIds', $excludeIds);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    // What the shop lists, the latest added first - what a post's product is chosen among
+    /**
+     * @param list<int> $excludeIds
+     *
+     * @return list<Product>
+     */
+    public function findAvailableLatestExcluding(array $excludeIds): array
+    {
+        $qb = $this->available($this->createQueryBuilder('p'))
+            ->orderBy('p.creation', \SortDirection::Descending)
+            ->addOrderBy('p.id', \SortDirection::Descending);
+
+        if ([] !== $excludeIds) {
             $qb->andWhere('p.id NOT IN (:excludeIds)')
                 ->setParameter('excludeIds', $excludeIds);
         }

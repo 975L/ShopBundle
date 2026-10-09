@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.14.0
+
+Products browsable from a social post's draft
+
+- `ProductSocialContentSource` implements `BrowsableSocialContentSourceInterface` (09/10/2026)
+- Added a "Réseaux sociaux" column to the products' list, with SocialBundle only (09/10/2026)
+- `Product::$user` and `ProductItem::$user` set to `ON DELETE SET NULL` **Needs db update** (09/10/2026)
+- `c975l-shop-seo` skill mentions the browsable source and the social column (09/10/2026)
+
 ## v2.13.2
 
 Bought-file copies folder set by a parameter

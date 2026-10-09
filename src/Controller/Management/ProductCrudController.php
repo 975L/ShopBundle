@@ -28,7 +28,9 @@ use c975L\ShopBundle\Management\ProductImportProvider;
 use c975L\ShopBundle\Management\ShopBlockOwnerResolver;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ShopTranslator;
+use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
 use c975L\UiBundle\Form\BlockType;
+use c975L\UiBundle\Model\SocialContentStatus;
 use c975L\UiBundle\Repository\FavoriteRepository;
 use c975L\UiBundle\Repository\RatingRepository;
 use c975L\UiBundle\Repository\ReviewRepository;
@@ -90,6 +92,10 @@ class ProductCrudController extends AbstractCrudController
     // Where a product's public sheet is served, the prefix a redirect and a "gone" row are written against
     private const string PRODUCT_PATH = '/shop/products/';
 
+    // The posts' hold on every product the shop lists, asked once for the whole list rather than once per row
+    /** @var array<string, SocialContentStatus>|null */
+    private ?array $socialStatusMap = null;
+
     public function __construct(
         private readonly AdminContextProviderInterface $adminContextProvider,
         private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
@@ -100,17 +106,56 @@ class ProductCrudController extends AbstractCrudController
         private readonly ContentLocaleScreen $contentLocaleScreen,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
         private readonly ProductExportProvider $productExportProvider,
+        private readonly ProductRepository $productRepository,
         private readonly RedirectRepository $redirectRepository,
         private readonly RequestStack $requestStack,
         private readonly ShopTranslator $shopTranslator,
         private readonly TableExporter $tableExporter,
         private readonly TranslatorInterface $translator,
+        private readonly ?SocialContentStatusProviderInterface $socialStatuses = null,
     ) {
     }
 
     public static function getEntityFqcn(): string
     {
         return Product::class;
+    }
+
+    // Whether a social post holds the product - reserved by a draft, or published - on a site with SocialBundle only, and never on the trash nor the templates, which no post can hold
+    /** @return list<FieldInterface> */
+    private function socialStatusFields(): array
+    {
+        if (null === $this->socialStatuses || $this->isTrash() || $this->isTemplates()) {
+            return [];
+        }
+
+        return [
+            TextField::new('id')
+                ->setLabel(t('label.product_social', [], 'shop'))
+                ->formatValue(fn (mixed $value, Product $product): string => $this->socialStatusBadge($product))
+                ->renderAsHtml()
+                ->setSortable(false)
+                ->onlyOnIndex(),
+        ];
+    }
+
+    // The badge saying when the product was reserved or published, empty while no post holds it
+    private function socialStatusBadge(Product $product): string
+    {
+        $this->socialStatusMap ??= $this->socialStatuses?->getStatuses('product', $this->productRepository->findAvailableIds()) ?? [];
+        $status = $this->socialStatusMap[(string) $product->getId()] ?? null;
+        if (null === $status) {
+            return '';
+        }
+
+        // The date's format is the language's own: "09/10" reads as the 10th of September in English
+        $date = $status->at->format($this->translator->trans('label.product_social_date_format', [], 'shop'));
+
+        return sprintf(
+            '<span class="badge %s">%s</span>',
+            $status->isPublished() ? 'badge-success' : 'badge-warning',
+            htmlspecialchars($this->translator->trans('label.product_social_' . $status->state, ['%date%' => $date], 'shop')),
+        );
     }
 
     public function configureFields(string $pageName): iterable
@@ -168,6 +213,8 @@ class ProductCrudController extends AbstractCrudController
                 ->hideOnIndex(),
             DateField::new('availableAt')
                 ->setLabel(t('label.available_at', [], 'shop')),
+
+            ...$this->socialStatusFields(),
 
             // What goes with this product, chosen by hand: the calculated affinities say nothing until something has been sold, which is exactly when a new catalogue needs cross-selling most
             AssociationField::new('relatedProducts')

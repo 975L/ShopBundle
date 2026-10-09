@@ -13,12 +13,12 @@ namespace c975L\ShopBundle\Service;
 use c975L\ConfigBundle\Service\SiteUrlResolver;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Repository\ProductRepository;
-use c975L\UiBundle\Contract\SocialContentSourceInterface;
+use c975L\UiBundle\Contract\BrowsableSocialContentSourceInterface;
 use c975L\UiBundle\Model\SocialContent;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 // Hands SocialBundle's publication the shop's products, in the order the shop lists them - a site without SocialBundle simply never asks. What went out where is SocialBundle's to record
-class ProductSocialContentSource implements SocialContentSourceInterface
+class ProductSocialContentSource implements BrowsableSocialContentSourceInterface
 {
     // A product is worth showing again a season later, a shop living on its regulars coming back
     private const int REPEAT_AFTER_DAYS = 90;
@@ -48,6 +48,30 @@ class ProductSocialContentSource implements SocialContentSourceInterface
         $products = $this->productRepository->findAvailableProductsExcluding(array_map(intval(...), $excludedIds));
 
         return [] === $products ? null : $this->toContent($products[0]);
+    }
+
+    // What a post's product is chosen among: what the shop lists, the latest added first - the shop has no groups, so a scope given changes nothing. A product without a public url never takes a place, and none past the limit is turned into a post
+    public function findContents(array $excludedIds, array $scopeIds, int $limit): array
+    {
+        $contents = [];
+        foreach ($this->productRepository->findAvailableLatestExcluding(array_map(intval(...), $excludedIds)) as $product) {
+            if (\count($contents) >= $limit) {
+                break;
+            }
+
+            $content = $this->toContent($product);
+            if (null !== $content) {
+                $contents[] = $content;
+            }
+        }
+
+        return $contents;
+    }
+
+    // None: the products are not split into groups a post would be drawn again from
+    public function getContentScope(string $sourceId): ?string
+    {
+        return null;
     }
 
     // Null for a product taken off the shop since its post was prepared

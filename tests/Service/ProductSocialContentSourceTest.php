@@ -16,6 +16,7 @@ use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductSocialContentSource;
 use c975L\ShopBundle\Service\ShopPublicUrlResolver;
+use c975L\UiBundle\Model\SocialContent;
 use PHPUnit\Framework\TestCase;
 
 class ProductSocialContentSourceTest extends TestCase
@@ -39,6 +40,11 @@ class ProductSocialContentSourceTest extends TestCase
             $this->excludedIds = $excludedIds;
 
             return null === $product ? [] : [$product];
+        });
+        $repository->method('findAvailableLatestExcluding')->willReturnCallback(function (array $excludedIds) use ($product): array {
+            $this->excludedIds = $excludedIds;
+
+            return null === $product ? [] : [$product, $product];
         });
         $repository->method('find')->willReturn($product);
 
@@ -83,5 +89,26 @@ class ProductSocialContentSourceTest extends TestCase
     public function testAProductNotAvailableYetIsNotReadAgain(): void
     {
         $this->assertNull($this->createSource($this->createProduct()->setAvailableAt(new \DateTime('+1 week')))->getContent('5'));
+    }
+
+    // What a post's product is chosen among: the ones still free, as contents and no more than the limit - the shop having no groups, a scope given changes nothing
+    public function testTheContentsToChooseAreTheFreeProducts(): void
+    {
+        $contents = $this->createSource($this->createProduct())->findContents(['3'], ['9'], 1);
+
+        $this->assertSame(['5'], array_map(static fn (SocialContent $content): string => $content->sourceId, $contents));
+        $this->assertSame([3], $this->excludedIds);
+    }
+
+    // A product without a public url never takes a place among the contents
+    public function testNoContentIsChosenWithoutASiteUrl(): void
+    {
+        $this->assertSame([], $this->createSource($this->createProduct(), null)->findContents([], [], 1));
+    }
+
+    // The shop has no groups a post would be drawn again from
+    public function testAProductHasNoScope(): void
+    {
+        $this->assertNull($this->createSource($this->createProduct())->getContentScope('5'));
     }
 }
