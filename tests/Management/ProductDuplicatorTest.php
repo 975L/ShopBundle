@@ -306,6 +306,20 @@ class ProductDuplicatorTest extends TestCase
         $this->assertFileExists($this->absolutePath(str_replace('.pdf', '.webp', $filename)));
     }
 
+    // A file a namer put in a folder of its own is copied beside it, never into the folder the entity would pick by default
+    public function testACopyGoesBesideTheOriginalWhereverItWasNamed(): void
+    {
+        $product = $this->createProduct();
+        $product->getMedias()->first()->setName('medias/demo/visitor/shop/products/mon-produit-aaa.webp');
+        $this->writeFile('medias/demo/visitor/shop/products/mon-produit-aaa.webp');
+
+        $media = $this->createDuplicator()->duplicate($product)->getMedias()->first();
+
+        $this->assertStringStartsWith('medias/demo/visitor/shop/products/mon-produit-copie-', $media->getName());
+        $this->assertFileExists($this->absolutePath($media->getName()));
+        $this->assertFileDoesNotExist($this->absolutePath('medias/shop/products/' . basename($media->getName())));
+    }
+
     // A media whose file never made it to the disk, or an item left without one, must not stop the copy
     public function testAMissingFileLeavesTheCopyWithoutOne(): void
     {

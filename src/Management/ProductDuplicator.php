@@ -268,8 +268,10 @@ class ProductDuplicator
             return null;
         }
 
+        // In the original's own folder, whatever folder the entity would pick today: a namer may have put it elsewhere - a site sorting its uploads, a sandbox keeping its own apart - and the copy belongs beside it
         $extension = strtolower(pathinfo($name, \PATHINFO_EXTENSION));
-        $copyName = $basePath . '-' . uniqid() . ('' !== $extension ? '.' . $extension : '');
+        $folder = \dirname($name);
+        $copyName = ('.' !== $folder ? $folder . '/' : '') . basename($basePath) . '-' . uniqid() . ('' !== $extension ? '.' . $extension : '');
         $target = $this->projectDir . '/' . $directory . '/' . $copyName;
         $this->filesystem->copy($source, $target);
 

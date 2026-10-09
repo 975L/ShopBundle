@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.13.2
+
+Bought-file copies folder set by a parameter
+
+- Added the `c975l_shop.download_dir` parameter for the buyers' file copies (09/10/2026)
+- A duplicated product's file is copied beside the original, whatever its folder (09/10/2026)
+- `c975l-shop-checkout` skill mentions `c975l_shop.download_dir` (09/10/2026)
+
 ## v2.13.1
 
 Shop stylesheet no longer centers every alert

@@ -41,9 +41,13 @@ class ProductItemDownloadServiceTest extends TestCase
     private function createService(
         ?EntityManagerInterface $entityManager = null,
         ?ProductItemDownloadRepository $repository = null,
+        ?string $downloadDir = null,
     ): ProductItemDownloadService {
         $parameterBag = $this->createStub(ParameterBagInterface::class);
-        $parameterBag->method('get')->willReturn($this->projectDir);
+        $parameterBag->method('get')->willReturnMap([
+            ['kernel.project_dir', $this->projectDir],
+            ['c975l_shop.download_dir', $downloadDir ?? $this->projectDir . '/private/downloads'],
+        ]);
 
         return new ProductItemDownloadService(
             $parameterBag,
@@ -60,6 +64,15 @@ class ProductItemDownloadServiceTest extends TestCase
             ->setToken('abcdefgh12345678')
             ->setFilename($filename)
             ->setExpiresAt(new \DateTimeImmutable($expiresAt));
+    }
+
+    // An app may send the copies elsewhere - a demo keeping its own apart from the site's - and they go there, nowhere else
+    public function testTheCopiesGoWhereTheAppSays(): void
+    {
+        $token = $this->createService(downloadDir: $this->projectDir . '/var/demo/downloads/')->prepareFileForDownload(1, 2, self::SOURCE);
+
+        $this->assertFileExists($this->projectDir . '/var/demo/downloads/story-' . $token . '.pdf');
+        $this->assertDirectoryDoesNotExist($this->projectDir . '/private/downloads');
     }
 
     // The copy is the point, and where it lands is the point too: only the route reaches it

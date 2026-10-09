@@ -33,7 +33,7 @@ class ProductItemDownloadService implements ProductItemDownloadServiceInterface
         private readonly Filesystem $filesystem,
     ) {
         $this->privateDir = $this->parameterBag->get('kernel.project_dir') . '/private/';
-        $this->downloadDir = $this->privateDir . 'downloads/';
+        $this->downloadDir = rtrim((string) $this->parameterBag->get('c975l_shop.download_dir'), '/') . '/';
     }
 
     public function getFileItems(array $basketItems): array

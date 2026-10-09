@@ -19,6 +19,9 @@ class c975LShopBundle extends AbstractBundle
     public function loadExtension(array $config, ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void
     {
         $containerConfigurator->import('../config/services.yaml');
+
+        // Where the copies of a bought file go, one per buyer (see ProductItemDownloadService) - an app running a second context against its own database (a demo) sets its own, or that context's copies land among the site's. An app parameter wins over this one
+        $containerBuilder->setParameter('c975l_shop.download_dir', '%kernel.project_dir%/private/downloads');
     }
 
     public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void
