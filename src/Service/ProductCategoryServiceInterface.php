@@ -20,6 +20,11 @@ interface ProductCategoryServiceInterface
     public function findAll();
 
     /**
+     * @return ProductCategory[] the categories holding at least one available product, the only ones a public screen lists
+     */
+    public function findAllListed(): array;
+
+    /**
      * @return ProductCategory|null null when no category carries that slug
      */
     public function findOneBySlug(string $slug): ?ProductCategory;

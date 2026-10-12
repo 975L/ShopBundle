@@ -11,7 +11,6 @@
 namespace c975L\ShopBundle\Service;
 
 use c975L\ShopBundle\Entity\Product;
-use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\UiBundle\Service\Paginator;
 
@@ -30,7 +29,6 @@ class ShopService implements ShopServiceInterface
 
     public function __construct(
         private readonly ProductRepository $productRepository,
-        private readonly ProductCategoryRepository $productCategoryRepository,
         private readonly ProductStateServiceInterface $productStateService,
         private readonly Paginator $paginator,
     ) {
@@ -111,10 +109,10 @@ class ShopService implements ShopServiceInterface
         return $brackets;
     }
 
-    // Counts the categories the shop publishes
+    // Counts the categories the shop publishes, the ones its selector offers
     public function countCategories(): int
     {
-        return $this->productCategoryRepository->count([]);
+        return \count($this->productRepository->findListedCategories());
     }
 
     // Narrows the listing on what the filter row asks. All three read the items, which no WHERE can reach without collapsing the rows the joined medias and items spread a product over, so they are applied here as the price ordering already is

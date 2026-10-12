@@ -21,7 +21,7 @@ All registered with UiBundle's `BlockRegistry` through the `ui.block` tag, all i
 | Kind | Shows | Cacheable |
 | --- | --- | --- |
 | `shop_products` | a grid of products, by category, capped, optionally at random | yes, except at random |
-| `shop_categories` | the links to the shop's categories | yes |
+| `shop_categories` | the links to the shop's categories holding an available product | yes |
 | `shop_product` | one product, as a card linking to its sheet | yes |
 | `shop_product_button` | a button whose label and link follow the product | yes |
 | `shop_search` | the live search, under a heading of its own when given one | **no** |

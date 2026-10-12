@@ -115,6 +115,19 @@ class ProductRepositoryTest extends TestCase
         $this->assertNull($dql);
     }
 
+    // What the selector, the sitemap and the category blocks list: a category is read through its available products, so an empty one is left out
+    public function testTheListedCategoriesAreThoseHoldingAnAvailableProduct(): void
+    {
+        $dql = null;
+        $this->createRepository($dql)->findListedCategories();
+
+        $this->assertStringContainsString('SELECT DISTINCT c FROM', (string) $dql);
+        $this->assertStringContainsString('INNER JOIN c.products p', (string) $dql);
+        $this->assertStringContainsString('p.hidden = false', (string) $dql);
+        $this->assertStringContainsString('p.isDeleted = false', (string) $dql);
+        $this->assertStringContainsString('p.availableAt < :now', (string) $dql);
+    }
+
     // A repository wired on an entity manager that runs no query, only records the DQL it was handed
     private function createRepository(?string &$dql): ProductRepository
     {

@@ -33,6 +33,14 @@ class ListingMetaDescriptionTest extends TestCase
         $this->assertStringContainsString("'text.meta_category'|trans({'%category%': category.name, '%site%': config('site-name')})", $template);
     }
 
+    // A category holding no product stays out of the index until it holds one
+    public function testAnEmptyCategoryIsKeptOutOfTheIndex(): void
+    {
+        $template = $this->read('templates/category/display.html.twig');
+
+        $this->assertStringContainsString("{% set robots = shop_category_products(category) is empty ? 'noindex, follow' : 'index, follow' %}", $template);
+    }
+
     private function read(string $relativePath): string
     {
         $path = \dirname(__DIR__, 2) . '/' . $relativePath;

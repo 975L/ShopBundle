@@ -12,7 +12,6 @@ namespace c975L\ShopBundle\Tests\Twig;
 
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
-use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductRecommendationServiceInterface;
 use c975L\ShopBundle\Service\ShopTranslator;
@@ -32,7 +31,6 @@ class ShopBlockExtensionTest extends TestCase
     {
         $this->extension = new ShopBlockExtension(
             $this->createStub(ProductRepository::class),
-            $this->createStub(ProductCategoryRepository::class),
             $this->createStub(ProductRecommendationServiceInterface::class),
             new RequestStack(),
             // A double rather than the real one: what it lays over is ShopTranslator's own test, and a single-language site lays nothing
@@ -102,7 +100,6 @@ class ShopBlockExtensionTest extends TestCase
 
         return new ShopBlockExtension(
             $repository,
-            $this->createStub(ProductCategoryRepository::class),
             $this->createStub(ProductRecommendationServiceInterface::class),
             new RequestStack(),
             $this->createStub(ShopTranslator::class),
@@ -130,7 +127,6 @@ class ShopBlockExtensionTest extends TestCase
         $cache = new TagAwareAdapter(new ArrayAdapter());
         $extension = new ShopBlockExtension(
             $this->createStub(ProductRepository::class),
-            $this->createStub(ProductCategoryRepository::class),
             $this->createStub(ProductRecommendationServiceInterface::class),
             new RequestStack(),
             $this->createStub(ShopTranslator::class),
@@ -157,7 +153,6 @@ class ShopBlockExtensionTest extends TestCase
         $cache = new TagAwareAdapter(new ArrayAdapter());
         $extension = new ShopBlockExtension(
             $this->createStub(ProductRepository::class),
-            $this->createStub(ProductCategoryRepository::class),
             $this->createStub(ProductRecommendationServiceInterface::class),
             new RequestStack(),
             $this->createStub(ShopTranslator::class),

@@ -12,11 +12,13 @@ namespace c975L\ShopBundle\Service;
 
 use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
+use c975L\ShopBundle\Repository\ProductRepository;
 
 class ProductCategoryService implements ProductCategoryServiceInterface
 {
     public function __construct(
         private readonly ProductCategoryRepository $productCategoryRepository,
+        private readonly ProductRepository $productRepository,
     ) {
     }
 
@@ -24,6 +26,12 @@ class ProductCategoryService implements ProductCategoryServiceInterface
     public function findAll()
     {
         return $this->productCategoryRepository->findAll();
+    }
+
+    // Finds the categories a public screen lists, an empty one being left out
+    public function findAllListed(): array
+    {
+        return $this->productRepository->findListedCategories();
     }
 
     // Finds one by slug

@@ -96,6 +96,25 @@ class ShopSitemapProviderTest extends TestCase
         ], $locs);
     }
 
+    // A category holding no product is a page with nothing on it, which a search engine files as a soft 404: only the listed ones are declared
+    public function testReadsTheCategoriesThroughTheListedOnesAlone(): void
+    {
+        $categoryService = $this->createMock(ProductCategoryServiceInterface::class);
+        $categoryService->expects($this->once())->method('findAllListed')->willReturn([]);
+        $categoryService->expects($this->never())->method('findAll');
+
+        $productService = $this->createStub(ProductServiceInterface::class);
+        $productService->method('findAll')->willReturn([]);
+
+        $provider = new ShopSitemapProvider(
+            $this->createResolver('https://example.com', ['fr']),
+            new ShopTranslatedLocales(new SiteLocales(['fr'], 'fr')),
+            $productService,
+            $categoryService,
+        );
+        $provider->getUrls();
+    }
+
     // The products are read through findAll(), the only method filtering out what the shop does not stand behind - ProductRepository::findAll() is overridden for that, see ProductRepositoryTest
     public function testReadsTheProductsThroughTheFilteredFindAll(): void
     {
@@ -103,7 +122,7 @@ class ShopSitemapProviderTest extends TestCase
         $productService->expects($this->once())->method('findAll')->willReturn([]);
 
         $categoryService = $this->createStub(ProductCategoryServiceInterface::class);
-        $categoryService->method('findAll')->willReturn([]);
+        $categoryService->method('findAllListed')->willReturn([]);
 
         $provider = new ShopSitemapProvider(
             $this->createResolver('https://example.com', ['fr']),
@@ -120,7 +139,7 @@ class ShopSitemapProviderTest extends TestCase
         $productService->method('findAll')->willReturn($products);
 
         $categoryService = $this->createStub(ProductCategoryServiceInterface::class);
-        $categoryService->method('findAll')->willReturn($categories);
+        $categoryService->method('findAllListed')->willReturn($categories);
 
         return new ShopSitemapProvider(
             $this->createResolver($siteUrl, $locales),

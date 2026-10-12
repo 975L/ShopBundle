@@ -11,9 +11,9 @@
 namespace c975L\ShopBundle\Tests\Service;
 
 use c975L\ShopBundle\Entity\Product;
+use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Entity\ProductItemFile;
-use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductStateService;
 use c975L\ShopBundle\Service\ShopService;
@@ -80,12 +80,12 @@ class ShopServiceTest extends TestCase
         $this->assertSame(['dear', 'cheap', 'medium'], $this->titles());
     }
 
-    public function testTheCategoriesAreCounted(): void
+    // The count is the selector's own: a category holding no product is not one the shop publishes
+    public function testOnlyTheListedCategoriesAreCounted(): void
     {
-        $categoryRepository = $this->createStub(ProductCategoryRepository::class);
-        $categoryRepository->method('count')->willReturn(3);
+        $listed = [new ProductCategory(), new ProductCategory(), new ProductCategory()];
 
-        $this->assertSame(3, $this->service([], $categoryRepository)->countCategories());
+        $this->assertSame(3, $this->service([], $listed)->countCategories());
     }
 
     public function testAFilterTheListingDoesNotOfferIsIgnored(): void
@@ -111,7 +111,7 @@ class ShopServiceTest extends TestCase
     public function testThePriceBandsAreCutFromTheDearestItem(): void
     {
         // 92 € rounded up to 23 € a band, the last one left open-ended
-        $brackets = $this->service([], null, 9200)->getPriceBrackets();
+        $brackets = $this->service([], [], 9200)->getPriceBrackets();
 
         $this->assertCount(4, $brackets);
         $this->assertSame(['value' => '0-2300', 'min' => 0, 'max' => 2300], $brackets[0]);
@@ -178,7 +178,7 @@ class ShopServiceTest extends TestCase
         $productRepository->expects($this->once())->method('findPageSorted')->with('newest', 12, 12)->willReturn([]);
         $productRepository->expects($this->once())->method('countAvailable')->willReturn(30);
 
-        $service = new ShopService($productRepository, $this->createStub(ProductCategoryRepository::class), new ProductStateService(), new Paginator(new RequestStack()));
+        $service = new ShopService($productRepository, new ProductStateService(), new Paginator(new RequestStack()));
         $pagination = $service->findAllProductsPaginated(new InputBag(['order' => 'newest', 'p' => '2']));
 
         $this->assertSame(30, $pagination->getTotalItemCount());
@@ -200,17 +200,17 @@ class ShopServiceTest extends TestCase
     }
 
     // A service whose repository returns the given products, paginated for real: the paginator cuts a page out of a plain array and needs nothing from a request to do it
-    private function service(array $products = [], ?ProductCategoryRepository $categoryRepository = null, int $maxItemPrice = 0): ShopService
+    private function service(array $products = [], array $listedCategories = [], int $maxItemPrice = 0): ShopService
     {
         $productRepository = $this->createStub(ProductRepository::class);
         $productRepository->method('findAllSorted')->willReturn($products);
         $productRepository->method('findPageSorted')->willReturnCallback(static fn (?string $sort, int $offset, int $limit): array => array_slice($products, $offset, $limit));
         $productRepository->method('countAvailable')->willReturn(count($products));
         $productRepository->method('findMaxLowestItemPrice')->willReturn($maxItemPrice);
+        $productRepository->method('findListedCategories')->willReturn($listedCategories);
 
         return new ShopService(
             $productRepository,
-            $categoryRepository ?? $this->createStub(ProductCategoryRepository::class),
             new ProductStateService(),
             new Paginator(new RequestStack()),
         );

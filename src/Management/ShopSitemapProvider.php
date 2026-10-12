@@ -65,8 +65,8 @@ class ShopSitemapProvider implements SitemapProviderInterface
             ], $url, $this->shopPublicUrlResolver->resolveAlternates('product_display', $parameters, $this->shopTranslatedLocales->forProduct($product)))];
         }
 
-        // Urls for categories
-        foreach ($this->productCategoryService->findAll() as $category) {
+        // Urls for categories - the listed ones alone, an empty category having nothing to be crawled for
+        foreach ($this->productCategoryService->findAllListed() as $category) {
             $parameters = ['slug' => $category->getSlug()];
             $url = $this->shopPublicUrlResolver->resolve('category_display', $parameters);
             if (null === $url) {

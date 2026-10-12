@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Repository;
 
 use c975L\ShopBundle\Entity\Product;
+use c975L\ShopBundle\Entity\ProductCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -165,6 +166,23 @@ class ProductRepository extends ServiceEntityRepository
             ->orderBy('p.position', \SortDirection::Ascending)
             ->addOrderBy('m.position', \SortDirection::Ascending)
             ->addOrderBy('i.position', \SortDirection::Ascending)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    // The categories the shop lists, by name: those holding at least one available product. Read here rather than in ProductCategoryRepository, the rule saying what a listing shows being written once, in available() - an empty category is a page with nothing on it, which a search engine files as a soft 404
+    /** @return list<ProductCategory> */
+    public function findListedCategories(): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('c')
+            ->distinct()
+            ->from(ProductCategory::class, 'c')
+            ->join('c.products', 'p');
+
+        return $this->available($qb)
+            ->orderBy('c.name', \SortDirection::Ascending)
             ->getQuery()
             ->getResult()
         ;

@@ -12,7 +12,6 @@ namespace c975L\ShopBundle\Twig\Extension;
 
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductCategory;
-use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductRecommendationServiceInterface;
 use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
@@ -42,7 +41,6 @@ class ShopBlockExtension implements ResetInterface
 
     public function __construct(
         private readonly ProductRepository $productRepository,
-        private readonly ProductCategoryRepository $categoryRepository,
         private readonly ProductRecommendationServiceInterface $recommendationService,
         private readonly RequestStack $requestStack,
         private readonly ShopTranslator $shopTranslator,
@@ -234,7 +232,7 @@ class ShopBlockExtension implements ResetInterface
     /** @return list<ProductCategory> */
     private function loadCategories(): array
     {
-        return $this->categories ??= $this->categoryRepository->findAll();
+        return $this->categories ??= $this->productRepository->findListedCategories();
     }
 
     // The lists only ever describe the request being rendered - dropped between two of them so a worker runtime (FrankenPHP, RoadRunner...) doesn't serve the next one the catalog of the previous

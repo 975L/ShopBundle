@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.14.1
+
+Empty categories kept out of the shop's lists and index
+
+- Added `ProductCategoryService::findAllListed()`, the categories holding an available product (12/10/2026)
+- Category selector, `shop_categories` block and sitemap list non-empty categories only (12/10/2026)
+- `countCategories()` counts the listed categories only (12/10/2026)
+- An empty category page is set to `noindex, follow` (12/10/2026)
+- `c975l-shop-seo`, `c975l-shop-blocks` and `c975l-shop-catalog` skills mention the listed categories (12/10/2026)
+
 ## v2.14.0
 
 Products browsable from a social post's draft
