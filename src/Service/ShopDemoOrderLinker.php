@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\PaymentBundle\Contract\BasketLine;
 use c975L\PaymentBundle\Entity\Basket;
 use c975L\PaymentBundle\Entity\Payment;
+use c975L\PaymentBundle\Enum\BasketStatus;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\UiBundle\Contract\DemoFixtureLinkerInterface;
 
@@ -149,7 +150,7 @@ class ShopDemoOrderLinker implements DemoFixtureLinkerInterface
         return new Basket()
             ->setNumber($number)
             ->setItems($items)
-            ->setStatus('paid')
+            ->setStatus(BasketStatus::Paid)
             ->setEmail($email)
             ->setName($name)
             ->setAddress($address)

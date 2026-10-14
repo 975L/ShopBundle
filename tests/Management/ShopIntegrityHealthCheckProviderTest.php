@@ -13,6 +13,7 @@ namespace c975L\ShopBundle\Tests\Management;
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Service\SiteUrlResolver;
 use c975L\PaymentBundle\Entity\Basket;
+use c975L\PaymentBundle\Enum\BasketStatus;
 use c975L\PaymentBundle\Repository\BasketRepository;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
@@ -197,7 +198,7 @@ class ShopIntegrityHealthCheckProviderTest extends TestCase
     {
         $basket = new Basket()
             ->setNumber($number)
-            ->setStatus('paid')
+            ->setStatus(BasketStatus::Paid)
             ->setEmail('buyer@example.com')
             ->setItems([])
             ->setModification(new \DateTime('-1 day'))

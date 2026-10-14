@@ -15,6 +15,7 @@ use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
 use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\PaymentBundle\Entity\Basket;
 use c975L\PaymentBundle\Entity\Payment;
+use c975L\PaymentBundle\Enum\BasketStatus;
 use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
@@ -111,7 +112,7 @@ class ShopDemoOrderLinkerTest extends TestCase
     {
         $order = $this->fixtures($this->catalogue())[1];
 
-        $this->assertSame('paid', $order->getStatus());
+        $this->assertSame(BasketStatus::Paid, $order->getStatus());
         $this->assertSame('2026-0114', $order->getNumber());
         $this->assertNull($order->getItemsShipped());
         $this->assertSame(Basket::CONTENT_FLAG_PHYSICAL, $order->getContentFlags() & Basket::CONTENT_FLAG_PHYSICAL);

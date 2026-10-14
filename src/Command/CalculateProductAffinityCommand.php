@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Command;
 
+use c975L\PaymentBundle\Enum\BasketStatus;
 use c975L\PaymentBundle\Repository\BasketRepository;
 use c975L\ShopBundle\Entity\ProductAffinity;
 use c975L\ShopBundle\Repository\ProductAffinityRepository;
@@ -161,11 +162,12 @@ class CalculateProductAffinityCommand extends Command
         return $affinity;
     }
 
-    // Fetches completed baskets (status: 'paid' or 'shipped').
+    // Fetches the settled baskets, paid whether shipped or not
     private function fetchCompletedBaskets(?int $days): array
     {
         $qb = $this->basketRepository->createQueryBuilder('b')
-            ->where("b.status IN ('paid', 'shipped')");
+            ->where('b.status IN (:settled)')
+            ->setParameter('settled', BasketStatus::SETTLED);
 
         if (null !== $days) {
             $since = new \DateTime(sprintf('-%d days', $days));

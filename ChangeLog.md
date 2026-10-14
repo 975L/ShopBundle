@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.14.2
+
+Basket statuses read and written through `BasketStatus`
+
+- Requires `c975l/payment-bundle` ^6.20 for the `BasketStatus` enum (14/10/2026)
+- Product affinities computed from `BasketStatus::SETTLED` baskets (14/10/2026)
+- Demo orders created with `BasketStatus::Paid` (14/10/2026)
+
 ## v2.14.1
 
 Empty categories kept out of the shop's lists and index
