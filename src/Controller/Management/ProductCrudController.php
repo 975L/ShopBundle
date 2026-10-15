@@ -316,7 +316,6 @@ class ProductCrudController extends AbstractCrudController
             ->linkToUrl(fn (Product $product): string => $this->generateUrl('product_display', ['slug' => $product->getSlug()]))
             ->setHtmlAttributes(['target' => '_blank'])
             ->displayIf(static fn (Product $product): bool => !$product->isHidden() && !$product->isDeleted() && '' !== (string) $product->getSlug())
-            ->addCssClass('btn btn-secondary')
         ;
 
         // Copies the product with its pictures, its items and its blocks, then opens the copy - what a catalogue of near-identical sheets is written with, rather than by retyping each one. A template is copied as a template
@@ -324,7 +323,6 @@ class ProductCrudController extends AbstractCrudController
             ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('duplicate', $product, self::DUPLICATE_CSRF_TOKEN, query: ['template' => (int) $product->isTemplate()]))
             ->displayIf(static fn (Product $product): bool => !$product->isDeleted())
             ->askConfirmation(t('confirm.duplicate', [], 'shop'))
-            ->addCssClass('btn btn-secondary')
         ;
 
         // The same copy, made a template: the product stays as it is, and the texts of its items are kept for the next ones
@@ -332,7 +330,6 @@ class ProductCrudController extends AbstractCrudController
             ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('duplicate', $product, self::DUPLICATE_CSRF_TOKEN, query: ['template' => 1]))
             ->displayIf(static fn (Product $product): bool => !$product->isDeleted() && !$product->isTemplate())
             ->askConfirmation(t('confirm.create_template', [], 'shop'))
-            ->addCssClass('btn btn-secondary')
         ;
 
         // The other way round: a product copied from a template, hidden until it is named and priced
@@ -340,7 +337,6 @@ class ProductCrudController extends AbstractCrudController
             ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('duplicate', $product, self::DUPLICATE_CSRF_TOKEN, query: ['template' => 0]))
             ->displayIf(static fn (Product $product): bool => !$product->isDeleted() && $product->isTemplate())
             ->askConfirmation(t('confirm.create_product', [], 'shop'))
-            ->addCssClass('btn btn-secondary')
         ;
 
         // Opens the sheet of a product that is not online yet, in a new tab - the same page the visitor will read, minus the block cache and with a banner saying so
@@ -348,14 +344,12 @@ class ProductCrudController extends AbstractCrudController
             ->linkToUrl(fn (Product $product): string => $this->generateUrl('product_preview', ['slug' => $product->getSlug()]))
             ->setHtmlAttributes(['target' => '_blank'])
             ->displayIf(static fn (Product $product): bool => $product->isHidden() && !$product->isDeleted() && '' !== (string) $product->getSlug())
-            ->addCssClass('btn btn-secondary')
         ;
 
         // Takes a product back out of the recycle bin, with everything it still holds - it comes back hidden, its own switch having been turned on when it was trashed
         $restoreAction = Action::new('restore', t('action.restore', [], 'shop'), 'fa fa-trash-restore')
             ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('restore', $product, self::RESTORE_CSRF_TOKEN, true))
             ->displayIf(static fn (Product $product): bool => $product->isDeleted())
-            ->addCssClass('btn btn-secondary')
         ;
 
         // Removes the product for good, its pictures and its files with it - only reachable from the recycle bin
@@ -364,14 +358,12 @@ class ProductCrudController extends AbstractCrudController
             ->displayIf(static fn (Product $product): bool => $product->isDeleted())
             ->askConfirmation(t('confirm.delete_permanently', [], 'shop'))
             ->asDangerAction()
-            ->addCssClass('btn btn-danger')
         ;
 
         // Opens the first language screen straight from the list, the way SiteBundle's pages are translated - the tabs above a sheet already opened are the only other way in, and a translation screen nobody finds translates nothing
         $translateAction = $this->contentLocaleScreen
             ->action('translate', t('action.translate', [], 'shop'), 'fa fa-language', $this->shopTranslator->getTranslatableLocales())
             ->displayIf(fn (Product $product): bool => !$product->isDeleted() && $this->shopTranslator->isActive())
-            ->addCssClass('btn btn-secondary')
         ;
 
         // A template is made from a product (see $createTemplateAction), never from an empty form, which would come back as a product
@@ -520,7 +512,6 @@ class ProductCrudController extends AbstractCrudController
 
         return $action
             ->createAsGlobalAction()
-            ->addCssClass('btn btn-secondary')
         ;
     }
 
@@ -550,7 +541,6 @@ class ProductCrudController extends AbstractCrudController
 
         return $action
             ->createAsGlobalAction()
-            ->addCssClass('btn btn-secondary')
         ;
     }
 

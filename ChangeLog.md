@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.14.3
+
+Custom actions left to EasyAdmin's own button classes
+
+- Requires `easycorp/easyadmin-bundle` ^5.7, in line with the other c975L bundles (14/10/2026)
+- Custom actions no longer add the `btn` classes EasyAdmin already sets (14/10/2026)
+
 ## v2.14.2
 
 Basket statuses read and written through `BasketStatus`

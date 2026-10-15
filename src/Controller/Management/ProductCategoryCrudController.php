@@ -138,14 +138,12 @@ class ProductCategoryCrudController extends AbstractCrudController
             ->linkToUrl(fn (ProductCategory $category): string => $this->generateUrl('category_display', ['slug' => $category->getSlug()]))
             ->setHtmlAttributes(['target' => '_blank'])
             ->displayIf(static fn (ProductCategory $category): bool => '' !== (string) $category->getSlug())
-            ->addCssClass('btn btn-secondary')
         ;
 
         // Opens the first language screen straight from the list, the way SiteBundle's pages are translated - the tabs above a sheet already opened are the only other way in, and a translation screen nobody finds translates nothing
         $translateAction = $this->contentLocaleScreen
             ->action('translate', t('action.translate', [], 'shop'), 'fa fa-language', $this->shopTranslator->getTranslatableLocales())
             ->displayIf(fn (ProductCategory $category): bool => $this->shopTranslator->isActive())
-            ->addCssClass('btn btn-secondary')
         ;
 
         return $actions

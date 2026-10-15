@@ -121,7 +121,6 @@ class ShopSettingsCrudController extends AbstractCrudController
         $viewOnSiteAction = Action::new('viewOnSite', t('action.view_on_site', [], 'shop'), 'fa fa-external-link-alt')
             ->linkToUrl(fn (): string => $this->generateUrl('shop_index'))
             ->setHtmlAttributes(['target' => '_blank'])
-            ->addCssClass('btn btn-secondary')
         ;
 
         return $actions
