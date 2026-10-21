@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.15.1
+
+Categories' Edit and Delete icons from the shared helper
+
+- Requires `c975l/core-bundle` ^1.72.2 for `EasyAdminActionHelper::iconOnlyDefaults()` (21/10/2026)
+- Categories' list uses `iconOnlyDefaults()` for EasyAdmin's Edit and Delete (21/10/2026)
+
 ## v2.15.0
 
 Products listed on Google Merchant Center, one feed per language

@@ -146,15 +146,14 @@ class ProductCategoryCrudController extends AbstractCrudController
             ->displayIf(fn (ProductCategory $category): bool => $this->shopTranslator->isActive())
         ;
 
+        // EasyAdmin's own Edit and Delete as icons on the list, their label kept as the title
+        EasyAdminActionHelper::iconOnlyDefaults($actions, $this->translator);
+
         return $actions
             ->add(Crud::PAGE_INDEX, $exportGroup)
             ->add(Crud::PAGE_INDEX, $viewOnSiteAction)
             ->add(Crud::PAGE_INDEX, $translateAction)
             ->add(Crud::PAGE_EDIT, $viewOnSiteAction)
-            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action,
-                $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
-            ))
             ->update(Crud::PAGE_INDEX, 'viewOnSite', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
                 $this->translator->trans('action.view_on_site', [], 'shop'),
@@ -162,10 +161,6 @@ class ProductCategoryCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, 'translate', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
                 $this->translator->trans('action.translate', [], 'shop'),
-            ))
-            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action,
-                $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
             ))
             // reorder() turns priority ordering off page-wide, so "exportSelection" leads the batch bar too - "batchDelete" is left unnamed, as naming it throws where it is disabled
             ->reorder(Crud::PAGE_INDEX, ['exportSelection', Action::EDIT, 'viewOnSite', Action::DELETE])
