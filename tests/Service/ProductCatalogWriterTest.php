@@ -180,6 +180,30 @@ class ProductCatalogWriterTest extends TestCase
         $this->assertSame('Le texte de l\'éditeur.', $item->getDescription());
     }
 
+    // The catalog's barcode is written on a new item and on an existing one, while an item the catalog gives none keeps the editor's
+    public function testTheCatalogsGtinIsWrittenAndAMissingOneKeepsTheEditors(): void
+    {
+        $item = new ProductItem()->setCatalogKey('book-12-digital-epub')->setTitle('EPUB')->setSlug('epub')->setGtin('9780000000002')->setFile(new ProductItemFile()->setName('medias/loup.epub'));
+        $product = new Product()->setCatalogKey('book-12')->addItem($item);
+
+        $persisted = [];
+        $this->writer($product, $persisted, found: $item)->write(new CatalogProduct('book-12', 'Le Loup', '<p>Un loup.</p>', [
+            new CatalogProductItem('book-12-digital-epub', 'Format EPUB', $this->projectDir . '/loup.epub', 299),
+        ]));
+        $this->assertSame('9780000000002', $item->getGtin());
+
+        $this->writer($product, $persisted, found: $item)->write(new CatalogProduct('book-12', 'Le Loup', '<p>Un loup.</p>', [
+            new CatalogProductItem('book-12-digital-epub', 'Format EPUB', $this->projectDir . '/loup.epub', 299, gtin: '9782953285901'),
+        ]));
+        $this->assertSame('9782953285901', $item->getGtin());
+
+        $created = new Product()->setCatalogKey('book-13')->setSlug('le-renard');
+        $this->writer($created, $persisted)->write(new CatalogProduct('book-13', 'Le Renard', '<p>Un renard.</p>', [
+            new CatalogProductItem('book-13-digital-epub', 'Format EPUB', $this->projectDir . '/loup.epub', 299, gtin: '9782953285918'),
+        ]));
+        $this->assertSame('9782953285918', $created->getItems()->first()->getGtin());
+    }
+
     // The catalog's other languages are stored as the item's translations, its default one written on the row
     public function testOtherLanguagesAreStoredAsTranslations(): void
     {

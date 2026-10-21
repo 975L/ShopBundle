@@ -163,6 +163,7 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
                 ->setDescription($this->descriptions($catalogItem)[$this->siteLocales->getDefaultLocale()] ?? $catalogItem->title)
                 ->setPrice($catalogItem->price ?? 0)
                 ->setCurrency(strtolower($catalogItem->currency))
+                ->setGtin($catalogItem->gtin)
                 ->setFile($file);
             $product->addItem($item);
             $this->entityManager->persist($item);
@@ -175,7 +176,7 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
         return $item;
     }
 
-    // An item already written: its title, its text and its price taken again from the catalog, its file copied in again only when it changed
+    // An item already written: its title, its text, its price and its barcode taken again from the catalog, its file copied in again only when it changed
     private function updateItem(ProductItem $item, CatalogProductItem $catalogItem): void
     {
         // Its title follows the catalog's, which says what the file is (an EPUB read aloud, an earlier version), and its text only when the catalog gives one, the editor's kept otherwise; its slug stays, being in the links already given out
@@ -188,6 +189,9 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
         }
         if (null !== $catalogItem->price) {
             $item->setPrice($catalogItem->price);
+        }
+        if (null !== $catalogItem->gtin) {
+            $item->setGtin($catalogItem->gtin);
         }
 
         $file = $item->getFile() ?? new ProductItemFile();

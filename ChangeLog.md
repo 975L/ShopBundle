@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.14.4
+
+Items' barcode taken from the catalog
+
+- Requires `c975l/core-bundle` ^1.70.1 for the catalog's `gtin` (21/10/2026)
+- `ProductCatalogWriter` writes the catalog item's `gtin`, the editor's kept when none is given (21/10/2026)
+
 ## v2.14.3
 
 Custom actions left to EasyAdmin's own button classes

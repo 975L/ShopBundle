@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-10-21",
+        "description": [
+            {
+                "en": "Your books' barcodes now fill in on their own in your shop, and the one you typed is kept when the book has none.",
+                "fr": "Le code-barres de vos livres se remplit désormais tout seul dans votre boutique, et celui que vous aviez saisi est conservé quand le livre n'en a pas.",
+                "es": "El código de barras de sus libros se rellena ahora solo en su tienda, y el que usted había introducido se conserva cuando el libro no tiene ninguno."
+            }
+        ]
+    },
+    {
         "date": "2026-10-12",
         "description": [
             {
