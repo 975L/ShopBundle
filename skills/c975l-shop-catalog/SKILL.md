@@ -18,7 +18,7 @@ description: "Use this skill when working with the shop's catalog in a Symfony a
 
 | Entity | Holds | Never holds |
 | --- | --- | --- |
-| `Product` | title, slug, description, `brand`, `age`, `availableAt`, position, `hidden`, `isDeleted`, medias, categories, blocks, `relatedProducts`, `giftCardText`, `giftCardScratch`, `catalogKey` | a price |
+| `Product` | title, slug, description, `brand`, `language`, `age`, `availableAt`, position, `hidden`, `isDeleted`, medias, categories, blocks, `relatedProducts`, `giftCardText`, `giftCardScratch`, `catalogKey` | a price |
 | `ProductItem` | price and `priceBefore` (**cents**), currency, vat, `sku`, `gtin`, `limitedQuantity`, `orderedQuantity`, `service`, `itemCondition`, `weight` (**grams**), `hidden`, `giftCardValue`, `catalogKey`, one media, one file | its own page, a recycle bin |
 | `ProductCategory` | name, slug, description, products (`ManyToMany`) | a price |
 
@@ -123,6 +123,7 @@ button that is or is not disabled, and from the `availability` the structured da
 | `category_display` | `/shop/category/{slug}` |
 | `category_display_localized` | `/{_locale}/shop/category/{slug}` |
 | `shop_download` | `/shop/download/{token}` — see `c975l-shop-checkout` |
+| `shop_merchant_feed` | `/shop/merchant-feed.xml` — `?language=`, see `c975l-shop-seo` |
 | `shop_terms_of_sales` | `/shop/terms-of-sales`, unless SiteBundle serves it |
 
 Every one of those templates extends `@c975LShop/layout.html.twig`, which overrides UiBundle's
@@ -234,7 +235,7 @@ carried, and the baskets' download links belong to the payments.
 
 `ProductCatalogWriter` implements UiBundle's `ProductCatalogWriterInterface`: a catalog (BookBundle) writes
 its products here under a `catalogKey`, unique over each table. The product is created once and is the
-shop's from then on; its items follow the catalog's title, price, `gtin` (when given) and file (the slug kept), and its description in each language it gives one, the editor's kept for the others, the file copied in through a
+shop's from then on; its `language` follows the catalog's when given, its items follow the catalog's title, price, `gtin` (when given) and file (the slug kept), and its description in each language it gives one, the editor's kept for the others, the file copied in through a
 `ReplacingFile` only when its size or date changed. An item is looked up by its key over the whole table and
 moved to the product written, so a product key that changed does not write it twice. A dropped item is
 hidden, never deleted, and a hidden one is never shown again by the writer. The catalog's other languages

@@ -26,6 +26,10 @@
                 <source>narration.guided_project_shop_index</source>
                 <target>Réglons la page sur laquelle la boutique s'ouvre : la phrase qui accueille le visiteur, et les blocks composés au-dessus de la liste.</target>
             </trans-unit>
+            <trans-unit id="PoR_.Dx">
+                <source>narration.guided_project_shop_merchant_feed</source>
+                <target>Donnons le catalogue à Google Merchant Center, qui le relira chaque jour pour l'afficher dans Google Shopping.</target>
+            </trans-unit>
             <trans-unit id="rs8nYa9">
                 <source>narration.guided_project_shop_product</source>
                 <target>Écrivons une fiche produit, et l'article qui porte ce que le visiteur paie. L'une sans l'autre ne vend rien.</target>
@@ -162,6 +166,18 @@
                 <source>narration.guided_step_shop_index_save</source>
                 <target>Enregistrez. L'index de la boutique affiche la phrase et les blocks dès que la ligne est enregistrée.</target>
             </trans-unit>
+            <trans-unit id="tHX83WB">
+                <source>narration.guided_step_shop_merchant_feed_open</source>
+                <target>Les adresses du flux sont affichées sur l'écran de la page d'index : le panneau vous y emmène.</target>
+            </trans-unit>
+            <trans-unit id="CCfmR44">
+                <source>narration.guided_step_shop_merchant_feed_paste</source>
+                <target>Dans Merchant Center, ajoutez une source de produits par récupération planifiée pour chaque adresse, avec sa langue. Tant que la boutique est en mode test, le flux n'est pas servi.</target>
+            </trans-unit>
+            <trans-unit id="3sBSa6y">
+                <source>narration.guided_step_shop_merchant_feed_urls</source>
+                <target>Voici une adresse par langue dans laquelle vos produits sont écrits, chacune listant les produits de sa langue. Si rien ne s'affiche, l'adresse du site n'est pas encore configurée.</target>
+            </trans-unit>
             <trans-unit id="XJyQ1RX">
                 <source>narration.guided_step_shop_product_age</source>
                 <target>Indiquez à qui il s'adresse. Écrivez l'âge comme une plage de chiffres, trois tiret huit, ou quinze tiret à partir de quinze ans : la fiche en tire son avertissement, et les moteurs de recherche son public.</target>
@@ -193,6 +209,10 @@
             <trans-unit id="1wuchEH">
                 <source>narration.guided_step_shop_product_items</source>
                 <target>Descendez aux articles. Le produit dit ce que c'est ; ses articles disent ce qui est acheté, à quel prix, dans quel état. Le poids de chaque article est celui sur lequel les frais de port sont calculés.</target>
+            </trans-unit>
+            <trans-unit id="3VpdGJi">
+                <source>narration.guided_step_shop_product_language</source>
+                <target>Si le produit est écrit dans une autre langue que celle du site, choisissez-la ici : il rejoint alors le flux Google Merchant Center de cette langue. Sinon, passez : le champ est facultatif.</target>
             </trans-unit>
             <trans-unit id="ekzkn6X">
                 <source>narration.guided_step_shop_product_medias</source>
@@ -248,11 +268,11 @@
             </trans-unit>
             <trans-unit id="cWMR.ej">
                 <source>narration.guided_step_shop_test_mode_banner</source>
-                <target>Le visiteur voit alors un bandeau sur chaque page de la boutique, disant qu'elle est en cours d'installation. Les paiements ont leur propre mode test, et les deux sont distincts.</target>
+                <target>Le visiteur voit alors un bandeau sur chaque page de la boutique, disant qu'elle est en cours d'installation, et les moteurs de recherche sont tenus à l'écart jusqu'à la fin. Les paiements ont leur propre mode test, et les deux sont distincts.</target>
             </trans-unit>
             <trans-unit id="wm5GV4w">
                 <source>narration.guided_step_shop_test_mode_disable</source>
-                <target>Désactivez-le avec le même bouton, le jour où le catalogue est prêt à être lu tel quel.</target>
+                <target>Désactivez-le avec le même bouton, le jour où le catalogue est prêt à être lu tel quel : la boutique redevient lisible par les moteurs de recherche.</target>
             </trans-unit>
             <trans-unit id="WbfdxFm">
                 <source>narration.guided_step_shop_test_mode_enable</source>

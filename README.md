@@ -30,7 +30,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 ## Contents
 
 - **Setup** — [requirements](#requirements) · [installation](#installation) · [upgrading from v1](#upgrading)
-- **Using it** — [usage](#usage) · [block kinds](#block-kinds) · [composing the shop](#composing-the-shop) · [languages](#languages) · [commands](#commands) · [export / import products](#export--import-products) · [sitemap, llms.txt and health check](#sitemap-llmstxt-and-health-check) · [structured data](#structured-data) · [wish list](#wish-list) · [back-in-stock alerts](#back-in-stock-alerts) · [customer ratings](#customer-ratings) · [test mode](#test-mode) · [the demo catalog](#the-demo-catalog) · [what the site's dashboard gets](#what-the-sites-dashboard-gets) · [guided projects](#guided-projects)
+- **Using it** — [usage](#usage) · [block kinds](#block-kinds) · [composing the shop](#composing-the-shop) · [languages](#languages) · [commands](#commands) · [export / import products](#export--import-products) · [sitemap, llms.txt and health check](#sitemap-llmstxt-and-health-check) · [structured data](#structured-data) · [Google Merchant Center feed](#google-merchant-center-feed) · [wish list](#wish-list) · [back-in-stock alerts](#back-in-stock-alerts) · [customer ratings](#customer-ratings) · [test mode](#test-mode) · [the demo catalog](#the-demo-catalog) · [what the site's dashboard gets](#what-the-sites-dashboard-gets) · [guided projects](#guided-projects)
 
 ## Features
 
@@ -64,9 +64,10 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - EasyAdmin CRUD for products, written hidden, ordered by dragging the index rows, duplicated with everything they hold, kept as templates new products are drawn from, kept in a recycle bin once deleted, and exported as SQL/CSV/JSON from their index
 - Gift cards sold as an ordinary item, one card issued per unit once the order is paid, its visual built in the
   back-office and copied onto the card (see [gift cards](#gift-cards))
-- Test mode switched from the dashboard, warning every visitor that nothing is really sold
+- Test mode switched from the dashboard, warning every visitor that nothing is really sold and keeping the shop out of search engines
+- Google Merchant Center feed, one per language the products are written in, built from the sheets' own structured data (see [Google Merchant Center feed](#google-merchant-center-feed))
 - Made-up catalog shipped as data, rendering the block showcase and seeding a demo site's shop (see [the demo catalog](#the-demo-catalog))
-- Ten replayable guided projects contributed to the dashboard, via ConfigBundle's `GuidedProjectProviderInterface`, walking a category, the shop's own page, a product, its templates, its translation, the downloadable, the gift card, the test mode, the export and the recycle bin (see [guided projects](#guided-projects))
+- Eleven replayable guided projects contributed to the dashboard, via ConfigBundle's `GuidedProjectProviderInterface`, walking a category, the shop's own page, a product, its templates, its translation, the downloadable, the gift card, the test mode, the export, the Merchant Center feed and the recycle bin (see [guided projects](#guided-projects))
 - Four skills written for the coding agents of the sites installing this bundle, shipped in the package and read straight from `vendor/`
 
 ---
@@ -533,7 +534,7 @@ to, and the download links of the baskets, which belong to the payments rather t
 
 ### Written by another bundle's catalog
 
-`ProductCatalogWriter` is the shop's side of UiBundle's `ProductCatalogWriterInterface`: a bundle holding a catalog of its own (BookBundle and its book files) writes its products here, each found again under the `catalogKey` it was written with. The product is created once, hidden like any new one, its title and text the shop's from then on; its items follow the catalog - title (the slug kept), text in every language it gives, price, barcode (`gtin`, the editor's kept when the catalog gives none), and the file, copied in again only when its size or date changed. An item the catalog stops listing is hidden, never deleted, and an item the editor hid stays hidden. A new item the catalog sends without a price is written at 0, for the editor to set.
+`ProductCatalogWriter` is the shop's side of UiBundle's `ProductCatalogWriterInterface`: a bundle holding a catalog of its own (BookBundle and its book files) writes its products here, each found again under the `catalogKey` it was written with. The product is created once, hidden like any new one, its title and text the shop's from then on; its items follow the catalog - title (the slug kept), text in every language it gives, price, barcode (`gtin`, the editor's kept when the catalog gives none), and the file, copied in again only when its size or date changed. An item the catalog stops listing is hidden, never deleted, and an item the editor hid stays hidden. A new item the catalog sends without a price is written at 0, for the editor to set. The product's `language` follows the catalog's when it gives one.
 
 ---
 
@@ -715,6 +716,20 @@ publishes nothing.
 
 ---
 
+## Google Merchant Center feed
+
+`/shop/merchant-feed.xml` (route `shop_merchant_feed`) serves the products to Google Merchant Center in its RSS 2.0
+dialect, built by `ProductMerchantFeed` from the very graph the sheet publishes, so the feed and the page never state
+two prices. `Product.language` says which language a product is written in, empty for the site's own: the bare url
+lists the products written in the site's language, `?language=en` those written in English. A free item, an item
+priced in no currency and a digital book Google refuses (an audiobook is kept) are left out.
+
+The feed answers 404 while `site-url` is not configured and while the shop is in test mode; it is cached an hour and
+carries `X-Robots-Tag: noindex`. The urls to give Merchant Center, one per language present in the catalog, are shown
+on the shop's index screen of the back-office, which the guided project *List on Google Shopping* walks to.
+
+---
+
 ## Wish list
 
 `shop-favorites`, on out of the box, puts UiBundle's heart on the product sheet — next to the rating widget and
@@ -830,7 +845,9 @@ a card is put in the basket the way anything else is.
 
 `shop-test-mode` is the third configuration entry this bundle declares. Switched on - from the dashboard's tile
 rather than by hand - every page of the shop carries a warning banner telling the visitor that nothing is really
-sold and nothing will be shipped, which is what a catalog still being filled in owes whoever lands on it.
+sold and nothing will be shipped, which is what a catalog still being filled in owes whoever lands on it. The shop
+is also kept out of search engines: every page carries `noindex, follow`, its sitemap is emptied and the Merchant
+Center feed answers 404, all three back the moment the switch is turned off.
 
 It speaks for the catalog alone: PaymentBundle announces its own `payment-test-mode` with its own banner in the
 basket, where the charge actually happens, so a visitor is never warned twice over the same page. Its wording is
@@ -890,14 +907,14 @@ Installed alongside ConfigBundle, this bundle contributes on its own, with nothi
 
 ## Guided projects
 
-`ShopGuidedProjectProvider` (ConfigBundle's `GuidedProjectProviderInterface`) contributes ten replayable
+`ShopGuidedProjectProvider` (ConfigBundle's `GuidedProjectProviderInterface`) contributes eleven replayable
 exercises to the dashboard's "Guided projects" panel, in the order a catalog is actually filled: **creating a
 category**, which classes the products and is the one thing a shop needs before it holds anything to sell,
 **setting up the shop's own page**, the sentence a visitor is greeted with and the blocks composed above the
 listing, **creating a product** with the item carrying its price — one sheet without the other sells nothing —,
 **creating products from a template**, which is never made from *New*, **translating a product** from its language screen, **selling a file** rather than a parcel, **selling a gift
 card**, whose worth is typed on its item, **rehearsing the shop** through the test mode tile, **moving a catalog**
-to another site, and **the recycle bin**, which walks the deletion that is not one, the way back out and the one
+to another site, **listing on Google Shopping** through the Merchant Center feed, and **the recycle bin**, which walks the deletion that is not one, the way back out and the one
 that destroys. Nothing to register — the provider is picked up automatically.
 
 Only the opening step of each carries an `url`, which is why creating a category and creating a product are two
@@ -908,18 +925,18 @@ back on that very step:
 | Pointed at | What it is |
 | --- | --- |
 | `.action-new`, `.action-edit`, `.action-saveAndReturn`, `.action-createTemplate`, `.action-templates`, `.action-createProduct`, `.action-translate`, `.action-exportSelection`, `.action-delete`, `.action-trash`, `.action-restore`, `.action-deletePermanently` | EasyAdmin builds an `action-<name>` class from the action's own name — `saveAndReturn`, not `save`. The translate one is only drawn where the site declares several languages, and the step reads as well without the outline |
-| `#Product_title`, `#Product_categories + .ts-wrapper`, `#Product_age`, `#Product_availableAt`, `#Product_hidden`, `#Product_giftCardText`, `#Product_giftCardScratch`, `#ProductCategory_name`, `#ProductCategory_slug`, `#ProductCategory_position`, `#ShopSettings_intro` | plain form fields, pointed at through their rendered id — an `AssociationField` rendered by TomSelect through the wrapper it inserts after the original select |
+| `#Product_title`, `#Product_categories + .ts-wrapper`, `#Product_language + .ts-wrapper`, `#Product_age`, `#Product_availableAt`, `#Product_hidden`, `#Product_giftCardText`, `#Product_giftCardScratch`, `#ProductCategory_name`, `#ProductCategory_slug`, `#ProductCategory_position`, `#ShopSettings_intro` | plain form fields, pointed at through their rendered id — an `AssociationField` rendered by TomSelect through the wrapper it inserts after the original select |
 | `trix-editor[input="Product_description"]`, `trix-editor[input="ProductCategory_description"]` | the editor itself, `#…_description` being the hidden input trix writes into |
-| `[data-shop-product-items]`, `[data-shop-item-translations]`, `[data-shop-settings-blocks]` | markers this bundle's own CRUD controllers set on collections EasyAdmin numbers, which therefore carry no stable id |
+| `[data-shop-product-items]`, `[data-shop-item-translations]`, `[data-shop-settings-blocks]`, `[data-shop-merchant-feed]` | markers this bundle's own CRUD controllers and templates set on what EasyAdmin numbers or does not render as a field, which therefore carry no stable id |
 | `[data-content-locales]` | the language tabs ConfigBundle draws above an edit screen |
 | `#form-batch-checkbox-all` | EasyAdmin's own select-all of the index, checked before the export button: the batch actions stay hidden until a row is |
 | `form[action$="/shop/test-mode-toggle"] button` | the dashboard shortcut of the test mode, the one step leaving this bundle's own screens |
 
-All ten are gated by `site-role-admin`, the bar the three management screens set on their own index: a parcours is
+All eleven are gated by `site-role-admin`, the bar the three management screens set on their own index: a parcours is
 never offered to someone its very first step turns away. Their `order` (8010 to 8070) runs the 8000 block
 `GuidedProjectProviderInterface` reserves this bundle — the same docblock naming every other bundle's block, so a
 range is read there rather than recopied here. The step of 10 it states leaves room to slip a parcours where it
-belongs rather than appending it at the end, which is what 8015, 8022 and 8025 are. Each step carries a `narration` of its
+belongs rather than appending it at the end, which is what 8015, 8022, 8025 and 8065 are. Each step carries a `narration` of its
 own, and each parcours one for its title, so the back-office films say a text written to be heard rather than read.
 
 ---

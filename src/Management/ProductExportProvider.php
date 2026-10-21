@@ -86,6 +86,7 @@ class ProductExportProvider implements ExportProviderInterface
             'title' => $product->getTitle(),
             'description' => $product->getDescription(),
             'brand' => $product->getBrand(),
+            'language' => $product->getLanguage(),
             // What the sheet warns the buyer of, the archive being a faithful copy: without it a re-import drops the warning and the "audience" node built from it
             'age' => $product->getAge(),
             'position' => $product->getPosition(),

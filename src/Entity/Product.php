@@ -56,6 +56,11 @@ class Product implements \Stringable, HasBlocksInterface
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $brand = null;
 
+    // The language the product is written in, null for the site's own writing language - a translation lays another language over its texts, this says which one they were written in, which is what the merchant feed is split on (see ProductMerchantFeed)
+    #[Assert\Length(max: 5)]
+    #[ORM\Column(length: 5, nullable: true)]
+    private ?string $language = null;
+
     // The age the product is meant for, written as a range ("3-8", "15-"), published as the graph's PeopleAudience. A string and not two columns: it is typed as it is printed, and schema.org's own two ages are read off it (see ProductSnippetBuilder), which is why the very format that builder reads is asked of the editor rather than accepted and then dropped in silence - the length being the column's own, which a free text field would overrun into a database error
     #[Assert\Length(max: 20)]
     #[Assert\Regex(pattern: '/^\s*\d{1,3}\s*(?:-\s*\d{0,3})?\s*$/', message: 'label.age_invalid')]
@@ -469,6 +474,18 @@ class Product implements \Stringable, HasBlocksInterface
     public function setBrand(?string $brand): static
     {
         $this->brand = $brand;
+
+        return $this;
+    }
+
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(?string $language): static
+    {
+        $this->language = $language;
 
         return $this;
     }

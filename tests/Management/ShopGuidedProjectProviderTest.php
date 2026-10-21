@@ -69,10 +69,10 @@ class ShopGuidedProjectProviderTest extends TestCase
         $projects = $this->createProvider()->getGuidedProjects();
 
         $this->assertSame(
-            ['shop-category', 'shop-index', 'shop-product', 'shop-template', 'shop-translate', 'shop-downloadable', 'shop-gift-card', 'shop-test-mode', 'shop-export', 'shop-trash'],
+            ['shop-category', 'shop-index', 'shop-product', 'shop-template', 'shop-translate', 'shop-downloadable', 'shop-gift-card', 'shop-test-mode', 'shop-export', 'shop-merchant-feed', 'shop-trash'],
             array_column($projects, 'slug'),
         );
-        $this->assertSame([8010, 8015, 8020, 8022, 8025, 8030, 8040, 8050, 8060, 8070], array_column($projects, 'order'));
+        $this->assertSame([8010, 8015, 8020, 8022, 8025, 8030, 8040, 8050, 8060, 8065, 8070], array_column($projects, 'order'));
     }
 
     public function testEverySlugIsPrefixedWithTheBundleName(): void
@@ -124,14 +124,14 @@ class ShopGuidedProjectProviderTest extends TestCase
         }
     }
 
-    // Each parcours opens on the listing its task starts from, the seven written from the products one included - the shop's own page having a screen of its own, which opens straight on the single row it edits
+    // Each parcours opens on the listing its task starts from, the seven written from the products one included - the shop's own page having a screen of its own, which opens straight on the single row it edits, and which the merchant feed opens on too
     public function testEachCrudProjectOpensOnItsOwnListing(): void
     {
         $controllers = [];
         $this->createProvider($controllers)->getGuidedProjects();
 
         $this->assertSame(
-            ['ProductCategoryCrudController', 'ShopSettingsCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController'],
+            ['ProductCategoryCrudController', 'ShopSettingsCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ProductCrudController', 'ShopSettingsCrudController', 'ProductCrudController'],
             array_map(static fn (string $fqcn): string => basename(str_replace('\\', '/', $fqcn)), $controllers),
         );
     }
@@ -278,6 +278,14 @@ class ShopGuidedProjectProviderTest extends TestCase
         $source = (string) file_get_contents(\dirname(__DIR__, 2) . '/src/Controller/Management/ShopSettingsCrudController.php');
 
         $this->assertStringContainsString("'data-shop-settings-blocks' => '1'", $source);
+    }
+
+    // The feed's urls are not a field, so the project points at the attribute the shop's own screen sets around them
+    public function testTheMerchantFeedUrlsAreHighlightedByTheirOwnAttribute(): void
+    {
+        $source = (string) file_get_contents(\dirname(__DIR__, 2) . '/templates/management/shop_settings_crud_edit.html.twig');
+
+        $this->assertStringContainsString('<div data-shop-merchant-feed>', $source);
     }
 
     // A label or description with no translation reads as its own key in the panel, in whichever locale it is missing from

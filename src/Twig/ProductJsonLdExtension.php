@@ -12,10 +12,9 @@ namespace c975L\ShopBundle\Twig;
 
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductCategory;
+use c975L\ShopBundle\Service\ProductImageUrlResolver;
 use c975L\ShopBundle\Service\ProductSnippetBuilder;
 use c975L\ShopBundle\Service\ShopBreadcrumbBuilder;
-use Symfony\Component\Asset\Packages;
-use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Attribute\AsTwigFunction;
 
@@ -25,8 +24,7 @@ class ProductJsonLdExtension
     public function __construct(
         private readonly ProductSnippetBuilder $snippetBuilder,
         private readonly ShopBreadcrumbBuilder $breadcrumbBuilder,
-        private readonly Packages $packages,
-        private readonly UrlHelper $urlHelper,
+        private readonly ProductImageUrlResolver $imageUrlResolver,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
@@ -35,7 +33,7 @@ class ProductJsonLdExtension
     #[AsTwigFunction('product_json_ld', isSafe: ['html'])]
     public function productJsonLd(Product $product, ?string $imageUrl = null, ?string $url = null, bool $withRating = false): string
     {
-        return $this->snippetBuilder->buildJson($this->snippetBuilder->buildProduct($product, $imageUrl, $url, $this->itemImageUrls($product), $withRating));
+        return $this->snippetBuilder->buildJson($this->snippetBuilder->buildProduct($product, $imageUrl, $url, $this->imageUrlResolver->forItems($product), $withRating));
     }
 
     /**
@@ -72,20 +70,5 @@ class ProductJsonLdExtension
     public function breadcrumbJsonLd(Product | ProductCategory $subject): string
     {
         return $this->snippetBuilder->buildJson($this->snippetBuilder->buildBreadcrumb($this->breadcrumb($subject)));
-    }
-
-    // Every item's picture as an absolute url, keyed by its slug - the asset() the item's card applies to the same media, made absolute like the sheet does for the product's own image, and resolved here so the builder keeps knowing nothing about urls
-    private function itemImageUrls(Product $product): array
-    {
-        $urls = [];
-
-        foreach ($product->getVisibleItems() as $item) {
-            $media = $item->getMedia();
-            if (null !== $media && null !== $media->getName()) {
-                $urls[trim((string) $item->getSlug())] = $this->urlHelper->getAbsoluteUrl($this->packages->getUrl($media->getName()));
-            }
-        }
-
-        return $urls;
     }
 }

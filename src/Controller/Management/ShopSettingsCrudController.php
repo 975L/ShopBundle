@@ -15,6 +15,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ShopBundle\Entity\ShopSettings;
 use c975L\ShopBundle\Management\ShopBlockOwnerResolver;
 use c975L\ShopBundle\Repository\ShopSettingsRepository;
+use c975L\ShopBundle\Service\ProductMerchantFeed;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Service\BlockFocusUrl;
@@ -51,6 +52,7 @@ class ShopSettingsCrudController extends AbstractCrudController
         private readonly ShopSettingsRepository $shopSettingsRepository,
         private readonly ContentLocaleScreen $contentLocaleScreen,
         private readonly ShopTranslator $shopTranslator,
+        private readonly ProductMerchantFeed $merchantFeed,
     ) {
     }
 
@@ -172,11 +174,16 @@ class ShopSettingsCrudController extends AbstractCrudController
         ];
     }
 
-    // What the language tabs at the top of the edit screen need, and nothing at all where the row is not saved yet or the site declares a single language
+    // What the language tabs at the top of the edit screen need, and nothing at all where the row is not saved yet or the site declares a single language - plus the merchant feed's urls
     #[\Override]
     public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
     {
         $responseParameters = parent::configureResponseParameters($responseParameters);
+
+        // The urls Merchant Center is given, shown under the screen's own line on the writing language's screen only, like that line
+        if (null === $this->contentLocale()) {
+            $responseParameters->set('merchant_feed_urls', $this->merchantFeed->urls());
+        }
 
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
         $id = $entity instanceof ShopSettings ? $entity->getId() : null;

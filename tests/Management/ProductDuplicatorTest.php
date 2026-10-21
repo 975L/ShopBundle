@@ -234,6 +234,14 @@ class ProductDuplicatorTest extends TestCase
         $this->assertSame('3-8', $copy->getAge());
     }
 
+    // A copy is written in the same language, which is the feed it is listed in
+    public function testTheCopyKeepsTheLanguage(): void
+    {
+        $copy = $this->createDuplicator()->duplicate($this->createProduct()->setLanguage('en'));
+
+        $this->assertSame('en', $copy->getLanguage());
+    }
+
     // A reference and a barcode name one item and one only: two offers publishing the same GTIN is the very claim the column exists to prevent
     public function testTheCopyTakesNeitherTheReferenceNorTheBarcode(): void
     {

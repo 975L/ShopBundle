@@ -17,6 +17,7 @@ use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Entity\ProductItemMedia;
+use c975L\ShopBundle\Service\ProductImageUrlResolver;
 use c975L\ShopBundle\Service\ProductSnippetBuilder;
 use c975L\ShopBundle\Service\ProductStateService;
 use c975L\ShopBundle\Service\ShopBreadcrumbBuilder;
@@ -65,8 +66,7 @@ class ProductJsonLdExtensionTest extends TestCase
                 new ShopPublicUrlResolver($configService, new LocalizedUrlGenerator($urlGenerator, new SiteLocales(['fr'], 'fr'), $requestStack), $urlGenerator, new SiteLocales(['fr'], 'fr')),
                 $translator,
             ),
-            new Packages(new PathPackage('/', new EmptyVersionStrategy())),
-            new UrlHelper($requestStack),
+            new ProductImageUrlResolver(new Packages(new PathPackage('/', new EmptyVersionStrategy())), new UrlHelper($requestStack)),
             $urlGenerator,
         );
     }

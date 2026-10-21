@@ -5,6 +5,20 @@
 
     {% if content_locale|default(null) is null %}
         <p>{{ ('label.info_shop_index'|trans({}, 'shop')) }}</p>
+
+        {# The urls to give Merchant Center, one per language a product is written in #}
+        <div data-shop-merchant-feed>
+            <p>{{ ('label.info_merchant_feed'|trans({}, 'shop')) }}</p>
+            {% if merchant_feed_urls|default([]) is empty %}
+                <p>{{ ('label.info_merchant_feed_no_site_url'|trans({}, 'shop')) }}</p>
+            {% else %}
+                <ul>
+                    {% for language, url in merchant_feed_urls %}
+                        <li><code>{{ url }}</code> ({{ language|language_name }})</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
     {% endif %}
 
     {{ parent() }}

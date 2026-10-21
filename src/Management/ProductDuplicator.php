@@ -63,6 +63,7 @@ class ProductDuplicator
             ->setSlug($this->uniqueSlug($title))
             ->setDescription((string) $product->getDescription())
             ->setBrand($product->getBrand())
+            ->setLanguage($product->getLanguage())
             ->setAge($product->getAge())
             ->setAvailableAt($product->getAvailableAt())
             // The wording printed on the card and the way it is revealed: they belong to the offer, not to the one product that carried it

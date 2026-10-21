@@ -42,6 +42,7 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
             $this->giftCardProject(),
             $this->testModeProject(),
             $this->exportProject(),
+            $this->merchantFeedProject(),
             $this->trashProject(),
         ];
     }
@@ -239,6 +240,13 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                 'description' => 'description.guided_step_shop_product_brand',
                 'narration' => 'narration.guided_step_shop_product_brand',
                 'highlight' => '#Product_brand',
+            ],
+            [
+                'label' => 'label.guided_step_shop_product_language',
+                'description' => 'description.guided_step_shop_product_language',
+                'narration' => 'narration.guided_step_shop_product_language',
+                // LanguageField is rendered by tom-select like the categories above
+                'highlight' => '#Product_language + .ts-wrapper',
             ],
             [
                 'label' => 'label.guided_step_shop_product_age',
@@ -576,6 +584,39 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_shop_export_import',
                     'description' => 'description.guided_step_shop_export_import',
                     'narration' => 'narration.guided_step_shop_export_import',
+                ],
+            ],
+        ];
+    }
+
+    // Handing the catalog to Google Merchant Center, the one task whose last gesture happens outside the site - what the shop gives is a url per language, shown on its index screen
+    private function merchantFeedProject(): array
+    {
+        return [
+            'slug' => 'shop-merchant-feed',
+            'label' => 'label.guided_project_shop_merchant_feed',
+            'description' => 'description.guided_project_shop_merchant_feed',
+            'narration' => 'narration.guided_project_shop_merchant_feed',
+            'translation_domain' => 'shop',
+            'order' => 8065,
+            'role' => $this->roleNeeded(),
+            'steps' => [
+                [
+                    'label' => 'label.guided_step_shop_merchant_feed_open',
+                    'description' => 'description.guided_step_shop_merchant_feed_open',
+                    'narration' => 'narration.guided_step_shop_merchant_feed_open',
+                    'url' => $this->indexUrl(ShopSettingsCrudController::class),
+                ],
+                [
+                    'label' => 'label.guided_step_shop_merchant_feed_urls',
+                    'description' => 'description.guided_step_shop_merchant_feed_urls',
+                    'narration' => 'narration.guided_step_shop_merchant_feed_urls',
+                    'highlight' => '[data-shop-merchant-feed]',
+                ],
+                [
+                    'label' => 'label.guided_step_shop_merchant_feed_paste',
+                    'description' => 'description.guided_step_shop_merchant_feed_paste',
+                    'narration' => 'narration.guided_step_shop_merchant_feed_paste',
                 ],
             ],
         ];

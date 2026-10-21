@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Management;
 
 use c975L\ConfigBundle\Management\SitemapProviderInterface;
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ShopBundle\Service\ProductCategoryServiceInterface;
 use c975L\ShopBundle\Service\ProductServiceInterface;
 use c975L\ShopBundle\Service\ShopPublicUrlResolver;
@@ -24,6 +25,7 @@ class ShopSitemapProvider implements SitemapProviderInterface
         private readonly ShopTranslatedLocales $shopTranslatedLocales,
         private readonly ProductServiceInterface $productService,
         private readonly ProductCategoryServiceInterface $productCategoryService,
+        private readonly ConfigServiceInterface $configService,
     ) {
     }
 
@@ -35,6 +37,11 @@ class ShopSitemapProvider implements SitemapProviderInterface
     // A sitemap only accepts absolute urls, so there's nothing to declare before "site-url" is configured - which is what the resolver answers null for. Every url is built through it rather than by hand, so the sitemap can never drift from the routes themselves, and each screen is declared once per language it answers in: a language's url is only ever crawled if the sitemap names it, and the group alone leaves the other languages undeclared (see SitePageSitemapProvider, whose reading this follows)
     public function getUrls(): array
     {
+        // A shop in test mode carries a noindex on every page (see layout.html.twig), and a sitemap declaring noindex urls is a Search Console error
+        if ((bool) $this->configService->get('shop-test-mode')) {
+            return [];
+        }
+
         $shopUrl = $this->shopPublicUrlResolver->resolve('shop_index');
         if (null === $shopUrl) {
             return [];

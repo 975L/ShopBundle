@@ -26,6 +26,10 @@
                 <source>narration.guided_project_shop_index</source>
                 <target>Let's settle the page the shop opens on: the sentence it greets a visitor with, and the blocks composed above the listing.</target>
             </trans-unit>
+            <trans-unit id="PoR_.Dx">
+                <source>narration.guided_project_shop_merchant_feed</source>
+                <target>Let's hand the catalog to Google Merchant Center, which will read it again every day to show it in Google Shopping.</target>
+            </trans-unit>
             <trans-unit id="rs8nYa9">
                 <source>narration.guided_project_shop_product</source>
                 <target>Let's write a product sheet, and the item that carries what the visitor pays. One without the other sells nothing.</target>
@@ -162,6 +166,18 @@
                 <source>narration.guided_step_shop_index_save</source>
                 <target>Save. The shop's index shows the line and the blocks as soon as the row is saved.</target>
             </trans-unit>
+            <trans-unit id="tHX83WB">
+                <source>narration.guided_step_shop_merchant_feed_open</source>
+                <target>The feed's addresses are shown on the index page's screen: the panel takes you there.</target>
+            </trans-unit>
+            <trans-unit id="CCfmR44">
+                <source>narration.guided_step_shop_merchant_feed_paste</source>
+                <target>In Merchant Center, add a scheduled-fetch product source for each address, with its language. While the shop is in test mode, the feed is not served.</target>
+            </trans-unit>
+            <trans-unit id="3sBSa6y">
+                <source>narration.guided_step_shop_merchant_feed_urls</source>
+                <target>Here is one address per language your products are written in, each listing the products of its language. If nothing shows, the site's address is not configured yet.</target>
+            </trans-unit>
             <trans-unit id="XJyQ1RX">
                 <source>narration.guided_step_shop_product_age</source>
                 <target>Say who it is for. Write the age as a range of figures, three dash eight, or fifteen dash from fifteen up: the sheet warns the visitor with it, and search engines read the audience off it.</target>
@@ -193,6 +209,10 @@
             <trans-unit id="1wuchEH">
                 <source>narration.guided_step_shop_product_items</source>
                 <target>Move down to the items. The product says what it is; its items say what is bought, at what price, in which condition. The weight of each item is what the shipping cost is computed on.</target>
+            </trans-unit>
+            <trans-unit id="3VpdGJi">
+                <source>narration.guided_step_shop_product_language</source>
+                <target>If the product is written in another language than the site's, pick it here: it then joins the Google Merchant Center feed of that language. Otherwise move on: the field is optional.</target>
             </trans-unit>
             <trans-unit id="ekzkn6X">
                 <source>narration.guided_step_shop_product_medias</source>
@@ -248,11 +268,11 @@
             </trans-unit>
             <trans-unit id="cWMR.ej">
                 <source>narration.guided_step_shop_test_mode_banner</source>
-                <target>The visitor then sees a banner on every page of the shop, saying it is being set up. The payments have a test mode of their own, and the two are separate.</target>
+                <target>The visitor then sees a banner on every page of the shop, saying it is being set up, and the search engines are kept away until it is done. The payments have a test mode of their own, and the two are separate.</target>
             </trans-unit>
             <trans-unit id="wm5GV4w">
                 <source>narration.guided_step_shop_test_mode_disable</source>
-                <target>Turn it back off with the same button, the day the catalog is ready to be read as it stands.</target>
+                <target>Turn it back off with the same button, the day the catalog is ready to be read as it stands: the shop is open to the search engines again.</target>
             </trans-unit>
             <trans-unit id="WbfdxFm">
                 <source>narration.guided_step_shop_test_mode_enable</source>

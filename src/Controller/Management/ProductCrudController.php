@@ -63,6 +63,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\LanguageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
@@ -204,6 +205,11 @@ class ProductCrudController extends AbstractCrudController
             TextField::new('brand')
                 ->setLabel(t('label.brand', [], 'shop'))
                 ->setHelp(t('label.brand_help', [], 'shop'))
+                ->setRequired(false)
+                ->hideOnIndex(),
+            LanguageField::new('language')
+                ->setLabel(t('label.language', [], 'shop'))
+                ->setHelp(t('label.language_help', [], 'shop'))
                 ->setRequired(false)
                 ->hideOnIndex(),
             TextField::new('age')

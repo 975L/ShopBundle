@@ -26,6 +26,10 @@
                 <source>narration.guided_project_shop_index</source>
                 <target>Ajustemos la página con la que abre la tienda: la frase que acoge al visitante y los bloques compuestos encima de la lista.</target>
             </trans-unit>
+            <trans-unit id="PoR_.Dx">
+                <source>narration.guided_project_shop_merchant_feed</source>
+                <target>Entreguemos el catálogo a Google Merchant Center, que lo releerá cada día para mostrarlo en Google Shopping.</target>
+            </trans-unit>
             <trans-unit id="rs8nYa9">
                 <source>narration.guided_project_shop_product</source>
                 <target>Escribamos una ficha de producto y el artículo que lleva lo que paga el visitante. Uno sin el otro no vende nada.</target>
@@ -162,6 +166,18 @@
                 <source>narration.guided_step_shop_index_save</source>
                 <target>Guarde. El índice de la tienda muestra la frase y los bloques en cuanto se guarda la fila.</target>
             </trans-unit>
+            <trans-unit id="tHX83WB">
+                <source>narration.guided_step_shop_merchant_feed_open</source>
+                <target>Las direcciones del feed se muestran en la pantalla de la página de índice: el panel le lleva allí.</target>
+            </trans-unit>
+            <trans-unit id="CCfmR44">
+                <source>narration.guided_step_shop_merchant_feed_paste</source>
+                <target>En Merchant Center, añada una fuente de productos por recuperación programada para cada dirección, con su idioma. Mientras la tienda esté en modo de prueba, el feed no se sirve.</target>
+            </trans-unit>
+            <trans-unit id="3sBSa6y">
+                <source>narration.guided_step_shop_merchant_feed_urls</source>
+                <target>Aquí tiene una dirección por idioma en el que están escritos sus productos, cada una con los productos de su idioma. Si no se muestra nada, la dirección del sitio aún no está configurada.</target>
+            </trans-unit>
             <trans-unit id="XJyQ1RX">
                 <source>narration.guided_step_shop_product_age</source>
                 <target>Indique a quién se dirige. Escriba la edad como un intervalo de cifras, tres guion ocho, o quince guion a partir de quince años: la ficha saca de ahí su advertencia, y los buscadores su público.</target>
@@ -193,6 +209,10 @@
             <trans-unit id="1wuchEH">
                 <source>narration.guided_step_shop_product_items</source>
                 <target>Baje hasta los artículos. El producto dice qué es; sus artículos dicen qué se compra, a qué precio y en qué estado. El peso de cada artículo es aquel sobre el que se calculan los gastos de envío.</target>
+            </trans-unit>
+            <trans-unit id="3VpdGJi">
+                <source>narration.guided_step_shop_product_language</source>
+                <target>Si el producto está escrito en otro idioma que el del sitio, elíjalo aquí: se une entonces al feed de Google Merchant Center de ese idioma. Si no, continúe: el campo es opcional.</target>
             </trans-unit>
             <trans-unit id="ekzkn6X">
                 <source>narration.guided_step_shop_product_medias</source>
@@ -248,11 +268,11 @@
             </trans-unit>
             <trans-unit id="cWMR.ej">
                 <source>narration.guided_step_shop_test_mode_banner</source>
-                <target>El visitante ve entonces un banner en cada página de la tienda, que dice que se está montando. Los pagos tienen su propio modo de prueba, y ambos son distintos.</target>
+                <target>El visitante ve entonces un banner en cada página de la tienda, que dice que se está montando, y los motores de búsqueda se mantienen al margen hasta el final. Los pagos tienen su propio modo de prueba, y ambos son distintos.</target>
             </trans-unit>
             <trans-unit id="wm5GV4w">
                 <source>narration.guided_step_shop_test_mode_disable</source>
-                <target>Desactívelo con el mismo botón, el día en que el catálogo esté listo para leerse tal cual.</target>
+                <target>Desactívelo con el mismo botón, el día en que el catálogo esté listo para leerse tal cual: la tienda vuelve a ser legible por los motores de búsqueda.</target>
             </trans-unit>
             <trans-unit id="WbfdxFm">
                 <source>narration.guided_step_shop_test_mode_enable</source>

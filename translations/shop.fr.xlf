@@ -94,6 +94,10 @@
                 <source>description.guided_project_shop_index</source>
                 <target>La page sur laquelle la boutique s'ouvre : la phrase qui accueille le visiteur, et les blocks composés au-dessus de la liste.</target>
             </trans-unit>
+            <trans-unit id="DrD_ZgP">
+                <source>description.guided_project_shop_merchant_feed</source>
+                <target>Donner le catalogue à Google Merchant Center, qui le relit chaque jour pour l'afficher dans Google Shopping.</target>
+            </trans-unit>
             <trans-unit id="ucGRCvp">
                 <source>description.guided_project_shop_product</source>
                 <target>La fiche que lit le visiteur, et l'article qui porte ce qu'il paie : l'une sans l'autre ne vend rien.</target>
@@ -230,6 +234,18 @@
                 <source>description.guided_step_shop_index_save</source>
                 <target>L'index de la boutique affiche la phrase et les blocks dès que la ligne est enregistrée.</target>
             </trans-unit>
+            <trans-unit id="M7X8rir">
+                <source>description.guided_step_shop_merchant_feed_open</source>
+                <target>Les adresses du flux sont affichées sur l'écran de la page d'index de la boutique.</target>
+            </trans-unit>
+            <trans-unit id="4iQmh5b">
+                <source>description.guided_step_shop_merchant_feed_paste</source>
+                <target>Dans Merchant Center, une source de produits par récupération planifiée pour chaque adresse, avec sa langue - tant que la boutique est en mode test, le flux n'est pas servi.</target>
+            </trans-unit>
+            <trans-unit id="NnPK4u.">
+                <source>description.guided_step_shop_merchant_feed_urls</source>
+                <target>Une adresse par langue dans laquelle des produits sont écrits, chacune listant les produits de sa langue - rien ne s'affiche tant que l'adresse du site n'est pas configurée.</target>
+            </trans-unit>
             <trans-unit id="inThwdu">
                 <source>description.guided_step_shop_product_age</source>
                 <target>Un âge écrit comme une plage de chiffres, « 3-8 » ou « 15- » à partir de 15 ans : la fiche en tire son avertissement, et les moteurs de recherche son public.</target>
@@ -261,6 +277,10 @@
             <trans-unit id="ZPjQILJ">
                 <source>description.guided_step_shop_product_items</source>
                 <target>Le produit dit ce que c'est ; ses articles disent ce qui est acheté, à quel prix, dans quel état. Le poids de chaque article est celui sur lequel les frais de port sont calculés : un article laissé à zéro est expédié gratuitement.</target>
+            </trans-unit>
+            <trans-unit id="7J2LAac">
+                <source>description.guided_step_shop_product_language</source>
+                <target>Facultative : la langue dans laquelle le produit est écrit, vide pour celle du site. C'est elle qui range le produit dans le flux Google Merchant Center de sa langue.</target>
             </trans-unit>
             <trans-unit id=".QC10dg">
                 <source>description.guided_step_shop_product_medias</source>
@@ -316,11 +336,11 @@
             </trans-unit>
             <trans-unit id="2_nEywQ">
                 <source>description.guided_step_shop_test_mode_banner</source>
-                <target>Un bandeau sur chaque page de la boutique, disant qu'elle est en cours d'installation - les paiements ont leur propre mode test, et les deux sont distincts.</target>
+                <target>Un bandeau sur chaque page de la boutique, disant qu'elle est en cours d'installation, et les moteurs de recherche tenus à l'écart jusqu'à la fin - les paiements ont leur propre mode test, et les deux sont distincts.</target>
             </trans-unit>
             <trans-unit id="gMRdMfy">
                 <source>description.guided_step_shop_test_mode_disable</source>
-                <target>Le même bouton, le jour où le catalogue est prêt à être lu tel quel.</target>
+                <target>Le même bouton, le jour où le catalogue est prêt à être lu tel quel : la boutique redevient lisible par les moteurs de recherche.</target>
             </trans-unit>
             <trans-unit id="JvkgUAk">
                 <source>description.guided_step_shop_test_mode_enable</source>
@@ -778,6 +798,10 @@
                 <source>label.guided_project_shop_index</source>
                 <target>Régler la page de la boutique</target>
             </trans-unit>
+            <trans-unit id="rBSB7eg">
+                <source>label.guided_project_shop_merchant_feed</source>
+                <target>Publier sur Google Shopping</target>
+            </trans-unit>
             <trans-unit id="2sYUII0">
                 <source>label.guided_project_shop_product</source>
                 <target>Créer un produit</target>
@@ -914,6 +938,18 @@
                 <source>label.guided_step_shop_index_save</source>
                 <target>Enregistrer</target>
             </trans-unit>
+            <trans-unit id="ltMnaKm">
+                <source>label.guided_step_shop_merchant_feed_open</source>
+                <target>Ouvrir la page de la boutique</target>
+            </trans-unit>
+            <trans-unit id="2lSNS9P">
+                <source>label.guided_step_shop_merchant_feed_paste</source>
+                <target>Les donner à Merchant Center</target>
+            </trans-unit>
+            <trans-unit id="u9YjcFD">
+                <source>label.guided_step_shop_merchant_feed_urls</source>
+                <target>Relever les adresses</target>
+            </trans-unit>
             <trans-unit id="ou2A4o9">
                 <source>label.guided_step_shop_product_age</source>
                 <target>Indiquer à qui il s'adresse</target>
@@ -945,6 +981,10 @@
             <trans-unit id="uyINRLX">
                 <source>label.guided_step_shop_product_items</source>
                 <target>Descendre aux articles</target>
+            </trans-unit>
+            <trans-unit id="hYGUKMW">
+                <source>label.guided_step_shop_product_language</source>
+                <target>Indiquer sa langue</target>
             </trans-unit>
             <trans-unit id="KkZxe54">
                 <source>label.guided_step_shop_product_medias</source>
@@ -1158,6 +1198,14 @@
                 <source>label.in_stock</source>
                 <target>En stock</target>
             </trans-unit>
+            <trans-unit id="8iYpE_k">
+                <source>label.info_merchant_feed</source>
+                <target>Le flux Google Merchant Center : l'adresse à donner à Merchant Center, une par langue dans laquelle des produits sont écrits.</target>
+            </trans-unit>
+            <trans-unit id="Z80EvFO">
+                <source>label.info_merchant_feed_no_site_url</source>
+                <target>Configurez d'abord l'adresse du site : Merchant Center n'accepte que des adresses complètes.</target>
+            </trans-unit>
             <trans-unit id="Mvnz8pI">
                 <source>label.info_product</source>
                 <target>Les produits sont affichés dans la boutique par position croissante, puis par titre.</target>
@@ -1213,6 +1261,14 @@
             <trans-unit id="HBJI6qv">
                 <source>label.items</source>
                 <target>Articles</target>
+            </trans-unit>
+            <trans-unit id="Ogsv.lD">
+                <source>label.language</source>
+                <target>Langue</target>
+            </trans-unit>
+            <trans-unit id="metSQ0G">
+                <source>label.language_help</source>
+                <target>La langue dans laquelle le produit est écrit. Vide pour la langue du site ; un livre la reçoit de sa fiche. Sépare le flux Google Merchant Center par langue.</target>
             </trans-unit>
             <trans-unit id="d9tKXhO">
                 <source>label.limited_quantity</source>

@@ -204,6 +204,20 @@ class ProductCatalogWriterTest extends TestCase
         $this->assertSame('9782953285918', $created->getItems()->first()->getGtin());
     }
 
+    // The product takes the language the catalog writes it in, and keeps its own when the catalog gives none
+    public function testTheProductTakesTheCatalogsLanguage(): void
+    {
+        $product = new Product()->setCatalogKey('book-12')->setSlug('le-loup')->setLanguage('fr');
+        $items = [new CatalogProductItem('book-12-digital-epub', 'Format EPUB', $this->projectDir . '/loup.epub', 299)];
+
+        $persisted = [];
+        $this->writer($product, $persisted)->write(new CatalogProduct('book-12', 'Le Loup', '<p>Un loup.</p>', $items));
+        $this->assertSame('fr', $product->getLanguage());
+
+        $this->writer($product, $persisted)->write(new CatalogProduct('book-12', 'The Wolf', '<p>A wolf.</p>', $items, language: 'en'));
+        $this->assertSame('en', $product->getLanguage());
+    }
+
     // The catalog's other languages are stored as the item's translations, its default one written on the row
     public function testOtherLanguagesAreStoredAsTranslations(): void
     {

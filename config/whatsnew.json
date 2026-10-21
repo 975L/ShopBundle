@@ -6,6 +6,21 @@
                 "en": "Your books' barcodes now fill in on their own in your shop, and the one you typed is kept when the book has none.",
                 "fr": "Le code-barres de vos livres se remplit désormais tout seul dans votre boutique, et celui que vous aviez saisi est conservé quand le livre n'en a pas.",
                 "es": "El código de barras de sus libros se rellena ahora solo en su tienda, y el que usted había introducido se conserva cuando el libro no tiene ninguno."
+            },
+            {
+                "en": "Your products can now appear on Google Shopping: the shop's page in the back office gives you the address to hand to Google Merchant Center, one per language.",
+                "fr": "Vos produits peuvent désormais apparaître sur Google Shopping : la page de la boutique du back-office vous donne l'adresse à confier à Google Merchant Center, une par langue.",
+                "es": "Sus productos ya pueden aparecer en Google Shopping: la página de la tienda del back-office le da la dirección que confiar a Google Merchant Center, una por idioma."
+            },
+            {
+                "en": "You can now say which language each product is written in, and your books get theirs on their own.",
+                "fr": "Vous pouvez désormais indiquer la langue dans laquelle chaque produit est écrit, et vos livres reçoivent la leur tout seuls.",
+                "es": "Ahora puede indicar el idioma en el que está escrito cada producto, y sus libros reciben el suyo solos."
+            },
+            {
+                "en": "While your shop is in test mode, search engines leave it alone until you switch it off.",
+                "fr": "Tant que votre boutique est en mode test, les moteurs de recherche la laissent de côté jusqu'à ce que vous le désactiviez.",
+                "es": "Mientras su tienda está en modo de prueba, los motores de búsqueda la dejan de lado hasta que lo desactive."
             }
         ]
     },

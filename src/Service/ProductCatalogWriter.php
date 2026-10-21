@@ -53,6 +53,11 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
         }
         $product ??= $this->create($catalogProduct);
 
+        // The language follows the catalog's, the one thing of the product besides its items that does: it says what the texts were written in, not how the editor dressed them
+        if (null !== $catalogProduct->language) {
+            $product->setLanguage($catalogProduct->language);
+        }
+
         $keys = [];
         $translations = [];
         foreach ($catalogProduct->items as $catalogItem) {

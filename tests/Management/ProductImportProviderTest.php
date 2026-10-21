@@ -274,6 +274,24 @@ class ProductImportProviderTest extends TestCase
         new Filesystem()->remove([$projectDir, $filesDir]);
     }
 
+    // The language comes back as the archive names it
+    public function testTheProductComesBackWithTheLanguageTheArchiveNames(): void
+    {
+        $projectDir = $this->createDir();
+        $filesDir = $this->createDir();
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+
+        $data = $this->productData();
+        unset($data['items'][0]['file']);
+        $data['language'] = 'en';
+
+        $this->createProvider($projectDir)->import([$data], $filesDir);
+
+        $this->assertSame('en', $this->persistedOf(Product::class)[0]->getLanguage());
+
+        new Filesystem()->remove([$projectDir, $filesDir]);
+    }
+
     // A template exported from one site is a template in the next, and one taken before the column existed comes back a product
     public function testTheProductComesBackATemplateWhenTheArchiveSaysSo(): void
     {

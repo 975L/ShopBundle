@@ -193,7 +193,8 @@ the link was ever used and only offers the contact button where ContactFormBundl
 `shop-test-mode` is this bundle's only config key, toggled from the dashboard, and `Shop:TestMode`
 reads **it alone**. PaymentBundle announces its own `payment-test-mode` with its own banner in the
 basket, where the charge actually happens, so the two never warn twice over the same page. Never infer
-test mode from the word "test" in a Stripe key.
+test mode from the word "test" in a Stripe key. While it is on, the shop is also kept out of search engines
+(`noindex, follow`, empty sitemap, no Merchant Center feed) — see `c975l-shop-seo`.
 
 ## Scheduled work
 

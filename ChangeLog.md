@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.15.0
+
+Products listed on Google Merchant Center, one feed per language
+
+- Requires `c975l/core-bundle` ^1.70.2 for the catalog's `language` (21/10/2026)
+- Added `Product::$language`, set from the back-office and the catalog **Needs db update** (21/10/2026)
+- Added the `shop_merchant_feed` route and `ProductMerchantFeed`, one feed per language (21/10/2026)
+- Added `ProductImageUrlResolver`, shared by the JSON-LD and the feed (21/10/2026)
+- Feed urls shown on the shop's index screen (21/10/2026)
+- Test mode sets `noindex` on the shop, empties its sitemap and turns its feed off (21/10/2026)
+- Guided project `shop-merchant-feed` and a product step for the language (21/10/2026)
+
 ## v2.14.4
 
 Items' barcode taken from the catalog

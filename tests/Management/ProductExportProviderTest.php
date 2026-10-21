@@ -142,6 +142,19 @@ class ProductExportProviderTest extends TestCase
         new Filesystem()->remove($projectDir);
     }
 
+    // The language travels with the rest, a product written in the site's own carrying none
+    public function testSerializeCarriesTheLanguage(): void
+    {
+        $projectDir = $this->createProjectDir([]);
+
+        $exporter = new ProductExportProvider($this->createStub(ProductRepository::class), new BlockDataExporter($projectDir), $projectDir);
+
+        $this->assertSame('en', $exporter->serialize([$this->createProduct()->setLanguage('en')])['items'][0]['language']);
+        $this->assertNull($exporter->serialize([$this->createProduct()])['items'][0]['language']);
+
+        new Filesystem()->remove($projectDir);
+    }
+
     // The age the sheet warns on travels with the rest, and a product carrying none travels as nothing rather than as an empty string
     public function testSerializeCarriesTheAge(): void
     {

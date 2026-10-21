@@ -111,6 +111,7 @@ class ShopSitemapProviderTest extends TestCase
             new ShopTranslatedLocales(new SiteLocales(['fr'], 'fr')),
             $productService,
             $categoryService,
+            $this->createStub(ConfigServiceInterface::class),
         );
         $provider->getUrls();
     }
@@ -129,11 +130,20 @@ class ShopSitemapProviderTest extends TestCase
             new ShopTranslatedLocales(new SiteLocales(['fr'], 'fr')),
             $productService,
             $categoryService,
+            $this->createStub(ConfigServiceInterface::class),
         );
         $provider->getUrls();
     }
 
-    private function createProvider(string $siteUrl, array $products, array $categories, array $locales = ['fr']): ShopSitemapProvider
+    // A shop in test mode is kept out of search engines, so its urls are not declared either
+    public function testDeclaresNothingInTestMode(): void
+    {
+        $provider = $this->createProvider('https://example.com', [$this->createProduct('a-product')], [], ['fr'], true);
+
+        $this->assertSame([], $provider->getUrls());
+    }
+
+    private function createProvider(string $siteUrl, array $products, array $categories, array $locales = ['fr'], bool $testMode = false): ShopSitemapProvider
     {
         $productService = $this->createStub(ProductServiceInterface::class);
         $productService->method('findAll')->willReturn($products);
@@ -141,11 +151,15 @@ class ShopSitemapProviderTest extends TestCase
         $categoryService = $this->createStub(ProductCategoryServiceInterface::class);
         $categoryService->method('findAllListed')->willReturn($categories);
 
+        $configService = $this->createStub(ConfigServiceInterface::class);
+        $configService->method('get')->willReturn($testMode);
+
         return new ShopSitemapProvider(
             $this->createResolver($siteUrl, $locales),
             new ShopTranslatedLocales(new SiteLocales($locales, 'fr')),
             $productService,
             $categoryService,
+            $configService,
         );
     }
 
