@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.16.1
+
+Products grid on UiBundle's picture grid tokens
+
+- Products grid sized by UiBundle's `--card-grid-min` and `--card-grid-gap` (23/10/2026)
+- Products' wider card from 1024px instead of 700px (23/10/2026)
+
 ## v2.16.0
 
 Social column shared through UiBundle

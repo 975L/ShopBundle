@@ -3,6 +3,11 @@
         "date": "2026-10-23",
         "description": [
             {
+                "en": "Your shop's products now line up like your site's other picture grids, two to the row on a phone and the same size on a tablet.",
+                "fr": "Les produits de votre boutique s'alignent désormais comme les autres grilles d'images de votre site, deux par ligne sur téléphone et à la même taille sur tablette.",
+                "es": "Los productos de su tienda se alinean ahora como las demás cuadrículas de imágenes de su sitio, dos por fila en el teléfono y del mismo tamaño en la tableta."
+            },
+            {
                 "en": "The \"Create a product\" guided tour now shows you the Social networks column, whose dates follow your site's time zone.",
                 "fr": "Le parcours « Créer un produit » vous montre désormais la colonne Réseaux sociaux, dont les dates suivent le fuseau horaire de votre site.",
                 "es": "El recorrido «Crear un producto» le muestra ahora la columna Redes sociales, cuyas fechas siguen la zona horaria de su sitio."

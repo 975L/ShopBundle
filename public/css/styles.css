@@ -64,8 +64,8 @@
 /* PRODUCTS */
 .products {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-grid-min, min(150px, 50% - 6px))), 1fr));
+  gap: var(--card-grid-gap, 12px);
   width: 100%;
 }
 
@@ -280,11 +280,7 @@
   font-size: 1.15rem;
 }
 
-@media (min-width: 700px) {
-  .products {
-    grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
-    gap: 20px;
-  }
+@media (min-width: 1024px) {
   .product-visual {
     aspect-ratio: 4/3;
   }

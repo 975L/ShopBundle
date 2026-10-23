@@ -1,9 +1,9 @@
 /* PRODUCTS */
-// Mobile first throughout: the single column is the default, the grid widening on its own through auto-fill, and the two media queries below only raise what a phone cannot hold
+// Mobile first throughout: the grid widening on its own through auto-fill, on the picture grid UiBundle sizes once for every bundle (--card-grid-min and --card-grid-gap, its sass/_tokens.scss) - two to the row on a phone, a phone's size on a tablet, the wider track on a computer. The fallbacks are those tokens' phone values, for a site without UiBundle, and the two media queries below only raise what a phone cannot hold
 .products {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-grid-min, min(150px, calc(50% - 6px)))), 1fr));
+    gap: var(--card-grid-gap, 12px);
     width: 100%;
 }
 
@@ -236,12 +236,8 @@
     font-size: 1.15rem;
 }
 
-@media (min-width: 700px) {
-    .products {
-        grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
-        gap: 20px;
-    }
-
+// A computer's screen, the step UiBundle widens the picture grid at: a tablet keeps the phone's card, picture and type with it
+@media (min-width: 1024px) {
     .product-visual {
         aspect-ratio: 4 / 3;
     }
