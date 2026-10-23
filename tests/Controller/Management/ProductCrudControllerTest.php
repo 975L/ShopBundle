@@ -21,10 +21,9 @@ use c975L\ShopBundle\Controller\Management\ProductCrudController;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Management\ProductExportProvider;
-use c975L\ShopBundle\Repository\ProductRepository;
+use c975L\ShopBundle\Service\ProductSocialContentSource;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
-use c975L\UiBundle\Model\SocialContentStatus;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -56,7 +55,6 @@ class ProductCrudControllerTest extends TestCase
             $contentLocaleScreen ?? $this->createStub(ContentLocaleScreen::class),
             $this->createStub(CsrfTokenManagerInterface::class),
             $this->createStub(ProductExportProvider::class),
-            $this->createStub(ProductRepository::class),
             $redirectRepository ?? $this->createStub(RedirectRepository::class),
             $this->createStub(RequestStack::class),
             $shopTranslator ?? $this->createStub(ShopTranslator::class),
@@ -280,34 +278,37 @@ class ProductCrudControllerTest extends TestCase
         $this->assertSame('/shop/products/poster', $existing->getToUrl());
     }
 
-    // A product a post holds says so in the list, reserved or published with its date in the language's format - nothing for one no post holds. SocialBundle is asked once for the whole list, not once per row
-    public function testTheSocialBadgeSaysWhetherAPostHoldsTheProduct(): void
+    // The shared social column (see UiBundle's SocialStatusCrudTrait), asked about under the type SocialBundle files the products under, its keys shipped in every locale of this bundle's domain
+    public function testTheSocialColumnIsTheProductsOne(): void
     {
-        $statuses = $this->createMock(SocialContentStatusProviderInterface::class);
-        $statuses->expects($this->once())->method('getStatuses')->with('product', ['7', '8', '9'])->willReturn([
-            '7' => new SocialContentStatus(SocialContentStatus::PUBLISHED, new \DateTimeImmutable('2026-10-09')),
-            '9' => new SocialContentStatus(SocialContentStatus::RESERVED, new \DateTimeImmutable('2026-10-12')),
-        ]);
-        $repository = $this->createStub(ProductRepository::class);
-        $repository->method('findAvailableIds')->willReturn(['7', '8', '9']);
-        $translator = $this->createStub(TranslatorInterface::class);
-        $translator->method('trans')->willReturnCallback(static fn (string $id, array $parameters = []): string => 'label.product_social_date_format' === $id ? 'm/d' : $id . ' ' . implode(' ', $parameters));
-
-        // Only what the badge reads, the rest of the constructor having nothing to do with it
         $controller = new \ReflectionClass(ProductCrudController::class)->newInstanceWithoutConstructor();
-        foreach (['socialStatuses' => $statuses, 'productRepository' => $repository, 'translator' => $translator] as $property => $value) {
+        foreach (['socialStatuses' => $this->createStub(SocialContentStatusProviderInterface::class), 'requestStack' => new RequestStack([new Request()])] as $property => $value) {
             new \ReflectionProperty(ProductCrudController::class, $property)->setValue($controller, $value);
         }
 
-        $badge = static function (int $id) use ($controller): string {
-            $product = new Product();
-            new \ReflectionProperty(Product::class, 'id')->setValue($product, $id);
+        $label = new \ReflectionMethod(ProductCrudController::class, 'socialStatusFields')->invoke($controller)[0]->getAsDto()->getLabel();
 
-            return new \ReflectionMethod(ProductCrudController::class, 'socialStatusBadge')->invoke($controller, $product);
-        };
-        $this->assertSame('<span class="badge badge-success">label.product_social_published 10/09</span>', $badge(7));
-        $this->assertSame('', $badge(8));
-        $this->assertSame('<span class="badge badge-warning">label.product_social_reserved 10/12</span>', $badge(9));
+        $this->assertSame('label.product_social', $label->getMessage());
+        $this->assertSame('shop', $label->getDomain());
+        $this->assertSame(ProductSocialContentSource::SOURCE_TYPE, new \ReflectionMethod(ProductCrudController::class, 'socialSourceType')->invoke($controller));
+        foreach (['en', 'fr', 'es'] as $locale) {
+            $catalogue = (string) file_get_contents(dirname(__DIR__, 3) . '/translations/shop.' . $locale . '.xlf');
+            foreach (['', '_date_format', '_reserved', '_published'] as $suffix) {
+                $this->assertStringContainsString('<source>label.product_social' . $suffix . '</source>', $catalogue, $locale);
+            }
+        }
+    }
+
+    // Only the products the shop lists are asked about: a hidden or a scheduled one is left without a badge
+    public function testOnlyListedProductsAreAskedAboutTheirPost(): void
+    {
+        $controller = new \ReflectionClass(ProductCrudController::class)->newInstanceWithoutConstructor();
+        $shown = new \ReflectionMethod(ProductCrudController::class, 'socialStatusRowShown');
+
+        $this->assertTrue($shown->invoke($controller, new Product()->setHidden(false)));
+        $this->assertTrue($shown->invoke($controller, new Product()->setHidden(false)->setAvailableAt(new \DateTime('-1 day'))));
+        $this->assertFalse($shown->invoke($controller, new Product()->setHidden(true)));
+        $this->assertFalse($shown->invoke($controller, new Product()->setHidden(false)->setAvailableAt(new \DateTime('+1 day'))));
     }
 
     // The social column is on the catalogue only: no post holds a trashed product nor a template

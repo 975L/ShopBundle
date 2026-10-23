@@ -28,19 +28,6 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    // The id of every product the shop lists, as a string - what a post can hold, and what the back-office list asks SocialBundle about in one go
-    /** @return list<string> */
-    public function findAvailableIds(): array
-    {
-        $ids = $this->available($this->createQueryBuilder('p'))
-            ->select('p.id')
-            ->getQuery()
-            ->getSingleColumnResult()
-        ;
-
-        return array_map(strval(...), $ids);
-    }
-
     // Finds products based on search
     public function search(string $query, ?string $categorySlug = null): array
     {

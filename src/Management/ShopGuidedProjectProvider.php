@@ -17,6 +17,7 @@ use c975L\ShopBundle\Controller\Management\ProductCrudController;
 use c975L\ShopBundle\Controller\Management\ShopSettingsCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 // This bundle's guided projects, running the 8000 block GuidedProjectProviderInterface reserves them - the same docblock stating every other bundle's, so a range is read there rather than recopied here. They follow the order a catalog is actually filled: the category classes the products, so it comes first, then the shop's own page, settled before the catalogue it lists, then the product and the item carrying its price, its templates and its translation, then the two things an item can be beyond a parcel, and last the three occasional tasks. Creating a category and creating a product are two projects rather than the one task they feel like: only the opening step of a project carries an url, everything after it walking the screen the user has been sent to, highlighting the button or the field they are meant to use next - one they click themselves, which brings the panel back on that very step (see ConfigBundle's assets/js/guided-project.js)
@@ -27,6 +28,9 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
         private readonly ConfigServiceInterface $configService,
         // The test mode is flipped from the dashboard's own shortcut, not from a screen of this bundle, so its url comes from the router rather than from EasyAdmin's generator
         private readonly UrlGeneratorInterface $urlGenerator,
+        /** @var array<string, class-string> */
+        #[Autowire(param: 'kernel.bundles')]
+        private readonly array $bundles = [],
     ) {
     }
 
@@ -196,6 +200,25 @@ class ShopGuidedProjectProvider implements GuidedProjectProviderInterface
                     'narration' => 'narration.guided_step_shop_product_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
+                ...$this->productSocialSteps(),
+            ],
+        ];
+    }
+
+    // Back on the listing the save returned to: the column saying whether a post holds the product, drawn only where SocialBundle is there to publish (see UiBundle's SocialStatusCrudTrait, the column's class being "product-social")
+    /** @return list<array<string, string>> */
+    private function productSocialSteps(): array
+    {
+        if (!isset($this->bundles['c975LSocialBundle'])) {
+            return [];
+        }
+
+        return [
+            [
+                'label' => 'label.guided_step_shop_product_social',
+                'description' => 'description.guided_step_shop_product_social',
+                'narration' => 'narration.guided_step_shop_product_social',
+                'highlight' => 'th.product-social',
             ],
         ];
     }

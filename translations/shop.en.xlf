@@ -306,6 +306,10 @@
                 <source>description.guided_step_shop_product_save</source>
                 <target>The sheet is online the moment it is saved not hidden.</target>
             </trans-unit>
+            <trans-unit id="S_Dijee">
+                <source>description.guided_step_shop_product_social</source>
+                <target>The Social networks column tells, for each product, whether a post draft holds it or on which date it was posted.</target>
+            </trans-unit>
             <trans-unit id="TL1nzmE">
                 <source>description.guided_step_shop_product_title</source>
                 <target>What the visitor reads first, and what the address is built from.</target>
@@ -1009,6 +1013,10 @@
             <trans-unit id="7ozDsTN">
                 <source>label.guided_step_shop_product_save</source>
                 <target>Save</target>
+            </trans-unit>
+            <trans-unit id="Q4vQ_4v">
+                <source>label.guided_step_shop_product_social</source>
+                <target>Follow the posts</target>
             </trans-unit>
             <trans-unit id="XvTng1B">
                 <source>label.guided_step_shop_product_title</source>

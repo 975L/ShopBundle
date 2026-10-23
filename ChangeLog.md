@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.16.0
+
+Social column shared through UiBundle
+
+- Requires `c975l/core-bundle` ^1.74 for UiBundle's `SocialStatusCrudTrait` (23/10/2026)
+- Products' social column from UiBundle's `SocialStatusCrudTrait` (23/10/2026)
+- Hidden and scheduled products left without a social badge (23/10/2026)
+- Added `ProductSocialContentSource::SOURCE_TYPE` (23/10/2026)
+- Guided project `shop-product` ends on the social column (23/10/2026)
+- Removed `ProductRepository::findAvailableIds()` (23/10/2026)
+
 ## v2.15.1
 
 Categories' Edit and Delete icons from the shared helper

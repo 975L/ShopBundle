@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-10-23",
+        "description": [
+            {
+                "en": "The \"Create a product\" guided tour now shows you the Social networks column, whose dates follow your site's time zone.",
+                "fr": "Le parcours « Créer un produit » vous montre désormais la colonne Réseaux sociaux, dont les dates suivent le fuseau horaire de votre site.",
+                "es": "El recorrido «Crear un producto» le muestra ahora la columna Redes sociales, cuyas fechas siguen la zona horaria de su sitio."
+            }
+        ]
+    },
+    {
         "date": "2026-10-21",
         "description": [
             {

@@ -238,6 +238,10 @@
                 <source>narration.guided_step_shop_product_save</source>
                 <target>Save: the sheet is online the moment it is saved not hidden.</target>
             </trans-unit>
+            <trans-unit id="PE6h53C">
+                <source>narration.guided_step_shop_product_social</source>
+                <target>Back in the list, the Social networks column shows whether a post draft holds the product, or the date it was posted on.</target>
+            </trans-unit>
             <trans-unit id="sWHzX2s">
                 <source>narration.guided_step_shop_product_title</source>
                 <target>Give it a title: it is what the visitor reads first, and what the address is built from.</target>

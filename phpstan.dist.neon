@@ -31,6 +31,11 @@ parameters:
         # The only reader of a HasBlocksInterface entity's $blocks is UiBundle's HasBlocksTrait, analysed with its own package and not with this one
         - '#Property .*::\$blocks is never read, only written#'
 
+        # The only reader of a CRUD controller's $socialStatuses is UiBundle's SocialStatusCrudTrait, analysed with its own package and not with this one
+        -
+            message: '#Property .*::\$socialStatuses is never read, only written#'
+            path: src/Controller/Management/ProductCrudController.php
+
         # The five listeners sharing UserTrait are registered one entity at a time by #[AsEntityListener(entity: ...)], which is what guarantees the type Doctrine hands over. The five cannot share an interface: three extend UiBundle's Media and carry no getCreation(), which is why the trait asks method_exists() before reaching for it
         -
             identifier: method.nonObject

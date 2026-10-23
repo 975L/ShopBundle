@@ -51,7 +51,8 @@ class ShopGuidedProjectProviderTest extends TestCase
         return $generator;
     }
 
-    private function createProvider(array &$controllers = [], array &$routes = []): ShopGuidedProjectProvider
+    // SocialBundle installed by default, so every check below also walks the step only drawn with it
+    private function createProvider(array &$controllers = [], array &$routes = [], array $bundles = ['c975LSocialBundle' => 'c975L\\SocialBundle\\c975LSocialBundle']): ShopGuidedProjectProvider
     {
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn('ROLE_ADMIN');
@@ -60,7 +61,17 @@ class ShopGuidedProjectProviderTest extends TestCase
             $this->createAdminUrlGenerator($controllers),
             $configService,
             $this->createUrlGenerator($routes),
+            $bundles,
         );
+    }
+
+    // The column the step points at is only drawn where SocialBundle is there to publish
+    public function testTheProductParcoursShowsTheSocialColumnOnlyWithSocialBundle(): void
+    {
+        $steps = static fn (array $projects): array => array_column(array_column($projects, 'steps', 'slug')['shop-product'], 'highlight');
+
+        $this->assertContains('th.product-social', $steps($this->createProvider()->getGuidedProjects()));
+        $this->assertNotContains('th.product-social', $steps($this->createProvider(bundles: [])->getGuidedProjects()));
     }
 
     // The 8000 block GuidedProjectProviderInterface reserves this bundle, at the step of 10 it states

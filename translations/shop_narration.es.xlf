@@ -238,6 +238,10 @@
                 <source>narration.guided_step_shop_product_save</source>
                 <target>Guarde: la ficha está en línea en cuanto se guarda sin ocultar.</target>
             </trans-unit>
+            <trans-unit id="PE6h53C">
+                <source>narration.guided_step_shop_product_social</source>
+                <target>De vuelta en la lista, la columna Redes sociales indica si un borrador de publicación reserva el producto, o la fecha en que se publicó.</target>
+            </trans-unit>
             <trans-unit id="sWHzX2s">
                 <source>narration.guided_step_shop_product_title</source>
                 <target>Póngale un título: es lo que el visitante lee primero, y aquello a partir de lo cual se construye la dirección.</target>

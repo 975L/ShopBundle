@@ -633,8 +633,9 @@ It is also browsable (UiBundle's `BrowsableSocialContentSourceInterface`): on a 
 contenu" takes another product chosen among those still free, the latest added first — the shop has no groups, so
 nothing is narrowed to one. The other way round, the products' list shows a "Réseaux sociaux" column — "Réservé 10/10"
 for a product a draft holds, "Publié 09/10" once it went out — read from UiBundle's
-`SocialContentStatusProviderInterface`, which SocialBundle implements; it is not shown on the trash nor the templates,
-nor at all without SocialBundle.
+`SocialContentStatusProviderInterface`, which SocialBundle implements, for the products the shop lists only — a hidden or
+scheduled one gets no badge; it is not shown on the trash nor the templates, nor at all without SocialBundle, and the
+*Create a product* guided project ends on it.
 
 ---
 
@@ -928,6 +929,7 @@ back on that very step:
 | `#Product_title`, `#Product_categories + .ts-wrapper`, `#Product_language + .ts-wrapper`, `#Product_age`, `#Product_availableAt`, `#Product_hidden`, `#Product_giftCardText`, `#Product_giftCardScratch`, `#ProductCategory_name`, `#ProductCategory_slug`, `#ProductCategory_position`, `#ShopSettings_intro` | plain form fields, pointed at through their rendered id — an `AssociationField` rendered by TomSelect through the wrapper it inserts after the original select |
 | `trix-editor[input="Product_description"]`, `trix-editor[input="ProductCategory_description"]` | the editor itself, `#…_description` being the hidden input trix writes into |
 | `[data-shop-product-items]`, `[data-shop-item-translations]`, `[data-shop-settings-blocks]`, `[data-shop-merchant-feed]` | markers this bundle's own CRUD controllers and templates set on what EasyAdmin numbers or does not render as a field, which therefore carry no stable id |
+| `th.product-social` | the head of the products' "Réseaux sociaux" column, a class UiBundle's `SocialStatusCrudTrait` sets, only drawn with SocialBundle |
 | `[data-content-locales]` | the language tabs ConfigBundle draws above an edit screen |
 | `#form-batch-checkbox-all` | EasyAdmin's own select-all of the index, checked before the export button: the batch actions stay hidden until a row is |
 | `form[action$="/shop/test-mode-toggle"] button` | the dashboard shortcut of the test mode, the one step leaving this bundle's own screens |

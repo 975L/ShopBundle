@@ -306,6 +306,10 @@
                 <source>description.guided_step_shop_product_save</source>
                 <target>La fiche est en ligne dès qu'elle est enregistrée non masquée.</target>
             </trans-unit>
+            <trans-unit id="S_Dijee">
+                <source>description.guided_step_shop_product_social</source>
+                <target>La colonne Réseaux sociaux dit, pour chaque produit, si un brouillon de publication le réserve ou à quelle date il a été publié.</target>
+            </trans-unit>
             <trans-unit id="TL1nzmE">
                 <source>description.guided_step_shop_product_title</source>
                 <target>Ce que le visiteur lit en premier, et ce à partir de quoi l'adresse est construite.</target>
@@ -1009,6 +1013,10 @@
             <trans-unit id="7ozDsTN">
                 <source>label.guided_step_shop_product_save</source>
                 <target>Enregistrer</target>
+            </trans-unit>
+            <trans-unit id="Q4vQ_4v">
+                <source>label.guided_step_shop_product_social</source>
+                <target>Suivre les publications</target>
             </trans-unit>
             <trans-unit id="XvTng1B">
                 <source>label.guided_step_shop_product_title</source>

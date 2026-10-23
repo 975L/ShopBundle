@@ -20,6 +20,9 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 // Hands SocialBundle's publication the shop's products, in the order the shop lists them - a site without SocialBundle simply never asks. What went out where is SocialBundle's to record
 class ProductSocialContentSource implements BrowsableSocialContentSourceInterface
 {
+    // The type SocialBundle files the products under, also read by the back-office's social column
+    public const string SOURCE_TYPE = 'product';
+
     // A product is worth showing again a season later, a shop living on its regulars coming back
     private const int REPEAT_AFTER_DAYS = 90;
 
@@ -34,7 +37,7 @@ class ProductSocialContentSource implements BrowsableSocialContentSourceInterfac
 
     public function getSourceType(): string
     {
-        return 'product';
+        return self::SOURCE_TYPE;
     }
 
     public function getRepeatAfterDays(): ?int

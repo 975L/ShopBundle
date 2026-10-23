@@ -306,6 +306,10 @@
                 <source>description.guided_step_shop_product_save</source>
                 <target>La ficha está en línea en cuanto se guarda sin ocultar.</target>
             </trans-unit>
+            <trans-unit id="S_Dijee">
+                <source>description.guided_step_shop_product_social</source>
+                <target>La columna Redes sociales indica, para cada producto, si un borrador de publicación lo reserva o en qué fecha se publicó.</target>
+            </trans-unit>
             <trans-unit id="TL1nzmE">
                 <source>description.guided_step_shop_product_title</source>
                 <target>Lo que el visitante lee primero y a partir de lo cual se construye la dirección.</target>
@@ -1009,6 +1013,10 @@
             <trans-unit id="7ozDsTN">
                 <source>label.guided_step_shop_product_save</source>
                 <target>Guardar</target>
+            </trans-unit>
+            <trans-unit id="Q4vQ_4v">
+                <source>label.guided_step_shop_product_social</source>
+                <target>Seguir las publicaciones</target>
             </trans-unit>
             <trans-unit id="XvTng1B">
                 <source>label.guided_step_shop_product_title</source>

@@ -27,10 +27,11 @@ use c975L\ShopBundle\Management\ProductExportProvider;
 use c975L\ShopBundle\Management\ProductImportProvider;
 use c975L\ShopBundle\Management\ShopBlockOwnerResolver;
 use c975L\ShopBundle\Repository\ProductRepository;
+use c975L\ShopBundle\Service\ProductSocialContentSource;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
+use c975L\UiBundle\Controller\Management\Trait\SocialStatusCrudTrait;
 use c975L\UiBundle\Form\BlockType;
-use c975L\UiBundle\Model\SocialContentStatus;
 use c975L\UiBundle\Repository\FavoriteRepository;
 use c975L\UiBundle\Repository\RatingRepository;
 use c975L\UiBundle\Repository\ReviewRepository;
@@ -83,6 +84,8 @@ use function Symfony\Component\Translation\t;
 
 class ProductCrudController extends AbstractCrudController
 {
+    use SocialStatusCrudTrait;
+
     private const string TABLE = 'shop_product';
 
     // The row actions are links like every other one of the index, so their token rides in the url rather than in a form - a GET an <img> on a third-party page would otherwise fire on a logged-in admin (same pattern as SiteBundle's own trash actions)
@@ -92,10 +95,6 @@ class ProductCrudController extends AbstractCrudController
 
     // Where a product's public sheet is served, the prefix a redirect and a "gone" row are written against
     private const string PRODUCT_PATH = '/shop/products/';
-
-    // The posts' hold on every product the shop lists, asked once for the whole list rather than once per row
-    /** @var array<string, SocialContentStatus>|null */
-    private ?array $socialStatusMap = null;
 
     public function __construct(
         private readonly AdminContextProviderInterface $adminContextProvider,
@@ -107,7 +106,6 @@ class ProductCrudController extends AbstractCrudController
         private readonly ContentLocaleScreen $contentLocaleScreen,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
         private readonly ProductExportProvider $productExportProvider,
-        private readonly ProductRepository $productRepository,
         private readonly RedirectRepository $redirectRepository,
         private readonly RequestStack $requestStack,
         private readonly ShopTranslator $shopTranslator,
@@ -122,41 +120,28 @@ class ProductCrudController extends AbstractCrudController
         return Product::class;
     }
 
-    // Whether a social post holds the product - reserved by a draft, or published - on a site with SocialBundle only, and never on the trash nor the templates, which no post can hold
-    /** @return list<FieldInterface> */
-    private function socialStatusFields(): array
+    // The type SocialBundle files the products under (see UiBundle's SocialStatusCrudTrait)
+    private function socialSourceType(): string
     {
-        if (null === $this->socialStatuses || $this->isTrash() || $this->isTemplates()) {
-            return [];
-        }
-
-        return [
-            TextField::new('id')
-                ->setLabel(t('label.product_social', [], 'shop'))
-                ->formatValue(fn (mixed $value, Product $product): string => $this->socialStatusBadge($product))
-                ->renderAsHtml()
-                ->setSortable(false)
-                ->onlyOnIndex(),
-        ];
+        return ProductSocialContentSource::SOURCE_TYPE;
     }
 
-    // The badge saying when the product was reserved or published, empty while no post holds it
-    private function socialStatusBadge(Product $product): string
+    // The domain the social column's keys are shipped in
+    private function socialTranslationDomain(): string
     {
-        $this->socialStatusMap ??= $this->socialStatuses?->getStatuses('product', $this->productRepository->findAvailableIds()) ?? [];
-        $status = $this->socialStatusMap[(string) $product->getId()] ?? null;
-        if (null === $status) {
-            return '';
-        }
+        return 'shop';
+    }
 
-        // The date's format is the language's own: "09/10" reads as the 10th of September in English
-        $date = $status->at->format($this->translator->trans('label.product_social_date_format', [], 'shop'));
+    // Never on the trash nor the templates, which no post can hold
+    private function socialStatusColumnShown(): bool
+    {
+        return !$this->isTrash() && !$this->isTemplates();
+    }
 
-        return sprintf(
-            '<span class="badge %s">%s</span>',
-            $status->isPublished() ? 'badge-success' : 'badge-warning',
-            htmlspecialchars($this->translator->trans('label.product_social_' . $status->state, ['%date%' => $date], 'shop')),
-        );
+    // Only what the shop lists (see ProductRepository::available()), a hidden or scheduled product being left without a badge
+    private function socialStatusRowShown(object $entity): bool
+    {
+        return $entity instanceof Product && !$entity->isHidden() && (null === $entity->getAvailableAt() || $entity->getAvailableAt() < new \DateTimeImmutable());
     }
 
     public function configureFields(string $pageName): iterable
