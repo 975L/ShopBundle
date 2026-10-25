@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.16.3
+
+CI installs the latest lizard
+
+- CI's lizard no longer pinned to 1.17.31 (25/10/2026)
+
 ## v2.16.2
 
 Products' social posts in the product's language
