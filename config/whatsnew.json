@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-10-25",
+        "description": [
+            {
+                "en": "Your products shared on social networks are now posted in their own language.",
+                "fr": "Vos produits partagés sur les réseaux sociaux sont désormais publiés dans leur propre langue.",
+                "es": "Sus productos compartidos en las redes sociales se publican ahora en su propio idioma."
+            }
+        ]
+    },
+    {
         "date": "2026-10-23",
         "description": [
             {

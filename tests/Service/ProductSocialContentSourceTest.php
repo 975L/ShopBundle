@@ -26,7 +26,7 @@ class ProductSocialContentSourceTest extends TestCase
 
     private function createProduct(bool $hidden = false): Product
     {
-        $product = new Product()->setTitle('Mug')->setSlug('mug')->setDescription('<p>Un mug &amp; son dessin</p>')->setHidden($hidden);
+        $product = new Product()->setTitle('Mug')->setSlug('mug')->setDescription('<p>Un mug &amp; son dessin</p>')->setLanguage('en')->setHidden($hidden);
         $product->addMedia(new ProductMedia()->setName('medias/shop/products/mug-abc.webp'));
         new \ReflectionProperty(Product::class, 'id')->setValue($product, 5);
 
@@ -67,6 +67,7 @@ class ProductSocialContentSourceTest extends TestCase
         $this->assertSame('/var/www/site/public/medias/shop/products/mug-abc.webp', $content->imagePath);
         $this->assertSame('https://example.org/medias/shop/products/mug-abc.webp', $content->imageUrl);
         $this->assertSame(['description' => 'Un mug & son dessin'], $content->variables);
+        $this->assertSame('en', $content->locale);
     }
 
     public function testNothingIsHandedOverWhileTheSiteUrlIsUnset(): void

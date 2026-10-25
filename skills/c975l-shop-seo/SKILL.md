@@ -210,7 +210,8 @@ with 429s, and every row would read as a failed call.
 `BrowsableSocialContentSourceInterface`, which SocialBundle's scheduled publication reads where the site installs it.
 It reads what the shop lists, in the shop's own order (`findAvailableProductsExcluding()`), skips a product
 with no public url (`ShopPublicUrlResolver::resolve()` null) and answers `null` from `getContent()` for a
-product hidden, trashed or not yet available since its post was prepared. `findContents()` offers a draft
+product hidden, trashed or not yet available since its post was prepared; each content carries
+`Product::$language` as its `locale`. `findContents()` offers a draft
 the free products, latest first (`findAvailableLatestExcluding()`), up to the limit; `getContentScope()` is
 always `null`, the shop having no groups.
 

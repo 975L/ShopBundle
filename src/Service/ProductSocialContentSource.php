@@ -108,6 +108,7 @@ class ProductSocialContentSource implements BrowsableSocialContentSourceInterfac
             imageUrl: null === $name ? null : $this->siteUrlResolver->siteUrl() . '/' . $name,
             imageAlt: $image?->getAlt() ?? (string) $product->getTitle(),
             variables: array_filter(['description' => trim(html_entity_decode(strip_tags((string) $product->getDescription())))]),
+            locale: $product->getLanguage(),
         );
     }
 }

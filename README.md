@@ -625,8 +625,8 @@ A file of an article **taken off sale** is covered too — its buyers still hold
 Where the site installs SocialBundle, its scheduled publication draws from the catalog through
 `ProductSocialContentSource` (`product`), a UiBundle `SocialContentSourceInterface` service, autoconfigured: it
 hands out what the shop lists, in the shop's own order, and recalls each product 90 days after it last went out.
-Each post carries the product's public page, its first picture and its description. A product with no public
-address — `site-url` unset — is never handed out, and one taken off the shop since its post was prepared is
+Each post carries the product's public page, its first picture, its description and its language. A product with
+no public address — `site-url` unset — is never handed out, and one taken off the shop since its post was prepared is
 dropped. Which products went out where is SocialBundle's to record; a site without it never asks.
 
 It is also browsable (UiBundle's `BrowsableSocialContentSourceInterface`): on a draft's screen, SocialBundle's "Changer le

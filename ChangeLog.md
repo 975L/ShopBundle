@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.16.2
+
+Products' social posts in the product's language
+
+- Requires `c975l/core-bundle` ^1.79 for `SocialContent::$locale` (25/10/2026)
+- Products' social content carries the product's language (25/10/2026)
+
 ## v2.16.1
 
 Products grid on UiBundle's picture grid tokens
