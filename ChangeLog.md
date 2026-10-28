@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.16.4
+
+Account deletion listener declared by attribute
+
+- `AccountDeletionSubscriber` listens through `#[AsEventListener]` (28/10/2026)
+
 ## v2.16.3
 
 CI installs the latest lizard

@@ -12,24 +12,18 @@ namespace c975L\ShopBundle\EventSubscriber;
 
 use c975L\ConfigBundle\Event\UserAnonymizedEvent;
 use c975L\ShopBundle\Repository\ProductItemStockAlertRepository;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 // An account anonymized, by its owner or by the inactivity cleanup, takes the stock alerts of its former address with it
-class AccountDeletionSubscriber implements EventSubscriberInterface
+class AccountDeletionSubscriber
 {
     public function __construct(
         private readonly ProductItemStockAlertRepository $stockAlertRepository,
     ) {
     }
 
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            UserAnonymizedEvent::class => 'onUserAnonymized',
-        ];
-    }
-
     // Deletes the alerts the address subscribed to
+    #[AsEventListener(event: UserAnonymizedEvent::class)]
     public function onUserAnonymized(UserAnonymizedEvent $event): void
     {
         if (null !== $event->email) {
