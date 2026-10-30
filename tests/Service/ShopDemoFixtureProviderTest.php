@@ -19,6 +19,7 @@ use c975L\ShopBundle\Service\ShopSampleCatalog;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\PlaceholderMediaRegistry;
+use c975L\UiBundle\Service\DemoFixtureMediaCopier;
 use c975L\UiBundle\Service\DemoFixtureTranslator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -60,7 +61,7 @@ class ShopDemoFixtureProviderTest extends TestCase
         $registry->method('getDocument')->willReturn($document);
         $registry->method('getImagesFor')->willReturnCallback(static fn (string $key): array => $keyed[$key] ?? []);
 
-        return new ShopDemoFixtureProvider(new ShopSampleCatalog(), new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $registry, $this->projectDir);
+        return new ShopDemoFixtureProvider(new ShopSampleCatalog(), new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $registry, new DemoFixtureMediaCopier($this->projectDir));
     }
 
     /** @return list<object> */
@@ -225,7 +226,7 @@ class ShopDemoFixtureProviderTest extends TestCase
         $registry->method('getDocument')->willReturn(null);
         $registry->method('getImagesFor')->willReturn([]);
 
-        $provider = new ShopDemoFixtureProvider(new ShopSampleCatalog(), new DemoFixtureTranslator($translator, ['fr', 'en'], 'fr'), $translator, $registry, $this->projectDir);
+        $provider = new ShopDemoFixtureProvider(new ShopSampleCatalog(), new DemoFixtureTranslator($translator, ['fr', 'en'], 'fr'), $translator, $registry, new DemoFixtureMediaCopier($this->projectDir));
 
         $identifier = 0;
         foreach ($provider->getDemoFixtures() as $entity) {

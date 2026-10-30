@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.16.5
+
+Demo pictures copied through UiBundle's DemoFixtureMediaCopier
+
+- `ShopDemoFixtureProvider`: pictures copied through UiBundle's `DemoFixtureMediaCopier`, its own copy removed (30/10/2026)
+- Requires `c975l/core-bundle` ^1.81.3 (30/10/2026)
+
 ## v2.16.4
 
 Account deletion listener declared by attribute

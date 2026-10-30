@@ -18,10 +18,9 @@ use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\UiBundle\Contract\DemoFixtureLinkerInterface;
 use c975L\UiBundle\Contract\DemoFixtureProviderInterface;
 use c975L\UiBundle\Registry\PlaceholderMediaRegistry;
+use c975L\UiBundle\Service\DemoFixtureMediaCopier;
 use c975L\UiBundle\Service\DemoFixtureTranslator;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
 // The catalog a demo site is seeded with, persisted from the very data the block showcase renders in memory (see ShopSampleCatalog)
 class ShopDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixtureProviderInterface
@@ -34,8 +33,7 @@ class ShopDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         private readonly DemoFixtureTranslator $demoFixtureTranslator,
         private readonly TranslatorInterface $translator,
         private readonly PlaceholderMediaRegistry $placeholderMediaRegistry,
-        #[Autowire(param: 'kernel.project_dir')]
-        private readonly string $projectDir,
+        private readonly DemoFixtureMediaCopier $demoFixtureMediaCopier,
     ) {
     }
 
@@ -99,7 +97,7 @@ class ShopDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         $this->demoFixtureTranslator->stage($product, ShopTranslator::OWNER_PRODUCT, self::DOMAIN, ['title' => $spec['title'], 'description' => $spec['description']]);
 
         foreach ($this->pictures($spec['slug'], $images, $index) as $mediaPosition => $picture) {
-            $file = $this->temporaryCopy($picture);
+            $file = $this->demoFixtureMediaCopier->copy($picture);
 
             // Declared and no longer on disk: the product is seeded without that picture rather than not at all
             if (null !== $file) {
@@ -153,26 +151,13 @@ class ShopDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
 
         // A site declaring no placeholder document leaves the item file-less, hence sold as a posted one rather than announced as downloadable with nothing to download
         if (null !== $spec['file'] && null !== $document) {
-            $file = $this->temporaryCopy($document);
+            $file = $this->demoFixtureMediaCopier->copy($document);
             if (null !== $file) {
                 $item->setFile(new ProductItemFile()->setFile($file));
             }
         }
 
         return $item;
-    }
-
-    // VichUploader moves the file it is handed, so it gets a copy - as a ReplacingFile, a plain File being what UploadHandler::hasUploadedFile() ignores in silence
-    private function temporaryCopy(string $publicPath): ?ReplacingFile
-    {
-        $source = $this->projectDir . '/public/' . $publicPath;
-        if (!is_file($source)) {
-            return null;
-        }
-
-        $target = sys_get_temp_dir() . '/c975l-demo-' . uniqid() . '-' . basename($publicPath);
-
-        return copy($source, $target) ? new ReplacingFile($target, true, true, true) : null;
     }
 
     private function trans(string $key): string
