@@ -180,7 +180,9 @@ Deleting a product moves it to the **recycle bin**, reached from the button abov
 its items and its blocks, and its url answers 410 for as long as it can still be restored. Restoring brings it back
 hidden, to be read once before it goes online again. *Delete permanently* is the only thing that actually
 removes it, from that view alone, and takes its pictures and its downloadable files with it. Both gestures also work on
-a ticked selection: the batch action moves it to the bin from the catalogue, and empties it for good from the bin.
+a ticked selection: the batch action moves it to the bin from the catalogue, and empties it for good from the bin, at
+`site-role-admin` - ConfigBundle's `TrashBatchDeleteTrait` checks that role before the first row and says once how many
+products went.
 
 Both moves leave the urls behind them in order (ConfigBundle's `Redirect`): renaming a product writes a 301 from its
 old url to the new one, deleting it for good writes a `gone` row answering 410 there for ever - which a search engine

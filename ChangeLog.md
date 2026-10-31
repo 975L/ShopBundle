@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.16.8
+
+Recycle bin emptied through ConfigBundle's TrashBatchDeleteTrait
+
+- `ProductCrudController`: the bin's batch goes through `TrashBatchDeleteTrait`, one message for the selection (31/10/2026)
+- `ProductCrudController::deleteEntity()`: removing for good requires the admin role (31/10/2026)
+- `ProductCrudController`: the bin titled through `action.trash`, `label.trash` removed (31/10/2026)
+- Requires `c975l/core-bundle` ^1.84.0 (31/10/2026)
+
 ## v2.16.7
 
 Recycle bin emptied in a batch, and titled as such

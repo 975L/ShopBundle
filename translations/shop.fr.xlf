@@ -1626,10 +1626,6 @@
                 <source>label.title</source>
                 <target>Titre</target>
             </trans-unit>
-            <trans-unit id="GAONtw_">
-                <source>label.trash</source>
-                <target>Corbeille</target>
-            </trans-unit>
             <trans-unit id="zUuBcCL">
                 <source>label.unavailable</source>
                 <target>Indisponible</target>

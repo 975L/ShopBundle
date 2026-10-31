@@ -1626,10 +1626,6 @@
                 <source>label.title</source>
                 <target>Título</target>
             </trans-unit>
-            <trans-unit id="GAONtw_">
-                <source>label.trash</source>
-                <target>Papelera</target>
-            </trans-unit>
             <trans-unit id="zUuBcCL">
                 <source>label.unavailable</source>
                 <target>No disponible</target>

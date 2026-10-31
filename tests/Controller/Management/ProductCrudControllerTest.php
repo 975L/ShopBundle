@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Tests\Controller\Management;
 
+use c975L\ConfigBundle\Controller\Management\Trait\TrashBatchDeleteTrait;
 use c975L\ConfigBundle\Entity\Redirect;
 use c975L\ConfigBundle\Management\ContentLocaleScreen;
 use c975L\ConfigBundle\Repository\RedirectRepository;
@@ -30,6 +31,7 @@ use c975L\UiBundle\Repository\ReviewRepository;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
@@ -42,6 +44,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -55,7 +58,7 @@ class ProductCrudControllerTest extends TestCase
             $this->createStub(AdminContextProviderInterface::class),
             $this->createStub(AdminUrlGeneratorInterface::class),
             $this->createStub(BlockMoveRowAttrBuilder::class),
-            $this->createStub(ConfigServiceInterface::class),
+            $this->configService(),
             $this->createStub(Connection::class),
             $this->createStub(ContentExporter::class),
             $contentLocaleScreen ?? $this->createStub(ContentLocaleScreen::class),
@@ -274,7 +277,7 @@ class ProductCrudControllerTest extends TestCase
 
     // A controller deleting from the catalogue or from the bin, the screen read from the query as the batch posts it, with a session for the flash it leaves
     /** @return array{ProductCrudController, Session} */
-    private function deletingController(bool $trash): array
+    private function deletingController(bool $trash, bool $admin = true): array
     {
         $request = new Request($trash ? ['trash' => '1'] : []);
         $session = new Session(new MockArraySessionStorage());
@@ -283,6 +286,9 @@ class ProductCrudControllerTest extends TestCase
         $controller = $this->createController($this->redirectRepository(), requestStack: $requestStack);
         $container = new Container();
         $container->set('request_stack', $requestStack);
+        $authorizationChecker = $this->createStub(AuthorizationCheckerInterface::class);
+        $authorizationChecker->method('isGranted')->willReturn($admin);
+        $container->set('security.authorization_checker', $authorizationChecker);
         $controller->setContainer($container);
 
         return [$controller, $session];
@@ -303,7 +309,7 @@ class ProductCrudControllerTest extends TestCase
         $this->assertSame([], $persisted);
     }
 
-    // Deleting a product from the bin, which is what its batch action does, removes it for good, leaves a 410 at its url and says so
+    // Deleting a product from the bin, which is what its batch action does, removes it for good and leaves a 410 at its url - the message for the whole selection is TrashBatchDeleteTrait's, said once rather than per row
     public function testDeletingATrashedProductFromTheBinRemovesItForGood(): void
     {
         $persisted = [];
@@ -316,7 +322,47 @@ class ProductCrudControllerTest extends TestCase
         $this->assertSame([$product], $removed);
         $this->assertSame('/shop/products/affiche', $persisted[0]->getFromPath());
         $this->assertTrue($persisted[0]->isGone());
-        $this->assertCount(1, $session->getFlashBag()->peek('success'));
+        $this->assertSame([], $session->getFlashBag()->peek('success'));
+    }
+
+    // The settings the controller reads, the admin role among them - a role left null would not even build the screen
+    private function configService(): ConfigServiceInterface
+    {
+        $configService = $this->createStub(ConfigServiceInterface::class);
+        $configService->method('get')->willReturnCallback(static fn (string $key): ?string => 'site-role-admin' === $key ? 'ROLE_ADMIN' : null);
+
+        return $configService;
+    }
+
+    // The bin is titled as such, with the key every bundle's bin uses, the catalogue by its plural
+    public function testTheBinIsTitledAsSuch(): void
+    {
+        [$trash] = $this->deletingController(true);
+        [$catalogue] = $this->deletingController(false);
+
+        $this->assertSame('action.trash', $trash->configureCrud(Crud::new())->getAsDto()->getCustomPageTitle(Crud::PAGE_INDEX)?->getMessage());
+        $this->assertSame('label.products', $catalogue->configureCrud(Crud::new())->getAsDto()->getCustomPageTitle(Crud::PAGE_INDEX)?->getMessage());
+    }
+
+    // Removing for good is the admin's, EasyAdmin's single delete held to the bar of the row button
+    public function testAnEditorCannotRemoveAProductForGood(): void
+    {
+        $persisted = [];
+        $removed = [];
+        [$controller] = $this->deletingController(true, admin: false);
+
+        try {
+            $controller->deleteEntity($this->recordingEntityManager($persisted, $removed), new Product()->setSlug('affiche')->setIsDeleted(true));
+            $this->fail('An editor removed a product for good');
+        } catch (AccessDeniedException) {
+            $this->assertSame([], $removed);
+        }
+    }
+
+    // The bin's batch goes through ConfigBundle's trait, which checks the admin role before the first row and says once how many went
+    public function testTheBinBatchIsTrashBatchDeleteTrait(): void
+    {
+        $this->assertContains(TrashBatchDeleteTrait::class, class_uses(ProductCrudController::class));
     }
 
     // A replayed "Move to the recycle bin" on a product already there, or a stale bin selection holding one restored meanwhile, is left alone

@@ -6,6 +6,11 @@
                 "en": "You can now empty your shop's recycle bin in one go, by ticking several products.",
                 "fr": "Vous pouvez désormais vider la corbeille de votre boutique d'un coup, en cochant plusieurs produits.",
                 "es": "Ahora puede vaciar la papelera de su tienda de una vez, marcando varios productos."
+            },
+            {
+                "en": "Emptying the recycle bin now tells you once how many products were deleted for good.",
+                "fr": "Vider la corbeille vous indique désormais en une fois combien de produits ont été supprimés définitivement.",
+                "es": "Vaciar la papelera le indica ahora de una sola vez cuántos productos se han eliminado definitivamente."
             }
         ]
     },

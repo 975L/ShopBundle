@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Controller\Management;
 
+use c975L\ConfigBundle\Controller\Management\Trait\TrashBatchDeleteTrait;
 use c975L\ConfigBundle\Entity\Redirect;
 use c975L\ConfigBundle\Management\ContentLocaleScreen;
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
@@ -84,6 +85,9 @@ use function Symfony\Component\Translation\t;
 
 class ProductCrudController extends AbstractCrudController
 {
+    // Overrides batchDelete(): from the bin, the admin role checked before the first row and a single message for the whole selection
+    use TrashBatchDeleteTrait;
+
     use SocialStatusCrudTrait;
 
     private const string TABLE = 'shop_product';
@@ -458,7 +462,7 @@ class ProductCrudController extends AbstractCrudController
             ->disable(Action::DETAIL)
         ;
 
-        // The batch "Delete" runs deleteEntity() below, which trashes from the catalogue and removes for good from the bin - worded for each, EasyAdmin's own "Delete" saying neither. The bin posts its batch with "trash=1", which deleteEntity() decides on
+        // The batch "Delete" runs deleteEntity() below, which trashes from the catalogue and removes for good from the bin - worded for each, EasyAdmin's own "Delete" saying neither. The bin posts its batch with "trash=1", which deleteEntity() and TrashBatchDeleteTrait decide on
         return EasyAdminActionHelper::trashBatchDelete($actions, $this->isTrash(), $this->adminUrlGenerator);
     }
 
@@ -605,9 +609,10 @@ class ProductCrudController extends AbstractCrudController
             return;
         }
 
+        // From the bin, at the admin role like its row button - TrashBatchDeleteTrait checked it before the first row and says once what went, this holds EasyAdmin's single delete to the same bar
         if ($entityInstance->isDeleted()) {
+            $this->denyAccessUnlessGranted((string) $this->configService->get('site-role-admin'));
             $this->removeForGood($entityManager, $entityInstance);
-            $this->addFlash('success', $this->translator->trans('flash.product_deleted_permanently', [], 'shop'));
 
             return;
         }
@@ -735,7 +740,7 @@ class ProductCrudController extends AbstractCrudController
             ->setEntityLabelInSingular(t('label.product', [], 'shop'))
             ->setEntityLabelInPlural(t($listLabel, [], 'shop'))
             // The bin is the same screen as the catalogue, and says which of the two is shown rather than printing "Products" over both
-            ->setPageTitle(Crud::PAGE_INDEX, t($this->isTrash() ? 'label.trash' : $listLabel, [], 'shop'))
+            ->setPageTitle(Crud::PAGE_INDEX, t($this->isTrash() ? 'action.trash' : $listLabel, [], 'shop'))
             ->setEntityPermission($this->configService->get('site-role-admin'))
             // Carries the language tabs above the form, and nothing at all on a site declaring a single language (see ContentLocaleScreen)
             ->overrideTemplate('crud/edit', '@c975LShop/management/product_crud_edit.html.twig')
