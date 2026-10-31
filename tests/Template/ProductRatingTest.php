@@ -62,7 +62,7 @@ class ProductRatingTest extends TestCase
         $this->assertSame('true', $entry[0]['value']);
     }
 
-    // The votes, the wishlists and the reviews are dropped where the product is removed for good, and nowhere else: one sitting in the trash can still be restored, and it must find all three where it left them
+    // The votes, the wishlists and the reviews are dropped where the product is removed for good - the one method the row button and the batch action of the bin share - and nowhere else: one sitting in the trash can still be restored, and it must find all three where it left them
     public function testTheRatingsAreDroppedOnThePermanentDeletionAlone(): void
     {
         $crud = $this->read(self::CRUD);
@@ -70,13 +70,13 @@ class ProductRatingTest extends TestCase
         // Three times and no more: the ratings, the favourites and the reviews, all three hanging off "shop_product" + id and cascaded by nothing
         $this->assertSame(3, substr_count($crud, "deleteForOwner('shop_product'"));
 
-        $permanent = substr($crud, strpos($crud, 'public function deletePermanently('));
-        $body = substr($permanent, 0, strpos($permanent, 'private function'));
+        $permanent = substr($crud, strpos($crud, 'private function removeForGood('));
+        $body = substr($permanent, 0, strpos($permanent, 'private function', 1));
 
         $this->assertSame(3, substr_count($body, "deleteForOwner('shop_product'"));
-        $this->assertStringContainsString('$ratingRepository->deleteForOwner', $body);
-        $this->assertStringContainsString('$favoriteRepository->deleteForOwner', $body);
-        $this->assertStringContainsString('$reviewRepository->deleteForOwner', $body);
+        $this->assertStringContainsString('$this->ratingRepository->deleteForOwner', $body);
+        $this->assertStringContainsString('$this->favoriteRepository->deleteForOwner', $body);
+        $this->assertStringContainsString('$this->reviewRepository->deleteForOwner', $body);
     }
 
     // The sheet gathers what buyers wrote about this very product, before the recommendations that send the reader elsewhere

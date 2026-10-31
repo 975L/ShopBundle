@@ -324,11 +324,11 @@
             </trans-unit>
             <trans-unit id="R36fidL">
                 <source>narration.guided_step_shop_trash_delete</source>
-                <target>Elimina un producto: aquí la palabra es suave, solo envía la ficha a la papelera y la retira de la tienda. Nada se ha perdido todavía.</target>
+                <target>Envía un producto a la papelera: sale de la tienda, pero nada se pierde. Marca varios para moverlos juntos.</target>
             </trans-unit>
             <trans-unit id="_lSEV0I">
                 <source>narration.guided_step_shop_trash_delete_permanently</source>
-                <target>Elimínalo definitivamente: es el único gesto que destruye algo. El producto, sus imágenes y sus archivos se van, y la confirmación está para eso.</target>
+                <target>Elimínalo definitivamente: es el único gesto que destruye algo. El producto, sus imágenes y sus archivos se van, y la confirmación está para eso. Marca varios para vaciar la papelera de una vez.</target>
             </trans-unit>
             <trans-unit id="5QiFhct">
                 <source>narration.guided_step_shop_trash_hidden</source>

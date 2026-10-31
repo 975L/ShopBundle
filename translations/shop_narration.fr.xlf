@@ -324,11 +324,11 @@
             </trans-unit>
             <trans-unit id="R36fidL">
                 <source>narration.guided_step_shop_trash_delete</source>
-                <target>Supprimez un produit : ici le mot est doux, il ne fait que mettre la fiche à la corbeille et la retirer de la boutique. Rien n'est encore perdu.</target>
+                <target>Mettez un produit à la corbeille : il quitte la boutique, mais rien n'est perdu. Cochez-en plusieurs pour les y mettre ensemble.</target>
             </trans-unit>
             <trans-unit id="_lSEV0I">
                 <source>narration.guided_step_shop_trash_delete_permanently</source>
-                <target>Supprimez-le pour de bon : c'est le seul geste qui détruit quelque chose. Le produit, ses images et ses fichiers partent, et la confirmation est là pour ça.</target>
+                <target>Supprimez-le pour de bon : c'est le seul geste qui détruit quelque chose. Le produit, ses images et ses fichiers partent, et la confirmation est là pour ça. Cochez-en plusieurs pour vider la corbeille d'un coup.</target>
             </trans-unit>
             <trans-unit id="5QiFhct">
                 <source>narration.guided_step_shop_trash_hidden</source>

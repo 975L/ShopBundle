@@ -24,6 +24,9 @@ use c975L\ShopBundle\Management\ProductExportProvider;
 use c975L\ShopBundle\Service\ProductSocialContentSource;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
+use c975L\UiBundle\Repository\FavoriteRepository;
+use c975L\UiBundle\Repository\RatingRepository;
+use c975L\UiBundle\Repository\ReviewRepository;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,11 +34,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -43,7 +49,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // Guards the ordering the products index persists when a row is dropped (see UiBundle's ea-index-sort.js), and what a renamed or permanently deleted product leaves behind at its old url. The drag itself is a browser gesture, so what is locked here is what the payload it POSTs turns into.
 class ProductCrudControllerTest extends TestCase
 {
-    private function createController(?RedirectRepository $redirectRepository = null, ?ContentLocaleScreen $contentLocaleScreen = null, ?ShopTranslator $shopTranslator = null): ProductCrudController
+    private function createController(?RedirectRepository $redirectRepository = null, ?ContentLocaleScreen $contentLocaleScreen = null, ?ShopTranslator $shopTranslator = null, ?RequestStack $requestStack = null): ProductCrudController
     {
         return new ProductCrudController(
             $this->createStub(AdminContextProviderInterface::class),
@@ -54,9 +60,12 @@ class ProductCrudControllerTest extends TestCase
             $this->createStub(ContentExporter::class),
             $contentLocaleScreen ?? $this->createStub(ContentLocaleScreen::class),
             $this->createStub(CsrfTokenManagerInterface::class),
+            $this->createStub(FavoriteRepository::class),
             $this->createStub(ProductExportProvider::class),
+            $this->createStub(RatingRepository::class),
             $redirectRepository ?? $this->createStub(RedirectRepository::class),
-            $this->createStub(RequestStack::class),
+            $requestStack ?? $this->createStub(RequestStack::class),
+            $this->createStub(ReviewRepository::class),
             $shopTranslator ?? $this->createStub(ShopTranslator::class),
             $this->createStub(TableExporter::class),
             $this->createStub(TranslatorInterface::class),
@@ -261,6 +270,70 @@ class ProductCrudControllerTest extends TestCase
 
         $this->assertTrue($dangling->isGone());
         $this->assertNull($dangling->getToUrl());
+    }
+
+    // A controller deleting from the catalogue or from the bin, the screen read from the query as the batch posts it, with a session for the flash it leaves
+    /** @return array{ProductCrudController, Session} */
+    private function deletingController(bool $trash): array
+    {
+        $request = new Request($trash ? ['trash' => '1'] : []);
+        $session = new Session(new MockArraySessionStorage());
+        $request->setSession($session);
+        $requestStack = new RequestStack([$request]);
+        $controller = $this->createController($this->redirectRepository(), requestStack: $requestStack);
+        $container = new Container();
+        $container->set('request_stack', $requestStack);
+        $controller->setContainer($container);
+
+        return [$controller, $session];
+    }
+
+    // Deleting a product of the catalogue, one by one or in a batch, only moves it to the recycle bin
+    public function testDeletingALiveProductFromTheCatalogueMovesItToTheBin(): void
+    {
+        $persisted = [];
+        $removed = [];
+        $product = new Product()->setSlug('affiche');
+        [$controller] = $this->deletingController(false);
+
+        $controller->deleteEntity($this->recordingEntityManager($persisted, $removed), $product);
+
+        $this->assertTrue($product->isDeleted());
+        $this->assertSame([], $removed);
+        $this->assertSame([], $persisted);
+    }
+
+    // Deleting a product from the bin, which is what its batch action does, removes it for good, leaves a 410 at its url and says so
+    public function testDeletingATrashedProductFromTheBinRemovesItForGood(): void
+    {
+        $persisted = [];
+        $removed = [];
+        $product = new Product()->setSlug('affiche')->setIsDeleted(true);
+        [$controller, $session] = $this->deletingController(true);
+
+        $controller->deleteEntity($this->recordingEntityManager($persisted, $removed), $product);
+
+        $this->assertSame([$product], $removed);
+        $this->assertSame('/shop/products/affiche', $persisted[0]->getFromPath());
+        $this->assertTrue($persisted[0]->isGone());
+        $this->assertCount(1, $session->getFlashBag()->peek('success'));
+    }
+
+    // A replayed "Move to the recycle bin" on a product already there, or a stale bin selection holding one restored meanwhile, is left alone
+    public function testDeletingFromTheOtherScreenLeavesTheProductAlone(): void
+    {
+        foreach ([[false, true], [true, false]] as [$trash, $deleted]) {
+            $persisted = [];
+            $removed = [];
+            $product = new Product()->setSlug('affiche')->setIsDeleted($deleted);
+            [$controller] = $this->deletingController($trash);
+
+            $controller->deleteEntity($this->recordingEntityManager($persisted, $removed), $product);
+
+            $this->assertSame($deleted, $product->isDeleted());
+            $this->assertSame([], $removed);
+            $this->assertSame([], $persisted);
+        }
     }
 
     // A path an admin already covered says more than a dead end, so it is left alone

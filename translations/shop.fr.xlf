@@ -18,10 +18,6 @@
                 <source>action.create_template</source>
                 <target>Créer un modèle</target>
             </trans-unit>
-            <trans-unit id="sSgetpg">
-                <source>action.delete_permanently</source>
-                <target>Supprimer définitivement</target>
-            </trans-unit>
             <trans-unit id="IzBoXOt">
                 <source>action.duplicate</source>
                 <target>Dupliquer</target>
@@ -29,10 +25,6 @@
             <trans-unit id="DYrEVzQ">
                 <source>action.export_selection</source>
                 <target>Exporter la sélection</target>
-            </trans-unit>
-            <trans-unit id="vUjYe27">
-                <source>action.move_to_trash</source>
-                <target>Mettre à la corbeille</target>
             </trans-unit>
             <trans-unit id="OVrqPFV">
                 <source>action.preview</source>
@@ -392,11 +384,11 @@
             </trans-unit>
             <trans-unit id="9inURXg">
                 <source>description.guided_step_shop_trash_delete</source>
-                <target>Ici « Supprimer » ne fait que mettre le produit à la corbeille, et le retire de la boutique : rien n'est encore perdu.</target>
+                <target>Ici « Mettre à la corbeille » retire le produit de la boutique sans rien perdre ; cochez plusieurs produits pour les y mettre ensemble.</target>
             </trans-unit>
             <trans-unit id="H1.2khY">
                 <source>description.guided_step_shop_trash_delete_permanently</source>
-                <target>Le seul geste qui détruit quelque chose : le produit, ses images et ses fichiers partent, et aucune commande ne les montre plus jamais.</target>
+                <target>Le seul geste qui détruit quelque chose : le produit, ses images et ses fichiers partent, et aucune commande ne les montre plus jamais. Cochez plusieurs produits pour vider la corbeille d'un coup.</target>
             </trans-unit>
             <trans-unit id="qsvJO9b">
                 <source>description.guided_step_shop_trash_hidden</source>
@@ -1633,6 +1625,10 @@
             <trans-unit id="ZIbme0L">
                 <source>label.title</source>
                 <target>Titre</target>
+            </trans-unit>
+            <trans-unit id="GAONtw_">
+                <source>label.trash</source>
+                <target>Corbeille</target>
             </trans-unit>
             <trans-unit id="zUuBcCL">
                 <source>label.unavailable</source>

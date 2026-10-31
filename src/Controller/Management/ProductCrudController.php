@@ -105,9 +105,12 @@ class ProductCrudController extends AbstractCrudController
         private readonly ContentExporter $contentExporter,
         private readonly ContentLocaleScreen $contentLocaleScreen,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly FavoriteRepository $favoriteRepository,
         private readonly ProductExportProvider $productExportProvider,
+        private readonly RatingRepository $ratingRepository,
         private readonly RedirectRepository $redirectRepository,
         private readonly RequestStack $requestStack,
+        private readonly ReviewRepository $reviewRepository,
         private readonly ShopTranslator $shopTranslator,
         private readonly TableExporter $tableExporter,
         private readonly TranslatorInterface $translator,
@@ -344,7 +347,7 @@ class ProductCrudController extends AbstractCrudController
         ;
 
         // Removes the product for good, its pictures and its files with it - only reachable from the recycle bin
-        $deletePermanentlyAction = Action::new('deletePermanently', t('action.delete_permanently', [], 'shop'), 'fa fa-trash')
+        $deletePermanentlyAction = Action::new('deletePermanently', t('action.delete_permanently', [], 'config'), 'fa fa-trash')
             ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('deletePermanently', $product, self::DELETE_PERMANENTLY_CSRF_TOKEN, true))
             ->displayIf(static fn (Product $product): bool => $product->isDeleted())
             ->askConfirmation(t('confirm.delete_permanently', [], 'shop'))
@@ -362,7 +365,7 @@ class ProductCrudController extends AbstractCrudController
             $actions->remove(Crud::PAGE_INDEX, Action::NEW);
         }
 
-        return $actions
+        $actions
             ->add(Crud::PAGE_INDEX, $exportGroup)
             ->add(Crud::PAGE_INDEX, $this->trashAction())
             ->add(Crud::PAGE_INDEX, $this->templatesAction())
@@ -415,7 +418,7 @@ class ProductCrudController extends AbstractCrudController
             ))
             ->update(Crud::PAGE_INDEX, 'deletePermanently', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
-                $this->translator->trans('action.delete_permanently', [], 'shop'),
+                $this->translator->trans('action.delete_permanently', [], 'config'),
             ))
             // "Delete" only moves the product to the recycle bin here, and says so - what actually removes it is the action of that view
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
@@ -423,11 +426,11 @@ class ProductCrudController extends AbstractCrudController
                     ->setIcon('fa fa-box-archive')
                     ->askConfirmation(t('confirm.move_to_trash', [], 'shop'))
                     ->displayIf(static fn (Product $product): bool => !$product->isDeleted()),
-                $this->translator->trans('action.move_to_trash', [], 'shop'),
+                $this->translator->trans('action.move_to_trash', [], 'config'),
             ))
             // Same gesture on the sheet itself, keeping its words there, where the bar has the room for them
             ->update(Crud::PAGE_EDIT, Action::DELETE, fn (Action $action) => $action
-                ->setLabel(t('action.move_to_trash', [], 'shop'))
+                ->setLabel(t('action.move_to_trash', [], 'config'))
                 ->setIcon('fa fa-box-archive')
                 ->askConfirmation(t('confirm.move_to_trash', [], 'shop'))
                 ->displayIf(static fn (Product $product): bool => !$product->isDeleted()))
@@ -454,6 +457,9 @@ class ProductCrudController extends AbstractCrudController
             // Detail adds no information beyond what edit already shows
             ->disable(Action::DETAIL)
         ;
+
+        // The batch "Delete" runs deleteEntity() below, which trashes from the catalogue and removes for good from the bin - worded for each, EasyAdmin's own "Delete" saying neither. The bin posts its batch with "trash=1", which deleteEntity() decides on
+        return EasyAdminActionHelper::trashBatchDelete($actions, $this->isTrash(), $this->adminUrlGenerator);
     }
 
     // Whether the index is showing the recycle bin rather than the catalogue - the one flag the whole screen reads, from the fields to the query
@@ -584,12 +590,24 @@ class ProductCrudController extends AbstractCrudController
         return $queryBuilder;
     }
 
-    // Deleting a product only moves it to the recycle bin, with everything it holds: its url answers 410 from there, and it is restored or removed for good from that view alone
+    // Deleting a product from the catalogue only moves it to the recycle bin, with everything it holds: its url answers 410 from there. Deleting it from the bin, row or batch, removes it for good
     #[\Override]
     public function deleteEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
         if (!$entityInstance instanceof Product) {
             parent::deleteEntity($entityManager, $entityInstance);
+
+            return;
+        }
+
+        // Decided by the screen the delete came from, never by the row alone: a replayed "Move to the recycle bin" on a product already there, or a stale bin selection holding one restored meanwhile, is left alone
+        if ($entityInstance->isDeleted() !== $this->isTrash()) {
+            return;
+        }
+
+        if ($entityInstance->isDeleted()) {
+            $this->removeForGood($entityManager, $entityInstance);
+            $this->addFlash('success', $this->translator->trans('flash.product_deleted_permanently', [], 'shop'));
 
             return;
         }
@@ -655,7 +673,7 @@ class ProductCrudController extends AbstractCrudController
 
     // Removes the product for good, its pictures and its downloadable files with it - only reachable from the recycle bin
     #[AdminRoute(options: ['methods' => ['GET']])]
-    public function deletePermanently(Request $request, ProductRepository $productRepository, EntityManagerInterface $entityManager, RatingRepository $ratingRepository, FavoriteRepository $favoriteRepository, ReviewRepository $reviewRepository): Response
+    public function deletePermanently(Request $request, ProductRepository $productRepository, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
@@ -668,23 +686,29 @@ class ProductCrudController extends AbstractCrudController
             throw $this->createNotFoundException();
         }
 
-        $this->writeGoneRedirect($entityManager, $product);
-
-        // The customers' votes, which hang off "shop_product" + id rather than off a relation (see c975L\UiBundle\Entity\Rating) and so are cascaded by nothing. Dropped here and not when the product is trashed: one that can still be restored must find its ratings where it left them
-        $ratingRepository->deleteForOwner('shop_product', (int) $product->getId());
-
-        // The wishlists it was put aside on, held the same way and cascaded by nothing either (see c975L\UiBundle\Entity\Favorite). Dropped here and not on the trash for the same reason: a restored product must find itself on the lists it was on
-        $favoriteRepository->deleteForOwner('shop_product', (int) $product->getId());
-
-        // What the customers wrote about it, held the same way again (see c975L\UiBundle\Entity\Review) - a sheet nobody can reach any more must not keep its reviews reachable
-        $reviewRepository->deleteForOwner('shop_product', (int) $product->getId());
-
-        $entityManager->remove($product);
-        $entityManager->flush();
+        $this->removeForGood($entityManager, $product);
 
         $this->addFlash('success', $this->translator->trans('flash.product_deleted_permanently', [], 'shop'));
 
         return $this->redirect($this->trashIndexUrl());
+    }
+
+    // What removing a product for good takes, whether from its row button or from the batch action of the bin: its url left answering 410, and what hangs off it without a relation dropped with it
+    private function removeForGood(EntityManagerInterface $entityManager, Product $product): void
+    {
+        $this->writeGoneRedirect($entityManager, $product);
+
+        // The customers' votes, which hang off "shop_product" + id rather than off a relation (see c975L\UiBundle\Entity\Rating) and so are cascaded by nothing. Dropped here and not when the product is trashed: one that can still be restored must find its ratings where it left them
+        $this->ratingRepository->deleteForOwner('shop_product', (int) $product->getId());
+
+        // The wishlists it was put aside on, held the same way and cascaded by nothing either (see c975L\UiBundle\Entity\Favorite). Dropped here and not on the trash for the same reason: a restored product must find itself on the lists it was on
+        $this->favoriteRepository->deleteForOwner('shop_product', (int) $product->getId());
+
+        // What the customers wrote about it, held the same way again (see c975L\UiBundle\Entity\Review) - a sheet nobody can reach any more must not keep its reviews reachable
+        $this->reviewRepository->deleteForOwner('shop_product', (int) $product->getId());
+
+        $entityManager->remove($product);
+        $entityManager->flush();
     }
 
     // The 410 the recycle bin served only lasts as long as the product can be restored, and the url would fall back to a plain 404 once the row is gone - a "gone" Redirect keeps answering 410 for good, which a search engine acts on far faster. Redirects pointing at that url are turned into "gone" rows too rather than left dangling, and a path an admin already covered deliberately is left alone, a target saying more than a dead end
@@ -703,11 +727,15 @@ class ProductCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
+        $listLabel = $this->isTemplates() ? 'label.templates' : 'label.products';
+
         return $crud
             ->showEntityActionsInlined()
             // Named in the editor's own language: with no label, EasyAdmin falls back on the class name and prints "Product" on every screen and every button
             ->setEntityLabelInSingular(t('label.product', [], 'shop'))
-            ->setEntityLabelInPlural(t($this->isTemplates() ? 'label.templates' : 'label.products', [], 'shop'))
+            ->setEntityLabelInPlural(t($listLabel, [], 'shop'))
+            // The bin is the same screen as the catalogue, and says which of the two is shown rather than printing "Products" over both
+            ->setPageTitle(Crud::PAGE_INDEX, t($this->isTrash() ? 'label.trash' : $listLabel, [], 'shop'))
             ->setEntityPermission($this->configService->get('site-role-admin'))
             // Carries the language tabs above the form, and nothing at all on a site declaring a single language (see ContentLocaleScreen)
             ->overrideTemplate('crud/edit', '@c975LShop/management/product_crud_edit.html.twig')

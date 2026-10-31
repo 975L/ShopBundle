@@ -30,7 +30,7 @@ a float.
 
 `Product` carries two flags, and **every public read honours both**: `hidden` (a product is set aside - a new one
 starts that way, so nothing goes on sale by being saved) and `isDeleted` (the recycle bin — `ProductCrudController`'s
-delete action only sets this). The two are not the same thing: hidden means "not shown, nothing lost" and answers
+delete action only sets this from the catalogue, and removes for good from the bin, row or batch). The two are not the same thing: hidden means "not shown, nothing lost" and answers
 404, trashed means "on its way out" and answers 410.
 
 | Read through | Answers |
@@ -324,6 +324,7 @@ charging one price and displaying another.
 - **Do not leave `exportSelection` out of a `reorder()` call** — `reorder()` turns EasyAdmin's priority
   ordering off for the whole page, and the batch bar then falls back to the declaration order, which puts
   delete first. Name the export, never `batchDelete`, which throws where it is disabled.
+- **Do not decide `ProductCrudController::deleteEntity()` on `isDeleted()` alone** — it reads the screen (`trash=1`, kept on the bin's batch by `EasyAdminActionHelper::trashBatchDelete()` given the url generator): a replayed trash on a row already in the bin must not remove it for good.
 - **Do not gate a localised url on whether the row is translated** — `ShopTranslatedLocales` answers every declared language on purpose; what a row says is `ShopTranslator::translatedLocales()`, a separate question.
 - **Do not declare a language-screen field with a different type from the writing screen** — a rich text under a plain textarea loses its markup on save.
 - **Do not generate a shop url with the plain router** in anything a visitor clicks — `LocalizedUrlGenerator::path()` for a relative one, `ShopPublicUrlResolver` for an absolute one.

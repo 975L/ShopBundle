@@ -324,11 +324,11 @@
             </trans-unit>
             <trans-unit id="R36fidL">
                 <source>narration.guided_step_shop_trash_delete</source>
-                <target>Delete a product: here the word is kind, it only moves the sheet to the recycle bin and takes it out of the shop. Nothing is lost yet.</target>
+                <target>Move a product to the recycle bin: it leaves the shop, but nothing is lost. Tick several to move them together.</target>
             </trans-unit>
             <trans-unit id="_lSEV0I">
                 <source>narration.guided_step_shop_trash_delete_permanently</source>
-                <target>Remove it for good: this is the only gesture that destroys anything. The product, its pictures and its files go, and the confirmation is there for that.</target>
+                <target>Remove it for good: this is the only gesture that destroys anything. The product, its pictures and its files go, and the confirmation is there for that. Tick several to empty the bin at once.</target>
             </trans-unit>
             <trans-unit id="5QiFhct">
                 <source>narration.guided_step_shop_trash_hidden</source>

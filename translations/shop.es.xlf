@@ -18,10 +18,6 @@
                 <source>action.create_template</source>
                 <target>Crear una plantilla</target>
             </trans-unit>
-            <trans-unit id="sSgetpg">
-                <source>action.delete_permanently</source>
-                <target>Eliminar definitivamente</target>
-            </trans-unit>
             <trans-unit id="IzBoXOt">
                 <source>action.duplicate</source>
                 <target>Duplicar</target>
@@ -29,10 +25,6 @@
             <trans-unit id="DYrEVzQ">
                 <source>action.export_selection</source>
                 <target>Exportar la selección</target>
-            </trans-unit>
-            <trans-unit id="vUjYe27">
-                <source>action.move_to_trash</source>
-                <target>Mover a la papelera</target>
             </trans-unit>
             <trans-unit id="OVrqPFV">
                 <source>action.preview</source>
@@ -392,11 +384,11 @@
             </trans-unit>
             <trans-unit id="9inURXg">
                 <source>description.guided_step_shop_trash_delete</source>
-                <target>Aquí «Eliminar» solo envía el producto a la papelera y lo retira de la tienda: nada se ha perdido todavía.</target>
+                <target>Aquí «Mover a la papelera» retira el producto de la tienda sin perder nada; marque varios productos para moverlos juntos.</target>
             </trans-unit>
             <trans-unit id="H1.2khY">
                 <source>description.guided_step_shop_trash_delete_permanently</source>
-                <target>El único gesto que destruye algo: el producto, sus imágenes y sus archivos se van, y ningún pedido los vuelve a mostrar.</target>
+                <target>El único gesto que destruye algo: el producto, sus imágenes y sus archivos se van, y ningún pedido los vuelve a mostrar. Marque varios productos para vaciar la papelera de una vez.</target>
             </trans-unit>
             <trans-unit id="qsvJO9b">
                 <source>description.guided_step_shop_trash_hidden</source>
@@ -1633,6 +1625,10 @@
             <trans-unit id="ZIbme0L">
                 <source>label.title</source>
                 <target>Título</target>
+            </trans-unit>
+            <trans-unit id="GAONtw_">
+                <source>label.trash</source>
+                <target>Papelera</target>
             </trans-unit>
             <trans-unit id="zUuBcCL">
                 <source>label.unavailable</source>

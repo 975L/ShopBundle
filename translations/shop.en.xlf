@@ -18,10 +18,6 @@
                 <source>action.create_template</source>
                 <target>Create a template</target>
             </trans-unit>
-            <trans-unit id="sSgetpg">
-                <source>action.delete_permanently</source>
-                <target>Delete permanently</target>
-            </trans-unit>
             <trans-unit id="IzBoXOt">
                 <source>action.duplicate</source>
                 <target>Duplicate</target>
@@ -29,10 +25,6 @@
             <trans-unit id="DYrEVzQ">
                 <source>action.export_selection</source>
                 <target>Export selection</target>
-            </trans-unit>
-            <trans-unit id="vUjYe27">
-                <source>action.move_to_trash</source>
-                <target>Move to the recycle bin</target>
             </trans-unit>
             <trans-unit id="OVrqPFV">
                 <source>action.preview</source>
@@ -392,11 +384,11 @@
             </trans-unit>
             <trans-unit id="9inURXg">
                 <source>description.guided_step_shop_trash_delete</source>
-                <target>Here "Delete" only moves the product to the recycle bin, and hides it from the shop - nothing is lost yet.</target>
+                <target>Here "Move to the recycle bin" takes the product out of the shop without losing anything; tick several products to move them together.</target>
             </trans-unit>
             <trans-unit id="H1.2khY">
                 <source>description.guided_step_shop_trash_delete_permanently</source>
-                <target>The only gesture that destroys anything: the product, its pictures and its files go, and no order ever shows them again.</target>
+                <target>The only gesture that destroys anything: the product, its pictures and its files go, and no order ever shows them again. Tick several products to empty the bin at once.</target>
             </trans-unit>
             <trans-unit id="qsvJO9b">
                 <source>description.guided_step_shop_trash_hidden</source>
@@ -1633,6 +1625,10 @@
             <trans-unit id="ZIbme0L">
                 <source>label.title</source>
                 <target>Title</target>
+            </trans-unit>
+            <trans-unit id="GAONtw_">
+                <source>label.trash</source>
+                <target>Recycle bin</target>
             </trans-unit>
             <trans-unit id="zUuBcCL">
                 <source>label.unavailable</source>

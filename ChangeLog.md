@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.16.7
+
+Recycle bin emptied in a batch, and titled as such
+
+- `ProductCrudController`: batch "Delete" worded per screen, and removing the selection for good from the bin (31/10/2026)
+- `ProductCrudController`: deletion decided by the screen, a stale catalogue tab no longer removing a trashed product (31/10/2026)
+- `ProductCrudController`: recycle bin titled "Recycle bin" rather than "Products", `label.trash` added (31/10/2026)
+- `ProductCrudController`: removal for good shared by the row button and the batch action (31/10/2026)
+- Recycle bin guided project and its narration mention the batch gestures (31/10/2026)
+- `action.move_to_trash` and `action.delete_permanently` read from ConfigBundle's `config` catalog (31/10/2026)
+- Requires `c975l/core-bundle` ^1.83.0 (31/10/2026)
+
 ## v2.16.6
 
 Delivery time in the product graph
