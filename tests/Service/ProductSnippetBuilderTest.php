@@ -69,7 +69,7 @@ class ProductSnippetBuilderTest extends TestCase
         $this->assertSame('Affiche', $snippet['name']);
         $this->assertSame('https://example.org/shop/products/affiche', $snippet['url']);
         $this->assertSame('https://example.org/affiche.webp', $snippet['image']);
-        $this->assertSame('affiche', $snippet['sku']);
+        $this->assertArrayNotHasKey('sku', $snippet);
         $this->assertSame('Affiches', $snippet['category']);
     }
 
@@ -278,6 +278,35 @@ class ProductSnippetBuilderTest extends TestCase
 
         $this->assertSame('0.00', $shipping['shippingRate']['value']);
         $this->assertSame('FR', $shipping['shippingDestination']['addressCountry']);
+        $this->assertSame(['@type' => 'QuantitativeValue', 'minValue' => 0, 'maxValue' => 0, 'unitCode' => 'DAY'], $shipping['deliveryTime']['transitTime']);
+    }
+
+    // The two ranges the shop configured become the delivery time Google reads, a bare number being a range of its own
+    public function testAPostedArticleStatesTheDeliveryTimeTheShopConfigured(): void
+    {
+        $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur', 'shop-handling-days' => '1-3', 'shop-transit-days' => ' 2 '], shipping: 490);
+        $product = $this->product();
+        $product->getItems()->first()->setWeight(850);
+        $deliveryTime = $builder->buildProduct($product)['offers'][0]['shippingDetails']['deliveryTime'];
+
+        $this->assertSame('ShippingDeliveryTime', $deliveryTime['@type']);
+        $this->assertSame(['@type' => 'QuantitativeValue', 'minValue' => 1, 'maxValue' => 3, 'unitCode' => 'DAY'], $deliveryTime['handlingTime']);
+        $this->assertSame(['@type' => 'QuantitativeValue', 'minValue' => 2, 'maxValue' => 2, 'unitCode' => 'DAY'], $deliveryTime['transitTime']);
+    }
+
+    // Half a delivery time is none: a missing, unreadable or backwards range leaves the rate published without one
+    public function testAnIncompleteDeliveryTimeIsLeftOut(): void
+    {
+        $product = $this->product();
+        $product->getItems()->first()->setWeight(850);
+
+        foreach ([['shop-handling-days' => '1-3'], ['shop-handling-days' => '1-3', 'shop-transit-days' => 'vite'], ['shop-handling-days' => '3-1', 'shop-transit-days' => '2-4']] as $days) {
+            $builder = $this->builder(['shop-shipping-country' => 'FR', 'shop-currency' => 'eur'] + $days, shipping: 490);
+            $shipping = $builder->buildProduct($product)['offers'][0]['shippingDetails'];
+
+            $this->assertSame('4.90', $shipping['shippingRate']['value']);
+            $this->assertArrayNotHasKey('deliveryTime', $shipping);
+        }
     }
 
     // A tier priced at zero is free shipping, which Google reads from a zero rate
@@ -367,7 +396,7 @@ class ProductSnippetBuilderTest extends TestCase
         $this->assertSame(['@type' => 'Brand', 'name' => 'Éditions Lolant'], $snippet['brand']);
     }
 
-    // A product made in-house names no brand, and the node is left out rather than emitted empty
+    // A product whose brand was left unstated publishes no node rather than an empty one
     public function testAProductWithoutABrandPublishesNoBrandNode(): void
     {
         $this->assertArrayNotHasKey('brand', $this->builder->buildProduct($this->product()));

@@ -693,7 +693,9 @@ nothing.
 Each offer also carries what the sheet already displays about delivery and returns: the shipping rate
 PaymentBundle's grid charges for this very item's weight, to the one country `shop-shipping-country` names -
 a zero rate on a downloaded file and on a tier priced at zero, which is free shipping, and none on a rendered
-service. Nothing is published for an item nobody weighed, for a shop naming no default country, or for a grid
+service. The rate carries a `deliveryTime` when PaymentBundle's `shop-handling-days` and
+`shop-transit-days` both hold a range of business days (`1-3`, or `2` for exactly two) - half of one being no
+delivery time, none is published otherwise -, a downloaded file being delivered in zero days. Nothing is published for an item nobody weighed, for a shop naming no default country, or for a grid
 answering nothing: a tier published as if it covered every parcel is a guess. The return policy states the
 window PaymentBundle's `shop-return-days` holds for that same country, published only above zero - an unfilled
 setting reads as `0` -, with a `merchantReturnLink` to `url-terms-of-sales` when there is one; a downloaded file

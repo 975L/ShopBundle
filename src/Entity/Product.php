@@ -52,7 +52,7 @@ class Product implements \Stringable, HasBlocksInterface
     #[Assert\NotBlank]
     private ?string $description = null;
 
-    // The maker of the product, published as the graph's Brand node - Google Merchant Center declines a branded offer that names none. Left empty on anything made in-house, whose brand is the shop itself
+    // The maker of the product, published as the graph's Brand node - Google Merchant Center declines a branded offer that names none. On anything made in-house it is the shop's own name, a publisher's on a book
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $brand = null;
 

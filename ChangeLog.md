@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.16.6
+
+Delivery time in the product graph
+
+- `ProductSnippetBuilder`: offers' `shippingDetails` carry a `deliveryTime` from `shop-handling-days` and `shop-transit-days` (31/10/2026)
+- `ProductSnippetBuilder`: Product node no longer publishes its slug as `sku` (31/10/2026)
+
 ## v2.16.5
 
 Demo pictures copied through UiBundle's DemoFixtureMediaCopier
