@@ -34,7 +34,7 @@ class ProductMediaType extends AbstractType
                 'download_uri' => true,
                 'asset_helper' => true,
                 'constraints' => [
-                    new File(maxSize: '20M'),
+                    new File(maxSize: '20M', mimeTypes: ProductItemMediaType::IMAGE_TYPES),
                 ],
             ])
             // Left empty, the picture reads as decorative, which a product picture never is: this is the only thing a search engine and a screen reader get of it

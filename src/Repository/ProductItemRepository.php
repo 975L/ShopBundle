@@ -103,4 +103,53 @@ class ProductItemRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    // Counts an order against the stock, and says whether the stock still held it: a single statement, for two payments at the same second both read the same count. A null cap is no stock to run out of, and one at 0 a withdrawal this order was validated before
+    public function claimOrdered(ProductItem $item, int $quantity): bool
+    {
+        return 1 === (int) $this->getEntityManager()->getConnection()->executeStatement(
+            'UPDATE shop_product_item SET ordered_quantity = COALESCE(ordered_quantity, 0) + :quantity'
+                . ' WHERE id = :id AND (limited_quantity IS NULL OR limited_quantity <= 0 OR COALESCE(ordered_quantity, 0) + :quantity <= limited_quantity)',
+            ['id' => $item->getId(), 'quantity' => $quantity]
+        );
+    }
+
+    // Counts an order the stock could not hold, the customer having paid for it: the count stays true, and past its cap it is what the dashboard reads
+    public function addOrdered(ProductItem $item, int $quantity): void
+    {
+        $this->getEntityManager()->getConnection()->executeStatement(
+            'UPDATE shop_product_item SET ordered_quantity = COALESCE(ordered_quantity, 0) + :quantity WHERE id = :id',
+            ['id' => $item->getId(), 'quantity' => $quantity]
+        );
+    }
+
+    // How many items were sold past their stock (see ShopAlertProvider)
+    public function countOversold(): int
+    {
+        return (int) $this->createQueryBuilder('i')
+            ->select('COUNT(i.id)')
+            ->andWhere('i.limitedQuantity > 0')
+            ->andWhere('i.orderedQuantity > i.limitedQuantity')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * The titles of the items sold past their stock, for the shop to know which to restock or refund.
+     *
+     * @return list<array{product: ?string, item: ?string}>
+     */
+    public function findOversoldTitles(int $limit): array
+    {
+        return $this->createQueryBuilder('i')
+            ->select('p.title AS product', 'i.title AS item')
+            ->leftJoin('i.product', 'p')
+            ->andWhere('i.limitedQuantity > 0')
+            ->andWhere('i.orderedQuantity > i.limitedQuantity')
+            ->orderBy('p.title', \SortDirection::Ascending)
+            ->addOrderBy('i.id', \SortDirection::Ascending)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

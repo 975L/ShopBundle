@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.17.0
+
+Stock counted by the database, pictures only, editor text sanitized
+
+- `ProductBasketItemProvider::countOrdered()`: stock claimed by a conditional `UPDATE`, an oversold order logged as critical (01/11/2026)
+- `ShopAlertProvider`: a dashboard alert names the items sold past their stock (01/11/2026)
+- `ProductItemMediaType`, `ProductMediaType`: pictures only (`image/jpeg`, `png`, `webp`, `gif`) (01/11/2026)
+- `category/display`, `Product/Description`, `Button/Button`: `|raw` replaced with `|sanitize_html('c975l.rich')` (01/11/2026)
+- Requires `c975l/core-bundle` ^1.85.0 (01/11/2026)
+
 ## v2.16.8
 
 Recycle bin emptied through ConfigBundle's TrashBatchDeleteTrait

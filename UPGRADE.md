@@ -2,6 +2,10 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.17
+
+`ProductBasketItemProvider` takes a logger. Pictures of a product and of an item are limited to JPEG, PNG, WebP and GIF. Requires `c975l/core-bundle` ^1.85.0, for the `c975l.rich` sanitizer.
+
 ### v2.14
 
 **Two `user_id` foreign keys become `ON DELETE SET NULL`**, on `shop_product` and `shop_product_item`. Neither

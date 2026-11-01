@@ -21,6 +21,7 @@ use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\PaymentBundle\Service\VatCalculator;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
 use c975L\ShopBundle\Repository\ProductItemRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -34,6 +35,7 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
         private readonly TranslatorInterface $translator,
         private readonly LocalizedUrlGenerator $localizedUrlGenerator,
         private readonly ProductItemRepository $productItemRepository,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -192,7 +194,7 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
             }
 
             $this->issueGiftCards($basket, $itemContent);
-            $this->countOrdered($id, $itemContent['quantity']);
+            $this->countOrdered($basket, $id, (int) $itemContent['quantity']);
         }
 
         if ($hasDigital) {
@@ -221,14 +223,21 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
         }
     }
 
-    // Last, and the only thing the live catalogue is needed for: an item deleted since is simply no longer counted
-    private function countOrdered(int | string $id, int $quantity): void
+    // Last, and the only thing the live catalogue is needed for: an item deleted since is simply no longer counted, and a line at zero or below counts nothing, a negative one lowering the stock and a zero one changing no row, which would read as a refusal. The database says whether the stock still held this order, two payments at the same second both reading the same count. The customer has paid, so a refusal takes nothing back: the count goes past the stock and stays true, which is what the dashboard reads (see ShopAlertProvider), and the shop is told. Dated so a stock counted here still invalidates the pages showing it (see ShopCacheInvalidationListener)
+    private function countOrdered(Basket $basket, int | string $id, int $quantity): void
     {
         $item = $this->productItemService->findOneById($id);
-        if (null === $item) {
+        if (null === $item || $quantity <= 0) {
             return;
         }
 
-        $item->setOrderedQuantity(($item->getOrderedQuantity() ?? 0) + $quantity);
+        $item->setModification(new \DateTime());
+
+        if ($this->productItemRepository->claimOrdered($item, $quantity)) {
+            return;
+        }
+
+        $this->productItemRepository->addOrdered($item, $quantity);
+        $this->logger->critical('Basket {number}: item {id} oversold, {quantity} paid for past its stock', ['number' => $basket->getNumber(), 'id' => $id, 'quantity' => $quantity]);
     }
 }

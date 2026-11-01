@@ -29,7 +29,7 @@
             {# What the category says of itself, the only content of this page that is its own - the shop's welcome message belongs to the shop's index, not here #}
             {% if category.description %}
                 <div class="text text-center"{% if editUrl %} data-block-edit-url="{{ shop_product_category_edit_url(category, 'description') }}"{% endif %}>
-                    {{ category.description|raw }}
+                    {{ category.description|sanitize_html('c975l.rich') }}
                 </div>
             {% endif %}
         </div>

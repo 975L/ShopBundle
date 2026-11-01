@@ -903,7 +903,8 @@ Installed alongside ConfigBundle, this bundle contributes on its own, with nothi
 | `ProductCategoryExportProvider` / `ProductCategoryImportProvider` | The categories with the blocks composed on their page, carried the same way and importable in any order |
 | `ShopBackupPathProvider` | `public/medias/shop` and `private/medias/shop` declared as irreplaceable - **the private one holds the files your customers paid for** |
 | `ShopShortcutProvider` | The shop test mode tile, under Maintenance, toggling `shop-test-mode` |
-| `ShopGuidedProjectProvider` | The ten parcours of the "Guided projects" panel (see [guided projects](#guided-projects)) |
+| `ShopGuidedProjectProvider` | The eleven parcours of the "Guided projects" panel (see [guided projects](#guided-projects)) |
+| `ShopAlertProvider` | A dashboard alert naming the items sold past their stock, two customers having paid for the last one |
 | `ShopStatusProvider` | Whether the shop shows its test banner, the orders waiting to be shipped, how long the oldest has waited, the payments started but never confirmed, and the four counts of a catalog published but not finished - a sheet with no picture, a description too thin to rank, a picture with no `alt`, a category with no description - in the `extra` section of `/status/report` |
 | `ShopMaintenanceTaskProvider` | This bundle's two scheduled commands, so your site does not list them itself |
 | `WhatsNewProvider` | This bundle's entries on the "What's new" screen |

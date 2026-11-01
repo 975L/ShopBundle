@@ -12,6 +12,7 @@ namespace c975L\ShopBundle\Tests\Repository;
 
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Repository\ProductItemRepository;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query;
@@ -21,6 +22,8 @@ use PHPUnit\Framework\TestCase;
 
 class ProductItemRepositoryTest extends TestCase
 {
+    private string $sql = '';
+
     // What a catalog import reads: only the items with a named file, their file and product joined rather than lazy-loaded one by one
     public function testFindWithFileJoinsTheFileAndTheProduct(): void
     {
@@ -67,5 +70,52 @@ class ProductItemRepositoryTest extends TestCase
         $registry->method('getManagerForClass')->willReturn($entityManager);
 
         return new ProductItemRepository($registry);
+    }
+
+    // Two payments at the same second both read the same count: the stock itself is the condition of its own count, a null or zero cap being no stock to run out of
+    public function testTheStockIsTheConditionOfItsOwnCount(): void
+    {
+        $this->assertTrue($this->repositoryCatchingStatements(1)->claimOrdered(new ProductItem(), 2));
+
+        $this->assertStringContainsString('ordered_quantity = COALESCE(ordered_quantity, 0) + :quantity', $this->sql);
+        $this->assertStringContainsString('COALESCE(ordered_quantity, 0) + :quantity <= limited_quantity', $this->sql);
+        $this->assertStringContainsString('limited_quantity IS NULL OR limited_quantity <= 0', $this->sql);
+    }
+
+    public function testAClaimTheStockRefusesAnswersFalse(): void
+    {
+        $this->assertFalse($this->repositoryCatchingStatements(0)->claimOrdered(new ProductItem(), 2));
+    }
+
+    // Past the stock, the count is still what was paid for
+    public function testWhatTheStockCouldNotHoldIsCountedWithoutCondition(): void
+    {
+        $this->repositoryCatchingStatements(1)->addOrdered(new ProductItem(), 2);
+
+        $this->assertStringNotContainsString('limited_quantity', $this->sql);
+    }
+
+    private function repositoryCatchingStatements(int $affectedRows): ProductItemRepository
+    {
+        $connection = $this->createStub(Connection::class);
+        $connection->method('executeStatement')->willReturnCallback(function (string $sql) use ($affectedRows): int {
+            $this->sql = $sql;
+
+            return $affectedRows;
+        });
+
+        $entityManager = $this->createStub(EntityManagerInterface::class);
+        $entityManager->method('getConnection')->willReturn($connection);
+
+        return new class ($entityManager) extends ProductItemRepository {
+            public function __construct(private readonly EntityManagerInterface $entityManager)
+            {
+            }
+
+            protected function getEntityManager(): EntityManagerInterface
+            {
+                return $this->entityManager;
+            }
+        };
     }
 }

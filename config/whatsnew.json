@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-11-01",
+        "description": [
+            {
+                "en": "An item sold past its stock, two payments having arrived together, is now named on your dashboard.",
+                "fr": "Un article vendu au-delà de son stock, deux paiements étant arrivés en même temps, est désormais nommé sur votre tableau de bord.",
+                "es": "Un artículo vendido por encima de su existencia, al llegar dos pagos a la vez, se indica ahora en su panel."
+            },
+            {
+                "en": "Product and item pictures now accept JPEG, PNG, WebP and GIF only, so no other file can be served from your site as a picture.",
+                "fr": "Les images des produits et des articles n'acceptent plus que JPEG, PNG, WebP et GIF, pour qu'aucun autre fichier ne soit servi depuis votre site comme une image.",
+                "es": "Las imágenes de productos y artículos solo aceptan ahora JPEG, PNG, WebP y GIF, para que ningún otro archivo se sirva desde su sitio como imagen."
+            },
+            {
+                "en": "Product and category descriptions are cleaned before being shown: a script pasted into one no longer reaches your visitors.",
+                "fr": "Les descriptions des produits et des catégories sont nettoyées avant affichage : un script collé dedans n'atteint plus vos visiteurs.",
+                "es": "Las descripciones de productos y categorías se limpian antes de mostrarse: un script pegado en ellas ya no llega a sus visitantes."
+            }
+        ]
+    },
+    {
         "date": "2026-10-31",
         "description": [
             {

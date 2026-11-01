@@ -406,6 +406,10 @@
                 <source>description.guided_step_shop_trash_restore</source>
                 <target>El producto vuelve al catálogo con sus imágenes, sus artículos y sus bloques, oculto de la tienda.</target>
             </trans-unit>
+            <trans-unit id="GSsAj1F">
+                <source>description.items_oversold</source>
+                <target>%count% artículo(s) se han pagado por encima de su existencia (%items%), al llegar dos pagos a la vez. Los clientes han pagado: reponga o reembolse y luego suba el límite del artículo.</target>
+            </trans-unit>
             <trans-unit id="ZFRC0kd">
                 <source>flash.product_created_from_template</source>
                 <target>El producto se ha creado a partir de la plantilla. Permanece oculto hasta que lo publique.</target>
@@ -1261,6 +1265,10 @@
             <trans-unit id="HBJI6qv">
                 <source>label.items</source>
                 <target>Artículos</target>
+            </trans-unit>
+            <trans-unit id="yPxrlYW">
+                <source>label.items_oversold</source>
+                <target>Artículos vendidos por encima de su existencia</target>
             </trans-unit>
             <trans-unit id="Ogsv.lD">
                 <source>label.language</source>

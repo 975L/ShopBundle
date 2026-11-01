@@ -1,4 +1,4 @@
 <h2 id="description">{{ 'label.description'|trans({}, 'shop') }}</h2>
 <div class="text">
-    {{ description|raw }}
+    {{ description|default('')|sanitize_html('c975l.rich') }}
 </div>

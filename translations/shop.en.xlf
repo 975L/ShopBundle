@@ -406,6 +406,10 @@
                 <source>description.guided_step_shop_trash_restore</source>
                 <target>The product returns to the catalog with its pictures, its items and its blocks, hidden from the shop.</target>
             </trans-unit>
+            <trans-unit id="GSsAj1F">
+                <source>description.items_oversold</source>
+                <target>%count% item(s) were paid for past their stock (%items%), two payments having arrived together. The customers have paid: restock or refund, then raise the item's limit.</target>
+            </trans-unit>
             <trans-unit id="ZFRC0kd">
                 <source>flash.product_created_from_template</source>
                 <target>The product has been created from the template. It stays hidden until you publish it.</target>
@@ -1261,6 +1265,10 @@
             <trans-unit id="HBJI6qv">
                 <source>label.items</source>
                 <target>Items</target>
+            </trans-unit>
+            <trans-unit id="yPxrlYW">
+                <source>label.items_oversold</source>
+                <target>Items sold past their stock</target>
             </trans-unit>
             <trans-unit id="Ogsv.lD">
                 <source>label.language</source>

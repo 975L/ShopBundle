@@ -20,6 +20,7 @@ use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -28,6 +29,17 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // What may be dropped in a basket: the sheet of a draft or of a trashed product answers 404 or 410, but its items keep the ids an old page still carries
 class ProductBasketItemProviderTest extends TestCase
 {
+    /** @var list<int> */
+    private array $counted = [];
+
+    /** @var list<int> */
+    private array $forced = [];
+
+    /** @var list<string> */
+    private array $logged = [];
+
+    private bool $claimAnswers = true;
+
     private function createProvider(?ProductItem $found = null, bool $hasSellableParcel = true): ProductBasketItemProvider
     {
         $translator = $this->createStub(TranslatorInterface::class);
@@ -39,6 +51,19 @@ class ProductBasketItemProviderTest extends TestCase
 
         $itemRepository = $this->createStub(ProductItemRepository::class);
         $itemRepository->method('hasSellableParcel')->willReturn($hasSellableParcel);
+        $itemRepository->method('claimOrdered')->willReturnCallback(function (ProductItem $item, int $quantity): bool {
+            $this->counted[] = $quantity;
+
+            return $this->claimAnswers;
+        });
+        $itemRepository->method('addOrdered')->willReturnCallback(function (ProductItem $item, int $quantity): void {
+            $this->forced[] = $quantity;
+        });
+
+        $logger = $this->createStub(LoggerInterface::class);
+        $logger->method('critical')->willReturnCallback(function (string $message): void {
+            $this->logged[] = $message;
+        });
 
         return new ProductBasketItemProvider(
             $itemService,
@@ -47,6 +72,7 @@ class ProductBasketItemProviderTest extends TestCase
             $translator,
             new LocalizedUrlGenerator($this->urlGenerator(), new SiteLocales(['fr'], 'fr'), new RequestStack()),
             $itemRepository,
+            $logger,
         );
     }
 
@@ -163,6 +189,60 @@ class ProductBasketItemProviderTest extends TestCase
     public function testABasketHoldingAnItemDeletedOutrightIsRefused(): void
     {
         $this->assertSame('label.unavailable', $this->createProvider()->validateCheckout(new Basket(), $this->basketItems(1)));
+    }
+
+    // Two payments at the same second both read the same count: the database is what says whether the stock still held this one
+    public function testAPaidItemIsCountedByTheDatabase(): void
+    {
+        $this->pay(claimAnswers: true);
+
+        $this->assertSame([2], $this->counted);
+        $this->assertSame([], $this->forced);
+        $this->assertSame([], $this->logged);
+    }
+
+    // The stock ran out under this order while it was being paid: the customer has paid, so it stands, the count tells the truth and the shop is told
+    public function testAnOversoldItemIsCountedAllTheSameAndFlagged(): void
+    {
+        $this->pay(claimAnswers: false);
+
+        $this->assertSame([2], $this->forced);
+        $this->assertCount(1, $this->logged);
+    }
+
+    // Deleted since the checkout: nothing to count, and nothing oversold
+    public function testAnItemDeletedSinceIsNotCounted(): void
+    {
+        $this->createProvider()->onBasketPaid(new Basket(), [7 => ['quantity' => 2, 'item' => []]], []);
+
+        $this->assertSame([], $this->counted);
+        $this->assertSame([], $this->logged);
+    }
+
+    // A line at zero or below moves no stock and flags nothing: a negative one would lower the count, and a zero one change no row, which reads as a refusal
+    public function testALineAtZeroOrBelowCountsNothing(): void
+    {
+        $provider = $this->createProvider($this->item(false));
+        $provider->onBasketPaid(new Basket(), [7 => ['quantity' => 0, 'item' => []], 8 => ['quantity' => -2, 'item' => []]], []);
+
+        $this->assertSame([], $this->counted);
+        $this->assertSame([], $this->forced);
+        $this->assertSame([], $this->logged);
+    }
+
+    // The count goes round the unit of work: the date is the change the flush sees, and what has it invalidate the pages showing the stock
+    public function testACountedItemIsDated(): void
+    {
+        $item = $this->item(false);
+        $this->createProvider($item)->onBasketPaid(new Basket(), [7 => ['quantity' => 2, 'item' => []]], []);
+
+        $this->assertNotNull($item->getModification());
+    }
+
+    private function pay(bool $claimAnswers): void
+    {
+        $this->claimAnswers = $claimAnswers;
+        $this->createProvider($this->item(false))->onBasketPaid(new Basket(), [7 => ['quantity' => 2, 'item' => []]], []);
     }
 
     // A visible article that is posted is what makes the shipping health check expect a delivery grid

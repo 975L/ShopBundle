@@ -8,7 +8,7 @@
     <a href="{{ url }}" {% if target is defined and target != "" %}target="{{ target }}" {% endif %} role="button" class="btn btn-{{ type }}">
         <twig:c975LUi:Image:Icon src="{{ asset(icon) }}" width="48" height="48" class="icon-big animation bounce-horizontal"/>
         <br>
-        {{ label|raw }}
+        {{ label|default('')|sanitize_html('c975l.rich') }}
     </a>
 {% if inline == false %}
     </p>

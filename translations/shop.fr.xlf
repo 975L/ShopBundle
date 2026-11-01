@@ -406,6 +406,10 @@
                 <source>description.guided_step_shop_trash_restore</source>
                 <target>Le produit revient au catalogue avec ses images, ses articles et ses blocks, masqué de la boutique.</target>
             </trans-unit>
+            <trans-unit id="GSsAj1F">
+                <source>description.items_oversold</source>
+                <target>%count% article(s) ont été payés au-delà de leur stock (%items%), deux paiements étant arrivés en même temps. Les clients ont payé : réapprovisionnez ou remboursez, puis relevez la limite de l'article.</target>
+            </trans-unit>
             <trans-unit id="ZFRC0kd">
                 <source>flash.product_created_from_template</source>
                 <target>Le produit a été créé à partir du modèle. Il est masqué jusqu'à ce que vous le publiiez.</target>
@@ -1261,6 +1265,10 @@
             <trans-unit id="HBJI6qv">
                 <source>label.items</source>
                 <target>Articles</target>
+            </trans-unit>
+            <trans-unit id="yPxrlYW">
+                <source>label.items_oversold</source>
+                <target>Articles vendus au-delà de leur stock</target>
             </trans-unit>
             <trans-unit id="Ogsv.lD">
                 <source>label.language</source>

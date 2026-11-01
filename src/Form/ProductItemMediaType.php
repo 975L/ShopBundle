@@ -20,6 +20,9 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ProductItemMediaType extends AbstractType
 {
+    // What a product or an item shows is a picture, and what UiBundle's namer gives an extension to: no script, no page and no svg ends up served from the site's own origin
+    public const array IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -30,7 +33,7 @@ class ProductItemMediaType extends AbstractType
                 'download_uri' => true,
                 'asset_helper' => true,
                 'constraints' => [
-                    new File(maxSize: '20M'),
+                    new File(maxSize: '20M', mimeTypes: self::IMAGE_TYPES),
                 ],
             ])
             ->add('alt', TextType::class, [
