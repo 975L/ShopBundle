@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.18.0
+
+Removed dead ProcessMediaMessage
+
+- Removed `ProcessMediaMessage` (02/11/2026)
+- Corrected `bin/ci.sh` comment and message: vendor holds copies, not symlinks (02/11/2026)
+- `bin/ci.sh` installs the latest lizard instead of 1.17.31 (02/11/2026)
+
 ## v2.17.0
 
 Stock counted by the database, pictures only, editor text sanitized
