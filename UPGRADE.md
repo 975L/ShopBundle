@@ -2,6 +2,10 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.19
+
+`ProductMerchantFeed::NAMESPACE` becomes `ProductMerchantFeed::XML_NAMESPACE`, PHP 8.6 deprecating a class constant named `NAMESPACE`.
+
 ### v2.18
 
 `ProcessMediaMessage` is removed: it had no handler and nothing dispatched it.

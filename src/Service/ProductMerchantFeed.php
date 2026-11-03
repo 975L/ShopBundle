@@ -18,7 +18,7 @@ use c975L\ShopBundle\Entity\ProductItem;
 // The product feed Google Merchant Center fetches on schedule, in its RSS 2.0 dialect: built from the very graph ProductSnippetBuilder publishes on each sheet rather than read again from the entities, so the feed and the page can never state two prices. One feed per language the products are written in, a feed declaring a single "content language" - no translation is laid over the texts, which stay the ones the product was written with (see Product::$language)
 class ProductMerchantFeed
 {
-    public const string NAMESPACE = 'http://base.google.com/ns/1.0';
+    public const string XML_NAMESPACE = 'http://base.google.com/ns/1.0';
 
     // What a downloaded file can be and still be listed: Google refuses digital books (PDF, EPUB) on Shopping, audiobooks excepted, so a downloaded item is in the feed only when it is one of these
     private const array AUDIO_EXTENSIONS = ['aac', 'flac', 'm4a', 'm4b', 'mp3', 'oga', 'ogg', 'opus', 'wav'];
@@ -58,7 +58,7 @@ class ProductMerchantFeed
         $xml->startDocument('1.0', 'UTF-8');
         $xml->startElement('rss');
         $xml->writeAttribute('version', '2.0');
-        $xml->writeAttribute('xmlns:g', self::NAMESPACE);
+        $xml->writeAttribute('xmlns:g', self::XML_NAMESPACE);
         $xml->startElement('channel');
         $xml->writeElement('title', (string) $this->configService->get('site-name'));
         $xml->writeElement('link', $shopUrl);

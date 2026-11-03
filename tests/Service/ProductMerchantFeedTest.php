@@ -83,7 +83,7 @@ class ProductMerchantFeedTest extends TestCase
         $product->addItem($this->item(1, 'Livre imprimé', 500));
 
         $xml = (string) $this->feed([$product])->build();
-        $this->assertStringContainsString('xmlns:g="' . ProductMerchantFeed::NAMESPACE . '"', $xml);
+        $this->assertStringContainsString('xmlns:g="' . ProductMerchantFeed::XML_NAMESPACE . '"', $xml);
         $this->assertStringContainsString('<g:id>shop-item-1</g:id>', $xml);
 
         $this->assertNull($this->feed([$product], null)->build());
