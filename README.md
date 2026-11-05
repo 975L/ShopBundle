@@ -645,13 +645,12 @@ scheduled one gets no badge; it is not shown on the trash nor the templates, nor
 ## Structured data
 
 A product sheet publishes a schema.org `Product` graph as JSON-LD - name, image, description, sku, brand,
-category, audience, and one `offers` node per purchasable item carrying its own title, description, picture, sku, gtin,
+category, audience, and one `offers` node per purchasable item carrying its own title, description, sku, gtin,
 price, list price, currency, availability and condition. That is what a search engine shows as a rich result, and what any site reading the
 shop from outside needs to know what is on sale and for how much.
 
 The graph is built by `ProductSnippetBuilder` and rendered by a Twig function rather than by a template of the
-bundle, so overriding `product/display.html.twig` in your app keeps the markup - just call it again, the items'
-pictures being resolved by the function itself:
+bundle, so overriding `product/display.html.twig` in your app keeps the markup - just call it again:
 
 ```twig
 {% set jsonLd = product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug})) %}
@@ -729,6 +728,11 @@ dialect, built by `ProductMerchantFeed` from the very graph the sheet publishes,
 two prices. `Product.language` says which language a product is written in, empty for the site's own: the bare url
 lists the products written in the site's language, `?language=en` those written in English. A free item, an item
 priced in no currency and a digital book Google refuses (an audiobook is kept) are left out.
+
+Every item goes out with its product's first picture, which is what `g:image_link` carries. Google refuses anything
+under 500 x 500 pixels from 31 January 2027: a product picture is stored 600 pixels wide, an item's only 300 for the row
+that shows it, so a product's first picture has to reach 500 pixels on both sides. It has to be square or upright too:
+its height follows those 600 pixels, so a landscape picture wider than 6:5 stays under 500 high whatever size was uploaded.
 
 The feed answers 404 while `site-url` is not configured and while the shop is in test mode; it is cached an hour and
 carries `X-Robots-Tag: noindex`. The urls to give Merchant Center, one per language present in the catalog, are shown

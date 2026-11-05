@@ -12,7 +12,6 @@ namespace c975L\ShopBundle\Twig;
 
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductCategory;
-use c975L\ShopBundle\Service\ProductImageUrlResolver;
 use c975L\ShopBundle\Service\ProductSnippetBuilder;
 use c975L\ShopBundle\Service\ShopBreadcrumbBuilder;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -24,7 +23,6 @@ class ProductJsonLdExtension
     public function __construct(
         private readonly ProductSnippetBuilder $snippetBuilder,
         private readonly ShopBreadcrumbBuilder $breadcrumbBuilder,
-        private readonly ProductImageUrlResolver $imageUrlResolver,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
@@ -33,7 +31,7 @@ class ProductJsonLdExtension
     #[AsTwigFunction('product_json_ld', isSafe: ['html'])]
     public function productJsonLd(Product $product, ?string $imageUrl = null, ?string $url = null, bool $withRating = false): string
     {
-        return $this->snippetBuilder->buildJson($this->snippetBuilder->buildProduct($product, $imageUrl, $url, $this->imageUrlResolver->forItems($product), $withRating));
+        return $this->snippetBuilder->buildJson($this->snippetBuilder->buildProduct($product, $imageUrl, $url, $withRating));
     }
 
     /**

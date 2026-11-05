@@ -102,21 +102,13 @@ class ProductSnippetBuilderTest extends TestCase
         $this->assertSame('Format A2', $this->builder->buildProduct($product)['offers'][0]['description']);
     }
 
-    // The item's own picture, resolved by the caller and keyed by the item's slug
-    public function testAnOfferCarriesTheItemsOwnImage(): void
+    // The picture is the product's, stated once on the product node rather than on each offer
+    public function testAnOfferCarriesNoImageOfItsOwn(): void
     {
-        $offers = $this->builder->buildProduct($this->product(), null, null, ['a2' => 'https://example.org/a2.webp'])['offers'];
+        $snippet = $this->builder->buildProduct($this->product(), 'https://example.org/affiche.webp');
 
-        $this->assertSame('https://example.org/a2.webp', $offers[0]['image']);
-    }
-
-    // An item with no picture of its own never borrows the product's
-    public function testAnItemWithoutAPictureCarriesNoImage(): void
-    {
-        $product = $this->product()->addItem($this->item('a3', 800));
-        $offers = $this->builder->buildProduct($product, 'https://example.org/affiche.webp', null, ['a2' => 'https://example.org/a2.webp'])['offers'];
-
-        $this->assertArrayNotHasKey('image', $offers[1]);
+        $this->assertSame('https://example.org/affiche.webp', $snippet['image']);
+        $this->assertArrayNotHasKey('image', $snippet['offers'][0]);
     }
 
     // The column stores a token, the graph publishes the schema.org url it stands for
@@ -558,7 +550,7 @@ class ProductSnippetBuilderTest extends TestCase
     public function testASheetShowingItsRatingCarriesTheVotesInItsProductNode(): void
     {
         $builder = $this->builder([], ['average' => 4.5, 'count' => 12]);
-        $snippet = $builder->buildProduct($this->product(), null, null, [], true);
+        $snippet = $builder->buildProduct($this->product(), null, null, true);
 
         $this->assertSame([
             '@type' => 'AggregateRating',
@@ -572,7 +564,7 @@ class ProductSnippetBuilderTest extends TestCase
     // Nobody voted: the node is dropped rather than published at zero, which is what invalidates the whole rich result
     public function testAProductNobodyVotedOnCarriesNoAggregateRating(): void
     {
-        $this->assertArrayNotHasKey('aggregateRating', $this->builder->buildProduct($this->product(), null, null, [], true));
+        $this->assertArrayNotHasKey('aggregateRating', $this->builder->buildProduct($this->product(), null, null, true));
     }
 
     public function testAListingPublishesItsCardsAsAnItemList(): void

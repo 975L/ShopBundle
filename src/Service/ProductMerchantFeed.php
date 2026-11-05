@@ -115,7 +115,7 @@ class ProductMerchantFeed
         }
 
         $productImage = $this->imageUrlResolver->forProduct($product);
-        $graph = $this->snippetBuilder->buildProduct($product, $productImage, $url, $this->imageUrlResolver->forItems($product));
+        $graph = $this->snippetBuilder->buildProduct($product, $productImage, $url);
 
         // Each offer paired with the item it was built from by the sku the graph gives it - the item's own, its slug otherwise (see ProductSnippetBuilder::offers())
         $productItems = [];
@@ -162,7 +162,7 @@ class ProductMerchantFeed
     private function identityFields(array $graph, array $offer, Product $product, ProductItem $item, string $url, string $productImage): array
     {
         // The keys the graph leaves out when they are empty, read as such
-        $offer += ['name' => '', 'description' => $graph['description'] ?? $graph['name'], 'image' => $productImage, 'gtin' => ''];
+        $offer += ['name' => '', 'description' => $graph['description'] ?? $graph['name'], 'gtin' => ''];
         $gtin = (string) $offer['gtin'];
         $brand = (string) ($graph['brand']['name'] ?? '');
 
@@ -173,7 +173,8 @@ class ProductMerchantFeed
             'g:title' => mb_substr($graph['name'] . ' - ' . $offer['name'], 0, 150),
             'g:description' => mb_substr((string) $offer['description'], 0, 5000),
             'g:link' => $url,
-            'g:image_link' => (string) $offer['image'],
+            // The product's picture and never the item's, kept small for the row that shows it (see ProductImageUrlResolver)
+            'g:image_link' => $productImage,
             'g:gtin' => $gtin,
             'g:brand' => $brand,
             // What Merchant Center asks of a product that has neither, rather than flagging it as missing them

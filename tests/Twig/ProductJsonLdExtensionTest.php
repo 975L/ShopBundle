@@ -17,7 +17,6 @@ use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Entity\ProductItemMedia;
-use c975L\ShopBundle\Service\ProductImageUrlResolver;
 use c975L\ShopBundle\Service\ProductSnippetBuilder;
 use c975L\ShopBundle\Service\ProductStateService;
 use c975L\ShopBundle\Service\ShopBreadcrumbBuilder;
@@ -26,16 +25,12 @@ use c975L\ShopBundle\Twig\ProductJsonLdExtension;
 use c975L\UiBundle\Service\RatingService;
 use c975L\UiBundle\Service\RatingSnippetBuilder;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Asset\Packages;
-use Symfony\Component\Asset\PathPackage;
-use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// The one thing this extension does beyond delegating: turning every item's attached media into the absolute url the graph publishes
+// What this extension hands the builder and what the graph then publishes, an item's own picture staying out of it
 class ProductJsonLdExtensionTest extends TestCase
 {
     private ProductJsonLdExtension $extension;
@@ -66,34 +61,18 @@ class ProductJsonLdExtensionTest extends TestCase
                 new ShopPublicUrlResolver($configService, new LocalizedUrlGenerator($urlGenerator, new SiteLocales(['fr'], 'fr'), $requestStack), $urlGenerator, new SiteLocales(['fr'], 'fr')),
                 $translator,
             ),
-            new ProductImageUrlResolver(new Packages(new PathPackage('/', new EmptyVersionStrategy())), new UrlHelper($requestStack)),
             $urlGenerator,
         );
     }
 
-    public function testAnItemsMediaReachesItsOfferAsAnAbsoluteUrl(): void
+    // The graph states the product's picture alone, an item's own staying small for the row that shows it
+    public function testAnItemsMediaIsNotPublished(): void
     {
         $product = $this->product()->addItem($this->item('a2')->setMedia(new ProductItemMedia()->setName('medias/shop/items/affiche-a2.webp')));
-
-        $this->assertStringContainsString('"image":"https://example.org/medias/shop/items/affiche-a2.webp"', $this->extension->productJsonLd($product));
-    }
-
-    // An item with nothing attached publishes no image, rather than the product's own
-    public function testAnItemWithoutAMediaPublishesNoImage(): void
-    {
-        $product = $this->product()->addItem($this->item('a2'));
         $graph = json_decode($this->extension->productJsonLd($product, 'https://example.org/affiche.webp'), true);
 
         $this->assertSame('https://example.org/affiche.webp', $graph['image']);
         $this->assertArrayNotHasKey('image', $graph['offers'][0]);
-    }
-
-    // An item set aside publishes no offer, so its picture has no offer to be gathered for either
-    public function testAHiddenItemsMediaReachesNoOffer(): void
-    {
-        $product = $this->product()->addItem($this->item('a2')->setHidden(true)->setMedia(new ProductItemMedia()->setName('medias/shop/items/affiche-a2.webp')));
-
-        $this->assertStringNotContainsString('affiche-a2.webp', $this->extension->productJsonLd($product));
     }
 
     // Nothing to publish, nothing rendered: the sheet's <script> tag is left out entirely

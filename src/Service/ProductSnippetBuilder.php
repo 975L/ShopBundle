@@ -44,8 +44,8 @@ class ProductSnippetBuilder
     ) {
     }
 
-    // $imageUrl, $url and $itemImageUrls are resolved by the caller, only a template turning an attached media into an absolute url; $withRating is the sheet's own condition, so a rich result never shows stars a visitor cannot find on the page
-    public function buildProduct(Product $product, ?string $imageUrl = null, ?string $url = null, array $itemImageUrls = [], bool $withRating = false): array
+    // $imageUrl and $url are resolved by the caller, only a template turning an attached media into an absolute url; $withRating is the sheet's own condition, so a rich result never shows stars a visitor cannot find on the page
+    public function buildProduct(Product $product, ?string $imageUrl = null, ?string $url = null, bool $withRating = false): array
     {
         $name = trim((string) $product->getTitle());
 
@@ -69,7 +69,7 @@ class ProductSnippetBuilder
             // What the sheet prints above the description, said where a search engine reads it - the node is UiBundle's, which owns the votes and knows the scale they were cast on
             'aggregateRating' => $withRating ? $this->ratingSnippetBuilder->build('shop_product', (int) $product->getId()) : [],
             // One Offer per purchasable item rather than a single AggregateOffer: the items of one product are free to be priced in different currencies, which no aggregate can express, and each carries its own availability
-            'offers' => $this->offers($product, $url, $itemImageUrls),
+            'offers' => $this->offers($product, $url),
         ]);
     }
 
@@ -140,7 +140,7 @@ class ProductSnippetBuilder
     /**
      * @return list<array<string, mixed>>
      */
-    private function offers(Product $product, ?string $url, array $itemImageUrls = []): array
+    private function offers(Product $product, ?string $url): array
     {
         $offers = [];
 
@@ -157,8 +157,6 @@ class ProductSnippetBuilder
                 'gtin' => trim((string) $item->getGtin()),
                 // What the item's card says under its title, carried as the words only, like the product's own description
                 'description' => $this->jsonLdBuilder->plainText($item->getDescription()),
-                // The item's own picture, which is not the product's: a format, a colour or an edition is shown by its own image on the sheet
-                'image' => trim((string) ($itemImageUrls[$slug] ?? '')),
                 // Prices are stored in cents, schema.org expects the amount as it is charged
                 'price' => number_format(((int) $item->getPrice()) / 100, 2, '.', ''),
                 'priceCurrency' => strtoupper(trim((string) $item->getCurrency())),

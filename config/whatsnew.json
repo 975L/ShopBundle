@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-11-05",
+        "description": [
+            {
+                "en": "Google Shopping and your product pages' search data now show each product's main picture rather than its items' small ones, which Google refuses under 500 x 500 pixels from 31 January 2027. Check that each product's first picture reaches that size and is square or upright: a landscape picture wider than 6:5 stays too low, whatever size you upload.",
+                "fr": "Google Shopping et les données de recherche de vos fiches montrent désormais l'image principale du produit plutôt que les petites images de ses articles, que Google refuse sous 500 x 500 pixels à partir du 31 janvier 2027. Vérifiez que la première image de chaque produit atteint cette taille et qu'elle est carrée ou verticale : une image en paysage plus large que 6:5 reste trop basse, quelle que soit la taille envoyée.",
+                "es": "Google Shopping y los datos de búsqueda de sus fichas muestran ahora la imagen principal del producto en lugar de las imágenes pequeñas de sus artículos, que Google rechaza por debajo de 500 x 500 píxeles a partir del 31 de enero de 2027. Compruebe que la primera imagen de cada producto alcanza ese tamaño y que es cuadrada o vertical: una imagen apaisada más ancha que 6:5 queda demasiado baja, sea cual sea el tamaño enviado."
+            }
+        ]
+    },
+    {
         "date": "2026-11-01",
         "description": [
             {

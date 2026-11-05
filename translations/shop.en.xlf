@@ -232,7 +232,7 @@
             </trans-unit>
             <trans-unit id="4iQmh5b">
                 <source>description.guided_step_shop_merchant_feed_paste</source>
-                <target>In Merchant Center, one scheduled-fetch product source per address, with its language - while the shop is in test mode, the feed is not served.</target>
+                <target>In Merchant Center, one scheduled-fetch product source per address, with its language - while the shop is in test mode, the feed is not served. Each item goes out with its product's first picture, which Google requires at 500 x 500 pixels at least.</target>
             </trans-unit>
             <trans-unit id="NnPK4u.">
                 <source>description.guided_step_shop_merchant_feed_urls</source>

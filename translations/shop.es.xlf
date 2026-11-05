@@ -232,7 +232,7 @@
             </trans-unit>
             <trans-unit id="4iQmh5b">
                 <source>description.guided_step_shop_merchant_feed_paste</source>
-                <target>En Merchant Center, una fuente de productos por recuperación programada para cada dirección, con su idioma; mientras la tienda esté en modo de prueba, el feed no se sirve.</target>
+                <target>En Merchant Center, una fuente de productos por recuperación programada para cada dirección, con su idioma; mientras la tienda esté en modo de prueba, el feed no se sirve. Cada artículo sale con la primera imagen de su producto, que Google exige de al menos 500 x 500 píxeles.</target>
             </trans-unit>
             <trans-unit id="NnPK4u.">
                 <source>description.guided_step_shop_merchant_feed_urls</source>

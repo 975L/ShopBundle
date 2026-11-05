@@ -14,7 +14,7 @@ use c975L\ShopBundle\Entity\Product;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\UrlHelper;
 
-// A product's pictures as absolute urls - what its sheet's structured data and the merchant feed both publish, so the two never point at different files
+// A product's picture as an absolute url - what the merchant feed publishes for each of its items, an item's own picture staying small for the row that shows it (see ProductItemMedia::getImageWidth()) where Merchant Center refuses anything under 500 x 500 pixels
 class ProductImageUrlResolver
 {
     public function __construct(
@@ -28,28 +28,6 @@ class ProductImageUrlResolver
     {
         $media = $product->getMedias()->first() ?: null;
 
-        return null === $media?->getName() ? null : $this->absolute($media->getName());
-    }
-
-    // Every visible item's picture, keyed by its slug - the asset() the item's card applies to the same media
-    /** @return array<string, string> */
-    public function forItems(Product $product): array
-    {
-        $urls = [];
-
-        foreach ($product->getVisibleItems() as $item) {
-            $media = $item->getMedia();
-            if (null !== $media && null !== $media->getName()) {
-                $urls[trim((string) $item->getSlug())] = $this->absolute($media->getName());
-            }
-        }
-
-        return $urls;
-    }
-
-    // A media's public path made absolute, the way the sheet's own image is
-    private function absolute(string $name): string
-    {
-        return $this->urlHelper->getAbsoluteUrl($this->packages->getUrl($name));
+        return null === $media?->getName() ? null : $this->urlHelper->getAbsoluteUrl($this->packages->getUrl($media->getName()));
     }
 }

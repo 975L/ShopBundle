@@ -17,6 +17,8 @@ use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Entity\ProductItemFile;
+use c975L\ShopBundle\Entity\ProductItemMedia;
+use c975L\ShopBundle\Entity\ProductMedia;
 use c975L\ShopBundle\Service\ProductImageUrlResolver;
 use c975L\ShopBundle\Service\ProductMerchantFeed;
 use c975L\ShopBundle\Service\ProductServiceInterface;
@@ -65,6 +67,24 @@ class ProductMerchantFeedTest extends TestCase
         $this->assertSame('9782953285901', $fields['g:gtin']);
         $this->assertSame(['g:country' => 'FR', 'g:price' => '4.50 EUR'], $fields['g:shipping']);
         $this->assertArrayNotHasKey('g:identifier_exists', $fields);
+    }
+
+    // Each item goes out with the product's picture, its own being too small for Merchant Center
+    public function testAnItemIsListedWithTheProductsPicture(): void
+    {
+        $product = $this->product()->addMedia(new ProductMedia()->setName('medias/shop/products/le-loup.webp'));
+        $product->addItem($this->item(1, 'Livre imprimé', 500)->setMedia(new ProductItemMedia()->setName('medias/shop/items/le-loup-livre.webp')));
+
+        $this->assertSame('https://example.org/medias/shop/products/le-loup.webp', $this->feed([$product])->items($product)[0]['g:image_link']);
+    }
+
+    // A product holding no picture lists its items without an image link rather than with an empty one
+    public function testAProductWithoutAPictureListsNoImageLink(): void
+    {
+        $product = $this->product();
+        $product->addItem($this->item(1, 'Livre imprimé', 500));
+
+        $this->assertArrayNotHasKey('g:image_link', $this->feed([$product])->items($product)[0]);
     }
 
     // An item with neither barcode nor brand says so, which Merchant Center asks rather than flagging it

@@ -232,7 +232,7 @@
             </trans-unit>
             <trans-unit id="4iQmh5b">
                 <source>description.guided_step_shop_merchant_feed_paste</source>
-                <target>Dans Merchant Center, une source de produits par récupération planifiée pour chaque adresse, avec sa langue - tant que la boutique est en mode test, le flux n'est pas servi.</target>
+                <target>Dans Merchant Center, une source de produits par récupération planifiée pour chaque adresse, avec sa langue - tant que la boutique est en mode test, le flux n'est pas servi. Chaque article part avec la première image de son produit, que Google exige d'au moins 500 x 500 pixels.</target>
             </trans-unit>
             <trans-unit id="NnPK4u.">
                 <source>description.guided_step_shop_merchant_feed_urls</source>

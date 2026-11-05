@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.20.0
+
+Feed and sheet graph publish the product's picture only
+
+- `ProductMerchantFeed`: `g:image_link` is always the product's first picture (05/11/2026)
+- `ProductSnippetBuilder`: offers carry no `image`, `$itemImageUrls` removed from `buildProduct()` (05/11/2026) [BC-Break]
+- `ProductImageUrlResolver::forItems()` removed (05/11/2026) [BC-Break]
+- `ProductJsonLdExtension` no longer takes `ProductImageUrlResolver` (05/11/2026)
+- Guided project `shop-merchant-feed` states the 500 x 500 pixels Google requires (05/11/2026)
+
 ## v2.19.0
 
 CI tests PHP 8.5 and 8.6, bin/ci.sh replays them locally
