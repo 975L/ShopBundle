@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-11-10",
+        "description": [
+            {
+                "en": "A product whose brand you left empty now shows your shop's name as its brand in Google's search data, as a product you make yourself. Fill the brand in only for a product made by someone else, or a book's publisher.",
+                "fr": "Un produit dont vous avez laissé la marque vide affiche désormais le nom de votre boutique comme marque dans les données de recherche de Google, comme un produit que vous fabriquez vous-même. Ne remplissez la marque que pour un produit fabriqué par quelqu'un d'autre, ou l'éditeur d'un livre.",
+                "es": "Un producto cuya marca dejó vacía muestra ahora el nombre de su tienda como marca en los datos de búsqueda de Google, como un producto que usted mismo fabrica. Rellene la marca solo para un producto fabricado por otro, o la editorial de un libro."
+            }
+        ]
+    },
+    {
         "date": "2026-11-05",
         "description": [
             {

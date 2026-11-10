@@ -10,8 +10,7 @@
 
 namespace c975L\ShopBundle\Service;
 
-use c975L\ConfigBundle\Service\ConfigServiceInterface;
-use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
+use c975L\PaymentBundle\Service\OfferSnippetBuilder;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\UiBundle\Service\JsonLdBuilder;
@@ -36,10 +35,9 @@ class ProductSnippetBuilder
 
     // Shipping and returns are PaymentBundle's configuration, this bundle only publishing what the sheet displays - the state service being the one the cards and the sheet read their prices from, a struck-through price and the graph's list price can never disagree
     public function __construct(
-        private readonly ConfigServiceInterface $configService,
         private readonly ProductStateServiceInterface $productStateService,
         private readonly RatingSnippetBuilder $ratingSnippetBuilder,
-        private readonly ShippingRateResolverInterface $shippingRateResolver,
+        private readonly OfferSnippetBuilder $offerSnippetBuilder,
         private readonly JsonLdBuilder $jsonLdBuilder = new JsonLdBuilder(),
     ) {
     }
@@ -61,8 +59,8 @@ class ProductSnippetBuilder
             'url' => trim((string) $url),
             'description' => $this->jsonLdBuilder->plainText($product->getDescription()),
             'image' => trim((string) $imageUrl),
-            // What Google Merchant Center declines a branded offer for not naming, and what stands for a global identifier on an item without a barcode. A product the shop makes itself carries the shop's own name, a book its publisher's
-            'brand' => $this->brand($product),
+            // What Google Merchant Center declines a branded offer for not naming, and what stands for a global identifier on an item without a barcode. A product naming no maker carries the shop's own name, PaymentBundle's node as on a gallery print
+            'brand' => $this->offerSnippetBuilder->brand($product->getBrand()),
             'category' => $this->category($product),
             // Who the product is meant for, which schema.org says of a Product through an audience and never through the typicalAgeRange a book carries - that property belongs to a CreativeWork, and Google reads this one on a merchant listing
             'audience' => $this->audience($product),
@@ -121,14 +119,6 @@ class ProductSnippetBuilder
         return $audience;
     }
 
-    // The maker of the product as a Brand node, empty when it names none
-    private function brand(Product $product): array
-    {
-        $brand = trim((string) $product->getBrand());
-
-        return '' === $brand ? [] : ['@type' => 'Brand', 'name' => $brand];
-    }
-
     // The first category the product belongs to - schema.org takes a single one, and a list of them says nothing more to a search engine
     private function category(Product $product): string
     {
@@ -166,7 +156,7 @@ class ProductSnippetBuilder
                 // Left out when the shop does not state it: a graph claiming "new" over a second-hand item is worse than a graph saying nothing
                 'itemCondition' => self::CONDITIONS[(string) $item->getItemCondition()] ?? '',
                 'shippingDetails' => $this->shippingDetails($item),
-                'hasMerchantReturnPolicy' => $this->returnPolicy($item),
+                'hasMerchantReturnPolicy' => $this->offerSnippetBuilder->returnPolicy($this->isDownloaded($item)),
             ]);
         }
 
@@ -190,134 +180,10 @@ class ProductSnippetBuilder
         ];
     }
 
-    // What the Shipping component of the sheet already states, said again where a search engine reads it. Priced on the grid for this very article's weight, and to the one destination the shop names - a rate published without saying where it posts to is a rate for nowhere
+    // What the Shipping component of the sheet already states, said again where a search engine reads it - the node is PaymentBundle's, which owns the grid and the destination. A service is rendered, never posted: the rule is ProductBasketItemProvider's, so a graph and a delivery note never disagree
     private function shippingDetails(ProductItem $item): array
     {
-        // A service is rendered, never posted: the rule is ProductBasketItemProvider's, so a graph and a delivery note never disagree
-        $country = trim((string) $this->configService->get('shop-shipping-country'));
-        if ('' === $country || true === $item->isService()) {
-            return [];
-        }
-
-        // A downloaded file costs nothing to deliver, which Google reads from a zero rate rather than from a missing node
-        if ($this->isDownloaded($item)) {
-            return $this->shippingNode(0, $country, $this->deliveryTime([0, 0], [0, 0]));
-        }
-
-        // Nothing is claimed for an article nobody weighed: the grid answers per weight and per zone, and publishing one of its tiers as if it covered every parcel would be a guess
-        $weight = $item->getWeight();
-        if (null === $weight) {
-            return [];
-        }
-
-        // A grid saying nothing about that parcel declares nothing, while a tier priced at zero is free shipping and said as such
-        $shipping = $this->shippingRateResolver->resolve($country, $weight);
-
-        if (null === $shipping || $shipping < 0) {
-            return [];
-        }
-
-        // Both ranges or no delivery time at all: Google adds them up, and half of the sum is not one
-        $handling = $this->dayRange('shop-handling-days');
-        $transit = $this->dayRange('shop-transit-days');
-
-        return $this->shippingNode($shipping, $country, null === $handling || null === $transit ? [] : $this->deliveryTime($handling, $transit));
-    }
-
-    // The OfferShippingDetails node for a rate in cents, the one country it posts to and, when known, how long the parcel takes
-    private function shippingNode(int $rate, string $country, array $deliveryTime): array
-    {
-        $node = [
-            '@type' => 'OfferShippingDetails',
-            'shippingRate' => [
-                '@type' => 'MonetaryAmount',
-                'value' => number_format($rate / 100, 2, '.', ''),
-                'currency' => strtoupper(trim((string) $this->configService->get('shop-currency'))),
-            ],
-            'shippingDestination' => [
-                '@type' => 'DefinedRegion',
-                'addressCountry' => strtoupper($country),
-            ],
-        ];
-
-        if ([] !== $deliveryTime) {
-            $node['deliveryTime'] = $deliveryTime;
-        }
-
-        return $node;
-    }
-
-    // The business days a setting gives as a range an editor types ("1-3", or "2" for exactly two), null when it is empty, unreadable or written backwards
-    /** @return array{int, int}|null */
-    private function dayRange(string $setting): ?array
-    {
-        if (1 !== preg_match('/^\s*(\d{1,2})\s*(?:-\s*(\d{1,2}))?\s*$/', (string) $this->configService->get($setting), $days)) {
-            return null;
-        }
-
-        $min = (int) $days[1];
-        $max = isset($days[2]) ? (int) $days[2] : $min;
-
-        return $max < $min ? null : [$min, $max];
-    }
-
-    // The ShippingDeliveryTime node: the days before the parcel leaves, then the days it travels
-    /**
-     * @param array{int, int} $handling
-     * @param array{int, int} $transit
-     */
-    private function deliveryTime(array $handling, array $transit): array
-    {
-        $days = static fn (array $range): array => ['@type' => 'QuantitativeValue', 'minValue' => $range[0], 'maxValue' => $range[1], 'unitCode' => 'DAY'];
-
-        return [
-            '@type' => 'ShippingDeliveryTime',
-            'handlingTime' => $days($handling),
-            'transitTime' => $days($transit),
-        ];
-    }
-
-    // The return window the shop configured, for the country it sells to - no node at all when either is missing, an incomplete policy being what Google flags, and a guessed window a promise the shop never made. An unfilled int setting reads as zero, so only a window above zero is published: nothing is ever claimed for a shop that never answered the question
-    private function returnPolicy(ProductItem $item): array
-    {
-        $country = trim((string) $this->configService->get('shop-shipping-country'));
-        $days = max(0, (int) $this->configService->get('shop-return-days'));
-
-        // A downloaded file is not returnable, the right of withdrawal ending once the download starts - and it says so whatever window the posted articles are granted
-        $downloaded = $this->isDownloaded($item);
-        if ('' === $country || (!$downloaded && 0 === $days)) {
-            return [];
-        }
-
-        $policy = [
-            '@type' => 'MerchantReturnPolicy',
-            'applicableCountry' => strtoupper($country),
-            'returnPolicyCategory' => $downloaded ? 'https://schema.org/MerchantReturnNotPermitted' : 'https://schema.org/MerchantReturnFiniteReturnWindow',
-        ];
-
-        if (!$downloaded) {
-            $policy['merchantReturnDays'] = $days;
-        }
-
-        // The terms are configured as a path on most sites, and a relative link is not one a search engine can follow
-        $url = $this->absoluteUrl(trim((string) $this->configService->get('url-terms-of-sales')));
-        if ('' !== $url) {
-            $policy['merchantReturnLink'] = $url;
-        }
-
-        return $policy;
-    }
-
-    // A configured path turned into the address a search engine can follow, the host coming from "site-url" like everywhere else - an unconfigured host leaves nothing rather than a relative link
-    private function absoluteUrl(string $url): string
-    {
-        if ('' === $url || 1 === preg_match('#^https?://#i', $url)) {
-            return $url;
-        }
-
-        $siteUrl = rtrim(trim((string) $this->configService->get('site-url')), '/');
-
-        return '' === $siteUrl ? '' : $siteUrl . '/' . ltrim($url, '/');
+        return true === $item->isService() ? [] : $this->offerSnippetBuilder->shippingDetails($item->getWeight(), $this->isDownloaded($item));
     }
 
     // A named file is downloaded rather than posted - the empty placeholder ProductItemListener attaches to every new item is not one, here as in ProductBasketItemProvider

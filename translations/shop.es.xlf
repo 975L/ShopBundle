@@ -620,7 +620,7 @@
             </trans-unit>
             <trans-unit id="8jIsWJl">
                 <source>label.brand_help</source>
-                <target>El fabricante del producto, publicado en los datos estructurados. Déjelo vacío para un producto que usted mismo fabrica.</target>
+                <target>El fabricante del producto, publicado en los datos estructurados. Déjelo vacío para un producto que usted mismo fabrica: se publica en su lugar el nombre de la tienda.</target>
             </trans-unit>
             <trans-unit id="eCcX0_G">
                 <source>label.breadcrumb</source>

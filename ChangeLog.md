@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.21.0
+
+Shipping and return nodes come from PaymentBundle
+
+- `ProductSnippetBuilder`: shipping and return nodes built by PaymentBundle's `OfferSnippetBuilder` (10/11/2026)
+- `ProductSnippetBuilder`: a product naming no brand carries `shop-name` (10/11/2026)
+- `ProductSnippetBuilder` takes `OfferSnippetBuilder` in place of `ConfigServiceInterface` and `ShippingRateResolverInterface` (10/11/2026) [BC-Break]
+- `c975l/payment-bundle` required in ^6.24 (10/11/2026)
+- `ProductMerchantFeed`: `g:identifier_exists` is `no` for any item without a GTIN (10/11/2026)
+- `label.brand_help` states the shop's name stands in for an empty brand (10/11/2026)
+
 ## v2.20.0
 
 Feed and sheet graph publish the product's picture only

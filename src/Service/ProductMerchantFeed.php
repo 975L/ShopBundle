@@ -177,8 +177,8 @@ class ProductMerchantFeed
             'g:image_link' => $productImage,
             'g:gtin' => $gtin,
             'g:brand' => $brand,
-            // What Merchant Center asks of a product that has neither, rather than flagging it as missing them
-            'g:identifier_exists' => '' === $gtin && '' === $brand ? 'no' : '',
+            // What Merchant Center asks of a product without a barcode, rather than flagging it as missing one - a brand alone, often the shop's own name, identifies nothing
+            'g:identifier_exists' => '' === $gtin ? 'no' : '',
             'g:product_type' => (string) ($graph['category'] ?? ''),
         ];
     }

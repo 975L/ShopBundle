@@ -13,6 +13,7 @@ namespace c975L\ShopBundle\Tests\Twig;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
 use c975L\ConfigBundle\Service\SiteLocales;
+use c975L\PaymentBundle\Service\OfferSnippetBuilder;
 use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
@@ -56,7 +57,7 @@ class ProductJsonLdExtensionTest extends TestCase
         $ratingService->method('getScale')->willReturn(5);
 
         $this->extension = new ProductJsonLdExtension(
-            new ProductSnippetBuilder($configService, new ProductStateService(), new RatingSnippetBuilder($ratingService), $this->createStub(ShippingRateResolverInterface::class)),
+            new ProductSnippetBuilder(new ProductStateService(), new RatingSnippetBuilder($ratingService), new OfferSnippetBuilder($configService, $this->createStub(ShippingRateResolverInterface::class))),
             new ShopBreadcrumbBuilder(
                 new ShopPublicUrlResolver($configService, new LocalizedUrlGenerator($urlGenerator, new SiteLocales(['fr'], 'fr'), $requestStack), $urlGenerator, new SiteLocales(['fr'], 'fr')),
                 $translator,

@@ -13,6 +13,7 @@ namespace c975L\ShopBundle\Tests\Service;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
 use c975L\ConfigBundle\Service\SiteLocales;
+use c975L\PaymentBundle\Service\OfferSnippetBuilder;
 use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
@@ -94,6 +95,18 @@ class ProductMerchantFeedTest extends TestCase
         $product->addItem($this->item(1, 'Jeu de cartes', 900));
 
         $this->assertSame('no', $this->feed([$product])->items($product)[0]['g:identifier_exists']);
+    }
+
+    // A branded item without a barcode still says so, the brand alone identifying nothing to Merchant Center
+    public function testABrandedItemWithoutBarcodeSaysSo(): void
+    {
+        $product = $this->product()->setBrand('Catalog');
+        $product->addItem($this->item(1, 'item-1', 900));
+
+        $fields = $this->feed([$product])->items($product)[0];
+
+        $this->assertSame('Catalog', $fields['g:brand']);
+        $this->assertSame('no', $fields['g:identifier_exists']);
     }
 
     // The whole document: Google's namespace, and nothing at all while the site's url is not configured
@@ -185,7 +198,7 @@ class ProductMerchantFeedTest extends TestCase
         return new ProductMerchantFeed(
             $configService,
             $productService,
-            new ProductSnippetBuilder($configService, new ProductStateService(), new RatingSnippetBuilder($ratingService), $shippingRateResolver),
+            new ProductSnippetBuilder(new ProductStateService(), new RatingSnippetBuilder($ratingService), new OfferSnippetBuilder($configService, $shippingRateResolver)),
             new ProductImageUrlResolver(new Packages(new PathPackage('/', new EmptyVersionStrategy())), new UrlHelper($requestStack)),
             new ShopPublicUrlResolver($configService, new LocalizedUrlGenerator($urlGenerator, $siteLocales, $requestStack), $urlGenerator, $siteLocales),
             $siteLocales,

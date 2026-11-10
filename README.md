@@ -676,12 +676,14 @@ describing nobody. Unlike the brand, the field is read by the sheet too: a produ
 site's age warning above what the visitor decides on.
 
 Three references make the graph readable by a merchant listing rather than by a search engine alone.
-`Product.brand` names the maker, which Google Merchant Center declines a branded offer for not stating.
+`Product.brand` names the maker, which Google Merchant Center declines a branded offer for not stating - a
+product naming none carries PaymentBundle's `shop-name` instead.
 `ProductItem.sku` is the shop's own reference, and falls back on the item's slug when left empty - which is
 what every offer of this graph carried before the column existed. `ProductItem.gtin` is the barcode number, 8
 to 14 digits: an EAN-13 on a shelf product, an ISBN-13 on a book. It is what lets a comparison engine
 recognize the same product sold by someone else, and a product made in-house simply carries none - claiming
-one it does not have is worse than publishing nothing. All three are left out of the graph when unstated.
+one it does not have is worse than publishing nothing. The sku and the gtin are left out of the graph when
+unstated, and so is the brand when the shop has no name either.
 
 An item on offer publishes its previous price as a `priceSpecification` of type `ListPrice`, which is what
 Google shows as a crossed-out price. It is guarded by the very rule the sheet prints its struck-through price
@@ -692,7 +694,8 @@ product can be sold in two of them at once. Leaving it unstated publishes nothin
 for its merchant listings, but a graph claiming "new" over a second-hand item is worse than a graph saying
 nothing.
 
-Each offer also carries what the sheet already displays about delivery and returns: the shipping rate
+Each offer also carries what the sheet already displays about delivery and returns, both nodes built by
+PaymentBundle's `OfferSnippetBuilder` so a gallery print states the same terms: the shipping rate
 PaymentBundle's grid charges for this very item's weight, to the one country `shop-shipping-country` names -
 a zero rate on a downloaded file and on a tier priced at zero, which is free shipping, and none on a rendered
 service. The rate carries a `deliveryTime` when PaymentBundle's `shop-handling-days` and

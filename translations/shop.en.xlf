@@ -620,7 +620,7 @@
             </trans-unit>
             <trans-unit id="8jIsWJl">
                 <source>label.brand_help</source>
-                <target>The maker of the product, published in the structured data. Leave empty for a product you make yourself.</target>
+                <target>The maker of the product, published in the structured data. Leave empty for a product you make yourself: the shop's name is published instead.</target>
             </trans-unit>
             <trans-unit id="eCcX0_G">
                 <source>label.breadcrumb</source>

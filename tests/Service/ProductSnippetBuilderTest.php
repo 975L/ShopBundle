@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Tests\Service;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\PaymentBundle\Service\OfferSnippetBuilder;
 use c975L\PaymentBundle\Service\ShippingRateResolverInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductCategory;
@@ -33,7 +34,7 @@ class ProductSnippetBuilderTest extends TestCase
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn(null);
 
-        $this->builder = new ProductSnippetBuilder($configService, new ProductStateService(), $this->ratingSnippetBuilder(), $this->shippingRateResolver(null));
+        $this->builder = new ProductSnippetBuilder(new ProductStateService(), $this->ratingSnippetBuilder(), new OfferSnippetBuilder($configService, $this->shippingRateResolver(null)));
     }
 
     // The same builder against a shop that did fill those keys in
@@ -42,7 +43,7 @@ class ProductSnippetBuilderTest extends TestCase
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturnCallback(static fn (string $key): mixed => $config[$key] ?? null);
 
-        return new ProductSnippetBuilder($configService, new ProductStateService(), $this->ratingSnippetBuilder($aggregate), $this->shippingRateResolver($shipping));
+        return new ProductSnippetBuilder(new ProductStateService(), $this->ratingSnippetBuilder($aggregate), new OfferSnippetBuilder($configService, $this->shippingRateResolver($shipping)));
     }
 
     // The grid PaymentBundle prices a parcel on, which the graph states for one article's own weight
@@ -388,10 +389,18 @@ class ProductSnippetBuilderTest extends TestCase
         $this->assertSame(['@type' => 'Brand', 'name' => 'Éditions Lolant'], $snippet['brand']);
     }
 
-    // A product whose brand was left unstated publishes no node rather than an empty one
+    // A product whose brand was left unstated, in a shop with no name, publishes no node rather than an empty one
     public function testAProductWithoutABrandPublishesNoBrandNode(): void
     {
         $this->assertArrayNotHasKey('brand', $this->builder->buildProduct($this->product()));
+    }
+
+    // A product naming no maker carries the shop's own name, the shop being the maker of what it sells unbranded
+    public function testAProductWithoutABrandCarriesTheShopName(): void
+    {
+        $snippet = $this->builder(['shop-name' => 'Catalog'])->buildProduct($this->product());
+
+        $this->assertSame(['@type' => 'Brand', 'name' => 'Catalog'], $snippet['brand']);
     }
 
     // Who the product is for, said as schema.org says it of a Product: an audience, never the typicalAgeRange a book carries
