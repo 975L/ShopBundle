@@ -1,0 +1,14 @@
+{% extends '@c975LShop/layout.html.twig' %}
+{% trans_default_domain 'shop' %}
+
+{# Defines specific variables #}
+{% set title = 'label.age_verification_required_title'|trans %}
+
+{% block content %}
+    {# The page measure, same reasoning as item_downloaded.html.twig. Once verified the page reloads, and the same link serves the file #}
+    <div class="section-wrap">
+        <section class="text-center">
+            <twig:c975LUi:AgeGate age="{{ age }}"/>
+        </section>
+    </div>
+{% endblock %}

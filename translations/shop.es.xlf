@@ -56,15 +56,15 @@
             </trans-unit>
             <trans-unit id="X4j.TeG">
                 <source>confirm.delete_permanently</source>
-                <target>¿Eliminar definitivamente este producto, sus imágenes y sus archivos? Esta acción es irreversible.</target>
+                <target>¿Eliminar definitivamente el producto «%title%», sus imágenes y sus archivos? Esta acción es irreversible.</target>
             </trans-unit>
             <trans-unit id="gtzKxeG">
                 <source>confirm.duplicate</source>
-                <target>¿Duplicar este producto con sus imágenes, sus artículos y su ficha? La copia será un borrador.</target>
+                <target>¿Duplicar el producto «%title%» con sus imágenes, sus artículos y su ficha? La copia será un borrador.</target>
             </trans-unit>
             <trans-unit id="dm8sVDz">
                 <source>confirm.move_to_trash</source>
-                <target>¿Mover este producto a la papelera? Sale de la tienda y podrá restaurarse.</target>
+                <target>¿Mover el producto «%title%» a la papelera? Sale de la tienda y podrá restaurarse.</target>
             </trans-unit>
             <trans-unit id="tAE83vH">
                 <source>description.guided_project_shop_category</source>
@@ -240,7 +240,7 @@
             </trans-unit>
             <trans-unit id="inThwdu">
                 <source>description.guided_step_shop_product_age</source>
-                <target>Una edad escrita como un intervalo de cifras, «3-8» o «15-» a partir de 15 años: la ficha saca de ahí su advertencia, y los buscadores su público.</target>
+                <target>Una edad escrita como un intervalo de cifras, «3-8» o «15-» a partir de 15 años: la ficha saca de ahí su advertencia, y los buscadores su público. A partir de 18 años, el producto espera la verificación de edad go.cam en cuanto se introducen sus claves.</target>
             </trans-unit>
             <trans-unit id="U6WlC77">
                 <source>description.guided_step_shop_product_available_at</source>
@@ -452,7 +452,15 @@
             </trans-unit>
             <trans-unit id="z7fVVbq">
                 <source>label.age_help</source>
-                <target>La edad a la que se dirige el producto, solo cifras: «3-8», o «15-» a partir de 15 años. Se publica en los datos estructurados, donde los motores la leen como dos edades.</target>
+                <target>La edad a la que se dirige el producto, solo cifras: «3-8», o «15-» a partir de 15 años. Se publica en los datos estructurados, donde los motores la leen como dos edades. A partir de 18 años, la compra y la descarga esperan la verificación de edad go.cam.</target>
+            </trans-unit>
+            <trans-unit id="DV7pCcB">
+                <source>label.age_verification_required</source>
+                <target>Este producto está reservado a mayores de edad: verifique su edad en su ficha antes de añadirlo a la cesta.</target>
+            </trans-unit>
+            <trans-unit id="Ie8AVhj">
+                <source>label.age_verification_required_title</source>
+                <target>Verificación de edad</target>
             </trans-unit>
             <trans-unit id="5bnbli8">
                 <source>label.all_our_items</source>

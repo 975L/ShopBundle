@@ -12,7 +12,9 @@ namespace c975L\ShopBundle\Tests\Controller;
 
 use c975L\ShopBundle\Controller\ProductItemDownloadController;
 use c975L\ShopBundle\Entity\ProductItemDownload;
+use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductItemDownloadServiceInterface;
+use c975L\UiBundle\Service\AgeVerifier;
 use c975L\UiBundle\Service\PrivateFileResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
@@ -33,11 +35,14 @@ class ProductItemDownloadControllerTest extends TestCase
     private function createController(
         ProductItemDownloadServiceInterface $downloadService,
         PrivateFileResponseFactoryInterface $responseFactory,
+        bool $gateClosed = false,
     ): ProductItemDownloadController {
-        $controller = new ProductItemDownloadController($downloadService, $responseFactory);
+        $ageVerifier = $this->createStub(AgeVerifier::class);
+        $ageVerifier->method('isGateClosed')->willReturn($gateClosed);
+        $controller = new ProductItemDownloadController($downloadService, $responseFactory, $ageVerifier, $this->createStub(ProductItemRepository::class));
 
         $twig = $this->createStub(Environment::class);
-        $twig->method('render')->willReturn('<downloaded>');
+        $twig->method('render')->willReturnCallback(static fn (string $template): string => $template);
         $container = new Container();
         $container->set('twig', $twig);
         $controller->setContainer($container);
@@ -92,7 +97,7 @@ class ProductItemDownloadControllerTest extends TestCase
         $response = $this->createController($downloadService, $responseFactory)->download($this->createDownload());
 
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('<downloaded>', $response->getContent());
+        $this->assertSame('@c975LShop/product/item_downloaded.html.twig', $response->getContent());
     }
 
     // Nothing is recorded against a file the factory could not open either
@@ -108,5 +113,30 @@ class ProductItemDownloadControllerTest extends TestCase
         $response = $this->createController($downloadService, $responseFactory)->download($this->createDownload());
 
         $this->assertSame(200, $response->getStatusCode());
+    }
+
+    // A product for adults: the gate is drawn, the link left unspent and the file never served until the visitor is verified
+    public function testAProductForAdultsWaitsBehindTheAgeGate(): void
+    {
+        $downloadService = $this->createMock(ProductItemDownloadServiceInterface::class);
+        $downloadService->method('resolveFilePath')->willReturn('/tmp/private/medias/shop/items/invoice-abc123.pdf');
+        $downloadService->expects($this->never())->method('recordDownloaded');
+        $responseFactory = $this->createMock(PrivateFileResponseFactoryInterface::class);
+        $responseFactory->expects($this->never())->method('createDownloadResponse');
+
+        $response = $this->createController($downloadService, $responseFactory, true)->download($this->createDownload());
+
+        $this->assertSame('@c975LShop/product/item_age_gate.html.twig', $response->getContent());
+    }
+
+    // A dead link of a product for adults says so at once, no verification asked for a file there is no longer to serve
+    public function testAnExpiredLinkOfAProductForAdultsSkipsTheAgeGate(): void
+    {
+        $downloadService = $this->createStub(ProductItemDownloadServiceInterface::class);
+        $downloadService->method('resolveFilePath')->willReturn(null);
+
+        $response = $this->createController($downloadService, $this->createStub(PrivateFileResponseFactoryInterface::class), true)->download($this->createDownload());
+
+        $this->assertSame('@c975LShop/product/item_downloaded.html.twig', $response->getContent());
     }
 }

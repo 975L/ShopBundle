@@ -180,7 +180,7 @@
             </trans-unit>
             <trans-unit id="XJyQ1RX">
                 <source>narration.guided_step_shop_product_age</source>
-                <target>Say who it is for. Write the age as a range of figures, three dash eight, or fifteen dash from fifteen up: the sheet warns the visitor with it, and search engines read the audience off it.</target>
+                <target>Say who it is for. Write the age as a range of figures, three dash eight, or fifteen dash from fifteen up: the sheet warns the visitor with it, and search engines read the audience off it. From eighteen up, the product also waits for the age verification.</target>
             </trans-unit>
             <trans-unit id="pT6vXhz">
                 <source>narration.guided_step_shop_product_available_at</source>

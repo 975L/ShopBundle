@@ -56,15 +56,15 @@
             </trans-unit>
             <trans-unit id="X4j.TeG">
                 <source>confirm.delete_permanently</source>
-                <target>Permanently delete this product, its pictures and its files? This cannot be undone.</target>
+                <target>Permanently delete the product "%title%", its pictures and its files? This cannot be undone.</target>
             </trans-unit>
             <trans-unit id="gtzKxeG">
                 <source>confirm.duplicate</source>
-                <target>Duplicate this product with its pictures, its items and its sheet? The copy will be a draft.</target>
+                <target>Duplicate the product "%title%" with its pictures, its items and its sheet? The copy will be a draft.</target>
             </trans-unit>
             <trans-unit id="dm8sVDz">
                 <source>confirm.move_to_trash</source>
-                <target>Move this product to the recycle bin? It leaves the shop and can be restored.</target>
+                <target>Move the product "%title%" to the recycle bin? It leaves the shop and can be restored.</target>
             </trans-unit>
             <trans-unit id="tAE83vH">
                 <source>description.guided_project_shop_category</source>
@@ -240,7 +240,7 @@
             </trans-unit>
             <trans-unit id="inThwdu">
                 <source>description.guided_step_shop_product_age</source>
-                <target>An age written as a range of figures, "3-8" or "15-" from 15 up: the sheet warns the visitor with it, and search engines read the audience off it.</target>
+                <target>An age written as a range of figures, "3-8" or "15-" from 15 up: the sheet warns the visitor with it, and search engines read the audience off it. From 18 up, the product waits for the go.cam age verification once its keys are filled in.</target>
             </trans-unit>
             <trans-unit id="U6WlC77">
                 <source>description.guided_step_shop_product_available_at</source>
@@ -452,7 +452,15 @@
             </trans-unit>
             <trans-unit id="z7fVVbq">
                 <source>label.age_help</source>
-                <target>The age the product is meant for, figures alone: "3-8", or "15-" from 15 up. Published in the structured data, where engines read it as two ages.</target>
+                <target>The age the product is meant for, figures alone: "3-8", or "15-" from 15 up. Published in the structured data, where engines read it as two ages. From 18 up, buying and downloading wait for the go.cam age verification.</target>
+            </trans-unit>
+            <trans-unit id="DV7pCcB">
+                <source>label.age_verification_required</source>
+                <target>This product is for adults only: verify your age on its page before adding it to the basket.</target>
+            </trans-unit>
+            <trans-unit id="Ie8AVhj">
+                <source>label.age_verification_required_title</source>
+                <target>Age verification</target>
             </trans-unit>
             <trans-unit id="5bnbli8">
                 <source>label.all_our_items</source>

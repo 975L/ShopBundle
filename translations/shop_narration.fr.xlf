@@ -180,7 +180,7 @@
             </trans-unit>
             <trans-unit id="XJyQ1RX">
                 <source>narration.guided_step_shop_product_age</source>
-                <target>Indiquez à qui il s'adresse. Écrivez l'âge comme une plage de chiffres, trois tiret huit, ou quinze tiret à partir de quinze ans : la fiche en tire son avertissement, et les moteurs de recherche son public.</target>
+                <target>Indiquez à qui il s'adresse. Écrivez l'âge comme une plage de chiffres, trois tiret huit, ou quinze tiret à partir de quinze ans : la fiche en tire son avertissement, et les moteurs de recherche son public. À partir de dix-huit ans, le produit attend en plus la vérification d'âge.</target>
             </trans-unit>
             <trans-unit id="pT6vXhz">
                 <source>narration.guided_step_shop_product_available_at</source>

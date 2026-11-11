@@ -19,6 +19,7 @@ use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
+use c975L\UiBundle\Service\AgeVerifier;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -39,6 +40,8 @@ class ProductBasketItemProviderTest extends TestCase
     private array $logged = [];
 
     private bool $claimAnswers = true;
+
+    private bool $gateClosed = false;
 
     private function createProvider(?ProductItem $found = null, bool $hasSellableParcel = true): ProductBasketItemProvider
     {
@@ -65,6 +68,9 @@ class ProductBasketItemProviderTest extends TestCase
             $this->logged[] = $message;
         });
 
+        $ageVerifier = $this->createStub(AgeVerifier::class);
+        $ageVerifier->method('isGateClosed')->willReturnCallback(fn (): bool => $this->gateClosed);
+
         return new ProductBasketItemProvider(
             $itemService,
             $this->createStub(MessageBusInterface::class),
@@ -73,6 +79,7 @@ class ProductBasketItemProviderTest extends TestCase
             new LocalizedUrlGenerator($this->urlGenerator(), new SiteLocales(['fr'], 'fr'), new RequestStack()),
             $itemRepository,
             $logger,
+            $ageVerifier,
         );
     }
 
@@ -138,6 +145,14 @@ class ProductBasketItemProviderTest extends TestCase
     public function testAnItemOfAHiddenProductIsRefused(): void
     {
         $this->assertSame('label.unavailable', $this->createProvider()->validateAddition($this->item(true), 1));
+    }
+
+    // Whatever button a page drew, a visitor not verified of age is refused a product for adults
+    public function testAnItemOfAProductForAdultsWaitsForTheAgeVerification(): void
+    {
+        $this->gateClosed = true;
+
+        $this->assertSame('label.age_verification_required', $this->createProvider()->validateAddition($this->item(false), 1));
     }
 
     public function testAnItemOfATrashedProductIsRefused(): void

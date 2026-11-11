@@ -45,6 +45,9 @@
             {# Above what the visitor decides on, for a product declaring an age the sheet otherwise only publishes as a schema.org audience. The sentence itself is the site's, written once for the whole of it (config "site-age-warning"). The fragment carries the guards, so a product declaring no age, and a site leaving the setting empty, render nothing here #}
             <twig:c975LUi:Alert:AgeWarning age="{{ product.age }}"/>
 
+            {# Where a visitor proves their age before buying a product for adults, which the basket refuses them until then. Outside every cached fragment: the gate is this visitor's own (see UiBundle's AgeGate) #}
+            <twig:c975LUi:AgeGate age="{{ product.age }}"/>
+
             {# Picture on one side, everything the visitor decides on together on the other - a single column below 900px, the grid folding on its own #}
             <div class="product-sheet-main">
                 {# The column is only written when there is something to put in it: an empty one would still hold half the row #}

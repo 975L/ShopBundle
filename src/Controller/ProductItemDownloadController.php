@@ -11,7 +11,9 @@
 namespace c975L\ShopBundle\Controller;
 
 use c975L\ShopBundle\Entity\ProductItemDownload;
+use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductItemDownloadServiceInterface;
+use c975L\UiBundle\Service\AgeVerifier;
 use c975L\UiBundle\Service\PrivateFileResponseFactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,6 +23,8 @@ class ProductItemDownloadController extends AbstractController
     public function __construct(
         private readonly ProductItemDownloadServiceInterface $productItemDownloadService,
         private readonly PrivateFileResponseFactoryInterface $privateFileResponseFactory,
+        private readonly AgeVerifier $ageVerifier,
+        private readonly ProductItemRepository $productItemRepository,
     ) {
     }
 
@@ -35,6 +39,15 @@ class ProductItemDownloadController extends AbstractController
     {
         // An expired link, or one whose file the shop has since removed, gets the page saying so rather than a download recorded against nothing
         $filePath = $this->productItemDownloadService->resolveFilePath($productItemDownload);
+
+        // A product for adults waits behind the age gate, its link left unspent until go.cam found the visitor of age: the page reloads once they are, and the same link then serves the file - a dead link is said so without asking for a verification first
+        if (null !== $filePath) {
+            $age = $this->productItemRepository->find((int) $productItemDownload->getProductItemId())?->getProduct()?->getAge();
+            if ($this->ageVerifier->isGateClosed($age)) {
+                return $this->render('@c975LShop/product/item_age_gate.html.twig', ['age' => $age]);
+            }
+        }
+
         $response = null === $filePath
             ? null
             : $this->privateFileResponseFactory->createDownloadResponse($filePath, basename($filePath));

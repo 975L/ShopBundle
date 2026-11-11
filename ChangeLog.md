@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.22.0
+
+Products for adults wait behind the go.cam age verification
+
+- Product sheet draws CoreBundle's `AgeGate` for a product of 18 or more (11/11/2026)
+- `ProductBasketItemProvider::validateAddition()` refuses an adult product until the visitor is verified (11/11/2026)
+- `ProductItemDownloadController` draws `item_age_gate.html.twig` in place of an adult product's file, its link left unspent (11/11/2026)
+- `ProductItemDownloadController` and `ProductBasketItemProvider` take `AgeVerifier` (11/11/2026) [BC-Break]
+- Product age's help and guided step say a product of 18 or more waits for the age verification (11/11/2026)
+- `c975l/core-bundle` required in ^1.89.0 (11/11/2026)
+- Trash, permanent delete and duplicate confirmations name the product they act on (11/11/2026)
+- `easycorp/easyadmin-bundle` required in ^5.10 (11/11/2026)
+
 ## v2.21.0
 
 Shipping and return nodes come from PaymentBundle

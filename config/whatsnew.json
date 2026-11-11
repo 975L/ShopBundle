@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-11-11",
+        "description": [
+            {
+                "en": "A product for adults (age 18 and over) can only be bought and downloaded once go.cam has verified the visitor's age, anonymously and on their own device, as soon as the go.cam keys are filled in.",
+                "fr": "Un produit pour majeurs (âge 18 ans et plus) ne peut être acheté et téléchargé qu'une fois l'âge du visiteur vérifié par go.cam, anonymement et sur son propre appareil, dès que les clés go.cam sont renseignées.",
+                "es": "Un producto para mayores de edad (18 años o más) solo puede comprarse y descargarse una vez que go.cam ha verificado la edad del visitante, de forma anónima y en su propio dispositivo, en cuanto se introducen las claves go.cam."
+            },
+            {
+                "en": "Before moving to the trash, deleting for good or duplicating, the confirmation now names the product concerned, so you know at a glance which one you are about to act on.",
+                "fr": "Avant une mise à la corbeille, une suppression définitive ou une duplication, la confirmation nomme désormais le produit concerné, pour savoir d'un coup d'œil sur quoi vous allez agir.",
+                "es": "Antes de mover a la papelera, eliminar definitivamente o duplicar, la confirmación nombra ahora el producto en cuestión, para saber de un vistazo sobre qué va a actuar."
+            }
+        ]
+    },
+    {
         "date": "2026-11-10",
         "description": [
             {

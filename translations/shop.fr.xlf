@@ -56,15 +56,15 @@
             </trans-unit>
             <trans-unit id="X4j.TeG">
                 <source>confirm.delete_permanently</source>
-                <target>Supprimer définitivement ce produit, ses images et ses fichiers ? Cette action est irréversible.</target>
+                <target>Supprimer définitivement le produit « %title% », ses images et ses fichiers ? Cette action est irréversible.</target>
             </trans-unit>
             <trans-unit id="gtzKxeG">
                 <source>confirm.duplicate</source>
-                <target>Dupliquer ce produit avec ses images, ses articles et sa fiche ? La copie sera un brouillon.</target>
+                <target>Dupliquer le produit « %title% » avec ses images, ses articles et sa fiche ? La copie sera un brouillon.</target>
             </trans-unit>
             <trans-unit id="dm8sVDz">
                 <source>confirm.move_to_trash</source>
-                <target>Mettre ce produit à la corbeille ? Il sort de la boutique et pourra être restauré.</target>
+                <target>Mettre le produit « %title% » à la corbeille ? Il sort de la boutique et pourra être restauré.</target>
             </trans-unit>
             <trans-unit id="tAE83vH">
                 <source>description.guided_project_shop_category</source>
@@ -240,7 +240,7 @@
             </trans-unit>
             <trans-unit id="inThwdu">
                 <source>description.guided_step_shop_product_age</source>
-                <target>Un âge écrit comme une plage de chiffres, « 3-8 » ou « 15- » à partir de 15 ans : la fiche en tire son avertissement, et les moteurs de recherche son public.</target>
+                <target>Un âge écrit comme une plage de chiffres, « 3-8 » ou « 15- » à partir de 15 ans : la fiche en tire son avertissement, et les moteurs de recherche son public. À partir de 18 ans, le produit attend la vérification d'âge go.cam dès que ses clés sont renseignées.</target>
             </trans-unit>
             <trans-unit id="U6WlC77">
                 <source>description.guided_step_shop_product_available_at</source>
@@ -452,7 +452,15 @@
             </trans-unit>
             <trans-unit id="z7fVVbq">
                 <source>label.age_help</source>
-                <target>L'âge auquel le produit s'adresse, en chiffres seuls : « 3-8 », ou « 15- » à partir de 15 ans. Publié dans les données structurées, où les moteurs le lisent comme deux âges.</target>
+                <target>L'âge auquel le produit s'adresse, en chiffres seuls : « 3-8 », ou « 15- » à partir de 15 ans. Publié dans les données structurées, où les moteurs le lisent comme deux âges. À partir de 18 ans, achat et téléchargement attendent la vérification d'âge go.cam.</target>
+            </trans-unit>
+            <trans-unit id="DV7pCcB">
+                <source>label.age_verification_required</source>
+                <target>Ce produit est réservé aux personnes majeures : vérifiez votre âge sur sa fiche avant de l'ajouter au panier.</target>
+            </trans-unit>
+            <trans-unit id="Ie8AVhj">
+                <source>label.age_verification_required_title</source>
+                <target>Vérification d'âge</target>
             </trans-unit>
             <trans-unit id="5bnbli8">
                 <source>label.all_our_items</source>

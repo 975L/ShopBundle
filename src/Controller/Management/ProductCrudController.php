@@ -79,6 +79,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Intl\Locales;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function Symfony\Component\Translation\t;
@@ -320,7 +321,7 @@ class ProductCrudController extends AbstractCrudController
         $duplicateAction = Action::new('duplicate', t('action.duplicate', [], 'shop'), 'fa fa-copy')
             ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('duplicate', $product, self::DUPLICATE_CSRF_TOKEN, query: ['template' => (int) $product->isTemplate()]))
             ->displayIf(static fn (Product $product): bool => !$product->isDeleted())
-            ->askConfirmation(t('confirm.duplicate', [], 'shop'))
+            ->askConfirmation(self::titledConfirmation('confirm.duplicate'))
         ;
 
         // The same copy, made a template: the product stays as it is, and the texts of its items are kept for the next ones
@@ -354,7 +355,7 @@ class ProductCrudController extends AbstractCrudController
         $deletePermanentlyAction = Action::new('deletePermanently', t('action.delete_permanently', [], 'config'), 'fa fa-trash')
             ->linkToUrl(fn (Product $product): string => $this->tokenizedUrl('deletePermanently', $product, self::DELETE_PERMANENTLY_CSRF_TOKEN, true))
             ->displayIf(static fn (Product $product): bool => $product->isDeleted())
-            ->askConfirmation(t('confirm.delete_permanently', [], 'shop'))
+            ->askConfirmation(self::titledConfirmation('confirm.delete_permanently'))
             ->asDangerAction()
         ;
 
@@ -428,7 +429,7 @@ class ProductCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action
                     ->setIcon('fa fa-box-archive')
-                    ->askConfirmation(t('confirm.move_to_trash', [], 'shop'))
+                    ->askConfirmation(self::titledConfirmation('confirm.move_to_trash'))
                     ->displayIf(static fn (Product $product): bool => !$product->isDeleted()),
                 $this->translator->trans('action.move_to_trash', [], 'config'),
             ))
@@ -436,7 +437,7 @@ class ProductCrudController extends AbstractCrudController
             ->update(Crud::PAGE_EDIT, Action::DELETE, fn (Action $action) => $action
                 ->setLabel(t('action.move_to_trash', [], 'config'))
                 ->setIcon('fa fa-box-archive')
-                ->askConfirmation(t('confirm.move_to_trash', [], 'shop'))
+                ->askConfirmation(self::titledConfirmation('confirm.move_to_trash'))
                 ->displayIf(static fn (Product $product): bool => !$product->isDeleted()))
             // reorder() turns priority ordering off page-wide, so "exportSelection" leads the batch bar too - "batchDelete" is left unnamed, as naming it throws where it is disabled
             ->reorder(Crud::PAGE_INDEX, ['exportSelection', Action::EDIT, 'viewOnSite', 'preview', 'duplicate', 'createTemplate', 'createProduct', 'restore', Action::DELETE, 'deletePermanently'])
@@ -1036,6 +1037,16 @@ class ProductCrudController extends AbstractCrudController
         }
 
         return $formBuilder;
+    }
+
+    // A confirmation naming the row it acts on, EasyAdmin handing the closure that row - one saved without a title is named by its id
+    private static function titledConfirmation(string $key): \Closure
+    {
+        return static function (Product $product) use ($key): TranslatableMessage {
+            $title = (string) $product->getTitle();
+
+            return t($key, ['%title%' => '' !== $title ? $title : '#' . $product->getId()], 'shop');
+        };
     }
 
     // Each variant's texts handed over the same way, filed under the variant rather than the product - only the fields the form really carries, a key missing from what stage() is given leaving that translation alone where a null would erase it

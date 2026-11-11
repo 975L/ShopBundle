@@ -180,7 +180,7 @@
             </trans-unit>
             <trans-unit id="XJyQ1RX">
                 <source>narration.guided_step_shop_product_age</source>
-                <target>Indique a quién se dirige. Escriba la edad como un intervalo de cifras, tres guion ocho, o quince guion a partir de quince años: la ficha saca de ahí su advertencia, y los buscadores su público.</target>
+                <target>Indique a quién se dirige. Escriba la edad como un intervalo de cifras, tres guion ocho, o quince guion a partir de quince años: la ficha saca de ahí su advertencia, y los buscadores su público. A partir de dieciocho años, el producto espera además la verificación de edad.</target>
             </trans-unit>
             <trans-unit id="pT6vXhz">
                 <source>narration.guided_step_shop_product_available_at</source>

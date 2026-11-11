@@ -21,6 +21,7 @@ use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
+use c975L\UiBundle\Service\AgeVerifier;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -188,6 +189,6 @@ class ProductGiftCardTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
 
-        return new ProductBasketItemProvider($itemService, $this->createStub(MessageBusInterface::class), $giftCardService, $translator, new LocalizedUrlGenerator($this->createStub(UrlGeneratorInterface::class), new SiteLocales(['fr'], 'fr'), new RequestStack()), $this->createStub(ProductItemRepository::class), $this->createStub(LoggerInterface::class));
+        return new ProductBasketItemProvider($itemService, $this->createStub(MessageBusInterface::class), $giftCardService, $translator, new LocalizedUrlGenerator($this->createStub(UrlGeneratorInterface::class), new SiteLocales(['fr'], 'fr'), new RequestStack()), $this->createStub(ProductItemRepository::class), $this->createStub(LoggerInterface::class), $this->createStub(AgeVerifier::class));
     }
 }
