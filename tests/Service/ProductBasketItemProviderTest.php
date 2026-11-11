@@ -19,7 +19,6 @@ use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
-use c975L\UiBundle\Service\AgeVerifier;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -40,8 +39,6 @@ class ProductBasketItemProviderTest extends TestCase
     private array $logged = [];
 
     private bool $claimAnswers = true;
-
-    private bool $gateClosed = false;
 
     private function createProvider(?ProductItem $found = null, bool $hasSellableParcel = true): ProductBasketItemProvider
     {
@@ -68,9 +65,6 @@ class ProductBasketItemProviderTest extends TestCase
             $this->logged[] = $message;
         });
 
-        $ageVerifier = $this->createStub(AgeVerifier::class);
-        $ageVerifier->method('isGateClosed')->willReturnCallback(fn (): bool => $this->gateClosed);
-
         return new ProductBasketItemProvider(
             $itemService,
             $this->createStub(MessageBusInterface::class),
@@ -79,7 +73,6 @@ class ProductBasketItemProviderTest extends TestCase
             new LocalizedUrlGenerator($this->urlGenerator(), new SiteLocales(['fr'], 'fr'), new RequestStack()),
             $itemRepository,
             $logger,
-            $ageVerifier,
         );
     }
 
@@ -147,12 +140,13 @@ class ProductBasketItemProviderTest extends TestCase
         $this->assertSame('label.unavailable', $this->createProvider()->validateAddition($this->item(true), 1));
     }
 
-    // Whatever button a page drew, a visitor not verified of age is refused a product for adults
-    public function testAnItemOfAProductForAdultsWaitsForTheAgeVerification(): void
+    // The age travels with the line, for the checkout to wait behind the verification it calls for
+    public function testTheLineCarriesTheAgeOfItsProduct(): void
     {
-        $this->gateClosed = true;
+        $item = $this->item(false);
+        $item->getProduct()->setAge('18-');
 
-        $this->assertSame('label.age_verification_required', $this->createProvider()->validateAddition($this->item(false), 1));
+        $this->assertSame('18-', $this->createProvider()->toBasketData($item, 1)['age']);
     }
 
     public function testAnItemOfATrashedProductIsRefused(): void

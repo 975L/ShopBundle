@@ -21,7 +21,6 @@ use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\PaymentBundle\Service\VatCalculator;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
 use c975L\ShopBundle\Repository\ProductItemRepository;
-use c975L\UiBundle\Service\AgeVerifier;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -37,7 +36,6 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
         private readonly LocalizedUrlGenerator $localizedUrlGenerator,
         private readonly ProductItemRepository $productItemRepository,
         private readonly LoggerInterface $logger,
-        private readonly AgeVerifier $ageVerifier,
     ) {
     }
 
@@ -77,11 +75,6 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
 
         if (0 === $item->getLimitedQuantity()) {
             return $this->translator->trans('label.unavailable', [], 'shop');
-        }
-
-        // A product for adults is only added for a visitor go.cam found of age, whatever button the page drew - a cached items table, a block on another page (see UiBundle's AgeVerifier)
-        if ($this->ageVerifier->isGateClosed($product->getAge())) {
-            return $this->translator->trans('label.age_verification_required', [], 'shop');
         }
 
         if ($item->getLimitedQuantity() > 0) {
@@ -141,6 +134,8 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
                 'giftCardScratch' => $product->hasGiftCardScratch(),
             ],
             'type' => 'product',
+            // What the checkout waits behind an age verification for, PaymentBundle reading it off every line whatever sold it (see Basket::getMinimumAge())
+            'age' => $product->getAge(),
             'quantity' => $quantity,
             // Taken out of what the line is sold for, prices being held VAT included (see PaymentBundle's VatCalculator)
             'totalVat' => VatCalculator::included($quantity * $item->getPrice(), (float) $item->getVat()),

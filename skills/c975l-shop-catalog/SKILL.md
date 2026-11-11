@@ -143,12 +143,13 @@ setting empty, render nothing. The sentence itself is the site's, written once i
 `site-age-warning`, which a multilingual site translates in the back office. The field is also the
 graph's `audience` (see `c975l-shop-seo`).
 
-A product of 18 or more (`18-`) also waits behind CoreBundle's go.cam age verification, on a site that
-filled its three `age-verification-*` keys: the sheet draws `<twig:c975LUi:AgeGate age="{{ product.age }}"/>`
-outside every cached fragment, `ProductBasketItemProvider::validateAddition()` refuses the item as
-`label.age_verification_required` until the visitor is verified - the items table stays cached, the server
-decides - and `ProductItemDownloadController` draws `product/item_age_gate.html.twig` in place of the file,
-leaving the link unspent.
+A product of 18 or more (`18-`) is paid for and downloaded once CoreBundle's go.cam age verification
+found the visitor of age, on a site that filled its three `age-verification-*` keys. The basket fills
+freely: `toBasketData()` writes the product's `age` on the line, and PaymentBundle's checkout draws the
+gate in place of its form and turns back a form posted around it (`Basket::getMinimumAge()`). The sheet
+only says so, as `label.age_verification_required`, outside every cached fragment and to a visitor not
+verified yet, and `ProductItemDownloadController` draws `product/item_age_gate.html.twig` in place of the
+file, leaving the link unspent.
 
 `age` is a free text field validated to the very format the graph reads: one to three figures, and a
 second group only with its dash (`3-8`, `15-`, `3`), refused as `label.age_invalid` otherwise, plus

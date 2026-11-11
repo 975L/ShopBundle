@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.23.0
+
+A product for adults is verified at the checkout, not in the basket
+
+- `ProductBasketItemProvider::validateAddition()` no longer refuses a product for adults (11/11/2026)
+- `ProductBasketItemProvider::toBasketData()` carries the product's `age` on the line, for PaymentBundle's checkout (11/11/2026)
+- `ProductBasketItemProvider` no longer takes `AgeVerifier` (11/11/2026) [BC-Break]
+- Product sheet says a product of 18 or more is paid for once the visitor's age is verified, in place of the gate (11/11/2026)
+- `c975l/payment-bundle` required in ^6.25.0 (11/11/2026)
+
 ## v2.22.0
 
 Products for adults wait behind the go.cam age verification

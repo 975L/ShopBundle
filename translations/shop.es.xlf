@@ -456,7 +456,7 @@
             </trans-unit>
             <trans-unit id="DV7pCcB">
                 <source>label.age_verification_required</source>
-                <target>Este producto está reservado a mayores de edad: verifique su edad en su ficha antes de añadirlo a la cesta.</target>
+                <target>Este artículo está reservado a mayores de edad: su edad se verificará de forma anónima antes del pago.</target>
             </trans-unit>
             <trans-unit id="Ie8AVhj">
                 <source>label.age_verification_required_title</source>

@@ -24,7 +24,6 @@ use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
 use c975L\ShopBundle\Service\ShopDemoOrderLinker;
-use c975L\UiBundle\Service\AgeVerifier;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -80,7 +79,6 @@ class ShopDemoOrderLinkerTest extends TestCase
             new LocalizedUrlGenerator($this->createStub(UrlGeneratorInterface::class), new SiteLocales(['fr'], 'fr'), new RequestStack()),
             $this->createStub(ProductItemRepository::class),
             $this->createStub(LoggerInterface::class),
-            $this->createStub(AgeVerifier::class),
         );
     }
 

@@ -44,7 +44,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - Nine block kinds of its own, putting the catalog on any page of the site, each drawn as a silhouette in the back-office picker
 - `Product` structured data (JSON-LD), the only `offers` node of the c975L ecosystem
 - The site's age warning stated on a product declaring an age — one sentence written once in the back office (CoreBundle's `site-age-warning`), printed on every such sheet
-- A product for adults held behind CoreBundle's go.cam age verification — the sheet shows the gate, the basket refuses the item and its download link waits until the visitor is verified, without the site ever learning who they are
+- A product for adults paid for and downloaded once CoreBundle's go.cam age verification found the visitor of age — the sheet says so, the checkout asks, the download link waits, and the site never learns who they are
 - Shop index describable from the back office — title and shared sentence written in *Descriptions d'urls*, over the bundle's own labels
 - `ItemList` structured data on the shop's index and its category pages
 - Plugs products into PaymentBundle's Basket/checkout engine via `BasketItemProviderInterface`, and tells it where the catalogue is (`CatalogueBasketItemProviderInterface`), whether it posts parcels (`ShippingBasketItemProviderInterface`) and which template draws the recommended products (`BasketRecommendationProviderInterface`)

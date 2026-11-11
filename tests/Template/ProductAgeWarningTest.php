@@ -35,6 +35,16 @@ class ProductAgeWarningTest extends TestCase
         $this->assertStringNotContainsString("config('site-age-warning')", $this->read(self::SHEET));
     }
 
+    // A product for adults is put in the basket freely and verified at the checkout: the sheet only says so, and only to a visitor not verified yet
+    public function testTheSheetSaysTheCheckoutVerifiesTheAgeRatherThanDrawingTheGate(): void
+    {
+        $sheet = $this->read(self::SHEET);
+
+        $this->assertStringNotContainsString('<twig:c975LUi:AgeGate', $sheet);
+        $this->assertStringContainsString('{% if age_gate_closed(product.age) %}', $sheet);
+        $this->assertStringContainsString("'label.age_verification_required'|trans({}, 'shop')", $sheet);
+    }
+
     private function read(string $relativePath): string
     {
         $path = \dirname(__DIR__, 2) . '/' . $relativePath;

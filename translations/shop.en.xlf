@@ -456,7 +456,7 @@
             </trans-unit>
             <trans-unit id="DV7pCcB">
                 <source>label.age_verification_required</source>
-                <target>This product is for adults only: verify your age on its page before adding it to the basket.</target>
+                <target>This item is for adults only: your age will be verified anonymously before payment.</target>
             </trans-unit>
             <trans-unit id="Ie8AVhj">
                 <source>label.age_verification_required_title</source>

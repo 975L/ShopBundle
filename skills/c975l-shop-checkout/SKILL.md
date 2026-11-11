@@ -63,6 +63,9 @@ the items on the dashboard until the shop raises the cap.
 **`toBasketData()` flattens rather than references.** It drops `product`, `creation`, `position`,
 `modification` and `user` and copies the media and file names, so a basket keeps saying what was bought
 at the price it was bought, whatever happens to the catalog afterwards.
+It also writes the product's `age` on the line: PaymentBundle's checkout reads the highest one off every
+line (`Basket::getMinimumAge()`) and waits behind CoreBundle's go.cam verification for a product for adults,
+so the basket itself never refuses one.
 
 ## Gift cards
 
