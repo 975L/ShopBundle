@@ -12,6 +12,7 @@ namespace c975L\ShopBundle\Tests\Repository;
 
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Repository\ProductItemRepository;
+use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -69,7 +70,7 @@ class ProductItemRepositoryTest extends TestCase
         $registry = $this->createStub(ManagerRegistry::class);
         $registry->method('getManagerForClass')->willReturn($entityManager);
 
-        return new ProductItemRepository($registry);
+        return new ProductItemRepository($registry, $this->createStub(ShopBlockCacheInvalidator::class));
     }
 
     // Two payments at the same second both read the same count: the stock itself is the condition of its own count, a null or zero cap being no stock to run out of
@@ -107,9 +108,10 @@ class ProductItemRepositoryTest extends TestCase
         $entityManager = $this->createStub(EntityManagerInterface::class);
         $entityManager->method('getConnection')->willReturn($connection);
 
-        return new class ($entityManager) extends ProductItemRepository {
-            public function __construct(private readonly EntityManagerInterface $entityManager)
+        return new class ($entityManager, $this->createStub(ShopBlockCacheInvalidator::class)) extends ProductItemRepository {
+            public function __construct(private readonly EntityManagerInterface $entityManager, ShopBlockCacheInvalidator $cacheInvalidator)
             {
+                new \ReflectionProperty(ProductItemRepository::class, 'cacheInvalidator')->setValue($this, $cacheInvalidator);
             }
 
             protected function getEntityManager(): EntityManagerInterface

@@ -1,5 +1,59 @@
 # Changelog
 
+## v2.24.0
+
+Refunds, release dates and one currency held server side
+
+- README, skills and whatsnew name the age verification without its service (11/11/2026)
+- Catalog listeners run on `prePersist` and `preUpdate` instead of `preFlush`, a visitor's flush no longer re-signing a product (12/11/2026)
+- An item's slug is given off its title once, kept on a rename (12/11/2026)
+- Catalog listeners no longer take `EntityManagerInterface` nor `SluggerInterface`, and `UserTrait::setUser()` gives way to the private `stampUser()` (12/11/2026) [BC-Break]
+- `ProductItemFileListener` removed, `ProductItemMediaListener` signing the item's file as well (12/11/2026) [BC-Break]
+- `Product::validateItemSlugs()` refuses a new item whose title gives a slug already taken (12/11/2026)
+- `ProductBasketItemProvider` refuses an item of a product dated ahead, `Product::isReleased()` being the one reading of the date (12/11/2026)
+- `ProductBasketItemProvider` implements `RefundableBasketItemProviderInterface`: a refund gives the stock back and ends the download links (12/11/2026)
+- `ProductBasketItemProvider` counts no stock for a basket paid in test mode (12/11/2026)
+- `ProductBasketItemProvider` takes `ProductItemDownloadRepository` (12/11/2026) [BC-Break]
+- `ProductItemRepository::releaseOrdered()` gives a refunded stock back, never below 0 (12/11/2026)
+- `ProductItemRepository` takes `ShopBlockCacheInvalidator`, `releaseOrdered()` dropping the cached cards itself (12/11/2026) [BC-Break]
+- `ProductItemDownloadRepository::expireByBasket()` ends a refunded order's links (12/11/2026)
+- `ProductItemDownloadController` and its message handler serve nothing for a basket no longer settled (12/11/2026)
+- `ProductItemDownloadController` takes `BasketRepository` (12/11/2026) [BC-Break]
+- `c975l:shop:releases:refresh`, scheduled right after midnight, drops the cached product blocks on the day a product comes out, looking back three days for a missed run (12/11/2026)
+- `ProductRepository::hasReleaseBetween()` added (12/11/2026)
+- Reordering the products invalidates the cached listings (12/11/2026)
+- A product saved in the back office is dated, its items and pictures included (12/11/2026)
+- Basket recommendations read the affinities in one query (`ProductAffinityRepository::getScoresFor()`) (12/11/2026)
+- Products picked by hand are left out of the recommendations before their release date (12/11/2026)
+- One currency, `shop-currency`, shown in the cards, the sheet, the filters, the structured data and the feed (`shop_currency()`) (12/11/2026)
+- `ProductStateServiceInterface::getCurrency()` added (12/11/2026) [BC-Break]
+- Gift cards issued in the currency the basket was charged in (12/11/2026)
+- Saving `shop-currency` drops the cached product blocks (12/11/2026)
+- `ShopCacheInvalidationListener` drops its tags once the flush is committed (`PostFlushTagInvalidationTrait`), and takes `TagAwareCacheInterface` (12/11/2026) [BC-Break]
+- Stock alert unsubscribe link opens a confirmation, only its POST (csrf checked, a mismatch told why) unsubscribing (12/11/2026)
+- `findByBlockIds()` of products, categories and settings shared in `BlockOwnerRepositoryTrait`: filtered through `EXISTS`, blocks fetched whole in the same query (12/11/2026)
+- Instant search looks for a typed `%` or `_` as itself (12/11/2026)
+- `ShopBlockCacheInvalidator::PRODUCT_TAGS` and `CATEGORY_TAGS`, read by the listener too (12/11/2026)
+- `ShopBlockCacheInvalidator` drops its tags at once outside a transaction, after it otherwise (next flush outside one, end of the request, command or message), and takes the DBAL `Connection` (12/11/2026)
+- Archive import refuses an AVIF picture, as the picture upload does (12/11/2026)
+- Item form no longer offers a currency field (12/11/2026)
+- Item form no longer resets VAT to 0 on every edit (12/11/2026)
+- Instant search capped at `ProductRepository::SEARCH_LIMIT` products in the shop's own order, fetch-joined and translated (12/11/2026)
+- Category selector redirects to the localized url of the page it was drawn on (12/11/2026)
+- Prices, stock, VAT, weight and gift card value bounded, string columns kept to their length (12/11/2026)
+- Product title required (12/11/2026)
+- Health check no longer reports a withdrawn item with past sales as oversold (12/11/2026)
+- Health check no longer reports a refunded order as undelivered (12/11/2026)
+- Archive import: every manifest path through `ArchivePath::resolve()`, stored names kept to allowed extensions, pictures to the image types read off their bytes, the archive's copy left in place (12/11/2026)
+- Archive import writes the creation dates before its single flush (12/11/2026)
+- `ProductCatalogWriter` names a new item through `ProductItem::slugFor()` (12/11/2026)
+- Stock alert form follows `FormBotProtection`: an untimed POST shown back with `text.form_resend`, the timer armed at display (12/11/2026)
+- Product, category and shop JSON-LD printed from a capture, without `|raw` (12/11/2026)
+- AI search card offers the basket button on a single visible item (12/11/2026)
+- `tests/CodeRulesTest.php` replays ConfigBundle's `CodeRulesTestCase` (12/11/2026)
+- `c975l/core-bundle` required in ^1.90 (12/11/2026)
+- `c975l/payment-bundle` required in ^6.26 (12/11/2026)
+
 ## v2.23.0
 
 A product for adults is verified at the checkout, not in the basket

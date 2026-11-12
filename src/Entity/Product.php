@@ -38,13 +38,17 @@ class Product implements \Stringable, HasBlocksInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
     private ?string $title = null;
 
     #[ORM\Column(length: 100, unique: true)]
+    #[Assert\Length(max: 100)]
     private ?string $slug = null;
 
     // The name another bundle's catalog wrote this row under (see ProductCatalogWriter) - never shown, null on a row made in the shop itself
     #[ORM\Column(length: 100, unique: true, nullable: true)]
+    #[Assert\Length(max: 100)]
     private ?string $catalogKey = null;
 
     // Required on the entity, the editor's textarea being hidden behind Trix where the browser cannot check it: the column is NOT NULL, and a form submitted without it fails as a 500 rather than as a field the back-office can point at
@@ -54,6 +58,7 @@ class Product implements \Stringable, HasBlocksInterface
 
     // The maker of the product, published as the graph's Brand node - Google Merchant Center declines a branded offer that names none. On anything made in-house it is the shop's own name, a publisher's on a book
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Length(max: 100)]
     private ?string $brand = null;
 
     // The language the product is written in, null for the site's own writing language - a translation lays another language over its texts, this says which one they were written in, which is what the merchant feed is split on (see ProductMerchantFeed)
@@ -93,6 +98,7 @@ class Product implements \Stringable, HasBlocksInterface
 
     // The words printed on the recto of the card this product sells, beside its picture and the amount, i.e. what makes it a birthday card rather than a voucher. Held on the product and not on its items: the visual is what a customer picks, the amounts under it being that very card at three prices (see ProductItem::$giftCardValue). Null on everything that is not a gift card
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Length(max: 100)]
     private ?string $giftCardText = null;
 
     // Whether the code is hidden under a panel to be scratched off, the way a card on a rack is. Not decoration alone: scratched, the code is not written in the page at all and is asked for only once the panel is rubbed off, where a card sold without one prints it as it stands - and a page pasted into a chat is unfurled by a robot that fetches it and runs no script (see PaymentBundle's GiftCardController)
@@ -234,6 +240,12 @@ class Product implements \Stringable, HasBlocksInterface
     public function getAvailableAt(): ?\DateTimeInterface
     {
         return $this->availableAt;
+    }
+
+    // Whether the product is out, i.e. dated no later than today - the one reading of the release date the sheet, the graph, the basket and the recommendations share, ProductRepository::available() saying the same in DQL
+    public function isReleased(): bool
+    {
+        return null === $this->availableAt || $this->availableAt->format('Ymd') <= date('Ymd');
     }
 
     public function setAvailableAt(?\DateTimeInterface $availableAt): static
@@ -463,6 +475,34 @@ class Product implements \Stringable, HasBlocksInterface
             $context->buildViolation('label.age_range_reversed')
                 ->atPath('age')
                 ->addViolation();
+        }
+    }
+
+    // Two items under one slug would share their anchor on the sheet, their sku in the graph and their row in an archive, so a new item whose title would give a slug already taken is refused where the editor typed it. Only a new one: an item keeps the slug it was given, so two saved items sharing one from before this check cannot be told apart by a rename, and must not lock the product
+    #[Assert\Callback]
+    public function validateItemSlugs(ExecutionContextInterface $context): void
+    {
+        $taken = [];
+        foreach ($this->items as $item) {
+            if ('' !== (string) $item->getSlug()) {
+                $taken[(string) $item->getSlug()] = true;
+            }
+        }
+
+        foreach ($this->items as $key => $item) {
+            $slug = ProductItem::slugFor((string) $item->getTitle());
+
+            // A saved item, or one with no title yet, which its own NotBlank refuses
+            if ('' !== (string) $item->getSlug() || '' === $slug) {
+                continue;
+            }
+
+            if (isset($taken[$slug])) {
+                $context->buildViolation('label.item_slug_taken')
+                    ->atPath('items[' . $key . '].title')
+                    ->addViolation();
+            }
+            $taken[$slug] = true;
         }
     }
 

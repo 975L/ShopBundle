@@ -98,10 +98,13 @@ Three deliberate exceptions:
   checksum and the CSRF token of the current session.
 - **A `shop_products` block drawing at random returns `null` from its tag resolver**, i.e. renders
   live: a cached entry would freeze the draw until the catalog itself changed.
-- **A catalog holding a product still to be released renders every catalog-reading kind live** —
-  `ProductRepository::hasScheduled()` answers for the whole catalog, and while it is true the resolvers
-  return `null`: a date passing fires no Doctrine event, so a cached entry would keep the product out
-  of the listing past its release. The veto is catalog-wide, a block filtered on one category included.
+- **A catalog holding a product still to be released renders its listings live** (`shop_products`,
+  `shop_gift_cards`, `shop_recommendations`) — `ProductRepository::hasScheduled()` answers for the whole
+  catalog, and while it is true their resolvers return `null`: a date passing fires no Doctrine event, so a
+  cached entry would keep the product out of the listing past its release. The veto is catalog-wide, a block
+  filtered on one category included. A single product's card, button and items table stay cached:
+  `c975l:shop:releases:refresh`, scheduled right after midnight, drops the `shop_products` tag on the day a
+  product comes out (`ProductRepository::hasReleaseBetween()`).
 
 Adding a kind that reads the catalog means adding it to `ShopBlockCacheTagProvider::PRODUCT_KINDS`, or
 declaring it `cacheable: false`. Forgetting both serves a stale catalog until the next `cache:clear`.

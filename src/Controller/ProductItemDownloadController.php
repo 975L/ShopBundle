@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Controller;
 
+use c975L\PaymentBundle\Repository\BasketRepository;
 use c975L\ShopBundle\Entity\ProductItemDownload;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductItemDownloadServiceInterface;
@@ -25,6 +26,7 @@ class ProductItemDownloadController extends AbstractController
         private readonly PrivateFileResponseFactoryInterface $privateFileResponseFactory,
         private readonly AgeVerifier $ageVerifier,
         private readonly ProductItemRepository $productItemRepository,
+        private readonly BasketRepository $basketRepository,
     ) {
     }
 
@@ -37,10 +39,13 @@ class ProductItemDownloadController extends AbstractController
     )]
     public function download(ProductItemDownload $productItemDownload)
     {
-        // An expired link, or one whose file the shop has since removed, gets the page saying so rather than a download recorded against nothing
-        $filePath = $this->productItemDownloadService->resolveFilePath($productItemDownload);
+        // An expired link, one whose file the shop has since removed, or one of an order refunded since, gets the page saying so rather than a download recorded against nothing - what the customer area hands out read the same way (see PaymentBundle's isSettled())
+        $basket = $this->basketRepository->find($productItemDownload->getBasketId());
+        $filePath = true === $basket?->getStatus()->isSettled()
+            ? $this->productItemDownloadService->resolveFilePath($productItemDownload)
+            : null;
 
-        // A product for adults waits behind the age gate, its link left unspent until go.cam found the visitor of age: the page reloads once they are, and the same link then serves the file - a dead link is said so without asking for a verification first
+        // A product for adults waits behind the age gate, its link left unspent until the age verification found the visitor of age: the page reloads once they are, and the same link then serves the file - a dead link is said so without asking for a verification first
         if (null !== $filePath) {
             $age = $this->productItemRepository->find((int) $productItemDownload->getProductItemId())?->getProduct()?->getAge();
             if ($this->ageVerifier->isGateClosed($age)) {

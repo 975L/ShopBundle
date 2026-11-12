@@ -10,7 +10,9 @@
 
 namespace c975L\ShopBundle\Tests\Service;
 
+use c975L\PaymentBundle\Entity\Basket;
 use c975L\ShopBundle\Entity\Product;
+use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Repository\ProductAffinityRepository;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
@@ -48,6 +50,43 @@ class ProductRecommendationServiceTest extends TestCase
         $product = $this->product('main')->addRelatedProduct($draft)->addRelatedProduct($trashed);
 
         $this->assertSame([], $this->service()->getSimilarProducts($product));
+    }
+
+    // A product not out yet is not sold, and is not recommended either
+    public function testAPickedProductNotOutYetIsLeftOut(): void
+    {
+        $ahead = $this->product('ahead')->setAvailableAt(new \DateTime('+3 days'));
+        $out = $this->product('out')->setAvailableAt(new \DateTime('today'));
+        $product = $this->product('main')->addRelatedProduct($ahead)->addRelatedProduct($out);
+
+        $this->assertSame([$out], $this->service()->getSimilarProducts($product));
+    }
+
+    // The basket page scores the whole catalogue: the affinities are read in one query, never one per candidate and per basket line
+    public function testTheBasketReadsItsAffinitiesOnce(): void
+    {
+        $inBasket = $this->product('in-basket', 1);
+        $item = new ProductItem()->setTitle('item-1');
+        $inBasket->addItem($item);
+        $candidates = [$this->product('item-2', 2), $this->product('item-3', 3), $this->product('item-4', 4)];
+
+        $productRepository = $this->createStub(ProductRepository::class);
+        $productRepository->method('findBy')->willReturn([$inBasket]);
+        $productRepository->method('findAvailableProductsExcluding')->willReturn($candidates);
+
+        $itemRepository = $this->createStub(ProductItemRepository::class);
+        $itemRepository->method('findBy')->willReturn([$item]);
+
+        $affinityRepository = $this->createMock(ProductAffinityRepository::class);
+        $affinityRepository->expects($this->once())->method('getScoresFor')->with([1])->willReturn(['1_3' => 100.0]);
+        $affinityRepository->expects($this->never())->method('getAffinityScore');
+
+        $basket = $this->createStub(Basket::class);
+        $basket->method('getItems')->willReturn(['product' => [10 => ['quantity' => 1]]]);
+
+        $recommendations = new ProductRecommendationService($productRepository, $affinityRepository, $itemRepository)->getRecommendationsForBasket($basket, 1);
+
+        $this->assertSame([$candidates[1]], $recommendations);
     }
 
     public function testAProductWithoutAPickFallsBackOnTheCalculatedAffinities(): void
@@ -92,12 +131,18 @@ class ProductRecommendationServiceTest extends TestCase
         );
     }
 
-    private function product(string $slug): Product
+    private function product(string $slug, ?int $id = null): Product
     {
-        return new Product()
+        $product = new Product()
             ->setTitle($slug)
             ->setSlug($slug)
             ->setHidden(false)
         ;
+
+        if (null !== $id) {
+            new \ReflectionProperty(Product::class, 'id')->setValue($product, $id);
+        }
+
+        return $product;
     }
 }

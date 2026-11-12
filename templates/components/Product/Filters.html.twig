@@ -21,9 +21,9 @@
                     <option value="{{ bracket.value }}" {% if bracket.value == price %}selected{% endif %}>
                         {# The open-ended last band is worded as a floor rather than as a range it has no upper end for #}
                         {% if bracket.max is null %}
-                            {{ 'label.filter_price_from'|trans({'%price%': (bracket.min / 100)|format_currency('eur')}, 'shop') }}
+                            {{ 'label.filter_price_from'|trans({'%price%': (bracket.min / 100)|format_currency(shop_currency())}, 'shop') }}
                         {% else %}
-                            {{ (bracket.min / 100)|format_currency('eur') }} – {{ (bracket.max / 100)|format_currency('eur') }}
+                            {{ (bracket.min / 100)|format_currency(shop_currency()) }} – {{ (bracket.max / 100)|format_currency(shop_currency()) }}
                         {% endif %}
                     </option>
                 {% endfor %}

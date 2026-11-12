@@ -29,6 +29,7 @@ use c975L\ShopBundle\Management\ProductImportProvider;
 use c975L\ShopBundle\Management\ShopBlockOwnerResolver;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductSocialContentSource;
+use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
 use c975L\UiBundle\Controller\Management\Trait\SocialStatusCrudTrait;
@@ -627,6 +628,9 @@ class ProductCrudController extends AbstractCrudController
     public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
         if ($entityInstance instanceof Product) {
+            // Dated by the editor's save, the items and pictures edited on this screen being rows of their own whose changes leave the product's change set empty - what the sitemap's lastmod reads
+            $entityInstance->setModification(new \DateTime());
+
             $originalSlug = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance)['slug'] ?? null;
             if (null !== $originalSlug && $originalSlug !== $entityInstance->getSlug()) {
                 $this->redirectSlugChange($entityManager, (string) $originalSlug, (string) $entityInstance->getSlug());
@@ -759,7 +763,7 @@ class ProductCrudController extends AbstractCrudController
 
     // Persists a new drag-and-drop order for the products (see product_crud_index.html.twig and UiBundle's assets/js/ea-index-sort.js)
     #[AdminRoute(path: '/reorder', options: ['methods' => ['POST']])]
-    public function reorder(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository): JsonResponse
+    public function reorder(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository, ShopBlockCacheInvalidator $cacheInvalidator): JsonResponse
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
@@ -786,8 +790,21 @@ class ProductCrudController extends AbstractCrudController
 
         $positions = $this->applyOrder($products, $ids);
 
-        // The new slots are written one by one rather than flushed, applyOrder() renumbering the whole catalogue while only the rows that actually moved need an update
+        $this->writeMoved($entityManager, $cacheInvalidator, $products, $before);
+
+        // What was persisted, so the index shows the new numbers without a reload
+        return new JsonResponse(['positions' => $positions]);
+    }
+
+    // The new slots are written one by one rather than flushed, applyOrder() renumbering the whole catalogue while only the rows that actually moved need an update - and a DQL update firing no Doctrine event, the listings ordered by position are dropped here rather than by ShopCacheInvalidationListener
+    /**
+     * @param list<Product>    $products
+     * @param array<int, ?int> $before
+     */
+    private function writeMoved(EntityManagerInterface $entityManager, ShopBlockCacheInvalidator $cacheInvalidator, array $products, array $before): void
+    {
         $update = $entityManager->createQuery('UPDATE ' . Product::class . ' p SET p.position = :position WHERE p.id = :id');
+        $moved = false;
         foreach ($products as $product) {
             if ($before[$product->getId()] === $product->getPosition()) {
                 continue;
@@ -796,10 +813,12 @@ class ProductCrudController extends AbstractCrudController
                 ->setParameter('id', $product->getId())
                 ->execute()
             ;
+            $moved = true;
         }
 
-        // What was persisted, so the index shows the new numbers without a reload
-        return new JsonResponse(['positions' => $positions]);
+        if ($moved) {
+            $cacheInvalidator->invalidateProducts();
+        }
     }
 
     // The dropped rows take back the slots they held among the whole catalogue, which is then renumbered from 0 - the index is paginated and unfiltered, unlike SiteBundle's collection items, so numbering the dropped page from 0 would collide with every other page. Returns the new position of each product the payload named, the only ones the browser has a row for.

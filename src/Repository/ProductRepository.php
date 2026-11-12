@@ -12,15 +12,20 @@ namespace c975L\ShopBundle\Repository;
 
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductCategory;
+use c975L\ShopBundle\Repository\Traits\BlockOwnerRepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Product>
+ *
+ * @method list<Product> findByBlockIds(array $blockIds)
  */
 class ProductRepository extends ServiceEntityRepository
 {
+    use BlockOwnerRepositoryTrait;
+
     public function __construct(
         ManagerRegistry $registry,
         private readonly ProductCategoryRepository $categoryRepository,
@@ -28,7 +33,10 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    // Finds products based on search
+    // What the instant search shows at most: it runs on every key typed, anonymously, and a single letter would otherwise render the whole catalogue
+    public const int SEARCH_LIMIT = 24;
+
+    // Finds products based on search - the ids first, cut in SQL, a LIMIT on the joined rows cutting through a product's medias and items, then the cards with everything they show
     public function search(string $query, ?string $categorySlug = null): array
     {
         if (empty($query)) {
@@ -36,22 +44,34 @@ class ProductRepository extends ServiceEntityRepository
         }
 
         $qb = $this->available($this->createQueryBuilder('p'))
+            ->select('p.id')
             ->andWhere('p.title LIKE :query OR p.description LIKE :query')
-            ->setParameter('query', '%' . $query . '%');
+            // A "%" or a "_" typed is looked for as itself, never as a wildcard matching the whole catalogue
+            ->setParameter('query', '%' . addcslashes($query, '%_\\') . '%');
 
         if ($categorySlug) {
             $category = $this->categoryRepository->findOneBySlug($categorySlug);
             if ($category) {
-                $qb->join('p.categories', 'c')
-                    ->andWhere('c = :category')
+                $qb->andWhere(':category MEMBER OF p.categories')
                     ->setParameter('category', $category);
             }
         }
 
-        return $qb->orderBy('p.title', \SortDirection::Descending)
+        // In the shop's own order, the one its listing is read in, so the products kept are the ones the shop puts first
+        $ids = $this->sorted($qb, null)
+            ->setMaxResults(self::SEARCH_LIMIT)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getSingleColumnResult();
+
+        if ([] === $ids) {
+            return [];
+        }
+
+        return $this->sortedCardsQueryBuilder(null)
+            ->andWhere('p.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
     }
 
     // Overrides FindAll() to get sorted
@@ -272,6 +292,20 @@ class ProductRepository extends ServiceEntityRepository
         ;
     }
 
+    // Whether a product the shop shows comes out between those two days, both included - what the nightly cache refresh reads (see ProductReleaseCacheRefresh)
+    public function hasReleaseBetween(\DateTimeInterface $from, \DateTimeInterface $to): bool
+    {
+        return [] !== $this->visible($this->createQueryBuilder('p'))
+            ->select('p.id')
+            ->andWhere('p.availableAt BETWEEN :from AND :to')
+            ->setParameter('from', $from->format('Y-m-d'))
+            ->setParameter('to', $to->format('Y-m-d'))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // Finds available products excluding certain IDs (used for recommendations to exclude products already in the basket)
     public function findAvailableProductsExcluding(array $excludeIds = []): array
     {
@@ -389,23 +423,6 @@ class ProductRepository extends ServiceEntityRepository
         return $this->visible($qb, $alias)
             ->andWhere($alias . '.availableAt < :now OR ' . $alias . '.availableAt IS NULL')
             ->setParameter('now', new \DateTime())
-        ;
-    }
-
-    // The products owning the given blocks, each with its own blocks loaded - what ShopBlockEditUrlProvider needs to point a block back at the sheet it was composed on, in one query rather than one per block
-    public function findByBlockIds(array $blockIds): array
-    {
-        if ([] === $blockIds) {
-            return [];
-        }
-
-        return $this->createQueryBuilder('p')
-            ->select('p, b')
-            ->innerJoin('p.blocks', 'b')
-            ->andWhere('b.id IN (:blockIds)')
-            ->setParameter('blockIds', $blockIds)
-            ->getQuery()
-            ->getResult()
         ;
     }
 

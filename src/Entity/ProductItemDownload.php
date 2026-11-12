@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'shop_product_item_download')]
@@ -29,9 +30,11 @@ class ProductItemDownload
     private ?int $productItemId = null;
 
     #[ORM\Column(length: 16)]
+    #[Assert\Length(max: 16)]
     private string $token;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(max: 255)]
     private string $filename;
 
     #[ORM\Column]

@@ -18,6 +18,7 @@ use c975L\PaymentBundle\Entity\GiftCard;
 use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Repository\ProductItemDownloadRepository;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
@@ -136,6 +137,22 @@ class ProductGiftCardTest extends TestCase
         $this->assertTrue($product->isGiftCard());
     }
 
+    // A card is worth what was paid for it in the currency it was paid in, the basket's, never the item's own column
+    public function testACardIsIssuedInTheCurrencyTheBasketWasChargedIn(): void
+    {
+        $currencies = [];
+        $giftCardService = $this->createStub(GiftCardService::class);
+        $giftCardService->method('issue')->willReturnCallback(static function (int $amount, string $currency) use (&$currencies): GiftCard {
+            $currencies[] = $currency;
+
+            return new GiftCard();
+        });
+
+        $this->provider($this->item(5000), $giftCardService)->onBasketPaid(new Basket()->setCurrency('CHF'), $this->basketItems(1, 5000), []);
+
+        $this->assertSame(['CHF'], $currencies);
+    }
+
     // The visual the shop hands over, kept as it was handed: what issue() is called with is the whole of what the card is printed from
     private function capturingService(?GiftCardDesign &$design): GiftCardService
     {
@@ -188,6 +205,6 @@ class ProductGiftCardTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
 
-        return new ProductBasketItemProvider($itemService, $this->createStub(MessageBusInterface::class), $giftCardService, $translator, new LocalizedUrlGenerator($this->createStub(UrlGeneratorInterface::class), new SiteLocales(['fr'], 'fr'), new RequestStack()), $this->createStub(ProductItemRepository::class), $this->createStub(LoggerInterface::class));
+        return new ProductBasketItemProvider($itemService, $this->createStub(MessageBusInterface::class), $giftCardService, $translator, new LocalizedUrlGenerator($this->createStub(UrlGeneratorInterface::class), new SiteLocales(['fr'], 'fr'), new RequestStack()), $this->createStub(ProductItemRepository::class), $this->createStub(LoggerInterface::class), $this->createStub(ProductItemDownloadRepository::class));
     }
 }

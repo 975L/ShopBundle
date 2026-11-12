@@ -45,7 +45,7 @@
             {# Above what the visitor decides on, for a product declaring an age the sheet otherwise only publishes as a schema.org audience. The sentence itself is the site's, written once for the whole of it (config "site-age-warning"). The fragment carries the guards, so a product declaring no age, and a site leaving the setting empty, render nothing here #}
             <twig:c975LUi:Alert:AgeWarning age="{{ product.age }}"/>
 
-            {# Said before the visitor fills the basket: a product for adults is paid for once go.cam verified their age, which the checkout asks (see PaymentBundle's BasketController). Outside every cached fragment, nothing said to a visitor already verified #}
+            {# Said before the visitor fills the basket: a product for adults is paid for once their age is verified, which the checkout asks (see PaymentBundle's BasketController). Outside every cached fragment, nothing said to a visitor already verified #}
             {% if age_gate_closed(product.age) %}
                 <twig:c975LUi:Alert:Alert type="info">{{ 'label.age_verification_required'|trans({}, 'shop') }}</twig:c975LUi:Alert:Alert>
             {% endif %}
@@ -123,18 +123,18 @@
         </div>
     </div>
 
-    {# The product's structured data, built by ProductSnippetBuilder from the very fields displayed above - the only "offers" node of the ecosystem, see BookSnippetBuilder. "raw" because the payload goes through a variable, which drops the function's own is_safe marking - the builder already escaped every character that could close the tag. Its offers read the items and its aggregateRating the votes, hence both tags; the day in the key for the availability #}
+    {# The product's structured data, built by ProductSnippetBuilder from the very fields displayed above - the only "offers" node of the ecosystem, see BookSnippetBuilder. Captured rather than set, so the payload keeps the function's own is_safe marking and prints without "raw" - the builder already escaped every character that could close the tag. Its offers read the items and its aggregateRating the votes, hence both tags; the day in the key for the availability #}
     {% cache sheetKey ~ '_jsonld_' ~ 'now'|date('Ymd') tags([...sheetTags, ui_rating_cache_tag('shop_product', product.id)]) %}
         {% do shop_translate(product.items) %}
-        {% set jsonLd = product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug}), showsRating) %}
-        {% if jsonLd %}
-            <script type="application/ld+json">{{ jsonLd|raw }}</script>
+        {% set jsonLd %}{{ product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug}), showsRating) }}{% endset %}
+        {% if jsonLd is not empty %}
+            <script type="application/ld+json">{{ jsonLd }}</script>
         {% endif %}
 
         {# The trail printed above the sheet, said again where a search engine reads it - it is what Google shows in its results in place of the url #}
-        {% set breadcrumbJsonLd = shop_breadcrumb_json_ld(product) %}
-        {% if breadcrumbJsonLd %}
-            <script type="application/ld+json">{{ breadcrumbJsonLd|raw }}</script>
+        {% set breadcrumbJsonLd %}{{ shop_breadcrumb_json_ld(product) }}{% endset %}
+        {% if breadcrumbJsonLd is not empty %}
+            <script type="application/ld+json">{{ breadcrumbJsonLd }}</script>
         {% endif %}
     {% endcache %}
 {% endblock %}

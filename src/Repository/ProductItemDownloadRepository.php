@@ -58,6 +58,20 @@ class ProductItemDownloadRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    // Ends now every link of a refunded order still running: the page explaining a dead link answers it, and the nightly clean-up takes its copy away like any other (see findExpired)
+    public function expireByBasket(int $basketId, \DateTimeImmutable $now): int
+    {
+        return (int) $this->createQueryBuilder('d')
+            ->update()
+            ->set('d.expiresAt', ':now')
+            ->andWhere('d.basketId = :basketId')
+            ->andWhere('d.expiresAt > :now')
+            ->setParameter('basketId', $basketId)
+            ->setParameter('now', $now)
+            ->getQuery()
+            ->execute();
+    }
+
     // Drops the rows expired long enough that nobody is owed the page explaining why their link no longer works
     public function deleteExpiredBefore(\DateTimeImmutable $retentionDate): int
     {

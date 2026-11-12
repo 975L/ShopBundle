@@ -44,10 +44,13 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - Nine block kinds of its own, putting the catalog on any page of the site, each drawn as a silhouette in the back-office picker
 - `Product` structured data (JSON-LD), the only `offers` node of the c975L ecosystem
 - The site's age warning stated on a product declaring an age — one sentence written once in the back office (CoreBundle's `site-age-warning`), printed on every such sheet
-- A product for adults paid for and downloaded once CoreBundle's go.cam age verification found the visitor of age — the sheet says so, the checkout asks, the download link waits, and the site never learns who they are
+- A product for adults paid for and downloaded once CoreBundle's age verification found the visitor of age — the sheet says so, the checkout asks, the download link waits, and the site never learns who they are
 - Shop index describable from the back office — title and shared sentence written in *Descriptions d'urls*, over the bundle's own labels
 - `ItemList` structured data on the shop's index and its category pages
 - Plugs products into PaymentBundle's Basket/checkout engine via `BasketItemProviderInterface`, and tells it where the catalogue is (`CatalogueBasketItemProviderInterface`), whether it posts parcels (`ShippingBasketItemProviderInterface`) and which template draws the recommended products (`BasketRecommendationProviderInterface`)
+- What a paid order handed over taken back on a full refund (`RefundableBasketItemProviderInterface`): the stock it counted given back, its download links ended, a refunded order's link serving nothing
+- A product dated ahead held to its date at the basket and the checkout, not only on its sheet
+- One currency shown, published and charged: PaymentBundle's `shop-currency`, read by the cards, the sheet, the filters, the structured data and the feed alike (`shop_currency()` in a template)
 - Shipping weight per item, in grams, weighing a basket for PaymentBundle's delivery grid and pricing the rate the structured data publishes
 - Product cards stating their own price, formats and availability, read from the items rather than stored
 - Struck-through price and discount badge, on the card as on the sheet, guarded against a figure that no longer holds
@@ -429,6 +432,12 @@ Two exceptions:
 - a `shop_products` block drawing **at random** declines its own entry, a cached one freezing the draw until the
   catalog itself changes.
 
+The tags are gathered during the flush and dropped once it is committed (UiBundle's `PostFlushTagInvalidationTrait`),
+a concurrent request otherwise caching the old state again. `ShopBlockCacheInvalidator`, which the stock statements, the
+reorder and the commands call, holds its tags the same way while a transaction is open, dropping them at its end. A release date fires no event: while a product waits for
+its own, the listings render live, and a single product's card, button and items table stay cached until
+`c975l:shop:releases:refresh`, scheduled right after midnight, drops them on its day.
+
 ---
 
 ## Composing the shop
@@ -493,8 +502,9 @@ so they can never show two different sets. The picks live in a `shop_product_rel
 | `php bin/console c975l:shop:downloads:delete` | Deletes expired download copies and the rows kept past them |
 | `php bin/console c975l:shop:affinity:calculate` | Calculates product affinities |
 | `php bin/console c975l:shop:stock-alerts:send` | Tells the visitors waiting on an item that it is back, `--limit` alerts at a time (50 by default) |
+| `php bin/console c975l:shop:releases:refresh` | Drops the cached product blocks on the day a product comes out |
 
-`ShopMaintenanceTaskProvider` schedules all three through the Symfony Scheduler, so a site installing this bundle has nothing to add to its own schedule and needs no system crontab entry.
+`ShopMaintenanceTaskProvider` schedules all four through the Symfony Scheduler, so a site installing this bundle has nothing to add to its own schedule and needs no system crontab entry.
 
 ---
 
@@ -521,9 +531,13 @@ that carries a product with everything hanging off it.
 entirely, so a synced catalogue answers at the very same image urls on every site it is carried to, and
 importing three hundred pictures copies files instead of resizing three hundred images. A name coming out of
 an archive is only honoured under `medias/shop/` (below `public/`, and below `private/` for the paid files),
-as a plain relative name: anything climbing out of it is refused and the file named by Vich instead, as an
+as a plain relative name carrying an extension UiBundle's `AllowedUploadExtension` lets through (any plain one
+below `private/`, which nothing serves): anything else is refused and the file named by Vich instead, as an
 archive exported before the names travelled is. A name another product already holds falls back the same way,
-the column being unique site-wide.
+the column being unique site-wide. **The manifest is untrusted**: every file path it names goes through
+ConfigBundle's `ArchivePath::resolve()`, so a path or a symbolic link leading out of the extracted archive is
+ignored rather than copied, a picture whose bytes are not a JPEG, PNG, WebP or GIF (an SVG, a page) is ignored too,
+and the archive's own copy is left where it is (`ReplacingFile($path, true, false, false)`).
 
 **An import never deletes what it cannot put back.** A product the archive doesn't name is left alone, and so
 is an item: what a customer has paid for is not re-uploadable, and an item still hanging off a paid basket
@@ -647,18 +661,21 @@ scheduled one gets no badge; it is not shown on the trash nor the templates, nor
 
 A product sheet publishes a schema.org `Product` graph as JSON-LD - name, image, description, sku, brand,
 category, audience, and one `offers` node per purchasable item carrying its own title, description, sku, gtin,
-price, list price, currency, availability and condition. That is what a search engine shows as a rich result, and what any site reading the
+price, list price, currency (`shop-currency`), availability and condition. That is what a search engine shows as a rich result, and what any site reading the
 shop from outside needs to know what is on sale and for how much.
 
 The graph is built by `ProductSnippetBuilder` and rendered by a Twig function rather than by a template of the
 bundle, so overriding `product/display.html.twig` in your app keeps the markup - just call it again:
 
 ```twig
-{% set jsonLd = product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug})) %}
-{% if jsonLd %}
+{% set jsonLd %}{{ product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug})) }}{% endset %}
+{% if jsonLd is not empty %}
     <script type="application/ld+json">{{ jsonLd }}</script>
 {% endif %}
 ```
+
+Captured with `{% set %}…{% endset %}` rather than assigned: the capture keeps the function's `is_safe` marking,
+so the graph prints without `|raw`, its builder having already escaped every character that could close the tag.
 
 This is the one place of the c975L ecosystem that emits an `offers` node: BookBundle's own `Book` graph
 deliberately leaves it out, so a book sold through this shop never publishes its price twice.
@@ -730,8 +747,8 @@ publishes nothing.
 `/shop/merchant-feed.xml` (route `shop_merchant_feed`) serves the products to Google Merchant Center in its RSS 2.0
 dialect, built by `ProductMerchantFeed` from the very graph the sheet publishes, so the feed and the page never state
 two prices. `Product.language` says which language a product is written in, empty for the site's own: the bare url
-lists the products written in the site's language, `?language=en` those written in English. A free item, an item
-priced in no currency and a digital book Google refuses (an audiobook is kept) are left out.
+lists the products written in the site's language, `?language=en` those written in English, every price in
+`shop-currency`. A free item and a digital book Google refuses (an audiobook is kept) are left out.
 
 Every item goes out with its product's first picture, which is what `g:image_link` carries. Google refuses anything
 under 500 x 500 pixels from 31 January 2027: a product picture is stored 600 pixels wide, an item's only 300 for the row
@@ -772,7 +789,8 @@ when it is capped and the cap has been reached (`orderedQuantity >= limitedQuant
 
 The subscription is held against the **item**, not the product: somebody waiting on the paperback is not told the
 ebook is back. It carries the language it was taken in — there is no order here to read a locale from — and an
-unsubscribe token, so the link the email carries never names the address itself. Subscribing twice puts the row
+unsubscribe token, so the link the email carries never names the address itself. That link opens a confirmation
+whose button POSTs (csrf token `shop_stock_alert_unsubscribe`): a link scanner opening it drops nothing. Subscribing twice puts the row
 back on the waiting list rather than being refused.
 
 `c975l:shop:stock-alerts:send`, scheduled hourly, walks the queue in batches: a restocked best-seller can carry
@@ -789,8 +807,10 @@ language this bundle does not ship. It travels from the `shop-email-*` addresses
 back on the site-wide `email-*` when they are blank.
 
 The public route is rate-limited: `c975LShopBundle` declares `shop_stock_alert` (10 an hour per caller) so a site
-that never configured a limiter is not serving it unlimited, and the form carries the same honeypot every public
-form of the ecosystem does.
+that never configured a limiter is not serving it unlimited, and the form carries the same honeypot and timer
+every public form of the ecosystem does (UiBundle's `FormBotProtection`): the timer is armed when the form is
+displayed, a POST with neither session nor display is dropped unread, and one with a session but no display timed
+(a second tab, a session expired meanwhile) is shown back filled with `text.form_resend`, never recorded.
 
 ---
 
@@ -816,8 +836,8 @@ to the recycle bin, one that can still be restored having to find them where it 
 
 An item whose **gift card value** is filled in is sold as a gift card. Everything else about it is an ordinary
 item: it has its own price, its own VAT, its own stock, and it is delivered the way its format says - a code
-sent by email, or a card printed and posted. The value is what the card is worth once received, in the item's
-own currency, and is deliberately not the price: a EUR 50 card sold at EUR 45 is a EUR 50 card.
+sent by email, or a card printed and posted. The value is what the card is worth once received, in the currency
+the basket was charged in, and is deliberately not the price: a EUR 50 card sold at EUR 45 is a EUR 50 card.
 
 `ProductItem::isGiftCard()` is true as soon as that value is set. `ProductBasketItemProvider` then adds
 `Basket::CONTENT_FLAG_GIFT_CARD` to the flag saying how the item is delivered - both travel, a card being money
@@ -862,6 +882,9 @@ rather than by hand - every page of the shop carries a warning banner telling th
 sold and nothing will be shipped, which is what a catalog still being filled in owes whoever lands on it. The shop
 is also kept out of search engines: every page carries `noindex, follow`, its sitemap is emptied and the Merchant
 Center feed answers 404, all three back the moment the switch is turned off.
+
+A basket paid in PaymentBundle's test mode (`Basket::isTestMode()`) counts no stock, its refund giving none back:
+its files are still sent and its cards minted as test cards, so the whole delivery can be tried.
 
 It speaks for the catalog alone: PaymentBundle announces its own `payment-test-mode` with its own banner in the
 basket, where the charge actually happens, so a visitor is never warned twice over the same page. Its wording is
@@ -914,7 +937,7 @@ Installed alongside ConfigBundle, this bundle contributes on its own, with nothi
 | `ShopGuidedProjectProvider` | The eleven parcours of the "Guided projects" panel (see [guided projects](#guided-projects)) |
 | `ShopAlertProvider` | A dashboard alert naming the items sold past their stock, two customers having paid for the last one |
 | `ShopStatusProvider` | Whether the shop shows its test banner, the orders waiting to be shipped, how long the oldest has waited, the payments started but never confirmed, and the four counts of a catalog published but not finished - a sheet with no picture, a description too thin to rank, a picture with no `alt`, a category with no description - in the `extra` section of `/status/report` |
-| `ShopMaintenanceTaskProvider` | This bundle's two scheduled commands, so your site does not list them itself |
+| `ShopMaintenanceTaskProvider` | This bundle's scheduled commands, so your site does not list them itself |
 | `WhatsNewProvider` | This bundle's entries on the "What's new" screen |
 | `StylesheetProvider` | The bundle's stylesheet, served in the site's single concatenated request, and the silhouettes of its block kinds, loaded on the back-office block picker |
 

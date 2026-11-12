@@ -37,6 +37,39 @@ class ProductAffinityRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    // Every score involving one of these products, read in one query and keyed "minId_maxId" the way the pairs are stored (see getAffinityScore()) - what a page scoring a whole catalogue against a basket reads once rather than once per pair
+    /**
+     * @param list<int> $productIds
+     *
+     * @return array<string, float>
+     */
+    public function getScoresFor(array $productIds): array
+    {
+        if ([] === $productIds) {
+            return [];
+        }
+
+        $rows = $this->createQueryBuilder('pa')
+            ->select('IDENTITY(pa.product1) AS product1', 'IDENTITY(pa.product2) AS product2', 'pa.affinityScore')
+            ->where('pa.product1 IN (:ids) OR pa.product2 IN (:ids)')
+            ->setParameter('ids', $productIds)
+            ->getQuery()
+            ->getArrayResult();
+
+        $scores = [];
+        foreach ($rows as $row) {
+            $scores[self::pairKey((int) $row['product1'], (int) $row['product2'])] = (float) $row['affinityScore'];
+        }
+
+        return $scores;
+    }
+
+    // The key a pair is found under whichever way round it is asked
+    public static function pairKey(int $productId1, int $productId2): string
+    {
+        return min($productId1, $productId2) . '_' . max($productId1, $productId2);
+    }
+
     // Gets the affinity score between two products
     public function getAffinityScore(int $productId1, int $productId2): ?float
     {

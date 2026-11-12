@@ -33,7 +33,8 @@ class ProductItemDownloadMessageHandler
     {
         $basket = $this->basketRepository->find($message->getBasketId());
 
-        if (!$basket) {
+        // A basket refunded before the message was handled is owed no file: nothing is copied and nothing is sent
+        if (null === $basket || !$basket->getStatus()->isSettled()) {
             return;
         }
 

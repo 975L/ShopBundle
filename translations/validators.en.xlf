@@ -10,6 +10,10 @@
                 <source>label.age_range_reversed</source>
                 <target>The lowest age must come first: write "3-8" and not "8-3"</target>
             </trans-unit>
+            <trans-unit id="_AT6Ggl">
+                <source>label.item_slug_taken</source>
+                <target>Another item of this product already has this title: give it a different one</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

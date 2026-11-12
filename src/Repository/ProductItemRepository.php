@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Repository;
 
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,8 +20,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ProductItemRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly ShopBlockCacheInvalidator $cacheInvalidator,
+    ) {
         parent::__construct($registry, ProductItem::class);
     }
 
@@ -121,6 +124,25 @@ class ProductItemRepository extends ServiceEntityRepository
             'UPDATE shop_product_item SET ordered_quantity = COALESCE(ordered_quantity, 0) + :quantity WHERE id = :id',
             ['id' => $item->getId(), 'quantity' => $quantity]
         );
+    }
+
+    // Gives back to the stock what a refunded order had counted, in one statement like the claim and never below 0 - an item deleted since, or a count already lowered by hand, changing nothing
+    public function releaseOrdered(int $id, int $quantity): void
+    {
+        if ($quantity <= 0) {
+            return;
+        }
+
+        $released = (int) $this->getEntityManager()->getConnection()->executeStatement(
+            'UPDATE shop_product_item SET ordered_quantity = CASE WHEN ordered_quantity > :quantity THEN ordered_quantity - :quantity ELSE 0 END'
+                . ' WHERE id = :id AND ordered_quantity > 0',
+            ['id' => $id, 'quantity' => $quantity]
+        );
+
+        // A sold-out item back on sale is what the cached cards must now say, no flush following the refund to drop them
+        if ($released > 0) {
+            $this->cacheInvalidator->invalidateProducts();
+        }
     }
 
     // How many items were sold past their stock (see ShopAlertProvider)

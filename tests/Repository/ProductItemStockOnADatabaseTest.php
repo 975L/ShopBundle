@@ -13,6 +13,7 @@ namespace c975L\ShopBundle\Tests\Repository;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Repository\ProductItemRepository;
+use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
@@ -50,7 +51,7 @@ class ProductItemStockOnADatabaseTest extends TestCase
 
         $registry = $this->createStub(ManagerRegistry::class);
         $registry->method('getManagerForClass')->willReturn($this->entityManager);
-        $this->repository = new ProductItemRepository($registry);
+        $this->repository = new ProductItemRepository($registry, $this->createStub(ShopBlockCacheInvalidator::class));
     }
 
     public function testTheStockDecidesAndTheCountStaysTrue(): void
@@ -96,6 +97,21 @@ class ProductItemStockOnADatabaseTest extends TestCase
 
         $this->assertSame([['product' => 'Chaise', 'item' => 'Standard'], ['product' => 'Chaise', 'item' => 'Second']], $this->repository->findOversoldTitles(5));
         $this->assertCount(1, $this->repository->findOversoldTitles(1));
+    }
+
+    // A refund gives back what it counted and never takes the count below 0, an empty count left alone
+    public function testARefundGivesTheStockBackWithoutGoingBelowZero(): void
+    {
+        $this->storedItem(5, limited: 3, ordered: 3);
+
+        $this->repository->releaseOrdered(5, 2);
+        $this->assertSame(1, $this->ordered());
+
+        $this->repository->releaseOrdered(5, 4);
+        $this->assertSame(0, $this->ordered());
+
+        $this->repository->releaseOrdered(5, 1);
+        $this->assertSame(0, $this->ordered());
     }
 
     private function storedItem(int $id, ?int $limited, ?int $ordered): ProductItem

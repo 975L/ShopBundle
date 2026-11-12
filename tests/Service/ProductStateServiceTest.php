@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Tests\Service;
 
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Entity\ProductItemFile;
@@ -24,6 +25,23 @@ class ProductStateServiceTest extends TestCase
     protected function setUp(): void
     {
         $this->service = new ProductStateService();
+    }
+
+    // One currency is charged, so one is shown: the shop's own, whatever an item's column still holds
+    public function testTheCurrencyIsTheShopsWhateverTheItemHolds(): void
+    {
+        $config = $this->createStub(ConfigServiceInterface::class);
+        $config->method('get')->willReturn('chf');
+        $product = new Product();
+        $product->addItem(new ProductItem()->setTitle('item-1')->setPrice(1200)->setCurrency('eur'));
+
+        $this->assertSame('CHF', new ProductStateService($config)->getState($product)['currency']);
+    }
+
+    // A site that configured none is read in euros
+    public function testTheCurrencyFallsBackOnTheEuro(): void
+    {
+        $this->assertSame('EUR', $this->service->getCurrency());
     }
 
     public function testAProductWithoutItemHasNoPriceAndNoFormat(): void

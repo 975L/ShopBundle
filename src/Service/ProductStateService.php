@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Service;
 
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 
@@ -18,6 +19,12 @@ class ProductStateService implements ProductStateServiceInterface
 {
     // How long a product wears the "new" badge, counted from its creation date
     private const int NEW_DAYS = 30;
+
+    // Optional so a card can be read outside a site, the euro standing in for a currency nobody configured
+    public function __construct(
+        private readonly ?ConfigServiceInterface $configService = null,
+    ) {
+    }
 
     // Returns the card's badge, price and formats, the badge being the single most useful thing to say: what cannot be bought comes before what is running out, which comes before what is merely recent
     public function getState(Product $product): array
@@ -44,7 +51,7 @@ class ProductStateService implements ProductStateServiceInterface
             'price' => $price,
             'priceBefore' => null === $cheapest ? null : $this->getItemPriceBefore($cheapest),
             'discount' => $discount,
-            'currency' => $this->getCurrency($product),
+            'currency' => $this->getCurrency(),
             'singlePrice' => 1 === count(array_unique($prices)),
             'formats' => $this->getFormats($product),
         ];
@@ -170,9 +177,7 @@ class ProductStateService implements ProductStateServiceInterface
     // Returns the availability date when it is still ahead, null when the product is already on sale
     private function getAvailableAt(Product $product): ?\DateTimeInterface
     {
-        $availableAt = $product->getAvailableAt();
-
-        return null !== $availableAt && $availableAt > new \DateTime() ? $availableAt : null;
+        return $product->isReleased() ? null : $product->getAvailableAt();
     }
 
     // Whether at least one item is out of stock rather than withdrawn - what tells the two unbuyable states apart on the card
@@ -224,16 +229,12 @@ class ProductStateService implements ProductStateServiceInterface
         return null !== $creation && $creation > new \DateTime('-' . self::NEW_DAYS . ' days');
     }
 
-    // The currency of the items, the euro when the product carries none
-    private function getCurrency(Product $product): string
+    // The one currency the basket charges (see PaymentBundle's BasketService), the euro on a site that configured none - an item's own column is history, never shown
+    public function getCurrency(): string
     {
-        foreach ($product->getVisibleItems() as $item) {
-            if (null !== $item->getCurrency()) {
-                return $item->getCurrency();
-            }
-        }
+        $currency = strtoupper(trim((string) $this->configService?->get('shop-currency')));
 
-        return 'eur';
+        return '' !== $currency ? $currency : 'EUR';
     }
 
     // The distinct kinds of items the product is sold as, in the order a visitor reads them - a physical copy first, then a file, then a service

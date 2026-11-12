@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Tests\Listener;
 
+use c975L\ConfigBundle\Entity\Config;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductAffinity;
 use c975L\ShopBundle\Entity\ProductCategory;
@@ -121,8 +122,8 @@ class ShopCacheInvalidationListenerTest extends TestCase
         $this->assertSame([], $this->invalidated);
     }
 
-    // A brand new item on an already-cached product is an INSERT, for which postUpdate never fires
-    public function testTheThreeEventsAllInvalidate(): void
+    // A brand new item on an already-cached product is an INSERT, for which postUpdate never fires: the three events all gather the tag, dropped once, and only once the flush is over - dropped inside it, a concurrent request would cache the old state again
+    public function testTheThreeEventsInvalidateOnceTheFlushIsOver(): void
     {
         $listener = $this->createListener();
         $manager = $this->createStub(EntityManagerInterface::class);
@@ -131,13 +132,35 @@ class ShopCacheInvalidationListenerTest extends TestCase
         $listener->postPersist(new PostPersistEventArgs($product, $manager));
         $listener->postUpdate(new PostUpdateEventArgs($product, $manager));
         $listener->preRemove(new PreRemoveEventArgs($product, $manager));
+        $this->assertSame([], $this->invalidated);
 
-        $this->assertCount(3, $this->invalidated);
+        $listener->postFlush();
+        $this->assertSame([[ShopBlockCacheInvalidator::CACHE_TAG_PRODUCTS]], $this->invalidated);
     }
 
+    // Every cached card prints its prices in the shop's currency: saving it drops them, once the flush is over, and another setting drops nothing
+    public function testSavingTheCurrencyDropsTheProductBlocksAfterTheFlush(): void
+    {
+        $listener = $this->createListener();
+        $manager = $this->createStub(EntityManagerInterface::class);
+
+        $listener->postUpdate(new PostUpdateEventArgs(new Config()->setSlug('site-name'), $manager));
+        $listener->postFlush();
+        $this->assertSame([], $this->invalidated);
+
+        $listener->postUpdate(new PostUpdateEventArgs(new Config()->setSlug('shop-currency'), $manager));
+        $this->assertSame([], $this->invalidated);
+        $listener->postFlush();
+        $this->assertSame([[ShopBlockCacheInvalidator::CACHE_TAG_PRODUCTS]], $this->invalidated);
+    }
+
+    // One change, then the end of its flush
     private function listen(object $entity): void
     {
-        $this->createListener()->postUpdate(new PostUpdateEventArgs($entity, $this->createStub(EntityManagerInterface::class)));
+        $listener = $this->createListener();
+        $manager = $this->createStub(EntityManagerInterface::class);
+        $listener->postUpdate(new PostUpdateEventArgs($entity, $manager));
+        $listener->postFlush();
     }
 
     private function createListener(): ShopCacheInvalidationListener
@@ -149,6 +172,6 @@ class ShopCacheInvalidationListenerTest extends TestCase
             return true;
         });
 
-        return new ShopCacheInvalidationListener(new ShopBlockCacheInvalidator($cache));
+        return new ShopCacheInvalidationListener($cache);
     }
 }

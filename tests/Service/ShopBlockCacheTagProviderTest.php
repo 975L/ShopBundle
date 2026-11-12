@@ -66,7 +66,7 @@ class ShopBlockCacheTagProviderTest extends TestCase
         }
     }
 
-    // A sheet's own kinds read the product they are placed on whatever its date (see ShopBlockExtension::getProduct), and the categories listing reads no product at all
+    // A single product's card, button and items table stay cached, the nightly refresh dropping them on the release day, the slider reads no date, and the categories listing reads no product at all
     public function testTheKindsReadingNoDateAreCachedWhateverIsScheduled(): void
     {
         $resolvers = $this->provider(true)->getCacheTagResolvers();

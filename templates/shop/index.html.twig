@@ -78,12 +78,12 @@
         </div>
     </div>
 
-    {# The cards this page prints, as the list a search engine reads a catalog through - the sheets it points at carry the prices, so nothing is published twice. The offset is the paginator's own: the second page numbers its cards from where the first stopped. "raw" because the payload goes through a variable, which drops the function's own is_safe marking - the builder already escaped every character that could close the tag #}
+    {# The cards this page prints, as the list a search engine reads a catalog through - the sheets it points at carry the prices, so nothing is published twice. The offset is the paginator's own: the second page numbers its cards from where the first stopped. Captured rather than set, so the payload keeps the function's own is_safe marking and prints without "raw" - the builder already escaped every character that could close the tag #}
     {% cache listingKey ~ '_jsonld' ttl(listingTtl) tags(listingTags) %}
         {% set products = shop_listing() %}
-        {% set productsJsonLd = shop_products_json_ld(products, (products.getCurrentPageNumber - 1) * products.getItemNumberPerPage) %}
-        {% if productsJsonLd %}
-            <script type="application/ld+json">{{ productsJsonLd|raw }}</script>
+        {% set productsJsonLd %}{{ shop_products_json_ld(products, (products.getCurrentPageNumber - 1) * products.getItemNumberPerPage) }}{% endset %}
+        {% if productsJsonLd is not empty %}
+            <script type="application/ld+json">{{ productsJsonLd }}</script>
         {% endif %}
     {% endcache %}
 {% endblock %}

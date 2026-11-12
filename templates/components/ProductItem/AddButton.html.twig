@@ -3,7 +3,7 @@
 {% set quantity = quantity | default(1) %}
 {% set disabled = "" %}
 {# The price is on the button rather than only above it: it is the last thing read before the click #}
-{% set label = 'label.add'|trans({}, 'shop') ~ ' — ' ~ (productItem.price == 0 ? 'label.free'|trans({}, 'shop') : (productItem.price / 100)|format_currency(productItem.currency)) %}
+{% set label = 'label.add'|trans({}, 'shop') ~ ' — ' ~ (productItem.price == 0 ? 'label.free'|trans({}, 'shop') : (productItem.price / 100)|format_currency(shop_currency())) %}
 
 {# Out of stock rather than withdrawn: what is expected back is worth waiting for, where an item capped at 0 was taken off sale and promises nothing. Read from the service rather than compared here, the badge and the alerts answering the same question #}
 {% set soldOut = shop_item_sold_out(productItem) %}

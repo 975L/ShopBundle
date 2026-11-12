@@ -14,19 +14,21 @@ use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
 use c975L\PaymentBundle\Contract\BasketItemProviderInterface;
 use c975L\PaymentBundle\Contract\CatalogueBasketItemProviderInterface;
 use c975L\PaymentBundle\Contract\GiftCardDesign;
+use c975L\PaymentBundle\Contract\RefundableBasketItemProviderInterface;
 use c975L\PaymentBundle\Contract\ShippingBasketItemProviderInterface;
 use c975L\PaymentBundle\Contract\WeighableBasketItemProviderInterface;
 use c975L\PaymentBundle\Entity\Basket;
 use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\PaymentBundle\Service\VatCalculator;
 use c975L\ShopBundle\Message\ProductItemDownloadMessage;
+use c975L\ShopBundle\Repository\ProductItemDownloadRepository;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Plugs product items into PaymentBundle's Basket/checkout engine (see BasketItemProviderInterface)
-class ProductBasketItemProvider implements BasketItemProviderInterface, CatalogueBasketItemProviderInterface, ShippingBasketItemProviderInterface, WeighableBasketItemProviderInterface
+class ProductBasketItemProvider implements BasketItemProviderInterface, CatalogueBasketItemProviderInterface, RefundableBasketItemProviderInterface, ShippingBasketItemProviderInterface, WeighableBasketItemProviderInterface
 {
     public function __construct(
         private readonly ProductItemServiceInterface $productItemService,
@@ -36,6 +38,7 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
         private readonly LocalizedUrlGenerator $localizedUrlGenerator,
         private readonly ProductItemRepository $productItemRepository,
         private readonly LoggerInterface $logger,
+        private readonly ProductItemDownloadRepository $productItemDownloadRepository,
     ) {
     }
 
@@ -70,6 +73,11 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
 
         // Same reasoning one level down: an item set aside has left the sheet, but an open page or a basket filled before it did still carries its id
         if ($item->isHidden()) {
+            return $this->translator->trans('label.unavailable', [], 'shop');
+        }
+
+        // The sheet hides the items of a product not out yet, and a POST naming one of their ids is held to the same date - a file included, which would otherwise be delivered before its release
+        if (!$product->isReleased()) {
             return $this->translator->trans('label.unavailable', [], 'shop');
         }
 
@@ -196,7 +204,11 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
             }
 
             $this->issueGiftCards($basket, $itemContent);
-            $this->countOrdered($basket, $id, (int) $itemContent['quantity']);
+
+            // A basket paid in test mode counts no stock, the shop's real customers being the ones it is kept for - its cards are minted as test cards by PaymentBundle, and its files sent so the whole delivery can be tried
+            if (!$basket->isTestMode()) {
+                $this->countOrdered($basket, $id, (int) $itemContent['quantity']);
+            }
         }
 
         if ($hasDigital) {
@@ -221,7 +233,7 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
 
         // The amount too: a card is worth what was paid for it, and a value re-priced between the checkout and the payment notice must not mint a card of another amount
         for ($i = 0; $i < $itemContent['quantity']; ++$i) {
-            $this->giftCardService->issue($giftCardValue, (string) ($itemContent['item']['currency'] ?? 'eur'), $basket, null, $design);
+            $this->giftCardService->issue($giftCardValue, (string) ($basket->getCurrency() ?? $itemContent['item']['currency'] ?? 'eur'), $basket, null, $design);
         }
     }
 
@@ -241,5 +253,17 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
 
         $this->productItemRepository->addOrdered($item, $quantity);
         $this->logger->critical('Basket {number}: item {id} oversold, {quantity} paid for past its stock', ['number' => $basket->getNumber(), 'id' => $id, 'quantity' => $quantity]);
+    }
+
+    // A full refund takes back what the payment handed over: the stock it counted, a test basket having counted none, and the download links it sent - the gift cards being PaymentBundle's own to switch off
+    public function onBasketRefunded(Basket $basket, array $itemsOfThisKind): void
+    {
+        if (!$basket->isTestMode()) {
+            foreach ($itemsOfThisKind as $id => $itemContent) {
+                $this->productItemRepository->releaseOrdered((int) $id, (int) ($itemContent['quantity'] ?? 0));
+            }
+        }
+
+        $this->productItemDownloadRepository->expireByBasket((int) $basket->getId(), new \DateTimeImmutable());
     }
 }

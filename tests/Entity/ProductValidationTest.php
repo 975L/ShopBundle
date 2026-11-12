@@ -11,6 +11,7 @@
 namespace c975L\ShopBundle\Tests\Entity;
 
 use c975L\ShopBundle\Entity\Product;
+use c975L\ShopBundle\Entity\ProductItem;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validation;
@@ -66,6 +67,58 @@ class ProductValidationTest extends TestCase
     }
 
     // The callback is written on the class, where validateProperty() does not reach it
+    // Two items titled alike would share their anchor and their sku: the second title is refused where it was typed
+    public function testTwoItemsUnderOneSlugAreRefusedOnTheSecondTitle(): void
+    {
+        $product = new Product()
+            ->addItem(new ProductItem()->setTitle('Poster'))
+            ->addItem(new ProductItem()->setTitle('poster'));
+
+        $violations = $this->validator()->validate($product, new Assert\Callback('validateItemSlugs'));
+
+        $this->assertCount(1, $violations);
+        $this->assertSame('items[1].title', $violations->get(0)->getPropertyPath());
+    }
+
+    // An item keeps the slug it was given, so a renamed one does not clash with a new one taking its former title
+    public function testAnItemKeepsTheSlugItWasGiven(): void
+    {
+        $product = new Product()
+            ->addItem(new ProductItem()->setTitle('Large poster')->setSlug('poster'))
+            ->addItem(new ProductItem()->setTitle('Small poster'));
+
+        $this->assertCount(0, $this->validator()->validate($product, new Assert\Callback('validateItemSlugs')));
+    }
+
+    // Two saved items sharing a slug from before the check must not lock the product: neither is new, and a rename would not clear it
+    public function testSavedItemsSharingASlugDoNotLockTheProduct(): void
+    {
+        $product = new Product()
+            ->addItem(new ProductItem()->setTitle('Paperback')->setSlug('paperback'))
+            ->addItem(new ProductItem()->setTitle('Paperback, second print')->setSlug('paperback'));
+
+        $this->assertCount(0, $this->validator()->validate($product, new Assert\Callback('validateItemSlugs')));
+    }
+
+    // A new item whose title gives the slug a saved one holds is refused
+    public function testANewItemTakingASavedSlugIsRefused(): void
+    {
+        $product = new Product()
+            ->addItem(new ProductItem()->setTitle('Large poster')->setSlug('poster'))
+            ->addItem(new ProductItem()->setTitle('Poster'));
+
+        $violations = $this->validator()->validate($product, new Assert\Callback('validateItemSlugs'));
+
+        $this->assertCount(1, $violations);
+        $this->assertSame('items[1].title', $violations->get(0)->getPropertyPath());
+    }
+
+    // A product without a title is a field error, not a 500 on the NOT NULL column
+    public function testAProductWithoutATitleIsRefused(): void
+    {
+        $this->assertGreaterThan(0, $this->validator()->validateProperty(new Product(), 'title')->count());
+    }
+
     private function rangeViolations(?string $age): int
     {
         return $this->validator()->validate(new Product()->setAge($age), new Assert\Callback('validateAgeRange'))->count();

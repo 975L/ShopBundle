@@ -65,4 +65,25 @@ class ProductItemValidationTest extends TestCase
         $this->assertNotEmpty($items);
         $this->assertSame(CascadingStrategy::CASCADE, $items[0]->getCascadingStrategy());
     }
+
+    // A negative price, a stock past its column, a VAT rate over 100 or a title past its column are field errors, never a 500 or a stock sold without limit
+    public function testTheNumbersAndTitleKeepToTheirBounds(): void
+    {
+        $item = new ProductItem()->setTitle('Standard')->setDescription('Sold as is')->setPrice(1900);
+
+        $this->assertCount(0, $this->validator()->validate($item));
+        $this->assertSame('price', $this->validator()->validate((clone $item)->setPrice(-1))->get(0)->getPropertyPath());
+        $this->assertSame('limitedQuantity', $this->validator()->validate((clone $item)->setLimitedQuantity(-1))->get(0)->getPropertyPath());
+        $this->assertSame('limitedQuantity', $this->validator()->validate((clone $item)->setLimitedQuantity(32768))->get(0)->getPropertyPath());
+        $this->assertSame('vat', $this->validator()->validate((clone $item)->setVat(150))->get(0)->getPropertyPath());
+        $this->assertSame('weight', $this->validator()->validate((clone $item)->setWeight(-5))->get(0)->getPropertyPath());
+        $this->assertSame('title', $this->validator()->validate((clone $item)->setTitle(str_repeat('a', 51)))->get(0)->getPropertyPath());
+    }
+
+    // The slug an item is given off its title keeps to its column
+    public function testTheSlugKeepsToItsColumn(): void
+    {
+        $this->assertSame('poster-a3', ProductItem::slugFor('Poster A3'));
+        $this->assertLessThanOrEqual(50, \strlen(ProductItem::slugFor(str_repeat('œ', 50))));
+    }
 }

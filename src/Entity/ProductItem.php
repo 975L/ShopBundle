@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Contract\UserInterface;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductItemRepository::class)]
@@ -31,13 +32,16 @@ class ProductItem implements \Stringable
     // Required on the entity and not only on the form: the back-office submits without the browser's own check, and the slug is written off this title when the row is saved (see ProductItemListener)
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 50)]
     private ?string $title = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\Length(max: 50)]
     private ?string $slug = null;
 
     // The name another bundle's catalog wrote this row under (see ProductCatalogWriter) - never shown, null on a row made in the shop itself
     #[ORM\Column(length: 100, unique: true, nullable: true)]
+    #[Assert\Length(max: 100)]
     private ?string $catalogKey = null;
 
     // Required on the entity like the title above, and for the same reason: the column is NOT NULL, and a form submitted without it fails as a 500 rather than as a field the back-office can point at
@@ -48,31 +52,40 @@ class ProductItem implements \Stringable
     // NotNull and not NotBlank: an item given away costs 0, which the integrity check lists as a free item rather than as an error
     #[ORM\Column]
     #[Assert\NotNull]
+    #[Assert\PositiveOrZero]
     private ?int $price = null;
 
     // What the item was sold for before the current price, struck through beside it - null when it is not on offer. Read by ProductStateService, which ignores anything not above the price, so a leftover value never publishes a discount of zero or less
     #[ORM\Column(nullable: true)]
+    #[Assert\PositiveOrZero]
     private ?int $priceBefore = null;
 
     #[ORM\Column(length: 3)]
+    #[Assert\Length(max: 3)]
     private string $currency = 'eur';
 
     // The shop's own reference for this item, published as the offer's sku - the slug stands in for it when it is left empty, which is what the graph did for every item before this column existed
     #[ORM\Column(length: 50, nullable: true)]
+    #[Assert\Length(max: 50)]
     private ?string $sku = null;
 
     // The item's barcode number, 8 to 14 digits - an EAN-13 for a shelf product, an ISBN-13 for a book. Left empty on anything made in-house, which carries none and must not claim one
     #[ORM\Column(length: 14, nullable: true)]
+    #[Assert\Length(max: 14)]
     private ?string $gtin = null;
 
     #[ORM\Column]
+    #[Assert\Range(min: 0, max: 100)]
     private float $vat = 0;
 
     // Three states in one column: null is an unlimited stock, a cap the orders have not reached is what is left to sell, a cap they have reached is a shortage the shop expects to end, and 0 is an item withdrawn for good. Null by default, so a shop publishing without touching the field is not read as having withdrawn everything
     #[ORM\Column(nullable: true, type: 'smallint')]
+    #[Assert\Range(min: 0, max: 32767)]
     private ?int $limitedQuantity = null;
 
+    // Counted by the orders, never typed: the bound is the column's own, which a counter run past would otherwise turn into a database error
     #[ORM\Column(nullable: true, type: 'smallint')]
+    #[Assert\Range(min: 0, max: 32767)]
     private ?int $orderedQuantity = null;
 
     #[ORM\Column(nullable: true)]
@@ -84,14 +97,17 @@ class ProductItem implements \Stringable
 
     // What a card bought through this item is worth, in cents, null on everything that is not a gift card - stated here rather than read off the price, a 50 € card being free to sell for 45
     #[ORM\Column(nullable: true)]
+    #[Assert\PositiveOrZero]
     private ?int $giftCardValue = null;
 
     // One of ProductSnippetBuilder::CONDITIONS, or null when the shop does not state it - null publishes nothing rather than claiming the item is new
     #[ORM\Column(length: 16, nullable: true)]
+    #[Assert\Length(max: 16)]
     private ?string $itemCondition = null;
 
     // What the item weighs once packed, in grams, whole - as prices are held in cents, a tenth of a gram changing no tariff. Null on anything not weighed, which the basket adds up as nothing rather than as zero: half a catalogue weighed would price a parcel as if the rest of it were feathers. Read by PaymentBundle through WeighableBasketItemProviderInterface, the tariff grid and the zones being its business, not this catalogue's
     #[ORM\Column(nullable: true)]
+    #[Assert\PositiveOrZero]
     private ?int $weight = null;
 
     #[ORM\OneToOne(inversedBy: 'productItem', cascade: ['persist', 'remove'])]
@@ -193,6 +209,12 @@ class ProductItem implements \Stringable
     public function getSlug(): ?string
     {
         return $this->slug;
+    }
+
+    // The slug an item is given off its title, kept to the column's length - one function for the listener that writes it and the product's check that two items never share one
+    public static function slugFor(string $title): string
+    {
+        return trim(mb_substr(new AsciiSlugger()->slug($title)->lower()->toString(), 0, 50), '-');
     }
 
     public function setSlug(string $slug): static

@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Management;
 
+use c975L\ConfigBundle\Management\ArchivePath;
 use c975L\ConfigBundle\Management\ImportProviderInterface;
 use c975L\ShopBundle\Entity\Media;
 use c975L\ShopBundle\Entity\Product;
@@ -18,10 +19,12 @@ use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Entity\ProductItemFile;
 use c975L\ShopBundle\Entity\ProductItemMedia;
 use c975L\ShopBundle\Entity\ProductMedia;
+use c975L\ShopBundle\Form\ProductItemMediaType;
 use c975L\ShopBundle\Repository\MediaRepository;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\UiBundle\Management\BlockDataImporter;
+use c975L\UiBundle\Validator\AllowedUploadExtension;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
@@ -62,15 +65,13 @@ class ProductImportProvider implements ImportProviderInterface
         $imported = [];
         // Resolved/created categories, keyed by slug - findOneBySlug() can't see a category created for a previous product of the same batch, which is only flushed at the end
         $categories = [];
-        // Held back rather than set in the loop: ProductListener/ProductItemListener stamp a creation date on prePersist, which would overwrite anything written before the flush (see restoreCreationDates)
-        $creationDates = [];
 
         foreach ($items as $item) {
             $product = $this->productRepository->findOneBySlug($item['slug']);
             $isNew = null === $product;
             $product ??= new Product();
 
-            $this->writeProduct($product, $item, $filesDir, $categories, $creationDates);
+            $this->writeProduct($product, $item, $filesDir, $categories);
 
             $this->em->persist($product);
             $imported[$item['slug']] = $product;
@@ -84,24 +85,22 @@ class ProductImportProvider implements ImportProviderInterface
 
         $this->em->flush();
 
-        $this->restoreCreationDates($creationDates);
-
         return ['created' => $created, 'updated' => $updated];
     }
 
     // Everything one sheet of the archive says about its product, each collection replaced whole
     // @param array<string, \c975L\ShopBundle\Entity\ProductCategory> $categories
-    // @param list<array{0: object, 1: \DateTime}> $creationDates
-    private function writeProduct(Product $product, array $item, ?string $filesDir, array &$categories, array &$creationDates): void
+    private function writeProduct(Product $product, array $item, ?string $filesDir, array &$categories): void
     {
         $this->fillProduct($product, $item);
         $this->replaceCategories($product, $item['categories'] ?? [], $categories);
         $this->replaceBlocks($product, $item['blocks'] ?? [], $filesDir);
         $this->importMedias($product, $item['medias'] ?? [], $filesDir);
-        $this->importItems($product, $item['items'] ?? [], $filesDir, $creationDates);
+        $this->importItems($product, $item['items'] ?? [], $filesDir);
 
+        // Written before the flush: ProductListener stamps a creation date on prePersist only when the row carries none, and what the "new" badge and the "newest first" listing are counted from is the archive's
         if (isset($item['creation'])) {
-            $creationDates[] = [$product, new \DateTime($item['creation'])];
+            $product->setCreation(new \DateTime($item['creation']));
         }
     }
 
@@ -192,7 +191,7 @@ class ProductImportProvider implements ImportProviderInterface
 
         $kept = [];
         foreach ($mediasData as $mediaData) {
-            $name = $this->archivedName($mediaData['name'] ?? null);
+            $name = $this->archivedName($mediaData['name'] ?? null, 'public');
             $media = null !== $name && isset($existing[$name]) ? $existing[$name] : new ProductMedia();
 
             $this->fillMedia($media, $mediaData);
@@ -210,11 +209,8 @@ class ProductImportProvider implements ImportProviderInterface
         }
     }
 
-    // The product's items, matched by slug - the slug itself is rewritten from the title on every flush (see ProductItemListener), so it is read here rather than written
-    /**
-     * @param list<array{0: Product|ProductItem, 1: \DateTime}> $creationDates
-     */
-    private function importItems(Product $product, array $itemsData, ?string $filesDir, array &$creationDates): void
+    // The product's items, matched by slug - written as the archive names it, ProductItemListener giving one off its title only to an item the archive names none for
+    private function importItems(Product $product, array $itemsData, ?string $filesDir): void
     {
         $existing = [];
         foreach ($product->getItems() as $item) {
@@ -231,7 +227,7 @@ class ProductImportProvider implements ImportProviderInterface
             $this->em->persist($item);
 
             if (isset($itemData['creation'])) {
-                $creationDates[] = [$item, new \DateTime($itemData['creation'])];
+                $item->setCreation(new \DateTime($itemData['creation']));
             }
         }
     }
@@ -320,21 +316,22 @@ class ProductImportProvider implements ImportProviderInterface
         }
     }
 
-    // The two ways of putting a media's file back, decided by whether the archive names it - named, it is laid straight back under that name, Vich never seeing one, which keeps the image urls and spares the resizing; unnamed, Vich stores and names it anew, on the ReplacingFile technique a plain File would leave silently ignored
+    // The two ways of putting a media's file back, decided by whether the archive names it - named, it is laid straight back under that name, Vich never seeing one, which keeps the image urls and spares the resizing; unnamed, Vich stores and names it anew, on the ReplacingFile technique a plain File would leave silently ignored. The manifest is untrusted: its path goes through ArchivePath, anything outside the extracted folder being ignored, and the archive's copy is left where it is, Vich removing nothing on success or on error
     private function attachFile(Media $media, array $mediaData, ?string $filesDir, string $root): void
     {
-        if (null === $filesDir || !isset($mediaData['file'])) {
+        if (null === $filesDir) {
             return;
         }
 
-        $archivedPath = $filesDir . '/' . $mediaData['file'];
-        if (!is_file($archivedPath)) {
+        $archivedPath = ArchivePath::resolve($filesDir, $mediaData['file'] ?? null);
+        if (null === $archivedPath || ('public' === $root && !$this->isPicture($archivedPath))) {
             return;
         }
 
-        $name = $this->archivedName($mediaData['name'] ?? null);
+        // A name refused or taken leaves the naming to UiMediaNamer, which keeps to AllowedUploadExtension whatever the archived file is called
+        $name = $this->archivedName($mediaData['name'] ?? null, $root);
         if (null === $name || !$this->isNameFree($name, $media)) {
-            $media->setFile(new ReplacingFile($archivedPath, true, true, true));
+            $media->setFile(new ReplacingFile($archivedPath, true, false, false));
 
             return;
         }
@@ -360,30 +357,31 @@ class ProductImportProvider implements ImportProviderInterface
     }
 
     // The name an archive says a file was served under, or null for anything this bundle would refuse to write. What comes out of an archive is a path an admin uploaded, so it is only honoured under this bundle's own media directory, and only as a plain relative name: a "../" or an absolute path would have an import lay files anywhere the process can write, and a null byte would have PHP stop reading the name where C does
-    private function archivedName(?string $name): ?string
+    private function archivedName(?string $name, string $root): ?string
     {
-        if (null === $name || !str_starts_with($name, self::MEDIA_DIRECTORY)) {
+        if (null === $name || !str_starts_with($name, self::MEDIA_DIRECTORY) || str_contains($name, "\0") || \in_array('..', explode('/', $name), true)) {
             return null;
         }
 
-        return !str_contains($name, "\0") && !\in_array('..', explode('/', $name), true) ? $name : null;
+        return $this->hasAllowedExtension($name, $root) ? $name : null;
     }
 
-    // The dates the two listeners stamped over on the flush above, put back as the archive holds them: what the "new" badge and the "newest first" listing of the shop are counted from (see ProductStateService)
-    /**
-     * @param list<array{0: Product|ProductItem, 1: \DateTime}> $creationDates
-     */
-    private function restoreCreationDates(array $creationDates): void
+    // Under public/ only what AllowedUploadExtension lets through bar SVG, never a page a browser would open on the site's origin nor a script a server would run; under private/, which neither ever reads, any plain extension a paid file carries - the same rule as UiMediaNamer's
+    private function hasAllowedExtension(string $name, string $root): bool
     {
-        if ([] === $creationDates) {
-            return;
+        $extension = strtolower(pathinfo($name, \PATHINFO_EXTENSION));
+
+        if ('public' === $root) {
+            return 'svg' !== $extension && \in_array($extension, AllowedUploadExtension::EXTENSIONS, true);
         }
 
-        foreach ($creationDates as [$entity, $creation]) {
-            $entity->setCreation($creation);
-        }
+        return 1 === preg_match('/^[a-z0-9]{1,10}$/', $extension);
+    }
 
-        $this->em->flush();
+    // A product's pictures are what its upload field accepts (ProductItemMediaType::IMAGE_TYPES), read off the bytes rather than the name: never an SVG, which runs its scripts on the site's origin when opened directly, nor a page dressed as a picture
+    private function isPicture(string $path): bool
+    {
+        return \in_array(mime_content_type($path), ProductItemMediaType::IMAGE_TYPES, true);
     }
 
     // The products an editor picked to go with this one, replaced whole - a slug this environment holds nowhere (a product left out of the selection that was exported) is skipped rather than created empty

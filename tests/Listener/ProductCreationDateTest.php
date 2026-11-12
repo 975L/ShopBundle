@@ -19,7 +19,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 
 // Both listeners stamp a creation date on persist, and both have to leave alone the one an entity already carries - a frozen demo dataset, an imported catalog
 class ProductCreationDateTest extends TestCase
@@ -64,7 +63,6 @@ class ProductCreationDateTest extends TestCase
     {
         return new ProductListener(
             $this->createStub(Security::class),
-            $this->createStub(EntityManagerInterface::class),
             $this->createStub(ProductRepository::class),
         );
     }
@@ -73,8 +71,6 @@ class ProductCreationDateTest extends TestCase
     {
         return new ProductItemListener(
             $this->createStub(Security::class),
-            $this->createStub(EntityManagerInterface::class),
-            new AsciiSlugger(),
         );
     }
 

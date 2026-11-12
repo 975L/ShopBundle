@@ -288,7 +288,7 @@
             </trans-unit>
             <trans-unit id="pZNb0_8">
                 <source>description.guided_step_shop_product_price</source>
-                <target>The price, its VAT rate and its currency, the weight the parcel is charged on, plus the struck-through price only if it really was charged over the last thirty days. An item coming from the book catalogue takes its price and file from there.</target>
+                <target>The price, in the shop's own currency, its VAT rate, the weight the parcel is charged on, plus the struck-through price only if it really was charged over the last thirty days. An item coming from the book catalogue takes its price and file from there.</target>
             </trans-unit>
             <trans-unit id="nYg2UQS">
                 <source>description.guided_step_shop_product_related_products</source>
@@ -657,10 +657,6 @@
             <trans-unit id="emPIlPf">
                 <source>label.creation</source>
                 <target>Creation</target>
-            </trans-unit>
-            <trans-unit id="AdZ6CDL">
-                <source>label.currency</source>
-                <target>Currency</target>
             </trans-unit>
             <trans-unit id="N05sbUe">
                 <source>label.danger</source>
@@ -1614,6 +1610,14 @@
                 <source>label.stock_alert_title</source>
                 <target>Be told when %name% is back</target>
             </trans-unit>
+            <trans-unit id="1NlXqOX">
+                <source>label.stock_alert_unsubscribe_button</source>
+                <target>Stop the alert</target>
+            </trans-unit>
+            <trans-unit id="dYYj3OM">
+                <source>label.stock_alert_unsubscribe_confirm</source>
+                <target>Unsubscribe from the alert</target>
+            </trans-unit>
             <trans-unit id="Gz0ZGub">
                 <source>label.stock_alert_unsubscribed</source>
                 <target>Unsubscribed</target>
@@ -1721,6 +1725,10 @@
             <trans-unit id="xqpMldX">
                 <source>text.stock_alert_subscribed</source>
                 <target>You will be told by email as soon as this item is back.</target>
+            </trans-unit>
+            <trans-unit id="vP4Tc7d">
+                <source>text.stock_alert_unsubscribe_confirm</source>
+                <target>You will no longer be told when this item is back. Do you confirm?</target>
             </trans-unit>
             <trans-unit id="p_xOkDg">
                 <source>text.stock_alert_unsubscribed</source>

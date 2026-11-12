@@ -93,14 +93,14 @@ class ShopIntegrityHealthCheckProvider implements HealthCheckExhaustiveInterface
         return \array_slice($offenders, 0, self::MAX_OFFENDERS);
     }
 
-    // The orders of the last few days holding at least one file, settled long enough ago for their delivery to have run
+    // The orders of the last few days holding at least one file, settled long enough ago for their delivery to have run - and still settled, a refunded order being owed no copy
     private function recentDigitalOrders(): array
     {
         $before = new \DateTime('-' . self::GRACE_MINUTES . ' minutes');
 
         return array_values(array_filter(
             $this->basketRepository->findOrdersSince(new \DateTime('-' . ProductItemDownloadService::VALIDITY_DAYS . ' days')),
-            fn (Basket $basket) => $basket->getModification() < $before && [] !== $this->itemDownloadService->getFileItems($basket->getItems()),
+            fn (Basket $basket) => $basket->getStatus()->isSettled() && $basket->getModification() < $before && [] !== $this->itemDownloadService->getFileItems($basket->getItems()),
         ));
     }
 
@@ -112,7 +112,8 @@ class ShopIntegrityHealthCheckProvider implements HealthCheckExhaustiveInterface
         foreach ($this->sellable() as $item) {
             $limited = $item->getLimitedQuantity();
 
-            if (null !== $limited && (int) $item->getOrderedQuantity() > $limited) {
+            // A cap of 0 is an item withdrawn, its past sales nothing anyone can fix - the same reading as ShopAlertProvider's
+            if (null !== $limited && $limited > 0 && (int) $item->getOrderedQuantity() > $limited) {
                 $offenders[] = $this->offender($item, $item->getOrderedQuantity() . ' ordered of ' . $limited);
             }
         }

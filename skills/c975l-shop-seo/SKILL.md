@@ -24,8 +24,8 @@ Purchasable means **not set aside**: both the builder and the extension read `Pr
 an item hidden publishing no offer for something the sheet no longer sells.
 
 ```twig
-{% set jsonLd = product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug})) %}
-{% if jsonLd %}
+{% set jsonLd %}{{ product_json_ld(product, ogImage|default(null), url('product_display', {'slug': product.slug})) }}{% endset %}
+{% if jsonLd is not empty %}
     <script type="application/ld+json">{{ jsonLd }}</script>
 {% endif %}
 ```

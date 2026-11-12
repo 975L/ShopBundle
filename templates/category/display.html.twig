@@ -51,17 +51,17 @@
         </div>
     </div>
 
-    {# The products filed under this category, as the list a search engine reads them through - the same summary form as the shop's index, on one page and so numbered from one. "raw" because the payload goes through a variable, which drops the function's own is_safe marking - the builder already escaped every character that could close the tag #}
+    {# The products filed under this category, as the list a search engine reads them through - the same summary form as the shop's index, on one page and so numbered from one. Captured rather than set, so the payload keeps the function's own is_safe marking and prints without "raw" - the builder already escaped every character that could close the tag #}
     {% cache categoryKey ~ '_jsonld' tags(categoryTags) %}
-        {% set productsJsonLd = shop_products_json_ld(shop_category_products(category)) %}
-        {% if productsJsonLd %}
-            <script type="application/ld+json">{{ productsJsonLd|raw }}</script>
+        {% set productsJsonLd %}{{ shop_products_json_ld(shop_category_products(category)) }}{% endset %}
+        {% if productsJsonLd is not empty %}
+            <script type="application/ld+json">{{ productsJsonLd }}</script>
         {% endif %}
 
         {# The trail above the page, which Google prints in place of the url #}
-        {% set breadcrumbJsonLd = shop_breadcrumb_json_ld(category) %}
-        {% if breadcrumbJsonLd %}
-            <script type="application/ld+json">{{ breadcrumbJsonLd|raw }}</script>
+        {% set breadcrumbJsonLd %}{{ shop_breadcrumb_json_ld(category) }}{% endset %}
+        {% if breadcrumbJsonLd is not empty %}
+            <script type="application/ld+json">{{ breadcrumbJsonLd }}</script>
         {% endif %}
     {% endcache %}
 {% endblock %}

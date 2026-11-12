@@ -11,19 +11,23 @@
 namespace c975L\ShopBundle\Repository;
 
 use c975L\ShopBundle\Entity\ProductCategory;
+use c975L\ShopBundle\Repository\Traits\BlockOwnerRepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<ProductCategory>
  *
- * @method ProductCategory|null find($id, $lockMode = null, $lockVersion = null)
- * @method ProductCategory|null findOneBy(array $criteria, array $orderBy = null)
- * @method ProductCategory[]    findAll()
- * @method ProductCategory[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method list<ProductCategory> findByBlockIds(array $blockIds)
+ * @method ProductCategory|null  find($id, $lockMode = null, $lockVersion = null)
+ * @method ProductCategory|null  findOneBy(array $criteria, array $orderBy = null)
+ * @method ProductCategory[]     findAll()
+ * @method ProductCategory[]     findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ProductCategoryRepository extends ServiceEntityRepository
 {
+    use BlockOwnerRepositoryTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ProductCategory::class);
@@ -37,28 +41,5 @@ class ProductCategoryRepository extends ServiceEntityRepository
     public function findOneBySlug(string $slug): ?ProductCategory
     {
         return $this->findOneBy(['slug' => $slug]);
-    }
-
-    /**
-     * The categories owning the given blocks, read in one query - what the front-end "Edit this block" button resolves its edit urls from (see ShopBlockEditUrlProvider), the same way ProductRepository does for a sheet.
-     *
-     * @param int[] $blockIds
-     *
-     * @return ProductCategory[]
-     */
-    public function findByBlockIds(array $blockIds): array
-    {
-        if ([] === $blockIds) {
-            return [];
-        }
-
-        return $this->createQueryBuilder('c')
-            ->select('c, b')
-            ->innerJoin('c.blocks', 'b')
-            ->andWhere('b.id IN (:blockIds)')
-            ->setParameter('blockIds', $blockIds)
-            ->getQuery()
-            ->getResult()
-        ;
     }
 }

@@ -10,6 +10,9 @@
 
 namespace c975L\ShopBundle\Tests\Controller;
 
+use c975L\PaymentBundle\Entity\Basket;
+use c975L\PaymentBundle\Enum\BasketStatus;
+use c975L\PaymentBundle\Repository\BasketRepository;
 use c975L\ShopBundle\Controller\ProductItemDownloadController;
 use c975L\ShopBundle\Entity\ProductItemDownload;
 use c975L\ShopBundle\Repository\ProductItemRepository;
@@ -36,10 +39,13 @@ class ProductItemDownloadControllerTest extends TestCase
         ProductItemDownloadServiceInterface $downloadService,
         PrivateFileResponseFactoryInterface $responseFactory,
         bool $gateClosed = false,
+        BasketStatus $status = BasketStatus::Paid,
     ): ProductItemDownloadController {
         $ageVerifier = $this->createStub(AgeVerifier::class);
         $ageVerifier->method('isGateClosed')->willReturn($gateClosed);
-        $controller = new ProductItemDownloadController($downloadService, $responseFactory, $ageVerifier, $this->createStub(ProductItemRepository::class));
+        $basketRepository = $this->createStub(BasketRepository::class);
+        $basketRepository->method('find')->willReturn(new Basket()->setStatus($status));
+        $controller = new ProductItemDownloadController($downloadService, $responseFactory, $ageVerifier, $this->createStub(ProductItemRepository::class), $basketRepository);
 
         $twig = $this->createStub(Environment::class);
         $twig->method('render')->willReturnCallback(static fn (string $template): string => $template);
@@ -136,6 +142,18 @@ class ProductItemDownloadControllerTest extends TestCase
         $downloadService->method('resolveFilePath')->willReturn(null);
 
         $response = $this->createController($downloadService, $this->createStub(PrivateFileResponseFactoryInterface::class), true)->download($this->createDownload());
+
+        $this->assertSame('@c975LShop/product/item_downloaded.html.twig', $response->getContent());
+    }
+
+    // A refunded order no longer hands anything over, a link it was sent before the refund included
+    public function testALinkOfARefundedOrderServesNothing(): void
+    {
+        $downloadService = $this->createMock(ProductItemDownloadServiceInterface::class);
+        $downloadService->expects($this->never())->method('resolveFilePath');
+        $downloadService->expects($this->never())->method('recordDownloaded');
+
+        $response = $this->createController($downloadService, $this->createStub(PrivateFileResponseFactoryInterface::class), status: BasketStatus::Refunded)->download($this->createDownload());
 
         $this->assertSame('@c975LShop/product/item_downloaded.html.twig', $response->getContent());
     }

@@ -11,19 +11,23 @@
 namespace c975L\ShopBundle\Repository;
 
 use c975L\ShopBundle\Entity\ShopSettings;
+use c975L\ShopBundle\Repository\Traits\BlockOwnerRepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<ShopSettings>
  *
- * @method ShopSettings|null find($id, $lockMode = null, $lockVersion = null)
- * @method ShopSettings|null findOneBy(array $criteria, array $orderBy = null)
- * @method ShopSettings[]    findAll()
- * @method ShopSettings[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method list<ShopSettings> findByBlockIds(array $blockIds)
+ * @method ShopSettings|null  find($id, $lockMode = null, $lockVersion = null)
+ * @method ShopSettings|null  findOneBy(array $criteria, array $orderBy = null)
+ * @method ShopSettings[]     findAll()
+ * @method ShopSettings[]     findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ShopSettingsRepository extends ServiceEntityRepository
 {
+    use BlockOwnerRepositoryTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ShopSettings::class);
@@ -33,26 +37,5 @@ class ShopSettingsRepository extends ServiceEntityRepository
     public function findSingle(): ?ShopSettings
     {
         return $this->findOneBy([], ['id' => 'ASC']);
-    }
-
-    /**
-     * @param int[] $blockIds
-     *
-     * @return ShopSettings[]
-     */
-    public function findByBlockIds(array $blockIds): array
-    {
-        if ([] === $blockIds) {
-            return [];
-        }
-
-        return $this->createQueryBuilder('s')
-            ->select('s, b')
-            ->innerJoin('s.blocks', 'b')
-            ->andWhere('b.id IN (:blockIds)')
-            ->setParameter('blockIds', $blockIds)
-            ->getQuery()
-            ->getResult()
-        ;
     }
 }

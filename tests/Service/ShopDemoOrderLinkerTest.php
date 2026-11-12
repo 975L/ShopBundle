@@ -19,6 +19,7 @@ use c975L\PaymentBundle\Enum\BasketStatus;
 use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Repository\ProductItemDownloadRepository;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
@@ -79,6 +80,7 @@ class ShopDemoOrderLinkerTest extends TestCase
             new LocalizedUrlGenerator($this->createStub(UrlGeneratorInterface::class), new SiteLocales(['fr'], 'fr'), new RequestStack()),
             $this->createStub(ProductItemRepository::class),
             $this->createStub(LoggerInterface::class),
+            $this->createStub(ProductItemDownloadRepository::class),
         );
     }
 

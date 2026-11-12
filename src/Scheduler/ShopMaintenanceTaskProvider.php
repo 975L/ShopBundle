@@ -23,6 +23,8 @@ class ShopMaintenanceTaskProvider implements MaintenanceTaskProviderInterface
             new MaintenanceTask('# #(1-3) * * *', 'c975l:shop:downloads:delete'),
             // Product affinities, monthly: a full pass over the orders, too long to run nightly for what it changes
             new MaintenanceTask('# #(2-5) # * *', 'c975l:shop:affinity:calculate'),
+            // The day's releases, right after midnight: the cached product blocks are dropped on the day a product comes out
+            new MaintenanceTask('1 0 * * *', 'c975l:shop:releases:refresh'),
             // Back-in-stock alerts, hourly and in batches: somebody told a day after the restock is told after the stock is gone again
             new MaintenanceTask('# * * * *', 'c975l:shop:stock-alerts:send'),
         ];

@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-catalog
-description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: age, AgeWarning, AgeGate, AgeVerifier, age verification, go.cam, label.age_verification_required, item_age_gate, site-age-warning, label.age_invalid, label.age_range_reversed, validateAgeRange, section-wrap, Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, findAllListed, findListedCategories, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, weight, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, template, isTemplate, setTemplate, createTemplate, createProduct, product template, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, TrashBatchDeleteTrait, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-country, shop-shipping-free, shop-return-days, shop-handling-days, shop-transit-days, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, ShopDemoOrderLinker, DemoFixtureLinkerInterface, demo catalogue, DemoFixtureMediaCopier, ReplacingFile, ProductCatalogWriter, ProductCatalogWriterInterface, catalogKey, itemsWithFile, setKeys, findWithFile, PlaceholderMediaProviderInterface, ShopTranslator, ShopTranslatedLocales, ShopLinkLocalizer, ShopPublicUrlResolver, ShopTranslationPurgeListener, ContentLocaleScreen, contenu, data-content-locales, action-translate, shop_index_localized, product_display_localized, category_display_localized, PRODUCT_FIELDS, CATEGORY_FIELDS, ITEM_FIELDS, SETTINGS_FIELDS, promptValues, translatedLocales, forShop, forProduct, forCategory, LocalizedUrlGenerator, hreflang, alternates, price-label, --price-size, IMAGE_TYPES, sanitize_html, c975l.rich."
+description: "Use this skill when working with the shop's catalog in a Symfony application built on the c975L ecosystem — products, categories, purchasable items, their pictures and downloadable files, the public listing and product sheet, ordering and searching, and what a card says of itself. Covers where the money settings actually live and how the shop is composed in the back-office rather than overridden. Triggers on: age, AgeWarning, AgeGate, AgeVerifier, age verification, label.age_verification_required, item_age_gate, site-age-warning, label.age_invalid, label.age_range_reversed, validateAgeRange, section-wrap, Product entity, ProductCategory, ProductItem, ProductMedia, ProductItemMedia, ProductItemFile, ProductStateService, shop_product_state, shop_item_format, ShopService, ProductService, ProductCategoryService, findAllListed, findListedCategories, ProductRepository, findAllSorted, shop_index, product_display, category_display, limitedQuantity, orderedQuantity, itemCondition, weight, availableAt, giftCardValue, giftCardText, giftCardScratch, isGiftCard, ProductDuplicator, template, isTemplate, setTemplate, createTemplate, createProduct, product template, ProductExportProvider, ProductImportProvider, ProductCategoryExportProvider, ProductCategoryImportProvider, export selection, import content, hidden, isHidden, setHidden, isDeleted, getVisibleItems, product_preview, recycle bin, TrashBatchDeleteTrait, ProductSearchComponent, CategorySelectorComponent, ShopSettings, shop_settings, category blocks, shop-currency, shop-shipping, shop-shipping-country, shop-shipping-free, shop-return-days, shop-handling-days, shop-transit-days, ShopSampleCatalog, ShopDemoFixtureProvider, DemoFixtureProviderInterface, ShopDemoOrderLinker, DemoFixtureLinkerInterface, demo catalogue, DemoFixtureMediaCopier, ReplacingFile, ProductCatalogWriter, ProductCatalogWriterInterface, catalogKey, itemsWithFile, setKeys, findWithFile, PlaceholderMediaProviderInterface, ShopTranslator, ShopTranslatedLocales, ShopLinkLocalizer, ShopPublicUrlResolver, ShopTranslationPurgeListener, ContentLocaleScreen, contenu, data-content-locales, action-translate, shop_index_localized, product_display_localized, category_display_localized, PRODUCT_FIELDS, CATEGORY_FIELDS, ITEM_FIELDS, SETTINGS_FIELDS, promptValues, translatedLocales, forShop, forProduct, forCategory, LocalizedUrlGenerator, hreflang, alternates, price-label, --price-size, IMAGE_TYPES, sanitize_html, c975l.rich."
 ---
 
 # c975L ShopBundle — catalog
@@ -19,7 +19,7 @@ description: "Use this skill when working with the shop's catalog in a Symfony a
 | Entity | Holds | Never holds |
 | --- | --- | --- |
 | `Product` | title, slug, description, `brand`, `language`, `age`, `availableAt`, position, `hidden`, `isDeleted`, medias, categories, blocks, `relatedProducts`, `giftCardText`, `giftCardScratch`, `catalogKey` | a price |
-| `ProductItem` | price and `priceBefore` (**cents**), currency, vat, `sku`, `gtin`, `limitedQuantity`, `orderedQuantity`, `service`, `itemCondition`, `weight` (**grams**), `hidden`, `giftCardValue`, `catalogKey`, one media, one file | its own page, a recycle bin |
+| `ProductItem` | price and `priceBefore` (**cents**), vat (0 to 100), `sku`, `gtin`, `limitedQuantity`, `orderedQuantity`, `service`, `itemCondition`, `weight` (**grams**), `hidden`, `giftCardValue`, `catalogKey`, one media, one file | its own page, a recycle bin |
 | `ProductCategory` | name, slug, description, products (`ManyToMany`) | a price |
 
 `Product` implements `HasBlocksInterface` — its sheet is composed in the back office, see
@@ -143,7 +143,7 @@ setting empty, render nothing. The sentence itself is the site's, written once i
 `site-age-warning`, which a multilingual site translates in the back office. The field is also the
 graph's `audience` (see `c975l-shop-seo`).
 
-A product of 18 or more (`18-`) is paid for and downloaded once CoreBundle's go.cam age verification
+A product of 18 or more (`18-`) is paid for and downloaded once CoreBundle's age verification
 found the visitor of age, on a site that filled its three `age-verification-*` keys. The basket fills
 freely: `toBasketData()` writes the product's `age` on the line, and PaymentBundle's checkout draws the
 gate in place of its form and turns back a form posted around it (`Basket::getMinimumAge()`). The sheet
@@ -280,9 +280,9 @@ dated relative to the load so the basket integrity check still reports it. **The
 integrity check reads as a mismatch.
 
 Only the categories and the products are yielded, their items, pictures and files riding the ORM cascade.
-An item's slug is rewritten from its title by
-`ProductItemListener`, exactly as one typed in the back office is — the catalogue's own item slug is what
-the showcase carries, nothing more.
+An item given no slug is named off its title by
+`ProductItemListener` on persist, exactly as one typed in the back office is, and keeps it on a rename — the
+catalogue's own item slug is what the showcase carries, nothing more.
 
 ## Search and category selector
 
@@ -290,6 +290,11 @@ the showcase carries, nothing more.
 **single root element carrying `{{ attributes }}`**, written whatever the shop holds — a selector
 rendering nothing when there is no category yet breaks the component, so the root stays and its
 contents are what disappears.
+
+The search answers at most `ProductRepository::SEARCH_LIMIT` products in the shop's own order (position), cut on their ids before the cards are
+fetch-joined, translated by `ShopTranslator::apply()` like every listing. The selector carries the page's
+locale as a `LiveProp` and redirects through `LocalizedUrlGenerator::path()`, so a category picked on
+`/en/shop` leads to `/en/shop/category/x`.
 
 The selector, the `shop_categories` block, the sitemap and `shop_categories_count()` all offer the **listed** categories only
 — `ProductCategoryService::findAllListed()`, read by `ProductRepository::findListedCategories()` through the
@@ -321,7 +326,9 @@ charging one price and displaying another.
 - **Do not store a price on `Product`** — it is the lowest of its items, resolved at read time.
 - **Do not print an editor's text with `|raw`** — `|sanitize_html('c975l.rich')`.
 - **Do not add `image/svg+xml` to `IMAGE_TYPES`** — an svg opened directly runs its scripts on the site's origin.
-- **Do not store prices as floats**, and do not store a currency per product.
+- **Do not store prices as floats**, and do not show a currency per item — `shop_currency()` (`shop-currency`) is the one the basket charges; `ProductItem.currency` is history.
+- **Do not write a `preFlush` listener** — the catalog's listeners run on `prePersist` and on a real `preUpdate` change set, so a visitor's flush never re-signs a product.
+- **Do not give two items of a product the same title** — `Product::validateItemSlugs()` refuses the second, the slug being the anchor, the sku and the archive key.
 - **Do not treat `limitedQuantity: 0` as unlimited.**
 - **Do not loosen the `age` pattern** — anything the entity accepts and `audience()` cannot read is a warning dropped in silence.
 - **Do not compute a badge, a price or a format in a template** — call `shop_product_state()`.

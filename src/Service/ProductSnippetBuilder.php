@@ -149,7 +149,8 @@ class ProductSnippetBuilder
                 'description' => $this->jsonLdBuilder->plainText($item->getDescription()),
                 // Prices are stored in cents, schema.org expects the amount as it is charged
                 'price' => number_format(((int) $item->getPrice()) / 100, 2, '.', ''),
-                'priceCurrency' => strtoupper(trim((string) $item->getCurrency())),
+                // The currency the basket charges, which the sheet shows too
+                'priceCurrency' => $this->productStateService->getCurrency(),
                 // What the sheet already prints struck through beside the price, said where a search engine reads it - "ListPrice" is the type Google shows a crossed-out price from
                 'priceSpecification' => $this->listPrice($item),
                 'availability' => $this->availability($product, $item),
@@ -176,7 +177,7 @@ class ProductSnippetBuilder
             '@type' => 'UnitPriceSpecification',
             'priceType' => 'https://schema.org/ListPrice',
             'price' => number_format($before / 100, 2, '.', ''),
-            'priceCurrency' => strtoupper(trim((string) $item->getCurrency())),
+            'priceCurrency' => $this->productStateService->getCurrency(),
         ];
     }
 
@@ -203,8 +204,7 @@ class ProductSnippetBuilder
             return self::SOLD_OUT;
         }
 
-        $availableAt = $product->getAvailableAt();
-        if (null !== $availableAt && $availableAt->format('Ymd') > date('Ymd')) {
+        if (!$product->isReleased()) {
             return self::PRE_ORDER;
         }
 

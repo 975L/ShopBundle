@@ -30,7 +30,7 @@ class ShopBlockCacheTagProvider implements BlockCacheTagProviderInterface, Reset
         'shop_gift_cards',
     ];
 
-    // The kinds reading the catalogue as it stands today: their products are filtered on "availableAt < now" (see ProductRepository::available()), so one dated ahead joins the listing on its own day, with nobody saving anything
+    // The kinds reading the catalogue as it stands today: their products are filtered on "availableAt < now" (see ProductRepository::available()), so one dated ahead joins the listing on its own day, with nobody saving anything. A card, a button or an items table of a single product stays cached, c975l:shop:releases:refresh dropping it the day that product comes out
     private const array SCHEDULED_KINDS = [
         'shop_products',
         'shop_gift_cards',

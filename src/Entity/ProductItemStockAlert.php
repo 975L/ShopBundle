@@ -12,6 +12,7 @@ namespace c975L\ShopBundle\Entity;
 
 use c975L\ShopBundle\Repository\ProductItemStockAlertRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 // One visitor waiting on one item coming back. Held against the item rather than the product because that is where the stock is: somebody waiting on the paperback is not told the ebook is back
 #[ORM\Entity(repositoryClass: ProductItemStockAlertRepository::class)]
@@ -32,14 +33,17 @@ class ProductItemStockAlert
 
     // The same length PaymentBundle's Basket gives its own email column, the two holding addresses of the same visitors
     #[ORM\Column(length: 100)]
+    #[Assert\Length(max: 100)]
     private string $email;
 
     // The language the subscription was taken in, there being no order to read it from: the alert is composed in it rather than in whatever the nightly command happens to run under
     #[ORM\Column(length: 5)]
+    #[Assert\Length(max: 5)]
     private string $locale;
 
     // What the unsubscribe link carries, in place of the address itself - a link naming an email address is a link that leaks one
     #[ORM\Column(length: 16, unique: true)]
+    #[Assert\Length(max: 16)]
     private string $token;
 
     #[ORM\Column]

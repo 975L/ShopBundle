@@ -13,6 +13,7 @@ namespace c975L\ShopBundle\Entity;
 use c975L\ShopBundle\Repository\MediaRepository;
 use c975L\UiBundle\Entity\Trait\VichMediaTrait;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 // Its own SINGLE_TABLE hierarchy, sharing only the trait with the other bundles' Media, never the table
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
@@ -30,6 +31,7 @@ abstract class Media
 
     // The alternative text of the picture, the one field of a product media a search engine and a screen reader both read - the trait carries what the file is, never what it shows
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $alt = null;
 
     public function getAlt(): ?string

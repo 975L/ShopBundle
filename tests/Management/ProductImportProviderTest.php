@@ -28,6 +28,9 @@ use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
 class ProductImportProviderTest extends TestCase
 {
+    // The head of a PNG, which is what the import reads a picture's type off - the rest of the bytes is the marker each test compares
+    private const string PICTURE = "\x89PNG\r\n\x1a\n\0\0\0\rIHDR\0\0\0\1\0\0\0\1\x08\x06\0\0\0";
+
     // The entities the provider handed to the entity manager, in the order it persisted them
     private array $persisted = [];
 
@@ -45,7 +48,7 @@ class ProductImportProviderTest extends TestCase
         $projectDir = $this->createDir();
         $filesDir = $this->createDir();
         $filesystem = new Filesystem();
-        $filesystem->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+        $filesystem->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
         $filesystem->dumpFile($filesDir . '/files/bbb_paid.pdf', 'paid-bytes');
 
         $provider = $this->createProvider($projectDir);
@@ -56,7 +59,7 @@ class ProductImportProviderTest extends TestCase
         $product = $this->persistedOf(Product::class)[0];
         $this->assertSame('affiche-montagne', $product->getSlug());
         $this->assertFalse($product->isHidden());
-        // Put back over what ProductListener stamped on the flush, which is what the "new" badge is counted from
+        // The archive's date, which is what the "new" badge is counted from
         $this->assertSame('2026-01-15', $product->getCreation()->format('Y-m-d'));
 
         $category = $this->persistedOf(ProductCategory::class)[0];
@@ -68,7 +71,7 @@ class ProductImportProviderTest extends TestCase
         $this->assertSame(2500, $item->getPrice());
 
         // Laid back under their exported names, so the catalogue answers at the very same urls on this site as on the one it was exported from
-        $this->assertSame('picture-bytes', file_get_contents($projectDir . '/public/medias/shop/products/affiche-montagne-1.webp'));
+        $this->assertSame(self::PICTURE . 'picture-bytes', file_get_contents($projectDir . '/public/medias/shop/products/affiche-montagne-1.webp'));
         $this->assertSame('paid-bytes', file_get_contents($projectDir . '/private/medias/shop/items/affiche-montagne-a3-2.pdf'));
         $this->assertSame('medias/shop/products/affiche-montagne-1.webp', $product->getMedias()->first()->getName());
         $this->assertSame(\strlen('paid-bytes'), $item->getFile()->getSize());
@@ -84,7 +87,7 @@ class ProductImportProviderTest extends TestCase
         $projectDir = $this->createDir();
         $filesDir = $this->createDir();
         $filesystem = new Filesystem();
-        $filesystem->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+        $filesystem->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
 
         $data = $this->productData();
         $data['medias'][0]['name'] = '../../etc/passwd';
@@ -95,6 +98,132 @@ class ProductImportProviderTest extends TestCase
         $product = $this->persistedOf(Product::class)[0];
         $this->assertInstanceOf(ReplacingFile::class, $product->getMedias()->first()->getFile());
         $this->assertFalse(is_file($projectDir . '/etc/passwd'));
+
+        $filesystem->remove([$projectDir, $filesDir]);
+    }
+
+    // A manifest naming a file outside its own folder (a secret of the site, the archive's own neighbours) copies nothing: the media is written without a file
+    public function testAPathOutOfTheArchiveIsIgnored(): void
+    {
+        $projectDir = $this->createDir();
+        $filesDir = $this->createDir();
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
+        $filesystem->dumpFile(\dirname($filesDir) . '/' . basename($filesDir) . '-secret.env', 'SECRET=1');
+
+        $data = $this->productData();
+        $data['medias'][0]['file'] = '../' . basename($filesDir) . '-secret.env';
+        unset($data['items']);
+
+        $this->createProvider($projectDir)->import([$data], $filesDir);
+
+        $media = $this->persistedOf(Product::class)[0]->getMedias()->first();
+        $this->assertNull($media->getFile());
+        $this->assertNull($media->getName());
+        $this->assertFalse(is_file($projectDir . '/public/medias/shop/products/affiche-montagne-1.webp'));
+
+        $filesystem->remove([$projectDir, $filesDir, \dirname($filesDir) . '/' . basename($filesDir) . '-secret.env']);
+    }
+
+    // A symbolic link inside the archive pointing out of it is no file of the archive either
+    public function testASymlinkOutOfTheArchiveIsIgnored(): void
+    {
+        $projectDir = $this->createDir();
+        $filesDir = $this->createDir();
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($projectDir . '/.env.local', 'SECRET=1');
+        $filesystem->mkdir($filesDir . '/files');
+        symlink($projectDir . '/.env.local', $filesDir . '/files/aaa_picture.webp');
+
+        $data = $this->productData();
+        unset($data['items']);
+
+        $this->createProvider($projectDir)->import([$data], $filesDir);
+
+        $this->assertNull($this->persistedOf(Product::class)[0]->getMedias()->first()->getFile());
+        $this->assertFalse(is_file($projectDir . '/public/medias/shop/products/affiche-montagne-1.webp'));
+
+        $filesystem->remove([$projectDir, $filesDir]);
+    }
+
+    // A name a browser would open as a page on the site's origin is never laid under public/: Vich names the file anew, the archive's copy left where it is
+    public function testAPageNameUnderPublicFallsBackOnVichNaming(): void
+    {
+        $projectDir = $this->createDir();
+        $filesDir = $this->createDir();
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
+
+        $data = $this->productData();
+        $data['medias'][0]['name'] = 'medias/shop/products/x.html';
+        unset($data['items']);
+
+        $this->createProvider($projectDir)->import([$data], $filesDir);
+
+        $file = $this->persistedOf(Product::class)[0]->getMedias()->first()->getFile();
+        $this->assertInstanceOf(ReplacingFile::class, $file);
+        $this->assertFalse($file->isRemoveReplacedFile());
+        $this->assertFalse($file->isRemoveReplacedFileOnError());
+        $this->assertFalse(is_file($projectDir . '/public/medias/shop/products/x.html'));
+        $this->assertTrue(is_file($filesDir . '/files/aaa_picture.webp'));
+
+        $filesystem->remove([$projectDir, $filesDir]);
+    }
+
+    // A picture whose bytes are an SVG, whatever it is called, is never written: product pictures are never SVG, one opened directly running its scripts on the site's origin
+    public function testAnSvgDressedAsAPictureIsIgnored(): void
+    {
+        $projectDir = $this->createDir();
+        $filesDir = $this->createDir();
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($filesDir . '/files/aaa_picture.webp', '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>');
+
+        $data = $this->productData();
+        unset($data['items']);
+
+        $this->createProvider($projectDir)->import([$data], $filesDir);
+
+        $this->assertNull($this->persistedOf(Product::class)[0]->getMedias()->first()->getFile());
+        $this->assertFalse(is_file($projectDir . '/public/medias/shop/products/affiche-montagne-1.webp'));
+
+        $filesystem->remove([$projectDir, $filesDir]);
+    }
+
+    // An AVIF is refused like every format the picture upload refuses, whatever the archive calls it
+    public function testAnAvifPictureIsIgnored(): void
+    {
+        $projectDir = $this->createDir();
+        $filesDir = $this->createDir();
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($filesDir . '/files/aaa_picture.webp', "\0\0\0\x1cftypavif\0\0\0\0avifmif1miaf");
+
+        $data = $this->productData();
+        $data['medias'][0]['name'] = 'medias/shop/products/affiche-montagne-1.avif';
+        unset($data['items']);
+
+        $this->createProvider($projectDir)->import([$data], $filesDir);
+
+        $this->assertNull($this->persistedOf(Product::class)[0]->getMedias()->first()->getFile());
+        $this->assertFalse(is_file($projectDir . '/public/medias/shop/products/affiche-montagne-1.avif'));
+
+        $filesystem->remove([$projectDir, $filesDir]);
+    }
+
+    // A paid file stays under private/, which nothing serves: any plain extension it carries is kept, a script's included
+    public function testAPrivateFileKeepsAPlainExtension(): void
+    {
+        $projectDir = $this->createDir();
+        $filesDir = $this->createDir();
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
+        $filesystem->dumpFile($filesDir . '/files/bbb_paid.pdf', 'paid-bytes');
+
+        $data = $this->productData();
+        $data['items'][0]['file']['name'] = 'medias/shop/items/affiche-montagne-a3-2.cbz';
+
+        $this->createProvider($projectDir)->import([$data], $filesDir);
+
+        $this->assertTrue(is_file($projectDir . '/private/medias/shop/items/affiche-montagne-a3-2.cbz'));
 
         $filesystem->remove([$projectDir, $filesDir]);
     }
@@ -124,7 +253,7 @@ class ProductImportProviderTest extends TestCase
         $projectDir = $this->createDir();
         $filesDir = $this->createDir();
         $filesystem = new Filesystem();
-        $filesystem->dumpFile($filesDir . '/files/aaa_picture.webp', 'new-picture-bytes');
+        $filesystem->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'new-picture-bytes');
         $filesystem->dumpFile($filesDir . '/files/bbb_paid.pdf', 'new-paid-bytes');
 
         $existing = new Product()->setSlug('affiche-montagne')->setTitle('Ancien titre')->setDescription('Ancienne description');
@@ -144,7 +273,7 @@ class ProductImportProviderTest extends TestCase
         $this->assertCount(1, $existing->getMedias());
         $this->assertSame($keptMedia, $existing->getMedias()->first());
         $this->assertSame('Affiche', $keptMedia->getAlt());
-        $this->assertSame('new-picture-bytes', file_get_contents($projectDir . '/public/medias/shop/products/affiche-montagne-1.webp'));
+        $this->assertSame(self::PICTURE . 'new-picture-bytes', file_get_contents($projectDir . '/public/medias/shop/products/affiche-montagne-1.webp'));
 
         // The item is matched by its slug rather than doubled, and its paid file written over
         $this->assertCount(1, $existing->getItems());
@@ -177,7 +306,7 @@ class ProductImportProviderTest extends TestCase
     {
         $projectDir = $this->createDir();
         $filesDir = $this->createDir();
-        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
 
         $data = $this->productData();
         unset($data['items'][0]['file']);
@@ -198,7 +327,7 @@ class ProductImportProviderTest extends TestCase
     {
         $projectDir = $this->createDir();
         $filesDir = $this->createDir();
-        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
 
         $data = $this->productData();
         unset($data['items'][0]['file']);
@@ -219,7 +348,7 @@ class ProductImportProviderTest extends TestCase
     {
         $projectDir = $this->createDir();
         $filesDir = $this->createDir();
-        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
 
         $data = $this->productData();
         unset($data['hidden']);
@@ -241,7 +370,7 @@ class ProductImportProviderTest extends TestCase
     {
         $projectDir = $this->createDir();
         $filesDir = $this->createDir();
-        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
 
         $data = $this->productData();
         unset($data['items'][0]['file']);
@@ -261,7 +390,7 @@ class ProductImportProviderTest extends TestCase
     {
         $projectDir = $this->createDir();
         $filesDir = $this->createDir();
-        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
 
         $data = $this->productData();
         unset($data['items'][0]['file']);
@@ -279,7 +408,7 @@ class ProductImportProviderTest extends TestCase
     {
         $projectDir = $this->createDir();
         $filesDir = $this->createDir();
-        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
 
         $data = $this->productData();
         unset($data['items'][0]['file']);
@@ -297,7 +426,7 @@ class ProductImportProviderTest extends TestCase
     {
         $projectDir = $this->createDir();
         $filesDir = $this->createDir();
-        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', 'picture-bytes');
+        new Filesystem()->dumpFile($filesDir . '/files/aaa_picture.webp', self::PICTURE . 'picture-bytes');
 
         $data = $this->productData();
         unset($data['items'][0]['file']);

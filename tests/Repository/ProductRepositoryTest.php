@@ -128,13 +128,54 @@ class ProductRepositoryTest extends TestCase
         $this->assertStringContainsString('p.availableAt < :now', (string) $dql);
     }
 
+    // The owners of a block are filtered through EXISTS and their blocks fetched whole on an alias of their own: a fetch-join on the filtered alias would load each sheet with the matching blocks only
+    public function testTheOwnersOfABlockAreReadWithoutAPartialCollection(): void
+    {
+        $dql = null;
+        $this->createRepository($dql)->findByBlockIds([3]);
+
+        $this->assertStringStartsWith('SELECT o, ob FROM', (string) $dql);
+        $this->assertStringContainsString('LEFT JOIN o.blocks ob', (string) $dql);
+        $this->assertStringContainsString('EXISTS (SELECT b.id FROM', (string) $dql);
+        $this->assertStringContainsString('b MEMBER OF o.blocks', (string) $dql);
+    }
+
+    // The nightly refresh looks back over a few days, among the products the shop shows
+    public function testAReleaseIsLookedForOverTheDaysAmongTheShownProducts(): void
+    {
+        $dql = null;
+        $this->createRepository($dql)->hasReleaseBetween(new \DateTimeImmutable('2026-11-28'), new \DateTimeImmutable('2026-12-01'));
+
+        $this->assertStringContainsString('p.availableAt BETWEEN :from AND :to', (string) $dql);
+        $this->assertStringContainsString('p.hidden = false', (string) $dql);
+    }
+
+    // The instant search runs on every key typed: its products are cut in SQL on the ids alone, a single letter never rendering the whole catalogue
+    public function testTheSearchIsCutOnTheProductsAlone(): void
+    {
+        $dql = null;
+        $maxResults = null;
+        $this->createRepository($dql, $maxResults)->search('e');
+
+        $this->assertStringStartsWith('SELECT p.id FROM', (string) $dql);
+        $this->assertStringNotContainsString('JOIN', (string) $dql);
+        $this->assertStringContainsString('p.hidden = false', (string) $dql);
+        $this->assertSame(ProductRepository::SEARCH_LIMIT, $maxResults);
+        // Cut in the shop's own order, so the products kept are the ones it puts first
+        $this->assertStringContainsString('ORDER BY p.position ASC, p.id ASC', (string) $dql);
+    }
+
     // A repository wired on an entity manager that runs no query, only records the DQL it was handed
-    private function createRepository(?string &$dql): ProductRepository
+    private function createRepository(?string &$dql, ?int &$maxResults = null): ProductRepository
     {
         $query = $this->createStub(Query::class);
         $query->method('setParameters')->willReturnSelf();
         $query->method('setFirstResult')->willReturnSelf();
-        $query->method('setMaxResults')->willReturnSelf();
+        $query->method('setMaxResults')->willReturnCallback(function (?int $max) use ($query, &$maxResults): Query {
+            $maxResults = $max;
+
+            return $query;
+        });
         $query->method('getResult')->willReturn([]);
 
         $entityManager = $this->createStub(EntityManagerInterface::class);

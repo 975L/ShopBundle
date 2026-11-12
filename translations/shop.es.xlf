@@ -288,7 +288,7 @@
             </trans-unit>
             <trans-unit id="pZNb0_8">
                 <source>description.guided_step_shop_product_price</source>
-                <target>El precio, su tipo de IVA y su moneda, el peso que determina el precio del paquete, y el precio tachado solo si se aplicó realmente en los últimos treinta días. Un artículo venido del catálogo de libros toma allí su precio y su archivo.</target>
+                <target>El precio, en la moneda de la tienda, su tipo de IVA, el peso que determina el precio del paquete, y el precio tachado solo si se aplicó realmente en los últimos treinta días. Un artículo venido del catálogo de libros toma allí su precio y su archivo.</target>
             </trans-unit>
             <trans-unit id="nYg2UQS">
                 <source>description.guided_step_shop_product_related_products</source>
@@ -657,10 +657,6 @@
             <trans-unit id="emPIlPf">
                 <source>label.creation</source>
                 <target>Creación</target>
-            </trans-unit>
-            <trans-unit id="AdZ6CDL">
-                <source>label.currency</source>
-                <target>Moneda</target>
             </trans-unit>
             <trans-unit id="N05sbUe">
                 <source>label.danger</source>
@@ -1614,6 +1610,14 @@
                 <source>label.stock_alert_title</source>
                 <target>Avisarme cuando %name% vuelva</target>
             </trans-unit>
+            <trans-unit id="1NlXqOX">
+                <source>label.stock_alert_unsubscribe_button</source>
+                <target>Dejar de recibir el aviso</target>
+            </trans-unit>
+            <trans-unit id="dYYj3OM">
+                <source>label.stock_alert_unsubscribe_confirm</source>
+                <target>Darse de baja del aviso</target>
+            </trans-unit>
             <trans-unit id="Gz0ZGub">
                 <source>label.stock_alert_unsubscribed</source>
                 <target>Baja efectuada</target>
@@ -1721,6 +1725,10 @@
             <trans-unit id="xqpMldX">
                 <source>text.stock_alert_subscribed</source>
                 <target>Se le avisará por correo en cuanto este artículo vuelva.</target>
+            </trans-unit>
+            <trans-unit id="vP4Tc7d">
+                <source>text.stock_alert_unsubscribe_confirm</source>
+                <target>Ya no se le avisará cuando este artículo vuelva. ¿Lo confirma?</target>
             </trans-unit>
             <trans-unit id="p_xOkDg">
                 <source>text.stock_alert_unsubscribed</source>

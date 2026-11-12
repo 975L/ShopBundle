@@ -35,6 +35,7 @@ class ProductItemType extends AbstractType
             ])
             ->add('title', TextType::class, [
                 'required' => true,
+                'empty_data' => '',
                 'label' => 'label.title',
             ])
             ->add('slug', TextType::class, [
@@ -46,6 +47,7 @@ class ProductItemType extends AbstractType
             ])
             ->add('description', TextareaType::class, [
                 'required' => true,
+                'empty_data' => '',
                 'label' => 'label.description',
                 // Opt-in marker read by the block form theme, which is what puts Donovan under a plain textarea
                 'attr' => ['data-ai-rephrase' => true],
@@ -70,20 +72,10 @@ class ProductItemType extends AbstractType
                 'help' => 'label.price_before_help',
                 'divisor' => 100,
             ])
-            ->add('currency', TextType::class, [
-                'required' => true,
-                'empty_data' => 'eur',
-                'label' => 'label.currency',
-                'attr' => [
-                    'value' => 'eur',
-                ],
-            ])
+            // No currency field: the shop charges in "shop-currency" alone, which every price is shown and published in. The default stays on the entity, an attr value being printed before the saved one and kept by the browser
             ->add('vat', NumberType::class, [
                 'label' => 'label.vat',
-                'empty_data' => 0,
-                'attr' => [
-                    'value' => 0,
-                ],
+                'empty_data' => '0',
             ])
             ->add('sku', TextType::class, [
                 'required' => false,

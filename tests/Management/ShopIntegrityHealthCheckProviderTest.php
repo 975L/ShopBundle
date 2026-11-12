@@ -59,6 +59,16 @@ class ShopIntegrityHealthCheckProviderTest extends TestCase
         $this->assertSame(HealthCheckResult::STATUS_OK, $row['status']);
     }
 
+    // A refunded order is owed no file: one refunded before its message ran has no copy, and that is no error anyone could fix
+    public function testARefundedOrderWithoutCopiesIsNotReported(): void
+    {
+        $order = $this->order('2026-000045')->setStatus(BasketStatus::Refunded);
+
+        $row = $this->row($this->provider(['orders' => [$order], 'fileItems' => [12 => ['title' => 'A story', 'file' => 'story.pdf', 'size' => 10]]])->runChecks(), ShopIntegrityHealthCheckProvider::ROW_UNDELIVERED_DOWNLOADS);
+
+        $this->assertSame(HealthCheckResult::STATUS_OK, $row['status']);
+    }
+
     // The copies are made by a message handler: an order settled moments before the run is being delivered, not left undelivered
     public function testAnOrderPaidMomentsAgoIsLeftAlone(): void
     {
@@ -80,6 +90,14 @@ class ShopIntegrityHealthCheckProviderTest extends TestCase
     public function testAnArticleWithinItsStockIsNotReported(): void
     {
         $row = $this->row($this->provider(['items' => [$this->item()->setLimitedQuantity(3)->setOrderedQuantity(3)]])->runChecks(), ShopIntegrityHealthCheckProvider::ROW_OVERSOLD_ITEMS);
+
+        $this->assertSame(HealthCheckResult::STATUS_OK, $row['status']);
+    }
+
+    // A stock of 0 is an item withdrawn: what it sold before is history, not an error anyone could fix
+    public function testAWithdrawnArticleWithPastSalesIsNotReported(): void
+    {
+        $row = $this->row($this->provider(['items' => [$this->item()->setLimitedQuantity(0)->setOrderedQuantity(4)]])->runChecks(), ShopIntegrityHealthCheckProvider::ROW_OVERSOLD_ITEMS);
 
         $this->assertSame(HealthCheckResult::STATUS_OK, $row['status']);
     }

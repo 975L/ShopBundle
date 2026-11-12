@@ -23,6 +23,9 @@ interface ProductStateServiceInterface
      */
     public function getState(Product $product): array;
 
+    // The currency every price of the shop is shown, published and charged in, upper case
+    public function getCurrency(): string;
+
     /**
      * The lowest price of a product's items, in cents, null when it has none.
      */

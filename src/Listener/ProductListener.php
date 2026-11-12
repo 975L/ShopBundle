@@ -14,40 +14,52 @@ use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Listener\Traits\UserTrait;
 use c975L\ShopBundle\Repository\ProductRepository;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Bundle\SecurityBundle\Security;
 
-#[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: Product::class)]
+// Dates and signs a product when it is written and when it is really edited - never on a flush that leaves it unchanged, a visitor's basket included (see UserTrait)
 #[AsEntityListener(event: Events::prePersist, method: 'prePersist', entity: Product::class)]
+#[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: Product::class)]
 class ProductListener
 {
     use UserTrait;
 
     public function __construct(
         private readonly Security $security,
-        private readonly EntityManagerInterface $entityManager,
         private readonly ProductRepository $productRepository,
     ) {
     }
 
-    public function preFlush(Product $entity, PreFlushEventArgs $event): void
-    {
-        if (null === $entity->getPosition()) {
-            // Read as a scalar off the whole table: findAll() only returns what the public may see now that a product can be hidden, and a new one placed after those alone would collide with a hidden one sitting further down
-            $entity->setPosition($this->productRepository->findMaxPosition() + 5);
-        }
-        $entity->setModification(new \DateTime());
-        $this->setUser($entity);
-    }
-
+    // A new product is placed after the others, dated and signed - a date it already carries kept, so a row built with its own (a frozen demo dataset, an imported catalog) keeps it
     public function prePersist(Product $entity, PrePersistEventArgs $event): void
     {
-        // Only stamped when the entity carries none, so a row built with its own date keeps it
+        $this->placeLast($entity);
+
         if (null === $entity->getCreation()) {
             $entity->setCreation(new \DateTime());
+        }
+        if (null === $entity->getModification()) {
+            $entity->setModification(new \DateTime());
+        }
+
+        $this->stampUser($entity, false);
+    }
+
+    // Doctrine only calls it on a real change set, and recomputes it afterwards, so the date and the author written here are saved with it
+    public function preUpdate(Product $entity, PreUpdateEventArgs $event): void
+    {
+        $this->placeLast($entity);
+        $entity->setModification(new \DateTime());
+        $this->stampUser($entity, true);
+    }
+
+    // Read as a scalar off the whole table: findAll() only returns what the public may see now that a product can be hidden, and a new one placed after those alone would collide with a hidden one sitting further down
+    private function placeLast(Product $entity): void
+    {
+        if (null === $entity->getPosition()) {
+            $entity->setPosition($this->productRepository->findMaxPosition() + 5);
         }
     }
 }

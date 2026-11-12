@@ -3,6 +3,7 @@
 namespace c975L\ShopBundle\Twig\Components;
 
 use c975L\ShopBundle\Service\ProductServiceInterface;
+use c975L\ShopBundle\Service\ShopTranslator;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -23,6 +24,7 @@ class ProductSearchComponent
 
     public function __construct(
         private ProductServiceInterface $productService,
+        private ShopTranslator $shopTranslator,
     ) {
     }
 
@@ -32,6 +34,10 @@ class ProductSearchComponent
             return null;
         }
 
-        return $this->productService->search($this->query, $this->categorySlug);
+        // Read in the language being rendered, like every listing of the shop
+        $products = $this->productService->search($this->query, $this->categorySlug);
+        $this->shopTranslator->apply($products);
+
+        return $products;
     }
 }

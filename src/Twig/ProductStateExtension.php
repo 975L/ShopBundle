@@ -30,6 +30,13 @@ class ProductStateExtension
         return $this->productStateService->getState($product);
     }
 
+    // Returns the one currency every price of the shop is shown in, the one the basket charges
+    #[AsTwigFunction('shop_currency')]
+    public function currency(): string
+    {
+        return $this->productStateService->getCurrency();
+    }
+
     // Returns the translation key naming the kind of a single item, shown next to its title on the product sheet
     #[AsTwigFunction('shop_item_format')]
     public function itemFormat(ProductItem $item): string

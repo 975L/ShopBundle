@@ -15,40 +15,27 @@ use c975L\ShopBundle\Entity\ProductItemFile;
 use c975L\ShopBundle\Entity\ProductItemMedia;
 use c975L\ShopBundle\Listener\Traits\UserTrait;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
-#[AsEntityListener(event: Events::preFlush, method: 'preFlush', entity: ProductItem::class)]
+// Places, names, dates and signs an item when it is written and when an editor really changes it - a sale counting its stock (see ProductBasketItemProvider::countOrdered()) changing neither its author nor anything else
 #[AsEntityListener(event: Events::prePersist, method: 'prePersist', entity: ProductItem::class)]
+#[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: ProductItem::class)]
 class ProductItemListener
 {
     use UserTrait;
 
+    // What a sale writes on the item by itself, the stock it counted and when
+    private const array COUNTERS = ['orderedQuantity', 'modification'];
+
     public function __construct(
         private readonly Security $security,
-        private readonly EntityManagerInterface $entityManager,
-        private SluggerInterface $slugger,
     ) {
     }
 
-    public function preFlush(ProductItem $entity, PreFlushEventArgs $event): void
-    {
-        if (null === $entity->getPosition()) {
-            $maxPosition = 0;
-            foreach ($entity->getProduct()->getItems() as $item) {
-                $maxPosition = max($maxPosition, $item->getPosition());
-            }
-            $entity->setPosition($maxPosition + 5);
-        }
-        $entity->setSlug($this->slugger->slug($entity->getTitle())->lower());
-        $entity->setModification(new \DateTime());
-        $this->setUser($entity);
-    }
-
+    // A new item gets its placeholders, its place, its slug, its dates and its author - a creation date it already carries kept, so a row built with its own keeps it
     public function prePersist(ProductItem $entity, PrePersistEventArgs $event): void
     {
         // Needs to add empty placeholder and a add contents aftewards because the owner is not yet persisted
@@ -62,9 +49,44 @@ class ProductItemListener
             $productItemFile->setUpdatedAt(new \DateTimeImmutable());
             $entity->setFile($productItemFile);
         }
-        // Only stamped when the entity carries none, so a row built with its own date keeps it
+
+        $this->placeAndName($entity);
+
         if (null === $entity->getCreation()) {
             $entity->setCreation(new \DateTime());
+        }
+        if (null === $entity->getModification()) {
+            $entity->setModification(new \DateTime());
+        }
+
+        $this->stampUser($entity, false);
+    }
+
+    // Doctrine recomputes the change set after this, so what is written here is saved with the edit
+    public function preUpdate(ProductItem $entity, PreUpdateEventArgs $event): void
+    {
+        if (!$this->isEdited($event, self::COUNTERS)) {
+            return;
+        }
+
+        $this->placeAndName($entity);
+        $entity->setModification(new \DateTime());
+        $this->stampUser($entity, true);
+    }
+
+    // After its product's last item, and named off its title once - a slug already given stays, so a renamed item keeps its anchor and its row in an archive (see ProductCatalogWriter)
+    private function placeAndName(ProductItem $entity): void
+    {
+        if (null === $entity->getPosition()) {
+            $maxPosition = 0;
+            foreach ($entity->getProduct()?->getItems() ?? [] as $item) {
+                $maxPosition = max($maxPosition, (int) $item->getPosition());
+            }
+            $entity->setPosition($maxPosition + 5);
+        }
+
+        if ('' === (string) $entity->getSlug()) {
+            $entity->setSlug(ProductItem::slugFor((string) $entity->getTitle()));
         }
     }
 }

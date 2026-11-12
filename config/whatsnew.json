@@ -1,11 +1,31 @@
 [
     {
+        "date": "2026-11-12",
+        "description": [
+            {
+                "en": "Correcting a product no longer resets the VAT rate of its items to 0: each item keeps the rate you saved. The currency field is gone from the items, every price being shown and charged in your shop's currency.",
+                "fr": "Corriger un produit ne remet plus le taux de TVA de ses articles à 0 : chaque article garde le taux enregistré. Le champ devise a disparu des articles, chaque prix étant affiché et encaissé dans la devise de votre boutique.",
+                "es": "Corregir un producto ya no pone a 0 el tipo de IVA de sus artículos: cada artículo conserva el tipo guardado. El campo de moneda ha desaparecido de los artículos, ya que cada precio se muestra y se cobra en la moneda de su tienda."
+            },
+            {
+                "en": "Two items of the same product can no longer share a title, and a negative price, a stock below 0 or a VAT rate above 100 is pointed out on its field instead of failing the save.",
+                "fr": "Deux articles d'un même produit ne peuvent plus porter le même titre, et un prix négatif, un stock sous 0 ou un taux de TVA au-dessus de 100 est signalé sur son champ au lieu de faire échouer l'enregistrement.",
+                "es": "Dos artículos del mismo producto ya no pueden tener el mismo título, y un precio negativo, un stock por debajo de 0 o un tipo de IVA por encima de 100 se señala en su campo en lugar de hacer fallar el guardado."
+            },
+            {
+                "en": "A fully refunded order gives its stock back and its download links stop working, and a product dated ahead can no longer be bought before its release date.",
+                "fr": "Une commande remboursée en totalité rend son stock et ses liens de téléchargement cessent de fonctionner, et un produit daté à l'avance ne peut plus être acheté avant sa date de sortie.",
+                "es": "Un pedido reembolsado por completo devuelve su stock y sus enlaces de descarga dejan de funcionar, y un producto con fecha futura ya no puede comprarse antes de su fecha de lanzamiento."
+            }
+        ]
+    },
+    {
         "date": "2026-11-11",
         "description": [
             {
-                "en": "A product for adults (age 18 and over) is put in the basket freely, and paid for and downloaded once go.cam has verified the visitor's age, anonymously and on their own device, as soon as the go.cam keys are filled in.",
-                "fr": "Un produit pour majeurs (âge 18 ans et plus) se met librement au panier, puis se paie et se télécharge une fois l'âge du visiteur vérifié par go.cam, anonymement et sur son propre appareil, dès que les clés go.cam sont renseignées.",
-                "es": "Un producto para mayores de edad (18 años o más) se añade libremente a la cesta, y se paga y se descarga una vez que go.cam ha verificado la edad del visitante, de forma anónima y en su propio dispositivo, en cuanto se introducen las claves go.cam."
+                "en": "A product for adults (age 18 and over) is put in the basket freely, and paid for and downloaded once the visitor's age has been verified, anonymously and on their own device, as soon as an age verification service is set up.",
+                "fr": "Un produit pour majeurs (âge 18 ans et plus) se met librement au panier, puis se paie et se télécharge une fois l'âge du visiteur vérifié, anonymement et sur son propre appareil, dès qu'un outil de vérification d'âge est configuré.",
+                "es": "Un producto para mayores de edad (18 años o más) se añade libremente a la cesta, y se paga y se descarga una vez verificada la edad del visitante, de forma anónima y en su propio dispositivo, en cuanto se configura un servicio de verificación de edad."
             },
             {
                 "en": "Before moving to the trash, deleting for good or duplicating, the confirmation now names the product concerned, so you know at a glance which one you are about to act on.",

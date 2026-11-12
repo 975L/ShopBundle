@@ -164,7 +164,7 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
             $item = new ProductItem()
                 ->setCatalogKey($catalogItem->key)
                 ->setTitle(mb_substr($catalogItem->title, 0, 50))
-                ->setSlug($this->slugger->slug(mb_substr($catalogItem->title, 0, 50))->lower()->toString())
+                ->setSlug(ProductItem::slugFor($catalogItem->title))
                 ->setDescription($this->descriptions($catalogItem)[$this->siteLocales->getDefaultLocale()] ?? $catalogItem->title)
                 ->setPrice($catalogItem->price ?? 0)
                 ->setCurrency(strtolower($catalogItem->currency))

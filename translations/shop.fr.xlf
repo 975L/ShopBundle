@@ -288,7 +288,7 @@
             </trans-unit>
             <trans-unit id="pZNb0_8">
                 <source>description.guided_step_shop_product_price</source>
-                <target>Le prix, son taux de TVA et sa devise, le poids qui décide du prix du colis, et le prix barré seulement s'il a réellement été pratiqué ces trente derniers jours. Un article venu du catalogue des livres prend son prix et son fichier là-bas.</target>
+                <target>Le prix, dans la devise de la boutique, son taux de TVA, le poids qui décide du prix du colis, et le prix barré seulement s'il a réellement été pratiqué ces trente derniers jours. Un article venu du catalogue des livres prend son prix et son fichier là-bas.</target>
             </trans-unit>
             <trans-unit id="nYg2UQS">
                 <source>description.guided_step_shop_product_related_products</source>
@@ -657,10 +657,6 @@
             <trans-unit id="emPIlPf">
                 <source>label.creation</source>
                 <target>Création</target>
-            </trans-unit>
-            <trans-unit id="AdZ6CDL">
-                <source>label.currency</source>
-                <target>Monnaie</target>
             </trans-unit>
             <trans-unit id="N05sbUe">
                 <source>label.danger</source>
@@ -1614,6 +1610,14 @@
                 <source>label.stock_alert_title</source>
                 <target>Être prévenu du retour de %name%</target>
             </trans-unit>
+            <trans-unit id="1NlXqOX">
+                <source>label.stock_alert_unsubscribe_button</source>
+                <target>Ne plus être prévenu</target>
+            </trans-unit>
+            <trans-unit id="dYYj3OM">
+                <source>label.stock_alert_unsubscribe_confirm</source>
+                <target>Se désinscrire de l'alerte</target>
+            </trans-unit>
             <trans-unit id="Gz0ZGub">
                 <source>label.stock_alert_unsubscribed</source>
                 <target>Désinscription effectuée</target>
@@ -1721,6 +1725,10 @@
             <trans-unit id="xqpMldX">
                 <source>text.stock_alert_subscribed</source>
                 <target>Vous serez prévenu par email dès le retour de cet article.</target>
+            </trans-unit>
+            <trans-unit id="vP4Tc7d">
+                <source>text.stock_alert_unsubscribe_confirm</source>
+                <target>Vous ne serez plus prévenu du retour de cet article. Confirmez-vous ?</target>
             </trans-unit>
             <trans-unit id="p_xOkDg">
                 <source>text.stock_alert_unsubscribed</source>

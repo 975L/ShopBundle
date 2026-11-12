@@ -53,10 +53,11 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         $referenceProducts = $this->productRepository->findBy(['id' => $basketProductIds]);
         $candidates = $this->getCandidateProducts($basketProductIds);
 
-        // Scores each candidate
+        // Scores each candidate, the affinities of the basket's products read once for the whole catalogue
+        $affinities = $this->affinityRepository->getScoresFor($basketProductIds);
         $scoredProducts = [];
         foreach ($candidates as $product) {
-            $score = $this->calculateRecommendationScore($product, $referenceProducts);
+            $score = $this->score($product, $referenceProducts, $affinities);
             if ($score > 0) {
                 $scoredProducts[] = [
                     'product' => $product,
@@ -96,10 +97,11 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         // Candidates from the same category
         $candidates = $this->productRepository->findByCategoriesExcluding($categoryIds, [$product->getId()]);
 
-        // Score the candidates
+        // Score the candidates, the product's affinities read once
+        $affinities = $this->affinityRepository->getScoresFor([(int) $product->getId()]);
         $scoredProducts = [];
         foreach ($candidates as $candidate) {
-            $score = $this->calculateRecommendationScore($candidate, [$product]);
+            $score = $this->score($candidate, [$product], $affinities);
 
             if ($score > 0) {
                 $scoredProducts[] = [
@@ -120,6 +122,15 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
 
     public function calculateRecommendationScore(Product $product, array $referenceProducts): float
     {
+        $referenceIds = array_map(static fn (Product $reference): int => (int) $reference->getId(), $referenceProducts);
+
+        return $this->score($product, $referenceProducts, $this->affinityRepository->getScoresFor(array_values($referenceIds)));
+    }
+
+    // The three criteria added up, the co-purchases read off $affinities rather than queried pair by pair
+    /** @param array<string, float> $affinities */
+    private function score(Product $product, array $referenceProducts, array $affinities): float
+    {
         $score = 0;
 
         // CRITERION 1: Same category (40 points max)
@@ -129,18 +140,18 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         $score += $this->scoreByPriceSimilarity($product, $referenceProducts);
 
         // CRITERION 3: Historical co-purchases (30 points max)
-        $score += $this->scoreByCoPurchase($product, $referenceProducts);
+        $score += $this->scoreByCoPurchase($product, $referenceProducts, $affinities);
 
         return round($score, 2);
     }
 
-    // The products the editor attached to this one, minus the ones the shop is not standing behind - a hidden product is not shown and a trashed one answers 410, and neither belongs in a block naming it
+    // The products the editor attached to this one, minus the ones the shop is not standing behind - a hidden product is not shown, a trashed one answers 410 and one not out yet is not sold, and none belongs in a block naming it
     private function getPickedProducts(Product $product, int $limit): array
     {
         $picked = [];
 
         foreach ($product->getRelatedProducts() as $related) {
-            if (!$related->isHidden() && !$related->isDeleted()) {
+            if (!$related->isHidden() && !$related->isDeleted() && $related->isReleased()) {
                 $picked[] = $related;
             }
         }
@@ -254,7 +265,8 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         return 0;
     }
 
-    private function scoreByCoPurchase(Product $product, array $referenceProducts): float
+    /** @param array<string, float> $affinities */
+    private function scoreByCoPurchase(Product $product, array $referenceProducts, array $affinities): float
     {
         if (empty($referenceProducts)) {
             return 0;
@@ -264,10 +276,7 @@ class ProductRecommendationService implements ProductRecommendationServiceInterf
         $maxPossibleScore = 0;
 
         foreach ($referenceProducts as $refProduct) {
-            $affinityScore = $this->affinityRepository->getAffinityScore(
-                $refProduct->getId(),
-                $product->getId()
-            );
+            $affinityScore = $affinities[ProductAffinityRepository::pairKey((int) $refProduct->getId(), (int) $product->getId())] ?? null;
 
             if (null !== $affinityScore) {
                 // Affinity score is between 0 and 100

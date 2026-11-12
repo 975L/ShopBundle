@@ -1,0 +1,20 @@
+{% extends '@c975LShop/layout.html.twig' %}
+{% trans_default_domain 'shop' %}
+
+{# Asked before anything is written: a link scanner opening the e-mail's links follows this page and clicks nothing #}
+{% set title = 'label.stock_alert_unsubscribe_confirm'|trans %}
+{% set robots = 'noindex, follow' %}
+
+{% block content %}
+    {# The page measure, the layout no longer wrapping a page's content (see @c975LShop/layout.html.twig) - this page composes no block, so the one wrapper holds everything #}
+    <div class="section-wrap">
+        <section class="text-center">
+            <p class="text lead">{{ 'text.stock_alert_unsubscribe_confirm'|trans }}</p>
+            {# Posted to its own url, the token in it naming the alert and the csrf token proving the click came from this page #}
+            <form method="post" data-turbo="false">
+                <input type="hidden" name="_token" value="{{ csrf_token('shop_stock_alert_unsubscribe') }}">
+                <button type="submit" class="btn btn-large btn-primary">{{ 'label.stock_alert_unsubscribe_button'|trans }}</button>
+            </form>
+        </section>
+    </div>
+{% endblock %}

@@ -23,6 +23,7 @@ use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Management\ProductExportProvider;
 use c975L\ShopBundle\Service\ProductSocialContentSource;
+use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
 use c975L\UiBundle\Repository\FavoriteRepository;
@@ -31,6 +32,7 @@ use c975L\UiBundle\Repository\ReviewRepository;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
@@ -171,6 +173,25 @@ class ProductCrudControllerTest extends TestCase
         $this->assertSame([4 => 2, 3 => 3], $positions);
         $this->assertSame(0, $products[0]->getPosition());
         $this->assertSame(1, $products[1]->getPosition());
+    }
+
+    // A DQL update fires no Doctrine event: the listings ordered by position are dropped by hand once a product moved, and left alone when none did
+    public function testAMoveDropsTheCachedListingsAndNoMoveLeavesThem(): void
+    {
+        $query = $this->createStub(Query::class);
+        $query->method('setParameter')->willReturnSelf();
+        $entityManager = $this->createStub(EntityManagerInterface::class);
+        $entityManager->method('createQuery')->willReturn($query);
+        $products = $this->catalogue(2);
+        $writeMoved = new \ReflectionMethod(ProductCrudController::class, 'writeMoved');
+
+        $moved = $this->createMock(ShopBlockCacheInvalidator::class);
+        $moved->expects($this->once())->method('invalidateProducts');
+        $writeMoved->invoke($this->createController(), $entityManager, $moved, $products, [1 => 1, 2 => 1]);
+
+        $still = $this->createMock(ShopBlockCacheInvalidator::class);
+        $still->expects($this->never())->method('invalidateProducts');
+        $writeMoved->invoke($this->createController(), $entityManager, $still, $products, [1 => 0, 2 => 1]);
     }
 
     // A tampered payload naming a product the catalogue doesn't hold reorders nothing

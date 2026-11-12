@@ -159,18 +159,19 @@ class ProductMerchantFeedTest extends TestCase
         $this->assertNull($this->feed([$product], testMode: true)->build());
     }
 
-    // Each offer goes with its own item, found by its sku or its slug, and one priced in no currency is not listed
+    // Each offer goes with its own item, found by its sku or its slug, every one priced in the currency the basket charges whatever its own column holds
     public function testOffersArePairedWithTheirItemsBySku(): void
     {
         $product = $this->product();
         $product->addItem($this->item(1, 'Livre imprimé', 500)->setSku('LOUP-PAPIER'));
         $product->addItem($this->item(2, 'Livre relié', 900));
-        $product->addItem($this->item(3, 'Livre ancien', 700)->setCurrency(''));
+        $product->addItem($this->item(3, 'Livre ancien', 700)->setCurrency('chf'));
 
         $items = $this->feed([$product])->items($product);
 
-        $this->assertSame(['shop-item-1', 'shop-item-2'], array_column($items, 'g:id'));
+        $this->assertSame(['shop-item-1', 'shop-item-2', 'shop-item-3'], array_column($items, 'g:id'));
         $this->assertSame('9.00 EUR', $items[1]['g:price']);
+        $this->assertSame('7.00 EUR', $items[2]['g:price']);
     }
 
     /** @param list<Product> $products */

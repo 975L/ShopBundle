@@ -16,6 +16,7 @@ use c975L\PaymentBundle\Entity\Basket;
 use c975L\PaymentBundle\Service\GiftCardService;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Repository\ProductItemDownloadRepository;
 use c975L\ShopBundle\Repository\ProductItemRepository;
 use c975L\ShopBundle\Service\ProductBasketItemProvider;
 use c975L\ShopBundle\Service\ProductItemServiceInterface;
@@ -38,6 +39,12 @@ class ProductBasketItemProviderTest extends TestCase
     /** @var list<string> */
     private array $logged = [];
 
+    /** @var list<array{int, int}> */
+    private array $released = [];
+
+    /** @var list<int> */
+    private array $expired = [];
+
     private bool $claimAnswers = true;
 
     private function createProvider(?ProductItem $found = null, bool $hasSellableParcel = true): ProductBasketItemProvider
@@ -59,6 +66,16 @@ class ProductBasketItemProviderTest extends TestCase
         $itemRepository->method('addOrdered')->willReturnCallback(function (ProductItem $item, int $quantity): void {
             $this->forced[] = $quantity;
         });
+        $itemRepository->method('releaseOrdered')->willReturnCallback(function (int $id, int $quantity): void {
+            $this->released[] = [$id, $quantity];
+        });
+
+        $downloadRepository = $this->createStub(ProductItemDownloadRepository::class);
+        $downloadRepository->method('expireByBasket')->willReturnCallback(function (int $basketId): int {
+            $this->expired[] = $basketId;
+
+            return 1;
+        });
 
         $logger = $this->createStub(LoggerInterface::class);
         $logger->method('critical')->willReturnCallback(function (string $message): void {
@@ -73,6 +90,7 @@ class ProductBasketItemProviderTest extends TestCase
             new LocalizedUrlGenerator($this->urlGenerator(), new SiteLocales(['fr'], 'fr'), new RequestStack()),
             $itemRepository,
             $logger,
+            $downloadRepository,
         );
     }
 
@@ -246,6 +264,51 @@ class ProductBasketItemProviderTest extends TestCase
         $this->createProvider($item)->onBasketPaid(new Basket(), [7 => ['quantity' => 2, 'item' => []]], []);
 
         $this->assertNotNull($item->getModification());
+    }
+
+    // A basket paid in test mode hands its files and its test cards over, but counts no stock against the real customers
+    public function testABasketPaidInTestModeCountsNoStock(): void
+    {
+        $this->createProvider($this->item(false))->onBasketPaid(new Basket()->setTestMode(true), [7 => ['quantity' => 2, 'item' => []]], []);
+
+        $this->assertSame([], $this->counted);
+        $this->assertSame([], $this->forced);
+    }
+
+    // A full refund gives the stock back line by line and ends the links the order was sent
+    public function testARefundGivesTheStockBackAndEndsTheLinks(): void
+    {
+        $this->createProvider()->onBasketRefunded(new Basket(), [7 => ['quantity' => 2], 9 => ['quantity' => 1]]);
+
+        $this->assertSame([[7, 2], [9, 1]], $this->released);
+        $this->assertCount(1, $this->expired);
+    }
+
+    // A test basket counted no stock, so its refund gives none back - its links still end
+    public function testARefundInTestModeGivesNoStockBack(): void
+    {
+        $this->createProvider()->onBasketRefunded(new Basket()->setTestMode(true), [7 => ['quantity' => 2]]);
+
+        $this->assertSame([], $this->released);
+        $this->assertCount(1, $this->expired);
+    }
+
+    // The sheet hides the items of a product not out yet, and a POST naming one is refused all the same
+    public function testAnItemOfAProductNotOutYetIsRefused(): void
+    {
+        $item = $this->item(false);
+        $item->getProduct()?->setAvailableAt(new \DateTime('+2 days'));
+
+        $this->assertSame('label.unavailable', $this->createProvider()->validateAddition($item, 1));
+    }
+
+    // Out today: on sale from the first hour of its day
+    public function testAnItemOfAProductOutTodayIsAdded(): void
+    {
+        $item = $this->item(false);
+        $item->getProduct()?->setAvailableAt(new \DateTime('today'));
+
+        $this->assertNull($this->createProvider()->validateAddition($item, 1));
     }
 
     private function pay(bool $claimAnswers): void

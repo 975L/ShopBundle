@@ -10,6 +10,10 @@
                 <source>label.age_range_reversed</source>
                 <target>L'âge le plus bas vient en premier : écrivez « 3-8 » et non « 8-3 »</target>
             </trans-unit>
+            <trans-unit id="_AT6Ggl">
+                <source>label.item_slug_taken</source>
+                <target>Un autre article de ce produit porte déjà ce titre : donnez-lui un titre différent</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

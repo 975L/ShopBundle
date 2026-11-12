@@ -1,6 +1,6 @@
 ---
 name: c975l-shop-checkout
-description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, WeighableBasketItemProviderInterface, ShippingBasketItemProviderInterface, shipsParcels, hasSellableParcel, CatalogueBasketItemProviderInterface, getCatalogueUrl, Basket:ContinueShoppingButton, getWeight, weight, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, Basket:Navbar, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, c975l_shop.download_dir, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, unsubscribe_url, c975l:shop:stock-alerts:send, isItemSoldOut, isItemAvailable, shop_stock_alert, ShopIntegrityHealthCheckProvider, ShopIntegrityHealthCheckAdviceProvider, shop-integrity, undelivered-downloads, oversold-items, free-items, ShopFilesHealthCheckProvider, files-shop, AbstractDeclaredFilesHealthCheckProvider, findWithFilename, findSellable, findDeliveredBasketIds, claimOrdered, addOrdered, countOversold, findOversoldTitles, ShopAlertProvider, items_oversold, LocalizedUrlGenerator, ShopFavoriteItemProvider, translated."
+description: "Use this skill when working on buying, paying for or delivering a shop item in a Symfony application built on the c975L ecosystem — plugging products into PaymentBundle's basket, the add-to-basket button and its stock rules, stock decremented on payment, digital files handed out through expiring one-time links, gift cards issued on payment, and the shop's test mode. Covers who owns the basket (PaymentBundle, not this bundle) and why a bought file is copied per purchase, and why that copy lives under private/. Triggers on: ProductBasketItemProvider, BasketItemProviderInterface, WeighableBasketItemProviderInterface, ShippingBasketItemProviderInterface, shipsParcels, hasSellableParcel, CatalogueBasketItemProviderInterface, getCatalogueUrl, Basket:ContinueShoppingButton, getWeight, weight, toBasketData, getContentFlags, onBasketPaid, onBasketValidated, CONTENT_FLAG_DIGITAL, CONTENT_FLAG_GIFT_CARD, giftCardValue, isGiftCard, giftCardText, giftCardScratch, GiftCardService, GiftCardDesign, shop_gift_cards, gift card, basket controller, basket#addItem, ProductItem:AddButton, Shop:NavbarBasket, Basket:Navbar, ProductItemDownload, ProductItemDownloadService, ProductItemDownloadMessage, ProductBasketDownloadProvider, BasketDownloadProviderInterface, getFileItems, liveByItem, recordDownloaded, shop_download, VichPrivateFileInterface, PrivateFileResponseFactory, c975l:shop:downloads:delete, c975l_shop.download_dir, shop-test-mode, payment-test-mode, Shop:TestMode, ShopMaintenanceTaskProvider, ProductItemStockAlert, ProductItemStockAlertService, ShopEmailTemplateProvider, back_in_stock, shop_stock_alert_new, shop_stock_alert_unsubscribe, unsubscribe_url, c975l:shop:stock-alerts:send, c975l:shop:releases:refresh, isItemSoldOut, isItemAvailable, shop_stock_alert, ShopIntegrityHealthCheckProvider, ShopIntegrityHealthCheckAdviceProvider, shop-integrity, undelivered-downloads, oversold-items, free-items, ShopFilesHealthCheckProvider, files-shop, AbstractDeclaredFilesHealthCheckProvider, findWithFilename, findSellable, findDeliveredBasketIds, claimOrdered, addOrdered, countOversold, findOversoldTitles, ShopAlertProvider, items_oversold, LocalizedUrlGenerator, ShopFavoriteItemProvider, translated."
 ---
 
 # c975L ShopBundle — buying, paying, delivering
@@ -16,7 +16,7 @@ description: "Use this skill when working on buying, paying for or delivering a 
 
 ## The one plug into PaymentBundle
 
-`ProductBasketItemProvider` implements `BasketItemProviderInterface`,
+`ProductBasketItemProvider` implements `BasketItemProviderInterface`, `RefundableBasketItemProviderInterface`,
 `WeighableBasketItemProviderInterface` and `ShippingBasketItemProviderInterface`, and declares the kind `product`.
 It is the **entire** contract between the shop and the checkout:
 
@@ -27,7 +27,8 @@ It is the **entire** contract between the shop and the checkout:
 | `validateCheckout($basket, $items)` | returns a message, or `null` when the whole basket can still be ordered |
 | `toBasketData($item, $quantity)` | flattens the item and its product into what the basket stores |
 | `getContentFlags($itemData)` | digital / service / physical, plus the gift card flag, which drives shipping |
-| `onBasketPaid($basket, $items)` | raises `orderedQuantity`, dispatches the download message, issues the gift cards |
+| `onBasketPaid($basket, $items)` | raises `orderedQuantity` (never for a basket in test mode), dispatches the download message, issues the gift cards |
+| `onBasketRefunded($basket, $items)` | gives the stock back (`releaseOrdered()`, never below 0, none for a test basket) and ends the order's download links (`expireByBasket()`) - the gift cards are PaymentBundle's to switch off |
 | `getWeight($itemData)` | what the line weighs in grams, the item's own weight times its quantity - `null` for what the shop never weighed |
 | `shipsParcels()` | whether a visible article is posted rather than downloaded or served, so a shop selling only files or services is not told to fill a delivery grid |
 
@@ -64,13 +65,13 @@ the items on the dashboard until the shop raises the cap.
 `modification` and `user` and copies the media and file names, so a basket keeps saying what was bought
 at the price it was bought, whatever happens to the catalog afterwards.
 It also writes the product's `age` on the line: PaymentBundle's checkout reads the highest one off every
-line (`Basket::getMinimumAge()`) and waits behind CoreBundle's go.cam verification for a product for adults,
+line (`Basket::getMinimumAge()`) and waits behind CoreBundle's age verification for a product for adults,
 so the basket itself never refuses one.
 
 ## Gift cards
 
 An item carrying a `giftCardValue` is a gift card, `ProductItem::isGiftCard()` saying so. The value is in
-cents, in the item's own currency, and is **what the card is worth**, not what it was sold for: a card sold at
+cents, in the currency the basket was charged in, and is **what the card is worth**, not what it was sold for: a card sold at
 a discount is still worth its face value.
 
 `getContentFlags()` adds `Basket::CONTENT_FLAG_GIFT_CARD` **on top of** the delivery flag rather than instead
@@ -129,8 +130,15 @@ answers true only when the item is capped and the cap is reached; `limitedQuanti
 sale, nothing is expected back, and nothing is offered. `isItemAvailable()` states the buyability rule the
 badge, the button and the alerts all read — **do not write it a fourth time.**
 
+The page's form follows UiBundle's `FormBotProtection` contract as `FormController` does: `isUntimed()` asked
+first (a POST with a session but no timed display is shown back filled with `text.form_resend`, never
+recorded), then `isSuspicious()` before `handleRequest()` (dropped unread), and `startTimer()` right before
+the render, never before `isSuspicious()` on the same request.
+
 `ProductItemStockAlert` holds the item, the address, the locale it was taken in (there is no order to read
-one from), an unsubscribe token and `notifiedAt`. Unique on `(product_item_id, email)`, so subscribing
+one from), an unsubscribe token and `notifiedAt`. The e-mail's link (`shop_stock_alert_unsubscribe`) opens a
+confirmation, `stock_alert/unsubscribe.html.twig`, and only its POST, csrf token checked, unsubscribes: a link
+scanner opening the link on arrival must drop nothing. Unique on `(product_item_id, email)`, so subscribing
 again calls `renew()` on the row that exists rather than creating a second.
 
 `c975l:shop:stock-alerts:send` walks the queue in bounded batches (`--limit`, 50 by default). A send the
@@ -164,7 +172,9 @@ A bought file is never served from where it was uploaded. `ProductItemFile` impl
 3. The handler emails the absolute `shop_download` URLs, generated here rather than in PaymentBundle's
    template: the route is this bundle's own, and both readers hand over a ready `url`.
 4. `ProductItemDownloadController` resolves the token through `resolveFilePath()` and hands the copy over
-   with UiBundle's `PrivateFileResponseFactory`.
+   with UiBundle's `PrivateFileResponseFactory` - only while the basket is settled (`BasketStatus::isSettled()`):
+   a refunded order's link renders `item_downloaded.html.twig`, and the handler copies nothing for a basket
+   refunded before its message was handled.
 5. `c975l:shop:downloads:delete` deletes the copies whose link is spent, and the rows kept past
    `RETENTION_DAYS` days to explain themselves.
 
@@ -206,6 +216,9 @@ basket, where the charge actually happens, so the two never warn twice over the 
 test mode from the word "test" in a Stripe key. While it is on, the shop is also kept out of search engines
 (`noindex, follow`, empty sitemap, no Merchant Center feed) — see `c975l-shop-seo`.
 
+A basket paid in PaymentBundle's test mode (`$basket->isTestMode()`) counts no stock and gives none back on
+refund; its files are still sent and its cards minted as test cards, so the whole delivery can be tried.
+
 ## Scheduled work
 
 `ShopMaintenanceTaskProvider` schedules this bundle's commands through the Symfony Scheduler, so a site
@@ -216,6 +229,7 @@ installing the shop gets them without a system crontab entry, and a site removin
 | `c975l:shop:downloads:delete` | nightly |
 | `c975l:shop:affinity:calculate` | monthly — a full pass over the orders |
 | `c975l:shop:stock-alerts:send` | hourly — in batches, so a restock does not hold the mailer |
+| `c975l:shop:releases:refresh` | right after midnight — drops the cached product blocks on a release day |
 
 **Do not ask a consuming app to add these to its own schedule.**
 
