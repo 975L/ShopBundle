@@ -226,7 +226,7 @@ class ProductStateService implements ProductStateServiceInterface
     {
         $creation = $product->getCreation();
 
-        return null !== $creation && $creation > new \DateTime('-' . self::NEW_DAYS . ' days');
+        return null !== $creation && $creation > new \DateTimeImmutable('-' . self::NEW_DAYS . ' days');
     }
 
     // The one currency the basket charges (see PaymentBundle's BasketService), the euro on a site that configured none - an item's own column is history, never shown

@@ -198,7 +198,7 @@ class ShopSitemapProviderTest extends TestCase
             ->setTitle('A product')
             ->setSlug($slug)
             ->setDescription('What it is')
-            ->setModification(new \DateTime('2026-08-30'))
+            ->setModification(new \DateTimeImmutable('2026-08-30'))
         ;
     }
 

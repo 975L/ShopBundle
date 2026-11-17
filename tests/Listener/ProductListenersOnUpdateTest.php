@@ -30,7 +30,7 @@ class ProductListenersOnUpdateTest extends TestCase
     {
         $editor = $this->createStub(UserInterface::class);
         $item = new ProductItem()->setTitle('item-1')->setSlug('item-1')->setUser($editor)->setPosition(5);
-        $item->setModification(new \DateTime('2026-01-12'));
+        $item->setModification(new \DateTimeImmutable('2026-01-12'));
 
         $this->itemListener($this->createStub(UserInterface::class))->preUpdate($item, $this->updateArgs($item, ['orderedQuantity' => [1, 2]]));
 
@@ -43,7 +43,7 @@ class ProductListenersOnUpdateTest extends TestCase
     {
         $editor = $this->createStub(UserInterface::class);
         $item = new ProductItem()->setTitle('Renamed')->setSlug('item-1')->setPosition(5);
-        $item->setModification(new \DateTime('2026-01-12'));
+        $item->setModification(new \DateTimeImmutable('2026-01-12'));
 
         $this->itemListener($editor)->preUpdate($item, $this->updateArgs($item, ['title' => ['item-1', 'Renamed']]));
 

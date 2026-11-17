@@ -147,8 +147,8 @@ class ProductItemDownloadService implements ProductItemDownloadServiceInterface
 
         // The row may be gone while the copy is still served: the download is recorded all the same
         if (null !== $basket) {
-            $basket->setDownloaded(new \DateTime());
-            $basket->setModification(new \DateTime());
+            $basket->setDownloaded(new \DateTimeImmutable());
+            $basket->setModification(new \DateTimeImmutable());
             $this->entityManager->persist($basket);
         }
 

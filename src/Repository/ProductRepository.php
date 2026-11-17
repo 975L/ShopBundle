@@ -285,7 +285,7 @@ class ProductRepository extends ServiceEntityRepository
         return [] !== $this->visible($this->createQueryBuilder('p'))
             ->select('p.id')
             ->andWhere('p.availableAt > :now')
-            ->setParameter('now', new \DateTime())
+            ->setParameter('now', new \DateTimeImmutable())
             ->setMaxResults(1)
             ->getQuery()
             ->getResult()
@@ -422,7 +422,7 @@ class ProductRepository extends ServiceEntityRepository
     {
         return $this->visible($qb, $alias)
             ->andWhere($alias . '.availableAt < :now OR ' . $alias . '.availableAt IS NULL')
-            ->setParameter('now', new \DateTime())
+            ->setParameter('now', new \DateTimeImmutable())
         ;
     }
 

@@ -72,14 +72,14 @@ class Product implements \Stringable, HasBlocksInterface
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $age = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $availableAt = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $availableAt = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $creation = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?\DateTimeImmutable $creation = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $modification = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?\DateTimeImmutable $modification = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $position = null;
@@ -237,7 +237,7 @@ class Product implements \Stringable, HasBlocksInterface
         return $this;
     }
 
-    public function getAvailableAt(): ?\DateTimeInterface
+    public function getAvailableAt(): ?\DateTimeImmutable
     {
         return $this->availableAt;
     }
@@ -250,31 +250,31 @@ class Product implements \Stringable, HasBlocksInterface
 
     public function setAvailableAt(?\DateTimeInterface $availableAt): static
     {
-        $this->availableAt = $availableAt;
+        $this->availableAt = null === $availableAt ? null : \DateTimeImmutable::createFromInterface($availableAt);
 
         return $this;
     }
 
-    public function getCreation(): ?\DateTimeInterface
+    public function getCreation(): ?\DateTimeImmutable
     {
         return $this->creation;
     }
 
     public function setCreation(\DateTimeInterface $creation): static
     {
-        $this->creation = $creation;
+        $this->creation = \DateTimeImmutable::createFromInterface($creation);
 
         return $this;
     }
 
-    public function getModification(): ?\DateTimeInterface
+    public function getModification(): ?\DateTimeImmutable
     {
         return $this->modification;
     }
 
     public function setModification(\DateTimeInterface $modification): static
     {
-        $this->modification = $modification;
+        $this->modification = \DateTimeImmutable::createFromInterface($modification);
 
         return $this;
     }

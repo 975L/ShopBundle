@@ -297,7 +297,7 @@ class ProductBasketItemProviderTest extends TestCase
     public function testAnItemOfAProductNotOutYetIsRefused(): void
     {
         $item = $this->item(false);
-        $item->getProduct()?->setAvailableAt(new \DateTime('+2 days'));
+        $item->getProduct()?->setAvailableAt(new \DateTimeImmutable('+2 days'));
 
         $this->assertSame('label.unavailable', $this->createProvider()->validateAddition($item, 1));
     }
@@ -306,7 +306,7 @@ class ProductBasketItemProviderTest extends TestCase
     public function testAnItemOfAProductOutTodayIsAdded(): void
     {
         $item = $this->item(false);
-        $item->getProduct()?->setAvailableAt(new \DateTime('today'));
+        $item->getProduct()?->setAvailableAt(new \DateTimeImmutable('today'));
 
         $this->assertNull($this->createProvider()->validateAddition($item, 1));
     }

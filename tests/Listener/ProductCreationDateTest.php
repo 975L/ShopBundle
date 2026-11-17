@@ -25,7 +25,7 @@ class ProductCreationDateTest extends TestCase
 {
     public function testAProductKeepsTheCreationDateItCarries(): void
     {
-        $product = new Product()->setCreation(new \DateTime('2026-01-12'));
+        $product = new Product()->setCreation(new \DateTimeImmutable('2026-01-12'));
 
         $this->productListener()->prePersist($product, $this->args($product));
 
@@ -43,7 +43,7 @@ class ProductCreationDateTest extends TestCase
 
     public function testAnItemKeepsTheCreationDateItCarries(): void
     {
-        $item = new ProductItem()->setCreation(new \DateTime('2026-01-12'));
+        $item = new ProductItem()->setCreation(new \DateTimeImmutable('2026-01-12'));
 
         $this->itemListener()->prePersist($item, $this->args($item));
 

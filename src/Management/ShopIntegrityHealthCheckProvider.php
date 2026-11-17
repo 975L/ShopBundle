@@ -96,10 +96,10 @@ class ShopIntegrityHealthCheckProvider implements HealthCheckExhaustiveInterface
     // The orders of the last few days holding at least one file, settled long enough ago for their delivery to have run - and still settled, a refunded order being owed no copy
     private function recentDigitalOrders(): array
     {
-        $before = new \DateTime('-' . self::GRACE_MINUTES . ' minutes');
+        $before = new \DateTimeImmutable('-' . self::GRACE_MINUTES . ' minutes');
 
         return array_values(array_filter(
-            $this->basketRepository->findOrdersSince(new \DateTime('-' . ProductItemDownloadService::VALIDITY_DAYS . ' days')),
+            $this->basketRepository->findOrdersSince(new \DateTimeImmutable('-' . ProductItemDownloadService::VALIDITY_DAYS . ' days')),
             fn (Basket $basket) => $basket->getStatus()->isSettled() && $basket->getModification() < $before && [] !== $this->itemDownloadService->getFileItems($basket->getItems()),
         ));
     }

@@ -98,7 +98,7 @@ class ProductStateServiceTest extends TestCase
     public function testAProductStillToComeSaysSoBeforeAnythingElse(): void
     {
         $product = $this->product([$this->item(1900, 0)]);
-        $product->setAvailableAt(new \DateTime('+10 days'));
+        $product->setAvailableAt(new \DateTimeImmutable('+10 days'));
         $state = $this->service->getState($product);
 
         $this->assertSame('label.coming_soon', $state['badge']);
@@ -108,7 +108,7 @@ class ProductStateServiceTest extends TestCase
     public function testACappedStockComesBeforeAPriceAndABirthday(): void
     {
         $product = $this->product([$this->item(0, 5)]);
-        $product->setCreation(new \DateTime());
+        $product->setCreation(new \DateTimeImmutable());
 
         $this->assertSame('label.limited_quantity', $this->service->getState($product)['badge']);
     }
@@ -116,7 +116,7 @@ class ProductStateServiceTest extends TestCase
     public function testAFreeProductComesBeforeARecentOne(): void
     {
         $product = $this->product([$this->item(0)]);
-        $product->setCreation(new \DateTime());
+        $product->setCreation(new \DateTimeImmutable());
 
         $this->assertSame('label.free', $this->service->getState($product)['badge']);
     }
@@ -124,7 +124,7 @@ class ProductStateServiceTest extends TestCase
     public function testAProductCreatedWithinThirtyDaysIsNew(): void
     {
         $product = $this->product([$this->item(1900)]);
-        $product->setCreation(new \DateTime('-3 days'));
+        $product->setCreation(new \DateTimeImmutable('-3 days'));
 
         $this->assertSame('label.new', $this->service->getState($product)['badge']);
     }
@@ -132,7 +132,7 @@ class ProductStateServiceTest extends TestCase
     public function testAnOlderProductWearsNoBadgeAtAll(): void
     {
         $product = $this->product([$this->item(1900)]);
-        $product->setCreation(new \DateTime('-90 days'));
+        $product->setCreation(new \DateTimeImmutable('-90 days'));
 
         $this->assertNull($this->service->getState($product)['badge']);
     }

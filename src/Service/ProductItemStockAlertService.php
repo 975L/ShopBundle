@@ -111,7 +111,7 @@ class ProductItemStockAlertService implements ProductItemStockAlertServiceInterf
         return null !== $product
             && !$product->isHidden()
             && !$product->isDeleted()
-            && (null === $availableAt || $availableAt <= new \DateTime());
+            && (null === $availableAt || $availableAt <= new \DateTimeImmutable());
     }
 
     // Composes the alert from the EmailTemplate of that name, in the language the subscription was taken in - there is no order here to read a locale from, which is why the row carries its own

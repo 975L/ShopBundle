@@ -446,9 +446,9 @@ class ProductCrudControllerTest extends TestCase
         $shown = new \ReflectionMethod(ProductCrudController::class, 'socialStatusRowShown');
 
         $this->assertTrue($shown->invoke($controller, new Product()->setHidden(false)));
-        $this->assertTrue($shown->invoke($controller, new Product()->setHidden(false)->setAvailableAt(new \DateTime('-1 day'))));
+        $this->assertTrue($shown->invoke($controller, new Product()->setHidden(false)->setAvailableAt(new \DateTimeImmutable('-1 day'))));
         $this->assertFalse($shown->invoke($controller, new Product()->setHidden(true)));
-        $this->assertFalse($shown->invoke($controller, new Product()->setHidden(false)->setAvailableAt(new \DateTime('+1 day'))));
+        $this->assertFalse($shown->invoke($controller, new Product()->setHidden(false)->setAvailableAt(new \DateTimeImmutable('+1 day'))));
     }
 
     // The social column is on the catalogue only: no post holds a trashed product nor a template

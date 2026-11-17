@@ -119,7 +119,7 @@ class CalculateProductAffinityCommand extends Command
     // Save or update ProductAffinity entities, answering how many were written
     private function saveAffinities(array $productPairs, array $productTotalOrders): int
     {
-        $now = new \DateTime();
+        $now = new \DateTimeImmutable();
         $processed = 0;
 
         foreach ($productPairs as $pairData) {
@@ -170,7 +170,7 @@ class CalculateProductAffinityCommand extends Command
             ->setParameter('settled', BasketStatus::SETTLED);
 
         if (null !== $days) {
-            $since = new \DateTime(sprintf('-%d days', $days));
+            $since = new \DateTimeImmutable(sprintf('-%d days', $days));
             $qb->andWhere('b.creation >= :since')
                 ->setParameter('since', $since);
         }

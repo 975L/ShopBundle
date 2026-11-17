@@ -46,7 +46,7 @@ class ShopShortcutController extends AbstractController
         if (null !== $config && $this->isCsrfTokenValid(self::TOGGLE_ROUTE_TEST_MODE, $request->request->get('_token'))) {
             $enabled = !$this->configService->getBool($config->getValue());
             $config->setValue($enabled);
-            $config->setModification(new \DateTime());
+            $config->setModification(new \DateTimeImmutable());
 
             $this->manager->flush();
             $this->configService->invalidateCache();

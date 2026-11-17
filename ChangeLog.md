@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.25.0
+
+[BC-Break] Product, product item and affinity dates stored as immutable dates
+
+- [BC-Break] Every date column is `datetime_immutable` or `date_immutable`, its getter returning `\DateTimeImmutable` (17/11/2026)
+- Date setters still accept any `\DateTimeInterface`, stored immutable (17/11/2026)
+- Date query parameters and date form fields immutable too (17/11/2026)
+- Requires `c975l/core-bundle` ^1.91 and `c975l/payment-bundle` ^6.27, their basket, payment and config dates being immutable (17/11/2026)
+
 ## v2.24.1
 
 CI replay runs the other PHP versions in parallel

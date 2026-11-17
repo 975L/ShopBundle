@@ -172,7 +172,7 @@ class ProductSnippetBuilderTest extends TestCase
 
     public function testAProductNotReleasedYetIsOnPreOrder(): void
     {
-        $product = $this->product()->setAvailableAt(new \DateTime('+1 month'));
+        $product = $this->product()->setAvailableAt(new \DateTimeImmutable('+1 month'));
 
         $this->assertSame('https://schema.org/PreOrder', $this->builder->buildProduct($product)['offers'][0]['availability']);
     }

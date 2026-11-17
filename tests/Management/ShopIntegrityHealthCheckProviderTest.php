@@ -72,7 +72,7 @@ class ShopIntegrityHealthCheckProviderTest extends TestCase
     // The copies are made by a message handler: an order settled moments before the run is being delivered, not left undelivered
     public function testAnOrderPaidMomentsAgoIsLeftAlone(): void
     {
-        $order = $this->order('2026-000044')->setModification(new \DateTime());
+        $order = $this->order('2026-000044')->setModification(new \DateTimeImmutable());
 
         $row = $this->row($this->provider(['orders' => [$order], 'fileItems' => [12 => ['title' => 'A story', 'file' => 'story.pdf', 'size' => 10]]])->runChecks(), ShopIntegrityHealthCheckProvider::ROW_UNDELIVERED_DOWNLOADS);
 
@@ -219,7 +219,7 @@ class ShopIntegrityHealthCheckProviderTest extends TestCase
             ->setStatus(BasketStatus::Paid)
             ->setEmail('buyer@example.com')
             ->setItems([])
-            ->setModification(new \DateTime('-1 day'))
+            ->setModification(new \DateTimeImmutable('-1 day'))
         ;
 
         new \ReflectionProperty(Basket::class, 'id')->setValue($basket, 42);

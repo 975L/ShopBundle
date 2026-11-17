@@ -2,6 +2,13 @@
 
 This document describes breaking changes and how to upgrade between major versions.
 
+### v2.25
+
+**Entity dates are immutable** (same SQL columns, no migration): their getters return `\DateTimeImmutable`.
+Code calling `modify()`, `setTime()`, `add()`... on them must use the returned date
+(`$date = $date->modify('+1 day')`), the call no longer changing the entity's own. The setters still accept a
+`\DateTime`; a form field mapped to one of these dates needs `'input' => 'datetime_immutable'`. Requires `c975l/core-bundle` ^1.91 and `c975l/payment-bundle` ^6.27, whose basket, payment and config dates are immutable too.
+
 ### v2.24
 
 `ProductBasketItemProvider` takes `ProductItemDownloadRepository`, `ProductItemDownloadController` takes PaymentBundle's `BasketRepository`, `ProductItemRepository` takes `ShopBlockCacheInvalidator`, and the catalog listeners no longer take `EntityManagerInterface` nor `SluggerInterface`, `UserTrait::setUser()` becoming the private `stampUser()` and `ProductItemFileListener` merged into `ProductItemMediaListener`: a class extending one of them passes the new arguments. `ShopCacheInvalidationListener` takes `TagAwareCacheInterface` in place of `ShopBlockCacheInvalidator`. `ProductStateServiceInterface` gains `getCurrency()`. The stock alert unsubscribe route answers GET with a confirmation and unsubscribes on its POST: an overridden `stock_alert/unsubscribe.html.twig` keeps the form and its `_token`. Every price is shown in `shop-currency`, `ProductItem.currency` being kept as history only and no longer offered in the item form. An item keeps its slug once given: a renamed item keeps its anchor. Requires `c975l/core-bundle` ^1.90 and `c975l/payment-bundle` ^6.26.

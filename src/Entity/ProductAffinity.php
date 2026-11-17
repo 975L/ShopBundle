@@ -41,8 +41,8 @@ class ProductAffinity
     #[ORM\Column(type: Types::FLOAT, options: ['default' => '0'])]
     private float $affinityScore = 0.0;
 
-    #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface $lastCalculated = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?\DateTimeImmutable $lastCalculated = null;
 
     public function getId(): ?int
     {
@@ -104,14 +104,14 @@ class ProductAffinity
         return $this;
     }
 
-    public function getLastCalculated(): ?\DateTimeInterface
+    public function getLastCalculated(): ?\DateTimeImmutable
     {
         return $this->lastCalculated;
     }
 
     public function setLastCalculated(\DateTimeInterface $lastCalculated): self
     {
-        $this->lastCalculated = $lastCalculated;
+        $this->lastCalculated = \DateTimeImmutable::createFromInterface($lastCalculated);
 
         return $this;
     }

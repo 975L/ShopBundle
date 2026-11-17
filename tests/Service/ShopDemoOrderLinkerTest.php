@@ -166,7 +166,7 @@ class ShopDemoOrderLinkerTest extends TestCase
         $this->assertSame(0, $order->getContentFlags() & Basket::CONTENT_FLAG_PHYSICAL);
 
         // Within the twelve months the check reads, whenever the demo is loaded
-        $this->assertGreaterThan(new \DateTime('-12 months'), $order->getCreation());
+        $this->assertGreaterThan(new \DateTimeImmutable('-12 months'), $order->getCreation());
     }
 
     // A shop that seeded no catalogue - no placeholder picture, no sample file - has no order to write either

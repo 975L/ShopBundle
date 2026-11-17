@@ -629,7 +629,7 @@ class ProductCrudController extends AbstractCrudController
     {
         if ($entityInstance instanceof Product) {
             // Dated by the editor's save, the items and pictures edited on this screen being rows of their own whose changes leave the product's change set empty - what the sitemap's lastmod reads
-            $entityInstance->setModification(new \DateTime());
+            $entityInstance->setModification(new \DateTimeImmutable());
 
             $originalSlug = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance)['slug'] ?? null;
             if (null !== $originalSlug && $originalSlug !== $entityInstance->getSlug()) {

@@ -38,10 +38,10 @@ class ProductListener
         $this->placeLast($entity);
 
         if (null === $entity->getCreation()) {
-            $entity->setCreation(new \DateTime());
+            $entity->setCreation(new \DateTimeImmutable());
         }
         if (null === $entity->getModification()) {
-            $entity->setModification(new \DateTime());
+            $entity->setModification(new \DateTimeImmutable());
         }
 
         $this->stampUser($entity, false);
@@ -51,7 +51,7 @@ class ProductListener
     public function preUpdate(Product $entity, PreUpdateEventArgs $event): void
     {
         $this->placeLast($entity);
-        $entity->setModification(new \DateTime());
+        $entity->setModification(new \DateTimeImmutable());
         $this->stampUser($entity, true);
     }
 

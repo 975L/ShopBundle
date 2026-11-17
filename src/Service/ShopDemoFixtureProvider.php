@@ -80,7 +80,7 @@ class ShopDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
     private function product(array $spec, array $categories, array $images, ?string $document, int $index, int $position): Product
     {
         // Read off the catalog rather than the clock, so a reload puts the very same creation dates back
-        $creation = new \DateTime($spec['creation']);
+        $creation = new \DateTimeImmutable($spec['creation']);
 
         $product = new Product();
         $product->setTitle($this->trans($spec['title']));

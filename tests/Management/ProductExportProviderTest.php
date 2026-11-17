@@ -176,8 +176,8 @@ class ProductExportProviderTest extends TestCase
             ->setDescription('Une affiche')
             ->setPosition(5)
             ->setHidden(false)
-            ->setCreation(new \DateTime('2026-01-15 10:00:00', new \DateTimeZone('UTC')))
-            ->setModification(new \DateTime('2026-01-15 10:00:00', new \DateTimeZone('UTC')));
+            ->setCreation(new \DateTimeImmutable('2026-01-15 10:00:00', new \DateTimeZone('UTC')))
+            ->setModification(new \DateTimeImmutable('2026-01-15 10:00:00', new \DateTimeZone('UTC')));
     }
 
     // @param array<string, string> $files

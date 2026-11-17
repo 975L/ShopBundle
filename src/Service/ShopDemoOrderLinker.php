@@ -135,7 +135,7 @@ class ShopDemoOrderLinker implements DemoFixtureLinkerInterface
             return null;
         }
 
-        $ordered = new \DateTime($orderedAt);
+        $ordered = new \DateTimeImmutable($orderedAt);
         $payment = new Payment()
             ->setFinished(true)
             ->setAmount($total + $shipping)

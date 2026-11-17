@@ -245,7 +245,7 @@ class ProductBasketItemProvider implements BasketItemProviderInterface, Catalogu
             return;
         }
 
-        $item->setModification(new \DateTime());
+        $item->setModification(new \DateTimeImmutable());
 
         if ($this->productItemRepository->claimOrdered($item, $quantity)) {
             return;

@@ -55,8 +55,8 @@ class ProductRecommendationServiceTest extends TestCase
     // A product not out yet is not sold, and is not recommended either
     public function testAPickedProductNotOutYetIsLeftOut(): void
     {
-        $ahead = $this->product('ahead')->setAvailableAt(new \DateTime('+3 days'));
-        $out = $this->product('out')->setAvailableAt(new \DateTime('today'));
+        $ahead = $this->product('ahead')->setAvailableAt(new \DateTimeImmutable('+3 days'));
+        $out = $this->product('out')->setAvailableAt(new \DateTimeImmutable('today'));
         $product = $this->product('main')->addRelatedProduct($ahead)->addRelatedProduct($out);
 
         $this->assertSame([$out], $this->service()->getSimilarProducts($product));

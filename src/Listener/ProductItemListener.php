@@ -53,10 +53,10 @@ class ProductItemListener
         $this->placeAndName($entity);
 
         if (null === $entity->getCreation()) {
-            $entity->setCreation(new \DateTime());
+            $entity->setCreation(new \DateTimeImmutable());
         }
         if (null === $entity->getModification()) {
-            $entity->setModification(new \DateTime());
+            $entity->setModification(new \DateTimeImmutable());
         }
 
         $this->stampUser($entity, false);
@@ -70,7 +70,7 @@ class ProductItemListener
         }
 
         $this->placeAndName($entity);
-        $entity->setModification(new \DateTime());
+        $entity->setModification(new \DateTimeImmutable());
         $this->stampUser($entity, true);
     }
 

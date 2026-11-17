@@ -83,7 +83,7 @@ class ProductSocialContentSource implements BrowsableSocialContentSourceInterfac
         $product = $this->productRepository->find((int) $sourceId);
         $availableAt = $product?->getAvailableAt();
 
-        return $product instanceof Product && !$product->isHidden() && !$product->isDeleted() && (null === $availableAt || $availableAt <= new \DateTime())
+        return $product instanceof Product && !$product->isHidden() && !$product->isDeleted() && (null === $availableAt || $availableAt <= new \DateTimeImmutable())
             ? $this->toContent($product)
             : null;
     }

@@ -89,7 +89,7 @@ class ProductSocialContentSourceTest extends TestCase
 
     public function testAProductNotAvailableYetIsNotReadAgain(): void
     {
-        $this->assertNull($this->createSource($this->createProduct()->setAvailableAt(new \DateTime('+1 week')))->getContent('5'));
+        $this->assertNull($this->createSource($this->createProduct()->setAvailableAt(new \DateTimeImmutable('+1 week')))->getContent('5'));
     }
 
     // What a post's product is chosen among: the ones still free, as contents and no more than the limit - the shop having no groups, a scope given changes nothing

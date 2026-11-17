@@ -100,7 +100,7 @@ class ProductImportProvider implements ImportProviderInterface
 
         // Written before the flush: ProductListener stamps a creation date on prePersist only when the row carries none, and what the "new" badge and the "newest first" listing are counted from is the archive's
         if (isset($item['creation'])) {
-            $product->setCreation(new \DateTime($item['creation']));
+            $product->setCreation(new \DateTimeImmutable($item['creation']));
         }
     }
 
@@ -114,7 +114,7 @@ class ProductImportProvider implements ImportProviderInterface
             ->setLanguage($item['language'] ?? null)
             ->setAge($item['age'] ?? null)
             ->setPosition($item['position'] ?? null)
-            ->setAvailableAt(isset($item['availableAt']) ? new \DateTime($item['availableAt']) : null);
+            ->setAvailableAt(isset($item['availableAt']) ? new \DateTimeImmutable($item['availableAt']) : null);
 
         $this->fillProductGiftCard($product, $item);
         $this->fillProductPublication($product, $item);
@@ -227,7 +227,7 @@ class ProductImportProvider implements ImportProviderInterface
             $this->em->persist($item);
 
             if (isset($itemData['creation'])) {
-                $item->setCreation(new \DateTime($itemData['creation']));
+                $item->setCreation(new \DateTimeImmutable($itemData['creation']));
             }
         }
     }

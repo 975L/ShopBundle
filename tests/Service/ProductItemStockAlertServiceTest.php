@@ -193,7 +193,7 @@ class ProductItemStockAlertServiceTest extends TestCase
     public function testAProductNotYetOnSaleIsNotWrittenAbout(): void
     {
         $item = $this->item(5, 2);
-        $item->getProduct()?->setAvailableAt(new \DateTime('+1 month'));
+        $item->getProduct()?->setAvailableAt(new \DateTimeImmutable('+1 month'));
         $alert = $this->alert($item);
 
         $service = $this->createService($this->repositoryReturning([$alert]));

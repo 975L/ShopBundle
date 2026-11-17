@@ -72,7 +72,7 @@ class ProductItemStockAlertRepository extends ServiceEntityRepository
             ->andWhere('p.availableAt IS NULL OR p.availableAt <= :now')
             // Back in stock: no cap at all, or a cap the orders have not reached. An item capped at 0 was withdrawn and never satisfies this, which is exactly what keeps it out of the window
             ->andWhere('i.limitedQuantity IS NULL OR i.limitedQuantity > COALESCE(i.orderedQuantity, 0)')
-            ->setParameter('now', new \DateTime())
+            ->setParameter('now', new \DateTimeImmutable())
             ->orderBy('a.createdAt', \SortDirection::Ascending)
             ->setMaxResults($limit)
             ->getQuery()
