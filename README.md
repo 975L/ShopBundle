@@ -978,6 +978,17 @@ range is read there rather than recopied here. The step of 10 it states leaves r
 belongs rather than appending it at the end, which is what 8015, 8022, 8025 and 8065 are. Each step carries a `narration` of its
 own, and each parcours one for its title, so the back-office films say a text written to be heard rather than read.
 
+## MCP tools
+
+The catalog brings its tools to the site's MCP endpoint, `/api/mcp`, which c975l/core-bundle serves and opens (see its README, "Opening the site to AI agents"): `Mcp\ShopMcpProvider`, under the `shop` key of the agent tokens, for an account holding `site-role-admin` as on the back office.
+
+| Tool | Does |
+| --- | --- |
+| `shop_list` | The products whose title holds the `search` words, every product without them, hidden ones included, trash and templates left aside, in the shop's order |
+| `shop_get` | A `product`: title, description, brand, categories, release day, hidden or not, and its items with their price (in cents of `shop-currency`) and stock, read only |
+| `shop_create` | A hidden product added with its `title` and `description`, without any item, its slug made unique, checked by the same constraints as the back office's form; pricing and putting it online stay a human's |
+| `shop_edit` | Only the `title`, `description` or `slug` given of a `product` changed, one at least, saved as the back office saves it: the same constraints (a blank title or description refused), the edit dated, and a new slug redirecting the old url (`Service\ProductUpdater`, shared with `ProductCrudController`) |
+
 ---
 
 ## AI agent skills

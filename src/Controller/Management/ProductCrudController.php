@@ -29,6 +29,7 @@ use c975L\ShopBundle\Management\ProductImportProvider;
 use c975L\ShopBundle\Management\ShopBlockOwnerResolver;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductSocialContentSource;
+use c975L\ShopBundle\Service\ProductUpdater;
 use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
@@ -99,9 +100,6 @@ class ProductCrudController extends AbstractCrudController
     public const string RESTORE_CSRF_TOKEN = 'shop_product_restore';
     public const string DELETE_PERMANENTLY_CSRF_TOKEN = 'shop_product_delete_permanently';
 
-    // Where a product's public sheet is served, the prefix a redirect and a "gone" row are written against
-    private const string PRODUCT_PATH = '/shop/products/';
-
     public function __construct(
         private readonly AdminContextProviderInterface $adminContextProvider,
         private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
@@ -113,6 +111,7 @@ class ProductCrudController extends AbstractCrudController
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
         private readonly FavoriteRepository $favoriteRepository,
         private readonly ProductExportProvider $productExportProvider,
+        private readonly ProductUpdater $productUpdater,
         private readonly RatingRepository $ratingRepository,
         private readonly RedirectRepository $redirectRepository,
         private readonly RequestStack $requestStack,
@@ -623,39 +622,15 @@ class ProductCrudController extends AbstractCrudController
         $entityManager->flush();
     }
 
-    // A renamed product leaves its old url behind, which visitors have bookmarked and search engines have indexed - a 301 sends both to the new one rather than to a 404
+    // A renamed product leaves its old url behind, which visitors have bookmarked and search engines have indexed - a 301 sends both to the new one rather than to a 404 (see ProductUpdater, shared with the agents' edits)
     #[\Override]
     public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
         if ($entityInstance instanceof Product) {
-            // Dated by the editor's save, the items and pictures edited on this screen being rows of their own whose changes leave the product's change set empty - what the sitemap's lastmod reads
-            $entityInstance->setModification(new \DateTimeImmutable());
-
-            $originalSlug = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance)['slug'] ?? null;
-            if (null !== $originalSlug && $originalSlug !== $entityInstance->getSlug()) {
-                $this->redirectSlugChange($entityManager, (string) $originalSlug, (string) $entityInstance->getSlug());
-            }
+            $this->productUpdater->update($entityInstance);
         }
 
         parent::updateEntity($entityManager, $entityInstance);
-    }
-
-    // Redirects the old url to the new one, reusing the row the old slug already had
-    private function redirectSlugChange(EntityManagerInterface $entityManager, string $oldSlug, string $newSlug): void
-    {
-        $fromPath = self::PRODUCT_PATH . $oldSlug;
-        $toUrl = self::PRODUCT_PATH . $newSlug;
-
-        // Removes any redirect starting from the new slug, otherwise renaming a product back to a name it already had builds a loop
-        $reverseRedirect = $this->redirectRepository->findOneByFromPath($toUrl);
-        if (null !== $reverseRedirect) {
-            $entityManager->remove($reverseRedirect);
-        }
-
-        $redirect = $this->redirectRepository->findOneByFromPath($fromPath)
-            ?? new Redirect()->setFromPath($fromPath);
-
-        $entityManager->persist($redirect->setToUrl($toUrl)->setPermanent(true));
     }
 
     // Takes a product back out of the recycle bin, untouched - it comes back hidden, to be read once before it is shown again
@@ -724,7 +699,7 @@ class ProductCrudController extends AbstractCrudController
     // The 410 the recycle bin served only lasts as long as the product can be restored, and the url would fall back to a plain 404 once the row is gone - a "gone" Redirect keeps answering 410 for good, which a search engine acts on far faster. Redirects pointing at that url are turned into "gone" rows too rather than left dangling, and a path an admin already covered deliberately is left alone, a target saying more than a dead end
     private function writeGoneRedirect(EntityManagerInterface $entityManager, Product $product): void
     {
-        $fromPath = self::PRODUCT_PATH . $product->getSlug();
+        $fromPath = ProductUpdater::PRODUCT_PATH . $product->getSlug();
 
         foreach ($this->redirectRepository->findByToUrl($fromPath) as $redirect) {
             $redirect->setGone(true)->setToUrl(null);

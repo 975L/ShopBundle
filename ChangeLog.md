@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.26.0
+
+Catalog tools on the site's MCP endpoint
+
+- `ShopMcpProvider`: an agent lists and reads the products with their items, adds a hidden one and writes its title, description and slug, with the rights of its token's account (21/11/2026)
+- `ShopMcpProvider` checks a product with the back office's constraints and saves an edit through `ProductUpdater` (21/11/2026)
+- `ProductUpdater` added: dates a product's edit and redirects its old url on a slug change, for the back office and the agents alike (21/11/2026)
+- [BC-Break] `ProductCrudController` takes `ProductUpdater`, its private `redirectSlugChange()` moved there (21/11/2026)
+- Requires `c975l/core-bundle` ^1.96, which serves the MCP endpoint (21/11/2026)
+- `php-http/discovery` plugin declared disabled in `allow-plugins`, so `composer qa` no longer stops on its prompt (21/11/2026)
+
 ## v2.25.0
 
 [BC-Break] Product, product item and affinity dates stored as immutable dates

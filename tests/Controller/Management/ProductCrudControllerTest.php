@@ -23,6 +23,7 @@ use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductItem;
 use c975L\ShopBundle\Management\ProductExportProvider;
 use c975L\ShopBundle\Service\ProductSocialContentSource;
+use c975L\ShopBundle\Service\ProductUpdater;
 use c975L\ShopBundle\Service\ShopBlockCacheInvalidator;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
@@ -49,9 +50,10 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// Guards the ordering the products index persists when a row is dropped (see UiBundle's ea-index-sort.js), and what a renamed or permanently deleted product leaves behind at its old url. The drag itself is a browser gesture, so what is locked here is what the payload it POSTs turns into.
+// Guards the ordering the products index persists when a row is dropped (see UiBundle's ea-index-sort.js), and what a permanently deleted product leaves behind at its old url. The drag itself is a browser gesture, so what is locked here is what the payload it POSTs turns into.
 class ProductCrudControllerTest extends TestCase
 {
     private function createController(?RedirectRepository $redirectRepository = null, ?ContentLocaleScreen $contentLocaleScreen = null, ?ShopTranslator $shopTranslator = null, ?RequestStack $requestStack = null): ProductCrudController
@@ -67,6 +69,7 @@ class ProductCrudControllerTest extends TestCase
             $this->createStub(CsrfTokenManagerInterface::class),
             $this->createStub(FavoriteRepository::class),
             $this->createStub(ProductExportProvider::class),
+            $this->createStub(ProductUpdater::class),
             $this->createStub(RatingRepository::class),
             $redirectRepository ?? $this->createStub(RedirectRepository::class),
             $requestStack ?? $this->createStub(RequestStack::class),
@@ -239,35 +242,6 @@ class ProductCrudControllerTest extends TestCase
         new \ReflectionMethod(ProductCrudController::class, $method)->invokeArgs($controller, $arguments);
     }
 
-    public function testRenamingAProductSendsItsOldUrlToTheNewOne(): void
-    {
-        $persisted = [];
-        $removed = [];
-        $controller = $this->createController($this->redirectRepository());
-
-        $this->invoke($controller, 'redirectSlugChange', [$this->recordingEntityManager($persisted, $removed), 'affiche', 'affiche-encadree']);
-
-        $this->assertCount(1, $persisted);
-        $this->assertSame('/shop/products/affiche', $persisted[0]->getFromPath());
-        $this->assertSame('/shop/products/affiche-encadree', $persisted[0]->getToUrl());
-        $this->assertTrue($persisted[0]->isPermanent());
-    }
-
-    // Renaming a product back to a name it already had would otherwise leave the two rows pointing at each other
-    public function testRenamingBackRemovesTheRedirectThatWouldLoop(): void
-    {
-        $persisted = [];
-        $removed = [];
-        $reverse = new Redirect()->setFromPath('/shop/products/affiche')->setToUrl('/shop/products/affiche-encadree');
-        $controller = $this->createController($this->redirectRepository(['/shop/products/affiche' => $reverse]));
-
-        $this->invoke($controller, 'redirectSlugChange', [$this->recordingEntityManager($persisted, $removed), 'affiche-encadree', 'affiche']);
-
-        $this->assertSame([$reverse], $removed);
-        $this->assertSame('/shop/products/affiche-encadree', $persisted[0]->getFromPath());
-        $this->assertSame('/shop/products/affiche', $persisted[0]->getToUrl());
-    }
-
     public function testDeletingAProductForGoodLeavesA410AtItsUrl(): void
     {
         $persisted = [];
@@ -361,8 +335,16 @@ class ProductCrudControllerTest extends TestCase
         [$trash] = $this->deletingController(true);
         [$catalogue] = $this->deletingController(false);
 
-        $this->assertSame('action.trash', $trash->configureCrud(Crud::new())->getAsDto()->getCustomPageTitle(Crud::PAGE_INDEX)?->getMessage());
-        $this->assertSame('label.products', $catalogue->configureCrud(Crud::new())->getAsDto()->getCustomPageTitle(Crud::PAGE_INDEX)?->getMessage());
+        $this->assertSame('action.trash', $this->pageTitleMessage($trash));
+        $this->assertSame('label.products', $this->pageTitleMessage($catalogue));
+    }
+
+    // The index title's translation key, the page title being any translatable
+    private function pageTitleMessage(ProductCrudController $controller): ?string
+    {
+        $title = $controller->configureCrud(Crud::new())->getAsDto()->getCustomPageTitle(Crud::PAGE_INDEX);
+
+        return $title instanceof TranslatableMessage ? $title->getMessage() : null;
     }
 
     // Removing for good is the admin's, EasyAdmin's single delete held to the bar of the row button

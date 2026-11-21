@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-11-21",
+        "description": [
+            {
+                "en": "An AI agent holding an agent token of an account managing the shop can list and read the products with their prices and stock, add a hidden product and write its title and description; prices, stock and putting it online stay yours, from the back office.",
+                "fr": "Un agent IA muni d'un jeton d'agent d'un compte qui gère la boutique peut lister et lire les produits avec leurs prix et leur stock, ajouter un produit masqué et rédiger son titre et sa description ; les prix, le stock et la mise en ligne restent les vôtres, depuis le back-office.",
+                "es": "Un agente de IA con un token de agente de una cuenta que gestiona la tienda puede listar y leer los productos con sus precios y su stock, añadir un producto oculto y redactar su título y su descripción; los precios, el stock y la puesta en línea siguen siendo suyos, desde el back-office."
+            }
+        ]
+    },
+    {
         "date": "2026-11-12",
         "description": [
             {

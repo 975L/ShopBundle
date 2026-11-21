@@ -21,7 +21,7 @@
     ],
     "require": {
         "php": ">=8.4",
-        "c975l/core-bundle": "^1.91",
+        "c975l/core-bundle": "^1.96",
         "c975l/payment-bundle": "^6.27",
         "doctrine/orm": "^3.7",
         "easycorp/easyadmin-bundle": "^5.10",
@@ -57,7 +57,10 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": false
+        }
     },
     "scripts": {
         "audit-deps": "composer audit --abandoned=report",
