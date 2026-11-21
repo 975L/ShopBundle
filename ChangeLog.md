@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.26.1
+
+`php-http/discovery` plugin allowed in `allow-plugins`
+
+- `php-http/discovery` plugin allowed in `allow-plugins`, as in the other bundles (21/11/2026)
+
 ## v2.26.0
 
 Catalog tools on the site's MCP endpoint
