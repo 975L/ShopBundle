@@ -12,8 +12,12 @@ namespace c975L\ShopBundle\Tests\Mcp;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ShopBundle\Entity\Product;
+use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Mcp\ShopCategoryTools;
+use c975L\ShopBundle\Mcp\ShopMcpAccess;
 use c975L\ShopBundle\Mcp\ShopMcpProvider;
+use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductStateServiceInterface;
 use c975L\ShopBundle\Service\ProductUpdater;
@@ -29,14 +33,24 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 // What an agent may read and write of the catalog, with the back office's rights and constraints
 class ShopMcpProviderTest extends TestCase
 {
-    // The tools named under the "shop" key, the writing ones flagged
+    // The tools named under the "shop" key, the categories' joined, the writing ones flagged
     public function testTools(): void
     {
         $tools = iterator_to_array($this->provider()->getMcpTools(), false);
 
         $this->assertSame('shop', $this->provider()->getMcpKey());
-        $this->assertSame(['shop_list', 'shop_get', 'shop_create', 'shop_edit'], array_map(static fn ($tool): string => $tool->name, $tools));
-        $this->assertSame([false, false, true, true], array_map(static fn ($tool): bool => $tool->writes, $tools));
+        $this->assertSame(['shop_list', 'shop_get', 'shop_create', 'shop_edit', 'shop_category_list', 'shop_category_get', 'shop_category_create', 'shop_category_edit'], array_map(static fn ($tool): string => $tool->name, $tools));
+        $this->assertSame([false, false, true, true, false, false, true, true], array_map(static fn ($tool): bool => $tool->writes, $tools));
+    }
+
+    // The agent is told an edit of what is already visible goes live at once, in the instructions and on both edit tools
+    public function testLiveEditsAreSaid(): void
+    {
+        $tools = array_column(array_map(static fn ($tool): array => [$tool->name, $tool->description], iterator_to_array($this->provider()->getMcpTools(), false)), 1, 0);
+
+        $this->assertStringContainsString('An edit of a product or category already visible shows on the site at once.', $this->provider()->getMcpInstructions());
+        $this->assertStringContainsString('shows on the site at once', $tools['shop_edit']);
+        $this->assertStringContainsString('shows on the site at once', $tools['shop_category_edit']);
     }
 
     // A product added hidden, without item, with a slug kept unique
@@ -113,6 +127,51 @@ class ShopMcpProviderTest extends TestCase
         $this->provider($repository, updater: $updater)->edit(1);
     }
 
+    // The categories given replace the product's own, as the back office's field does
+    public function testEditFilesTheProductUnderTheCategoriesGiven(): void
+    {
+        $kept = $this->category(1, 'catalog');
+        $added = $this->category(2, 'item-1');
+        $product = new Product()->setTitle('item-1')->setSlug('item-1')->addCategory($kept)->addCategory($this->category(3, 'item-2'));
+        $repository = $this->createStub(ProductRepository::class);
+        $repository->method('find')->willReturn($product);
+        $categories = $this->createStub(ProductCategoryRepository::class);
+        $categories->method('findBy')->willReturn([$kept, $added]);
+
+        $this->assertSame([['id' => 1, 'name' => 'catalog'], ['id' => 2, 'name' => 'item-1']], $this->provider($repository, categories: $categories)->edit(1, categories: [1, 2, 2])['categories']);
+    }
+
+    // An unknown category refuses the whole edit before anything is changed
+    public function testEditRefusesAnUnknownCategory(): void
+    {
+        $product = new Product()->setTitle('item-1')->setSlug('item-1');
+        $repository = $this->createStub(ProductRepository::class);
+        $repository->method('find')->willReturn($product);
+        $categories = $this->createStub(ProductCategoryRepository::class);
+        $categories->method('findBy')->willReturn([$this->category(1, 'catalog')]);
+        $updater = $this->createMock(ProductUpdater::class);
+        $updater->expects($this->never())->method('update');
+
+        try {
+            $this->provider($repository, updater: $updater, categories: $categories)->edit(1, title: 'item-2', categories: [1, 9]);
+            $this->fail('An unknown category was accepted.');
+        } catch (ToolCallException $exception) {
+            $this->assertSame('No category 9.', $exception->getMessage());
+        }
+        $this->assertSame('item-1', $product->getTitle());
+        $this->assertCount(0, $product->getCategories());
+    }
+
+    // An empty set takes the product out of every category
+    public function testEditTakesTheProductOutOfEveryCategory(): void
+    {
+        $product = new Product()->setTitle('item-1')->setSlug('item-1')->addCategory($this->category(1, 'catalog'));
+        $repository = $this->createStub(ProductRepository::class);
+        $repository->method('find')->willReturn($product);
+
+        $this->assertSame([], $this->provider($repository)->edit(1, categories: [])['categories']);
+    }
+
     // A slug made of signs only is refused
     public function testEditRefusesAnEmptySlug(): void
     {
@@ -154,8 +213,17 @@ class ShopMcpProviderTest extends TestCase
         $this->provider(granted: false)->list();
     }
 
+    // A category saved under its id
+    private function category(int $id, string $name): ProductCategory
+    {
+        $category = new ProductCategory()->setName($name)->setSlug($name);
+        new \ReflectionProperty(ProductCategory::class, 'id')->setValue($category, $id);
+
+        return $category;
+    }
+
     // The provider for an account managing the catalog or not, its constraints passing or refusing one field
-    private function provider(?ProductRepository $repository = null, ?EntityManagerInterface $entityManager = null, bool $granted = true, ?ProductUpdater $updater = null, ?string $violation = null): ShopMcpProvider
+    private function provider(?ProductRepository $repository = null, ?EntityManagerInterface $entityManager = null, bool $granted = true, ?ProductUpdater $updater = null, ?string $violation = null, ?ProductCategoryRepository $categories = null): ShopMcpProvider
     {
         $config = $this->createStub(ConfigServiceInterface::class);
         $config->method('get')->willReturn('ROLE_ADMIN');
@@ -166,6 +234,12 @@ class ShopMcpProviderTest extends TestCase
         $validator = $this->createStub(ValidatorInterface::class);
         $validator->method('validate')->willReturn(new ConstraintViolationList(null === $violation ? [] : [new ConstraintViolation('blank', null, [], null, $violation, null)]));
 
-        return new ShopMcpProvider($repository ?? $this->createStub(ProductRepository::class), $state, $entityManager ?? $this->createStub(EntityManagerInterface::class), $config, $security, new AsciiSlugger(), $updater ?? $this->createStub(ProductUpdater::class), $validator);
+        $entityManager ??= $this->createStub(EntityManagerInterface::class);
+        $repository ??= $this->createStub(ProductRepository::class);
+        $categories ??= $this->createStub(ProductCategoryRepository::class);
+        $updater ??= $this->createStub(ProductUpdater::class);
+        $access = new ShopMcpAccess($config, $security, $entityManager, new AsciiSlugger(), $validator);
+
+        return new ShopMcpProvider($repository, $state, $categories, $entityManager, $updater, $access, new ShopCategoryTools($categories, $repository, $entityManager, $updater, $access));
     }
 }

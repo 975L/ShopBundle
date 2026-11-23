@@ -71,8 +71,9 @@ class ShopCacheInvalidationListener
     {
         return match (true) {
             $entity instanceof Config => self::CURRENCY_SLUG === $entity->getSlug() ? ShopBlockCacheInvalidator::PRODUCT_TAGS : [],
-            $entity instanceof ProductCategory => ShopBlockCacheInvalidator::CATEGORY_TAGS,
-            $entity instanceof Product,
+            // The categories listed are those holding an available product, so a product filed, hidden or shown changes them
+            $entity instanceof ProductCategory,
+            $entity instanceof Product => ShopBlockCacheInvalidator::CATEGORY_TAGS,
             $entity instanceof ProductItem,
             $entity instanceof Media,
             $entity instanceof ProductAffinity => ShopBlockCacheInvalidator::PRODUCT_TAGS,

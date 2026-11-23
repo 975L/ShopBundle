@@ -40,11 +40,12 @@ class ShopCacheInvalidationListenerTest extends TestCase
         $this->invalidated = [];
     }
 
-    public function testAProductChangeDropsTheProductBlocks(): void
+    // A product filed under a category, hidden or shown changes which categories are listed
+    public function testAProductChangeDropsBothTags(): void
     {
         $this->listen(new Product());
 
-        $this->assertSame([[ShopBlockCacheInvalidator::CACHE_TAG_PRODUCTS]], $this->invalidated);
+        $this->assertSame([ShopBlockCacheInvalidator::CATEGORY_TAGS], $this->invalidated);
     }
 
     // The price, the stock and the formats a card prints are all read off the items
@@ -127,11 +128,11 @@ class ShopCacheInvalidationListenerTest extends TestCase
     {
         $listener = $this->createListener();
         $manager = $this->createStub(EntityManagerInterface::class);
-        $product = new Product();
+        $item = new ProductItem();
 
-        $listener->postPersist(new PostPersistEventArgs($product, $manager));
-        $listener->postUpdate(new PostUpdateEventArgs($product, $manager));
-        $listener->preRemove(new PreRemoveEventArgs($product, $manager));
+        $listener->postPersist(new PostPersistEventArgs($item, $manager));
+        $listener->postUpdate(new PostUpdateEventArgs($item, $manager));
+        $listener->preRemove(new PreRemoveEventArgs($item, $manager));
         $this->assertSame([], $this->invalidated);
 
         $listener->postFlush();

@@ -10,6 +10,7 @@
 
 namespace c975L\ShopBundle\Repository;
 
+use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Repository\Traits\BlockOwnerRepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -41,5 +42,22 @@ class ProductCategoryRepository extends ServiceEntityRepository
     public function findOneBySlug(string $slug): ?ProductCategory
     {
         return $this->findOneBy(['slug' => $slug]);
+    }
+
+    // The categories whose name holds the words, every one without them, in the back office's order, each with the number of its products left out of the trash and the templates
+    /** @return list<array{0: ProductCategory, products: int|string}> */
+    public function findWithProductCount(?string $search, int $limit): array
+    {
+        $builder = $this->createQueryBuilder('c')
+            // A subquery rather than a GROUP BY, which a server under ONLY_FULL_GROUP_BY would refuse on the hydrated columns
+            ->select('c, (SELECT COUNT(p.id) FROM ' . Product::class . ' p JOIN p.categories pc WHERE pc = c AND p.isDeleted = false AND p.template = false) AS products')
+            ->orderBy('c.position', \SortDirection::Ascending)
+            ->addOrderBy('c.name', \SortDirection::Ascending)
+            ->setMaxResults($limit);
+        if ('' !== trim((string) $search)) {
+            $builder->andWhere('c.name LIKE :words')->setParameter('words', '%' . addcslashes(trim((string) $search), '%_\\') . '%');
+        }
+
+        return $builder->getQuery()->getResult();
     }
 }

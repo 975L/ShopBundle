@@ -34,10 +34,12 @@ class ProductCategory implements \Stringable, HasBlocksInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank]
     #[Assert\Length(max: 100)]
     private ?string $name = null;
 
     #[ORM\Column(length: 100, unique: true)]
+    #[Assert\NotBlank]
     #[Assert\Length(max: 100)]
     private ?string $slug = null;
 

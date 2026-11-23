@@ -13,6 +13,7 @@ namespace c975L\ShopBundle\Tests\Service;
 use c975L\ConfigBundle\Entity\Redirect;
 use c975L\ConfigBundle\Repository\RedirectRepository;
 use c975L\ShopBundle\Entity\Product;
+use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Service\ProductUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
@@ -35,6 +36,14 @@ class ProductUpdaterTest extends TestCase
         $this->assertNotNull($product->getModification());
         $this->assertCount(1, $this->persisted);
         $this->assertSame(['/shop/products/item-1', '/shop/products/item-2', true], [$this->persisted[0]->getFromPath(), $this->persisted[0]->getToUrl(), $this->persisted[0]->isPermanent()]);
+    }
+
+    // A category's changed slug sends its old page to the new one
+    public function testAChangedCategorySlugIsRedirected(): void
+    {
+        $this->updater(originalSlug: 'catalog')->updateCategory(new ProductCategory()->setSlug('catalog-2'));
+
+        $this->assertSame(['/shop/category/catalog', '/shop/category/catalog-2'], [$this->persisted[0]->getFromPath(), $this->persisted[0]->getToUrl()]);
     }
 
     // A slug kept writes no redirect

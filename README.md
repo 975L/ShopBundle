@@ -980,14 +980,18 @@ own, and each parcours one for its title, so the back-office films say a text wr
 
 ## MCP tools
 
-The catalog brings its tools to the site's MCP endpoint, `/api/mcp`, which c975l/core-bundle serves and opens (see its README, "Opening the site to AI agents"): `Mcp\ShopMcpProvider`, under the `shop` key of the agent tokens, for an account holding `site-role-admin` as on the back office.
+The catalog brings its tools to the site's MCP endpoint, `/api/mcp`, which c975l/core-bundle serves and opens (see its README, "Opening the site to AI agents"): `Mcp\ShopMcpProvider`, under the `shop` key of the agent tokens, for an account holding `site-role-admin` as on the back office, the categories' tools joined from `Mcp\ShopCategoryTools`, both checked through `Mcp\ShopMcpAccess`. An edit of a product or category already visible shows on the site at once, as a save on the back office does: the cached fragments are dropped by `ShopCacheInvalidationListener`.
 
 | Tool | Does |
 | --- | --- |
 | `shop_list` | The products whose title holds the `search` words, every product without them, hidden ones included, trash and templates left aside, in the shop's order |
-| `shop_get` | A `product`: title, description, brand, categories, release day, hidden or not, and its items with their price (in cents of `shop-currency`) and stock, read only |
+| `shop_get` | A `product`: title, description, brand, categories with their id (what `shop_edit` replaces), release day, hidden or not, and its items with their price (in cents of `shop-currency`) and stock, read only |
 | `shop_create` | A hidden product added with its `title` and `description`, without any item, its slug made unique, checked by the same constraints as the back office's form; pricing and putting it online stay a human's |
-| `shop_edit` | Only the `title`, `description` or `slug` given of a `product` changed, one at least, saved as the back office saves it: the same constraints (a blank title or description refused), the edit dated, and a new slug redirecting the old url (`Service\ProductUpdater`, shared with `ProductCrudController`) |
+| `shop_edit` | Only the `title`, `description`, `slug` or `categories` given of a `product` changed, one at least, saved as the back office saves it: the same constraints (a blank title or description refused), the edit dated, a new slug redirecting the old url (`Service\ProductUpdater`, shared with `ProductCrudController`), and the category ids given replacing its own, an empty list taking it out of all, an unknown id refusing the whole call |
+| `shop_category_list` | The categories whose name holds the `search` words, every one without them, in the back office's order, each with its number of products (trash and templates left aside) and `listed` when it holds a product on sale |
+| `shop_category_get` | A `category`: name, slug, description, listed or not, and its products with their id, title and hidden state, read only |
+| `shop_category_create` | A category added with its `name` and optional `description`, its slug made unique; holding no product, it is listed nowhere (selector, sitemap, categories block) until a product on sale is filed under it with `shop_edit` |
+| `shop_category_edit` | Only the `name`, `description` or `slug` given of a `category` changed, one at least, checked by the entity's constraints, a new slug redirecting the old url (`ProductUpdater::updateCategory()`, shared with `ProductCategoryCrudController`); its order and blocks stay on the back office |
 
 ---
 

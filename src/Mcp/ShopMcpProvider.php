@@ -12,21 +12,17 @@ namespace c975L\ShopBundle\Mcp;
 
 use c975L\ConfigBundle\Mcp\McpTool;
 use c975L\ConfigBundle\Mcp\McpToolProviderInterface;
-use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ShopBundle\Entity\Product;
 use c975L\ShopBundle\Entity\ProductCategory;
 use c975L\ShopBundle\Entity\ProductItem;
+use c975L\ShopBundle\Repository\ProductCategoryRepository;
 use c975L\ShopBundle\Repository\ProductRepository;
 use c975L\ShopBundle\Service\ProductStateServiceInterface;
 use c975L\ShopBundle\Service\ProductUpdater;
-use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\ORM\EntityManagerInterface;
 use Mcp\Server\Exception\ToolCallException;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-// The shop's products on the site's MCP endpoint, for an account that manages them on the back office: listed, read with their items, a hidden product added and its texts and slug written as the back office writes them, prices, stock and publishing left to a human
+// The shop's products on the site's MCP endpoint, for an account that manages them on the back office: listed, read with their items, a hidden product added and its texts, slug and categories written as the back office writes them, prices, stock and publishing left to a human - the categories' tools joined from ShopCategoryTools
 class ShopMcpProvider implements McpToolProviderInterface
 {
     // Products a list gives at most
@@ -35,12 +31,11 @@ class ShopMcpProvider implements McpToolProviderInterface
     public function __construct(
         private readonly ProductRepository $productRepository,
         private readonly ProductStateServiceInterface $productStateService,
+        private readonly ProductCategoryRepository $categoryRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ConfigServiceInterface $configService,
-        private readonly Security $security,
-        private readonly SluggerInterface $slugger,
         private readonly ProductUpdater $productUpdater,
-        private readonly ValidatorInterface $validator,
+        private readonly ShopMcpAccess $access,
+        private readonly ShopCategoryTools $categoryTools,
     ) {
     }
 
@@ -53,27 +48,28 @@ class ShopMcpProvider implements McpToolProviderInterface
     // How the shop's tools go together
     public function getMcpInstructions(): string
     {
-        return 'Products are the catalog of the shop, each sold through its items. A product added by an agent is hidden and has no item: a human prices it and puts it online from the back office.';
+        return 'Products are the catalog of the shop, each sold through its items. A product added by an agent is hidden and has no item: a human prices it and puts it online from the back office. Categories group the products: a category added by an agent holds none and is listed nowhere until a product on sale is filed under it. An edit of a product or category already visible shows on the site at once.';
     }
 
     // The tools of the shop, the writing ones flagged
     public function getMcpTools(): iterable
     {
         yield new McpTool('shop_list', 'Products', 'The products whose title holds the search words, every product without them, hidden ones included, in the shop\'s order.', $this->list(...));
-        yield new McpTool('shop_get', 'Product', 'A product: title, description, brand, categories, release day, hidden or not, and its items with their price in cents and stock (none for unlimited, 0 for withdrawn), read only.', $this->get(...));
+        yield new McpTool('shop_get', 'Product', 'A product: title, description, brand, categories with their id, release day, hidden or not, and its items with their price in cents and stock (none for unlimited, 0 for withdrawn), read only.', $this->get(...));
         yield new McpTool('shop_create', 'Add a hidden product', 'Adds a product, hidden and without any item, with its title and description.', $this->create(...), true);
-        yield new McpTool('shop_edit', 'Write a product', 'Changes only the title, description or slug given of a product, as the back office does: checked by its rules, and a new slug redirecting the old address.', $this->edit(...), true);
+        yield new McpTool('shop_edit', 'Write a product', 'Changes only the title, description, slug or categories given of a product, as the back office does: checked by its rules, a new slug redirecting the old address, the category ids given replacing its own, read with shop_get first. An edit of a product already visible shows on the site at once.', $this->edit(...), true);
+        yield from $this->categoryTools->getMcpTools();
     }
 
     // The products whose title holds the words, every one without them, the trash and the templates left aside
     /**
      * @param ?string $search words looked for in the titles
      *
-     * @return list<array{id: ?int, title: ?string, slug: ?string, hidden: bool, available: ?string, categories: list<string>}>
+     * @return list<array{id: ?int, title: ?string, slug: ?string, hidden: bool, available: ?string, categories: list<array{id: ?int, name: string}>}>
      */
     public function list(?string $search = null): array
     {
-        $this->guard();
+        $this->access->guard();
         $builder = $this->productRepository->createQueryBuilder('p')
             ->andWhere('p.isDeleted = false')
             ->andWhere('p.template = false')
@@ -90,7 +86,7 @@ class ShopMcpProvider implements McpToolProviderInterface
     /**
      * @param int $product id of the product
      *
-     * @return array{id: ?int, title: ?string, slug: ?string, hidden: bool, available: ?string, categories: list<string>, description: ?string, brand: ?string, currency: string, items: list<array<string, mixed>>}
+     * @return array{id: ?int, title: ?string, slug: ?string, hidden: bool, available: ?string, categories: list<array{id: ?int, name: string}>, description: ?string, brand: ?string, currency: string, items: list<array<string, mixed>>}
      */
     public function get(int $product): array
     {
@@ -114,36 +110,38 @@ class ShopMcpProvider implements McpToolProviderInterface
      */
     public function create(string $title, string $description): array
     {
-        $this->guard();
+        $this->access->guard();
         $product = new Product()
             ->setTitle(trim($title))
             ->setSlug($this->slug(trim($title)))
             ->setDescription(trim($description))
             ->setHidden(true);
-        $this->validate($product);
+        $this->access->validate($product);
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
         return ['id' => $product->getId(), 'slug' => $product->getSlug()];
     }
 
-    // A product's title, description or slug changed, only those given, saved as the back office saves it: checked by its constraints, dated, and its old url redirected when the slug changes
+    // A product's title, description, slug or categories changed, only those given, saved as the back office saves it: checked by its constraints, dated, and its old url redirected when the slug changes
     /**
-     * @param int     $product     id of the product
-     * @param ?string $title       new title, 100 characters at most
-     * @param ?string $description new description, html allowed
-     * @param ?string $slug        new slug, which moves the product's address and redirects the old one
+     * @param int        $product     id of the product
+     * @param ?string    $title       new title, 100 characters at most
+     * @param ?string    $description new description, html allowed
+     * @param ?string    $slug        new slug, which moves the product's address and redirects the old one
+     * @param ?list<int> $categories  ids of every category the product is filed under, replacing its own, empty to take it out of all
      *
-     * @return array{id: ?int, slug: ?string}
+     * @return array{id: ?int, slug: ?string, categories: list<array{id: ?int, name: string}>}
      */
-    public function edit(int $product, ?string $title = null, ?string $description = null, ?string $slug = null): array
+    public function edit(int $product, ?string $title = null, ?string $description = null, ?string $slug = null, ?array $categories = null): array
     {
         $found = $this->found($product);
 
         // A call naming no field would only re-date the product, moving the sitemap's lastmod for nothing
-        if (null === $title && null === $description && null === $slug) {
-            throw new ToolCallException('Nothing to change: give a title, a description or a slug.');
+        if (null === $title && null === $description && null === $slug && null === $categories) {
+            throw new ToolCallException('Nothing to change: give a title, a description, a slug or categories.');
         }
+        $filed = null === $categories ? null : $this->categories($categories);
         if (null !== $title) {
             $found->setTitle(trim($title));
         }
@@ -151,45 +149,54 @@ class ShopMcpProvider implements McpToolProviderInterface
             $found->setDescription(trim($description));
         }
         if (null !== $slug) {
-            $found->setSlug($this->normalized($slug));
+            $found->setSlug($this->access->normalized($slug));
         }
-        $this->validate($found, true);
+        $this->access->validate($found, true);
+        if (null !== $filed) {
+            $this->file($found, $filed);
+        }
         $this->productUpdater->update($found);
         $this->entityManager->flush();
 
-        return ['id' => $found->getId(), 'slug' => $found->getSlug()];
+        return ['id' => $found->getId(), 'slug' => $found->getSlug(), 'categories' => $this->summary($found)['categories']];
     }
 
-    // The catalog is the admin's business, as on the back office
-    private function guard(): void
+    // The categories of the ids given, an unknown id refusing the whole set before anything is changed
+    /**
+     * @param list<int> $ids
+     *
+     * @return list<ProductCategory>
+     */
+    private function categories(array $ids): array
     {
-        if (!$this->security->isGranted((string) $this->configService->get('site-role-admin'))) {
-            throw new ToolCallException('This account may not work on the products.');
+        $ids = array_values(array_unique(array_map(intval(...), $ids)));
+        $categories = [] === $ids ? [] : $this->categoryRepository->findBy(['id' => $ids]);
+        $unknown = array_diff($ids, array_map(static fn (ProductCategory $category): ?int => $category->getId(), $categories));
+        if ([] !== $unknown) {
+            throw new ToolCallException(sprintf('No category %s.', implode(', ', $unknown)));
         }
+
+        return array_values($categories);
     }
 
-    // The product's constraints, as the back office's form runs them, a refused edit taken back off the managed row
-    private function validate(Product $product, bool $managed = false): void
+    // The product filed under exactly the categories given, as the back office's categories field files it
+    /** @param list<ProductCategory> $categories */
+    private function file(Product $product, array $categories): void
     {
-        $violations = $this->validator->validate($product);
-        if (0 === count($violations)) {
-            return;
+        foreach ($product->getCategories()->toArray() as $category) {
+            if (!in_array($category, $categories, true)) {
+                $product->removeCategory($category);
+            }
         }
-        if ($managed) {
-            $this->entityManager->refresh($product);
+        foreach ($categories as $category) {
+            $product->addCategory($category);
         }
-        $messages = [];
-        foreach ($violations as $violation) {
-            $messages[] = $violation->getPropertyPath() . ': ' . $violation->getMessage();
-        }
-
-        throw new ToolCallException(implode(' ', $messages));
     }
 
     // A product by its id, one in the trash or a template answering as unknown
     private function found(int $id): Product
     {
-        $this->guard();
+        $this->access->guard();
         $product = $this->productRepository->find($id);
         if (!$product instanceof Product || $product->isDeleted() || $product->isTemplate()) {
             throw new ToolCallException(sprintf('No product %d.', $id));
@@ -199,7 +206,7 @@ class ShopMcpProvider implements McpToolProviderInterface
     }
 
     // A product in a list
-    /** @return array{id: ?int, title: ?string, slug: ?string, hidden: bool, available: ?string, categories: list<string>} */
+    /** @return array{id: ?int, title: ?string, slug: ?string, hidden: bool, available: ?string, categories: list<array{id: ?int, name: string}>} */
     private function summary(Product $product): array
     {
         return [
@@ -208,7 +215,7 @@ class ShopMcpProvider implements McpToolProviderInterface
             'slug' => $product->getSlug(),
             'hidden' => $product->isHidden(),
             'available' => $product->getAvailableAt()?->format('Y-m-d'),
-            'categories' => array_values(array_map(static fn (ProductCategory $category): string => (string) $category->getName(), $product->getCategories()->toArray())),
+            'categories' => array_values(array_map(static fn (ProductCategory $category): array => ['id' => $category->getId(), 'name' => (string) $category->getName()], $product->getCategories()->toArray())),
         ];
     }
 
@@ -229,26 +236,9 @@ class ShopMcpProvider implements McpToolProviderInterface
         ];
     }
 
-    // A slug as an agent typed it, made a slug as the back office's slug field makes it, one made of signs only refused
-    private function normalized(string $slug): string
-    {
-        $normalized = strtolower($this->slugger->slug(trim($slug))->toString());
-        if ('' === $normalized) {
-            throw new ToolCallException('The slug is empty.');
-        }
-
-        return $normalized;
-    }
-
     // A slug from the title, "product" for a title made of signs only, a number added while another product holds it
     private function slug(string $title): string
     {
-        $base = mb_substr($title, 0, 90);
-
-        return UniqueSlug::build(
-            $this->slugger,
-            '' === $this->slugger->slug($base)->toString() ? 'product' : $base,
-            fn (string $candidate): bool => null !== $this->productRepository->findOneBy(['slug' => $candidate]),
-        );
+        return $this->access->unique($title, 'product', fn (string $candidate): bool => null !== $this->productRepository->findOneBy(['slug' => $candidate]));
     }
 }

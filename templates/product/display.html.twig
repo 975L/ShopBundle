@@ -24,7 +24,7 @@
 {# Read once and used twice: the widget below and the graph at the bottom of the page have to agree, a rich result showing stars nobody can find on the sheet being worse than none #}
 {% set showsRating = config('shop-rating')|to_bool %}
 
-{# The fragments below, one entry per product, language and reader - an editor's carry the edit urls. "shop_products" is emptied by a product, an item (its stock and prices), a media or an affinity saved, "shop_categories" by a category (see ShopCacheInvalidationListener) #}
+{# The fragments below, one entry per product, language and reader - an editor's carry the edit urls. "shop_products" is emptied by a product, an item (its stock and prices), a media or an affinity saved, "shop_categories" by a category or a product, the categories listed being those holding one on sale (see ShopCacheInvalidationListener) #}
 {% set sheetKey = 'shop_product_' ~ product.id ~ '_' ~ app.request.locale ~ (canEdit ? '_editor' : '') %}
 {% set sheetTags = ['shop_products', 'shop_categories'] %}
 

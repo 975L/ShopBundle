@@ -13,10 +13,12 @@ use c975L\ShopBundle\Management\ProductCategoryExportProvider;
 use c975L\ShopBundle\Management\ProductCategoryImportProvider;
 use c975L\ShopBundle\Management\ShopBlockOwnerResolver;
 use c975L\ShopBundle\Repository\ProductCategoryRepository;
+use c975L\ShopBundle\Service\ProductUpdater;
 use c975L\ShopBundle\Service\ShopTranslator;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\ActionGroup;
@@ -60,6 +62,7 @@ class ProductCategoryCrudController extends AbstractCrudController
         private readonly ContentLocaleScreen $contentLocaleScreen,
         private readonly ProductCategoryExportProvider $productCategoryExportProvider,
         private readonly ProductCategoryRepository $productCategoryRepository,
+        private readonly ProductUpdater $productUpdater,
         private readonly ShopTranslator $shopTranslator,
         private readonly TableExporter $tableExporter,
         private readonly TranslatorInterface $translator,
@@ -69,6 +72,17 @@ class ProductCategoryCrudController extends AbstractCrudController
     public static function getEntityFqcn(): string
     {
         return ProductCategory::class;
+    }
+
+    // A changed slug redirects the old page, as a product's does
+    #[\Override]
+    public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
+    {
+        if ($entityInstance instanceof ProductCategory) {
+            $this->productUpdater->updateCategory($entityInstance);
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
     }
 
     public function configureFields(string $pageName): iterable

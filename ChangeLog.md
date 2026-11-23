@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.27.0
+
+Category tools on the site's MCP endpoint, category slugs redirected
+
+- `ShopCategoryTools`: an agent lists the categories with their product counts, reads one, adds an empty one and writes its name, description and slug (23/11/2026)
+- `shop_edit` files a product under the category ids given, replacing its own (23/11/2026)
+- `shop_list`, `shop_get` and `shop_edit` give each category of a product with its id (23/11/2026)
+- `ShopMcpAccess` added: role check, validation and slug making shared by the shop's tools (23/11/2026)
+- MCP instructions and both edit tools say an edit of a visible product or category is live at once (23/11/2026)
+- `ProductUpdater::updateCategory()` redirects a category's changed slug, for the back office and the agents alike (23/11/2026)
+- `ProductCategoryRepository::findWithProductCount()` added (23/11/2026)
+- `ProductCategory` name and slug refused blank (23/11/2026)
+- A saved product drops the `shop_categories` cache tag too (23/11/2026)
+- [BC-Break] `ShopMcpProvider` takes `ProductCategoryRepository`, `ShopMcpAccess` and `ShopCategoryTools` in place of the config, security, slugger and validator (23/11/2026)
+- [BC-Break] `ProductCategoryCrudController` takes `ProductUpdater` (23/11/2026)
+
 ## v2.26.1
 
 `php-http/discovery` plugin allowed in `allow-plugins`

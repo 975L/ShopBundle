@@ -89,7 +89,8 @@ UiBundle's own invalidation listener cannot close the gap. Each entry carries a 
 (`ShopBlockCacheTagProvider`), and `ShopCacheInvalidationListener` drops it whenever a `Product`,
 `ProductItem`, `ProductMedia`, `ProductCategory` or `ProductAffinity` changes — and whenever a UiBundle
 `Translation` owned by `shop_product`, `shop_item` or `shop_category` does, a language screen writing those
-rows alone, its fields being unmapped.
+rows alone, its fields being unmapped. A `Product` saved drops `shop_categories` too: the `shop_categories`
+block lists the categories holding a product on sale, so a product filed, hidden or shown changes it.
 `c975l:shop:affinity:calculate` invalidates them explicitly: its bulk `DELETE` fires no Doctrine event.
 
 Three deliberate exceptions:
