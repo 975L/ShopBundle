@@ -1,19 +1,61 @@
 # ShopBundle
 
-Symfony bundle for e-commerce on the c975L core — product catalog with categories, media, downloadable files and affinity recommendations. Checkout is delegated to [c975L/PaymentBundle](https://github.com/975L/PaymentBundle).
-
 [![GitHub](https://img.shields.io/github/license/975L/ShopBundle)](https://github.com/975L/ShopBundle/blob/main/LICENSE)
 [![Packagist Version](https://img.shields.io/packagist/v/c975l/shop-bundle)](https://packagist.org/packages/c975l/shop-bundle)
 [![PHP Version](https://img.shields.io/packagist/php-v/c975l/shop-bundle)](https://packagist.org/packages/c975l/shop-bundle)
 [![Codacy Grade](https://app.codacy.com/project/badge/Grade/12a75ecfc03748c5a72a631010794932)](https://app.codacy.com/gh/975L/ShopBundle/dashboard)
 
+![ShopBundle](.github/images/ShopBundle.svg)
+
+**A product catalog and shop pages for your site, managed from the back office, with checkout handled by PaymentBundle.**
+
 **[Bundle page](https://bundles.975l.com/en/pages/shop-bundle) · [Tutorials](https://bundles.975l.com/en/tutoriels/shop-bundle) · [Block kinds](https://bundles.975l.com/en/pages/blocks/Shop) · [Live demo](https://bundles.975l.com/demo/) · [Demo back-office](https://bundles.975l.com/demo/login)**
 
 > **BUNDLE UNDER DEVELOPMENT — USE AT YOUR OWN RISK**
 
-## Why ShopBundle
+> **TL;DR** — ShopBundle gives a c975L site a product catalog managed from the back office, with shop pages built from blocks. It rests on CoreBundle, and the basket and payment go through PaymentBundle. Install it with Composer, run the migrations and load the configuration values.
 
-![ShopBundle](.github/images/ShopBundle.svg)
+## What you get
+
+- A product catalog with categories, pictures and downloadable files, managed from the back office
+- Shop pages composed from blocks in the back office, with no template to write
+- Listing sorted by novelty or price and filtered by price, format and availability, mobile first
+- Wish list, customer ratings and back-in-stock alerts, each behind one setting
+- Gift cards sold as an ordinary item
+- Structured data, sitemap and a Google Merchant Center feed built from the product sheets
+- A catalog translated product by product, and products exported or imported as a zip
+- A test mode warning every visitor that nothing is really sold
+
+## Quick start
+
+```bash
+composer require c975l/shop-bundle
+```
+
+Then follow the full [installation](#installation) section below.
+
+## For AI agents
+
+- Skills, read straight from `vendor/c975l/shop-bundle/skills/` by a coding agent:
+  - [`c975l-shop-catalog`](skills/c975l-shop-catalog/SKILL.md) — products, categories, items and the public pages
+  - [`c975l-shop-blocks`](skills/c975l-shop-blocks/SKILL.md) — the block kinds and composing the shop pages
+  - [`c975l-shop-checkout`](skills/c975l-shop-checkout/SKILL.md) — the link to PaymentBundle, stock, downloads and test mode
+  - [`c975l-shop-seo`](skills/c975l-shop-seo/SKILL.md) — structured data, sitemap, llms.txt and recommendations
+- MCP: an AI agent works with the catalog through the site's MCP endpoint (CoreBundle's `/api/mcp`), with the rights of its token's account: `shop_list`, `shop_get`, `shop_create`, `shop_edit` for products, `shop_category_list`, `shop_category_get`, `shop_category_create`, `shop_category_edit` for categories (see [MCP tools](#mcp-tools)).
+
+## Reference
+
+> **For developers** — A product catalog (categories, media, downloadable items, affinity recommendations) managed from EasyAdmin. Checkout isn't here: products are plugged into PaymentBundle's Basket engine through `BasketItemProviderInterface`, and crowdfunding/lottery moved to CrowdfundingBundle in v2.0.
+
+<details>
+<summary>Contents</summary>
+
+- **Setup** — [requirements](#requirements) · [installation](#installation) · [upgrading from v1](#upgrading)
+- **Using it** — [usage](#usage) · [shop listing and product sheet](#shop-listing-and-product-sheet) · [breadcrumb](#breadcrumb) · [terms of sales](#terms-of-sales) · [block kinds](#block-kinds) · [composing the shop](#composing-the-shop) · [related products](#related-products) · [languages](#languages) · [commands](#commands) · [export / import products](#export--import-products) · [sitemap, llms.txt and health check](#sitemap-llmstxt-and-health-check) · [structured data](#structured-data) · [Google Merchant Center feed](#google-merchant-center-feed) · [wish list](#wish-list) · [back-in-stock alerts](#back-in-stock-alerts) · [customer ratings](#customer-ratings) · [gift cards](#gift-cards) · [test mode](#test-mode) · [the demo catalog](#the-demo-catalog) · [what the site's dashboard gets](#what-the-sites-dashboard-gets) · [guided projects](#guided-projects) · [MCP tools](#mcp-tools) · [AI agent skills](#ai-agent-skills)
+
+</details>
+
+## Why ShopBundle
 
 Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - ConfigBundle and UiBundle in a single package - and get a product catalog with EasyAdmin management — categories, media, downloadable items, affinity recommendations. Checkout goes through [c975L/PaymentBundle](https://github.com/975L/PaymentBundle)'s Basket engine; crowdfunding/lottery live in [c975L/CrowdfundingBundle](https://github.com/975L/CrowdfundingBundle): both rest on the same foundation, alongside ShopBundle, never on top of it.
 
@@ -24,13 +66,6 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 > needed. See [UPGRADE.md](UPGRADE.md) before upgrading.
 
 ---
-
-> **TL;DR** — A product catalog (categories, media, downloadable items, affinity recommendations) managed from EasyAdmin. Checkout isn't here: products are plugged into PaymentBundle's Basket engine through `BasketItemProviderInterface`, and crowdfunding/lottery moved to CrowdfundingBundle in v2.0.
-
-## Contents
-
-- **Setup** — [requirements](#requirements) · [installation](#installation) · [upgrading from v1](#upgrading)
-- **Using it** — [usage](#usage) · [block kinds](#block-kinds) · [composing the shop](#composing-the-shop) · [languages](#languages) · [commands](#commands) · [export / import products](#export--import-products) · [sitemap, llms.txt and health check](#sitemap-llmstxt-and-health-check) · [structured data](#structured-data) · [Google Merchant Center feed](#google-merchant-center-feed) · [wish list](#wish-list) · [back-in-stock alerts](#back-in-stock-alerts) · [customer ratings](#customer-ratings) · [test mode](#test-mode) · [the demo catalog](#the-demo-catalog) · [what the site's dashboard gets](#what-the-sites-dashboard-gets) · [guided projects](#guided-projects)
 
 ## Features
 

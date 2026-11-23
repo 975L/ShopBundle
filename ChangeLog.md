@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.27.1
+
+README opened on a short overview for humans
+
+- README opened on a short overview for humans, the reference folded below it (23/11/2026)
+
 ## v2.27.0
 
 Category tools on the site's MCP endpoint, category slugs redirected
