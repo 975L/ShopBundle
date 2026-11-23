@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.27.3
+
+Markdown lint allows the centred README banner
+
+- `.markdownlint.json` allows the `p` and `img` elements the centred banner uses (23/11/2026)
+
 ## v2.27.2
 
 README banner centred, showcase film shown
