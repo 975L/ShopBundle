@@ -5,11 +5,15 @@
 [![PHP Version](https://img.shields.io/packagist/php-v/c975l/shop-bundle)](https://packagist.org/packages/c975l/shop-bundle)
 [![Codacy Grade](https://app.codacy.com/project/badge/Grade/12a75ecfc03748c5a72a631010794932)](https://app.codacy.com/gh/975L/ShopBundle/dashboard)
 
-![ShopBundle](.github/images/ShopBundle.svg)
+<p align="center"><img src=".github/images/ShopBundle.svg" alt="ShopBundle"></p>
 
 **A product catalog and shop pages for your site, managed from the back office, with checkout handled by PaymentBundle.**
 
 **[Bundle page](https://bundles.975l.com/en/pages/shop-bundle) · [Tutorials](https://bundles.975l.com/en/tutoriels/shop-bundle) · [Block kinds](https://bundles.975l.com/en/pages/blocks/Shop) · [Live demo](https://bundles.975l.com/demo/) · [Demo back-office](https://bundles.975l.com/demo/login)**
+
+[![Watch the ShopBundle film](.github/images/showcase.jpg)](https://youtu.be/MINzStfv6RU)
+
+▶ [Watch the film](https://youtu.be/MINzStfv6RU) · [ShopBundle's page](https://bundles.975l.com/en/pages/shop-bundle)
 
 > **BUNDLE UNDER DEVELOPMENT — USE AT YOUR OWN RISK**
 
@@ -47,13 +51,10 @@ Then follow the full [installation](#installation) section below.
 
 > **For developers** — A product catalog (categories, media, downloadable items, affinity recommendations) managed from EasyAdmin. Checkout isn't here: products are plugged into PaymentBundle's Basket engine through `BasketItemProviderInterface`, and crowdfunding/lottery moved to CrowdfundingBundle in v2.0.
 
-<details>
-<summary>Contents</summary>
+### Contents
 
 - **Setup** — [requirements](#requirements) · [installation](#installation) · [upgrading from v1](#upgrading)
 - **Using it** — [usage](#usage) · [shop listing and product sheet](#shop-listing-and-product-sheet) · [breadcrumb](#breadcrumb) · [terms of sales](#terms-of-sales) · [block kinds](#block-kinds) · [composing the shop](#composing-the-shop) · [related products](#related-products) · [languages](#languages) · [commands](#commands) · [export / import products](#export--import-products) · [sitemap, llms.txt and health check](#sitemap-llmstxt-and-health-check) · [structured data](#structured-data) · [Google Merchant Center feed](#google-merchant-center-feed) · [wish list](#wish-list) · [back-in-stock alerts](#back-in-stock-alerts) · [customer ratings](#customer-ratings) · [gift cards](#gift-cards) · [test mode](#test-mode) · [the demo catalog](#the-demo-catalog) · [what the site's dashboard gets](#what-the-sites-dashboard-gets) · [guided projects](#guided-projects) · [MCP tools](#mcp-tools) · [AI agent skills](#ai-agent-skills)
-
-</details>
 
 ## Why ShopBundle
 
@@ -64,6 +65,14 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 > ShopBundle — they moved to standalone [c975L/CrowdfundingBundle](https://github.com/975L/CrowdfundingBundle)
 > and [c975L/PaymentBundle](https://github.com/975L/PaymentBundle). Same table names, no data migration
 > needed. See [UPGRADE.md](UPGRADE.md) before upgrading.
+
+> [!TIP]
+> If this project **helps you save development time**:
+>
+> - [**star** it on GitHub](https://github.com/975L/ShopBundle) — helps others find it
+> - [**open an issue**](https://github.com/975L/ShopBundle/issues/new) to share how you use it — genuinely useful feedback
+>
+> And if you'd like to support the work directly, the **Sponsor** button at the top of the GitHub page is there for that. Thank you!
 
 ---
 
@@ -1070,13 +1079,3 @@ fails the suite instead of leaving an agent confidently wrong.
 ## Upgrading
 
 When upgrading between major versions, refer to the [UPGRADE.md](UPGRADE.md) guide for migration instructions and breaking changes.
-
----
-
-> [!TIP]
-> If this project **helps you save development time**:
->
-> - [**star** it on GitHub](https://github.com/975L/ShopBundle) — helps others find it
-> - [**open an issue**](https://github.com/975L/ShopBundle/issues/new) to share how you use it — genuinely useful feedback
->
-> And if you'd like to support the work directly, the **Sponsor** button at the top of the GitHub page is there for that. Thank you!
