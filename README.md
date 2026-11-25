@@ -794,10 +794,19 @@ two prices. `Product.language` says which language a product is written in, empt
 lists the products written in the site's language, `?language=en` those written in English, every price in
 `shop-currency`. A free item and a digital book Google refuses (an audiobook is kept) are left out.
 
-Every item goes out with its product's first picture, which is what `g:image_link` carries. Google refuses anything
-under 500 x 500 pixels from 31 January 2027: a product picture is stored 600 pixels wide, an item's only 300 for the row
-that shows it, so a product's first picture has to reach 500 pixels on both sides. It has to be square or upright too:
-its height follows those 600 pixels, so a landscape picture wider than 6:5 stays under 500 high whatever size was uploaded.
+Every item goes out with its product's first picture, which is what `g:image_link` carries, its next ten as
+`g:additional_image_link`. Google refuses anything under 500 x 500 pixels from 31 January 2027: a product picture is
+stored 600 pixels wide, an item's only 300 for the row that shows it, so a product's first picture has to reach 500
+pixels on both sides. `ProductMedia` also keeps a
+`-highres.webp` up to 2000 pixels wide beside each picture (UiBundle's `VichMultiSizeImageInterface`, capped at the
+upload's own width), which the feed sends instead whenever it is on disk and wider than the stored file - a picture
+uploaded before v2.28.0 has none and goes out at 600 pixels until it is uploaded again. Without that sibling, the first
+picture has to be square or upright: its height follows those 600 pixels, so a landscape picture wider than 6:5 stays
+under 500 high.
+
+`g:shipping` carries the country and rate of the sheet's shipping node and, when `shop-handling-days` and
+`shop-transit-days` are both set, `g:min_handling_time`, `g:max_handling_time`, `g:min_transit_time` and
+`g:max_transit_time`, which Merchant Center reads as the delivery time.
 
 The feed answers 404 while `site-url` is not configured and while the shop is in test mode; it is cached an hour and
 carries `X-Robots-Tag: noindex`. The urls to give Merchant Center, one per language present in the catalog, are shown

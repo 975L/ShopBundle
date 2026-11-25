@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-11-25",
+        "description": [
+            {
+                "en": "The Google Merchant Center feed now states the delivery time, from the preparation and transit days set in the shop's settings, and lists every picture of a product rather than the first one only, which Merchant Center counts in the store quality score.",
+                "fr": "Le flux Google Merchant Center indique désormais le délai de livraison, d'après les jours de préparation et de transport réglés dans les paramètres de la boutique, et liste toutes les images d'un produit au lieu de la seule première, ce que Merchant Center prend en compte dans le score de qualité du magasin.",
+                "es": "El feed de Google Merchant Center ahora indica el plazo de entrega, según los días de preparación y de transporte configurados en los ajustes de la tienda, y enumera todas las imágenes de un producto en lugar de solo la primera, lo que Merchant Center tiene en cuenta en la puntuación de calidad de la tienda."
+            },
+            {
+                "en": "Product pictures uploaded from now on are also kept in high resolution, up to 2000 pixels wide, and that version is the one the Google Merchant Center feed sends. A picture uploaded earlier exists only at 600 pixels: upload it again to have it sent in high resolution.",
+                "fr": "Les images de produit téléversées désormais sont aussi conservées en haute résolution, jusqu'à 2000 pixels de large, et c'est cette version que le flux Google Merchant Center envoie. Une image téléversée auparavant n'existe qu'en 600 pixels : téléversez-la à nouveau pour qu'elle parte en haute résolution.",
+                "es": "Las imágenes de producto subidas a partir de ahora también se conservan en alta resolución, hasta 2000 píxeles de ancho, y es esa versión la que envía el feed de Google Merchant Center. Una imagen subida antes solo existe en 600 píxeles: súbala de nuevo para que se envíe en alta resolución."
+            }
+        ]
+    },
+    {
         "date": "2026-11-23",
         "description": [
             {

@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.28.0
+
+Merchant feed states delivery times and every product picture in high resolution
+
+- `ProductMerchantFeed`: `g:shipping` carries the handling and transit days the sheet's graph states (25/11/2026)
+- `ProductMerchantFeed`: the product's other pictures go out as `g:additional_image_link`, ten at most (25/11/2026)
+- `ProductImageUrlResolver::allForProduct()` added (25/11/2026)
+- `ProductMedia` implements `VichMultiSizeImageInterface`: a `-highres.webp` 2000 pixels wide is kept beside each new product picture (25/11/2026)
+- `ProductImageUrlResolver` hands the feed the `-highres` sibling when it is on disk and wider than the stored file (25/11/2026)
+
 ## v2.27.3
 
 Markdown lint allows the centred README banner

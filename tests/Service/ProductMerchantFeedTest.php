@@ -26,6 +26,7 @@ use c975L\ShopBundle\Service\ProductServiceInterface;
 use c975L\ShopBundle\Service\ProductSnippetBuilder;
 use c975L\ShopBundle\Service\ProductStateService;
 use c975L\ShopBundle\Service\ShopPublicUrlResolver;
+use c975L\UiBundle\Service\ImageDimensionsReader;
 use c975L\UiBundle\Service\RatingService;
 use c975L\UiBundle\Service\RatingSnippetBuilder;
 use PHPUnit\Framework\TestCase;
@@ -77,6 +78,50 @@ class ProductMerchantFeedTest extends TestCase
         $product->addItem($this->item(1, 'Livre imprimé', 500)->setMedia(new ProductItemMedia()->setName('medias/shop/items/le-loup-livre.webp')));
 
         $this->assertSame('https://example.org/medias/shop/products/le-loup.webp', $this->feed([$product])->items($product)[0]['g:image_link']);
+    }
+
+    // The product's other pictures follow as additional links, ten at most, each written as its own element
+    public function testTheOtherPicturesAreAdditionalImageLinks(): void
+    {
+        $product = $this->product();
+        for ($i = 0; $i < 12; ++$i) {
+            $product->addMedia(new ProductMedia()->setName('medias/shop/products/le-loup-' . $i . '.webp'));
+        }
+        $product->addItem($this->item(1, 'Livre imprimé', 500));
+        $feed = $this->feed([$product]);
+
+        $fields = $feed->items($product)[0];
+        $this->assertSame('https://example.org/medias/shop/products/le-loup-0.webp', $fields['g:image_link']);
+        $this->assertCount(10, $fields['g:additional_image_link']);
+        $this->assertSame('https://example.org/medias/shop/products/le-loup-1.webp', $fields['g:additional_image_link'][0]);
+        $this->assertSame(10, substr_count((string) $feed->build(), '<g:additional_image_link>'));
+    }
+
+    // A product holding a single picture carries no additional link at all
+    public function testASinglePictureCarriesNoAdditionalLink(): void
+    {
+        $product = $this->product()->addMedia(new ProductMedia()->setName('medias/shop/products/le-loup.webp'));
+        $product->addItem($this->item(1, 'Livre imprimé', 500));
+
+        $this->assertArrayNotHasKey('g:additional_image_link', $this->feed([$product])->items($product)[0]);
+    }
+
+    // The handling and transit days the sheet states go out with the shipping, inside its own element
+    public function testTheShippingCarriesTheDeliveryTime(): void
+    {
+        $product = $this->product();
+        $product->addItem($this->item(1, 'Livre imprimé', 500)->setWeight(250));
+        $feed = $this->feed([$product], settings: ['shop-handling-days' => '1-3', 'shop-transit-days' => '2']);
+
+        $this->assertSame([
+            'g:country' => 'FR',
+            'g:price' => '4.50 EUR',
+            'g:min_handling_time' => '1',
+            'g:max_handling_time' => '3',
+            'g:min_transit_time' => '2',
+            'g:max_transit_time' => '2',
+        ], $feed->items($product)[0]['g:shipping']);
+        $this->assertStringContainsString('<g:max_handling_time>3</g:max_handling_time>', (string) $feed->build());
     }
 
     // A product holding no picture lists its items without an image link rather than with an empty one
@@ -175,9 +220,9 @@ class ProductMerchantFeedTest extends TestCase
     }
 
     /** @param list<Product> $products */
-    private function feed(array $products, ?string $siteUrl = 'https://example.org', bool $testMode = false): ProductMerchantFeed
+    private function feed(array $products, ?string $siteUrl = 'https://example.org', bool $testMode = false, array $settings = []): ProductMerchantFeed
     {
-        $config = ['site-url' => $siteUrl, 'site-name' => 'Editions', 'shop-shipping-country' => 'fr', 'shop-currency' => 'eur', 'shop-test-mode' => $testMode];
+        $config = [...['site-url' => $siteUrl, 'site-name' => 'Editions', 'shop-shipping-country' => 'fr', 'shop-currency' => 'eur', 'shop-test-mode' => $testMode], ...$settings];
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturnCallback(static fn (string $key): mixed => $config[$key] ?? null);
 
@@ -200,7 +245,7 @@ class ProductMerchantFeedTest extends TestCase
             $configService,
             $productService,
             new ProductSnippetBuilder(new ProductStateService(), new RatingSnippetBuilder($ratingService), new OfferSnippetBuilder($configService, $shippingRateResolver)),
-            new ProductImageUrlResolver(new Packages(new PathPackage('/', new EmptyVersionStrategy())), new UrlHelper($requestStack)),
+            new ProductImageUrlResolver(new Packages(new PathPackage('/', new EmptyVersionStrategy())), new UrlHelper($requestStack), new ImageDimensionsReader(), sys_get_temp_dir() . '/c975l-shop-none'),
             new ShopPublicUrlResolver($configService, new LocalizedUrlGenerator($urlGenerator, $siteLocales, $requestStack), $urlGenerator, $siteLocales),
             $siteLocales,
         );

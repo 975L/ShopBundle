@@ -10,15 +10,16 @@
 
 namespace c975L\ShopBundle\Entity;
 
-use c975L\UiBundle\Contract\VichImageResizableInterface;
 use c975L\UiBundle\Contract\VichMediaNamableInterface;
+use c975L\UiBundle\Contract\VichMultiSizeImageInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
+// Stored 600 pixels wide for the sheet, with a "-highres.webp" beside it for the Merchant Center feed (see ProductImageUrlResolver and UiBundle's VichImageResizeListener)
 #[ORM\Entity]
 #[Vich\Uploadable]
-class ProductMedia extends Media implements VichImageResizableInterface, VichMediaNamableInterface
+class ProductMedia extends Media implements VichMultiSizeImageInterface, VichMediaNamableInterface
 {
     #[Vich\UploadableField(mapping: 'block_media', fileNameProperty: 'name', size: 'size')]
     protected ?File $file = null;
@@ -42,6 +43,18 @@ class ProductMedia extends Media implements VichImageResizableInterface, VichMed
     public function getImageWidth(): int
     {
         return 600;
+    }
+
+    // No screen shows the product pictures as a grid cut from a thumbnail, so UiBundle cuts none
+    public function getThumbnailSize(): int
+    {
+        return 0;
+    }
+
+    // What Merchant Center counts as a high resolution picture, capped by UiBundle at the upload's own width
+    public function getHighresWidth(): int
+    {
+        return 2000;
     }
 
     public function getVichMediaPath(): string

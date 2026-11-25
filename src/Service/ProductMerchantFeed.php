@@ -20,6 +20,9 @@ class ProductMerchantFeed
 {
     public const string XML_NAMESPACE = 'http://base.google.com/ns/1.0';
 
+    // The most additional_image_link an entry carries, Merchant Center ignoring the others
+    private const int ADDITIONAL_IMAGES = 10;
+
     // What a downloaded file can be and still be listed: Google refuses digital books (PDF, EPUB) on Shopping, audiobooks excepted, so a downloaded item is in the feed only when it is one of these
     private const array AUDIO_EXTENSIONS = ['aac', 'flac', 'm4a', 'm4b', 'mp3', 'oga', 'ogg', 'opus', 'wav'];
 
@@ -105,7 +108,7 @@ class ProductMerchantFeed
     }
 
     // One entry per item Google accepts, its fields in the feed's own names
-    /** @return list<array<string, string|array<string, string>>> */
+    /** @return list<array<string, string|array<string, string>|list<string>>> */
     public function items(Product $product): array
     {
         // The canonical url, without the item's anchor the graph's offers carry: it is the one the sheet declares, which is what Merchant Center matches the page against
@@ -114,8 +117,8 @@ class ProductMerchantFeed
             return [];
         }
 
-        $productImage = $this->imageUrlResolver->forProduct($product);
-        $graph = $this->snippetBuilder->buildProduct($product, $productImage, $url);
+        $images = $this->imageUrlResolver->allForProduct($product);
+        $graph = $this->snippetBuilder->buildProduct($product, $images[0] ?? null, $url);
 
         // Each offer paired with the item it was built from by the sku the graph gives it - the item's own, its slug otherwise (see ProductSnippetBuilder::offers())
         $productItems = [];
@@ -128,7 +131,7 @@ class ProductMerchantFeed
         foreach ($graph['offers'] ?? [] as $offer) {
             $item = $this->listedItem($productItems, $offer);
             if (null !== $item) {
-                $items[] = $this->fields($graph, $offer, $product, $item, $url, (string) $productImage);
+                $items[] = $this->fields($graph, $offer, $product, $item, $url, $images);
             }
         }
 
@@ -148,18 +151,26 @@ class ProductMerchantFeed
     }
 
     // The fields of one entry, those the graph leaves out left out here too
-    /** @return array<string, string|array<string, string>> */
-    private function fields(array $graph, array $offer, Product $product, ProductItem $item, string $url, string $productImage): array
+    /**
+     * @param list<string> $images
+     *
+     * @return array<string, string|array<string, string>|list<string>>
+     */
+    private function fields(array $graph, array $offer, Product $product, ProductItem $item, string $url, array $images): array
     {
         return array_filter(
-            [...$this->identityFields($graph, $offer, $product, $item, $url, $productImage), ...$this->offerFields($offer)],
+            [...$this->identityFields($graph, $offer, $product, $item, $url, $images), ...$this->offerFields($offer)],
             static fn (string | array $value): bool => '' !== $value && [] !== $value
         );
     }
 
     // What the entry is: its ids, its texts, its links and what identifies it
-    /** @return array<string, string> */
-    private function identityFields(array $graph, array $offer, Product $product, ProductItem $item, string $url, string $productImage): array
+    /**
+     * @param list<string> $images
+     *
+     * @return array<string, string|list<string>>
+     */
+    private function identityFields(array $graph, array $offer, Product $product, ProductItem $item, string $url, array $images): array
     {
         // The keys the graph leaves out when they are empty, read as such
         $offer += ['name' => '', 'description' => $graph['description'] ?? $graph['name'], 'gtin' => ''];
@@ -173,8 +184,10 @@ class ProductMerchantFeed
             'g:title' => mb_substr($graph['name'] . ' - ' . $offer['name'], 0, 150),
             'g:description' => mb_substr((string) $offer['description'], 0, 5000),
             'g:link' => $url,
-            // The product's picture and never the item's, kept small for the row that shows it (see ProductImageUrlResolver)
-            'g:image_link' => $productImage,
+            // The product's first picture and never the item's, kept small for the row that shows it (see ProductImageUrlResolver)
+            'g:image_link' => $images[0] ?? '',
+            // The product's other pictures, as many as the feed takes
+            'g:additional_image_link' => \array_slice($images, 1, self::ADDITIONAL_IMAGES),
             'g:gtin' => $gtin,
             'g:brand' => $brand,
             // What Merchant Center asks of a product without a barcode, rather than flagging it as missing one - a brand alone, often the shop's own name, identifies nothing
@@ -199,10 +212,29 @@ class ProductMerchantFeed
             'g:price' => null === $listPrice ? $price : $listPrice['price'] . ' ' . $listPrice['priceCurrency'],
             'g:sale_price' => null === $listPrice ? '' : $price,
             'g:condition' => self::CONDITIONS[basename((string) $offer['itemCondition'])] ?? '',
-            'g:shipping' => null === $shipping ? [] : [
-                'g:country' => $shipping['shippingDestination']['addressCountry'],
-                'g:price' => $shipping['shippingRate']['value'] . ' ' . $shipping['shippingRate']['currency'],
-            ],
+            'g:shipping' => null === $shipping ? [] : $this->shippingFields($shipping),
+        ];
+    }
+
+    // The country and rate of the shipping node, with the handling and transit days when the graph states them
+    /** @return array<string, string> */
+    private function shippingFields(array $shipping): array
+    {
+        $fields = [
+            'g:country' => $shipping['shippingDestination']['addressCountry'],
+            'g:price' => $shipping['shippingRate']['value'] . ' ' . $shipping['shippingRate']['currency'],
+        ];
+
+        $deliveryTime = $shipping['deliveryTime'] ?? null;
+        if (null === $deliveryTime) {
+            return $fields;
+        }
+
+        return $fields + [
+            'g:min_handling_time' => (string) $deliveryTime['handlingTime']['minValue'],
+            'g:max_handling_time' => (string) $deliveryTime['handlingTime']['maxValue'],
+            'g:min_transit_time' => (string) $deliveryTime['transitTime']['minValue'],
+            'g:max_transit_time' => (string) $deliveryTime['transitTime']['maxValue'],
         ];
     }
 
@@ -214,12 +246,20 @@ class ProductMerchantFeed
         return null === $name || \in_array(strtolower(pathinfo($name, \PATHINFO_EXTENSION)), self::AUDIO_EXTENSIONS, true);
     }
 
-    // One <item>, a nested field written as its own element holding its sub-fields
-    /** @param array<string, string|array<string, string>> $fields */
+    // One <item>, a repeated field written once per value, a nested one as its own element holding its sub-fields
+    /** @param array<string, string|array<string, string>|list<string>> $fields */
     private function writeItem(\XMLWriter $xml, array $fields): void
     {
         $xml->startElement('item');
         foreach ($fields as $name => $value) {
+            if (\is_array($value) && array_is_list($value)) {
+                foreach ($value as $repeated) {
+                    $xml->writeElement($name, $repeated);
+                }
+
+                continue;
+            }
+
             if (\is_array($value)) {
                 $xml->startElement($name);
                 foreach ($value as $subName => $subValue) {
