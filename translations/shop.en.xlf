@@ -244,7 +244,7 @@
             </trans-unit>
             <trans-unit id="U6WlC77">
                 <source>description.guided_step_shop_product_available_at</source>
-                <target>The date the shop states, on the sheet and in the structured data the search engines read.</target>
+                <target>The date the shop states. Until then its page shows only its title and that day, neither texts nor pictures, and stays out of search engines; the preview shows you the whole page.</target>
             </trans-unit>
             <trans-unit id="ydurPgw">
                 <source>description.guided_step_shop_product_brand</source>

@@ -39,7 +39,8 @@ graph deliberately leaves it out, so a book sold through this shop never publish
 
 Availability follows the very rules the add button is disabled on: `limitedQuantity: 0` is
 `OutOfStock`, orders reaching the limit are `SoldOut`, a future `availableAt` is `PreOrder`, everything
-else `InStock`. **Those rules live in one place per concern** — the graph here, the badge in
+else `InStock` - `PreOrder` read on the preview alone, the public sheet of a product dated ahead being
+`product/upcoming.html.twig`, its title and its day, `noindex` and without any graph. **Those rules live in one place per concern** — the graph here, the badge in
 `ProductStateService` (see `c975l-shop-catalog`) — and a change to one is a change to both.
 
 Both delivery nodes are built by PaymentBundle's `OfferSnippetBuilder`, shared with GalleryBundle's prints,

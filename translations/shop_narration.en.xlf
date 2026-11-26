@@ -184,7 +184,7 @@
             </trans-unit>
             <trans-unit id="pT6vXhz">
                 <source>narration.guided_step_shop_product_available_at</source>
-                <target>Say when it becomes available. That is the date the shop states, on the sheet and in the structured data the search engines read.</target>
+                <target>Say when it becomes available. Until that day, its page shows only its title and the date, and stays out of search engines. The preview still shows you the whole page.</target>
             </trans-unit>
             <trans-unit id="7ZfEE.v">
                 <source>narration.guided_step_shop_product_brand</source>

@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-11-26",
+        "description": [
+            {
+                "en": "A product dated ahead now shows on its page only its title and the day it comes out, neither its texts nor its pictures, and stays out of search engines until then; the preview still shows you the whole page.",
+                "fr": "Un produit daté à venir ne montre plus sur sa page que son titre et son jour de sortie, ni ses textes ni ses images, et reste hors des moteurs de recherche jusque-là ; l'aperçu vous montre toujours la page entière.",
+                "es": "Un producto con fecha futura solo muestra en su página su título y el día de su salida, ni sus textos ni sus imágenes, y queda fuera de los buscadores hasta entonces; la vista previa le sigue mostrando la página entera."
+            }
+        ]
+    },
+    {
         "date": "2026-11-25",
         "description": [
             {

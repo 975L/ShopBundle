@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.29.0
+
+A product dated ahead shows only its day
+
+- The sheet of a product dated ahead shows its title and its day only, neither its texts nor its pictures, kept out of search engines, the preview keeping the whole sheet (26/11/2026)
+
 ## v2.28.0
 
 Merchant feed states delivery times and every product picture in high resolution

@@ -94,6 +94,7 @@ Add ShopBundle on top of the [c975L core](https://github.com/975L/CoreBundle) - 
 - Plugs products into PaymentBundle's Basket/checkout engine via `BasketItemProviderInterface`, and tells it where the catalogue is (`CatalogueBasketItemProviderInterface`), whether it posts parcels (`ShippingBasketItemProviderInterface`) and which template draws the recommended products (`BasketRecommendationProviderInterface`)
 - What a paid order handed over taken back on a full refund (`RefundableBasketItemProviderInterface`): the stock it counted given back, its download links ended, a refunded order's link serving nothing
 - A product dated ahead held to its date at the basket and the checkout, not only on its sheet
+- A product dated ahead shows on its sheet its title and its day only, neither its texts nor its pictures, out of search engines until then; its editors read the whole sheet through the preview
 - One currency shown, published and charged: PaymentBundle's `shop-currency`, read by the cards, the sheet, the filters, the structured data and the feed alike (`shop_currency()` in a template)
 - Shipping weight per item, in grams, weighing a basket for PaymentBundle's delivery grid and pricing the rate the structured data publishes
 - Product cards stating their own price, formats and availability, read from the items rather than stored
@@ -726,7 +727,8 @@ deliberately leaves it out, so a book sold through this shop never publishes its
 
 Availability follows the very rules the "add to basket" button is disabled on: an item limited to `0` is
 `OutOfStock`, one whose orders reached its limit is `SoldOut`, a product with a future release date is
-`PreOrder`, everything else is `InStock`.
+`PreOrder`, everything else is `InStock`. A product dated ahead publishes no graph before its day: its public sheet
+is `product/upcoming.html.twig`, its title and its day only, `noindex`, the preview alone reading `PreOrder`.
 
 `Product.age` states who the product is meant for, typed as a range an editor reads (`3-8`, or `15-` from
 fifteen up) and published as the `audience` node schema.org expects of a product: a `PeopleAudience` carrying

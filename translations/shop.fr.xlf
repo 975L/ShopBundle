@@ -244,7 +244,7 @@
             </trans-unit>
             <trans-unit id="U6WlC77">
                 <source>description.guided_step_shop_product_available_at</source>
-                <target>La date que la boutique annonce, sur la fiche et dans les données structurées que lisent les moteurs de recherche.</target>
+                <target>La date que la boutique annonce. Jusque-là, sa page ne montre que son titre et ce jour, ni textes ni images, et reste hors des moteurs de recherche ; l'aperçu vous montre la page entière.</target>
             </trans-unit>
             <trans-unit id="ydurPgw">
                 <source>description.guided_step_shop_product_brand</source>

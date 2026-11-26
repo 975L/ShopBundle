@@ -80,6 +80,13 @@ class ProductController extends AbstractController
         // The sheet in the language being read (see ShopTranslator::apply) - its items and the cards under it are translated inside the fragments drawing them, so a hit reads none (see ShopBlockExtension)
         $this->shopTranslator->apply([$product]);
 
+        // A product dated ahead says only when it comes out: neither its texts nor its pictures before its day, its editors reading the whole sheet through the preview
+        if (!$product->isReleased()) {
+            return $this->negotiator->vary($request, $this->render('@c975LShop/product/upcoming.html.twig', [
+                'product' => $product,
+            ]));
+        }
+
         return $this->negotiator->vary($request, $this->render('@c975LShop/product/display.html.twig', [
             'product' => $product,
         ]));

@@ -1,0 +1,13 @@
+{% extends '@c975LShop/layout.html.twig' %}
+{% trans_default_domain 'shop' %}
+
+{# A product dated ahead (see ProductController::display()): its title and its day, nothing of its texts nor its pictures before then, and kept out of search engines until there is something to index #}
+{% set title = product.title %}
+{% set robots = 'noindex, follow' %}
+
+{% block content %}
+    <div class="section-wrap">
+        <h1>{{ product.title }}</h1>
+        <twig:c975LUi:Alert:Alert type="info">{{ 'label.product_not_yet_available'|trans }} {{ product.availableAt|date('d/m/Y') }}.</twig:c975LUi:Alert:Alert>
+    </div>
+{% endblock %}

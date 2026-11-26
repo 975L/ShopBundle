@@ -184,7 +184,7 @@
             </trans-unit>
             <trans-unit id="pT6vXhz">
                 <source>narration.guided_step_shop_product_available_at</source>
-                <target>Diga a partir de cuándo está disponible. Es la fecha que la tienda anuncia, en la ficha y en los datos estructurados que leen los buscadores.</target>
+                <target>Diga a partir de cuándo está disponible. Hasta ese día, su página solo muestra su título y la fecha, y queda fuera de los buscadores. La vista previa le sigue mostrando la página entera.</target>
             </trans-unit>
             <trans-unit id="7ZfEE.v">
                 <source>narration.guided_step_shop_product_brand</source>
