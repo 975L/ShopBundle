@@ -58,6 +58,11 @@ class ProductCatalogWriter implements ProductCatalogWriterInterface
             $product->setLanguage($catalogProduct->language);
         }
 
+        // The day it comes out follows the catalog's too, so a product shown ahead of it says only that day and sells nothing
+        if (null !== $catalogProduct->availableAt) {
+            $product->setAvailableAt($catalogProduct->availableAt);
+        }
+
         $keys = [];
         $translations = [];
         foreach ($catalogProduct->items as $catalogItem) {

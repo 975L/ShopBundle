@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.30.0
+
+A catalog product follows its release day
+
+- A product written by a catalog takes the day it comes out from it, showing only that day and selling nothing before (26/11/2026)
+
 ## v2.29.0
 
 A product dated ahead shows only its day

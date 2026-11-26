@@ -110,6 +110,21 @@ class ProductCatalogWriterTest extends TestCase
         $this->assertSame($title, $item->getDescription());
     }
 
+    // The day the catalog says the product comes out is the product's, none leaving the shop's own
+    public function testTheCatalogsDayIsTheProducts(): void
+    {
+        $product = new Product()->setCatalogKey('book-12')->setSlug('le-loup')->setAvailableAt(new \DateTimeImmutable('2026-01-01'));
+        $items = [new CatalogProductItem('book-12-digital-epub', 'Format EPUB', $this->projectDir . '/loup.epub')];
+
+        $persisted = [];
+        $this->writer($product, $persisted)->write(new CatalogProduct('book-12', 'Le Loup', '<p>Un loup.</p>', $items));
+        $this->assertEquals(new \DateTimeImmutable('2026-01-01'), $product->getAvailableAt());
+
+        $this->writer($product, $persisted)->write(new CatalogProduct('book-12', 'Le Loup', '<p>Un loup.</p>', $items, availableAt: new \DateTimeImmutable('2026-12-19')));
+        $this->assertEquals(new \DateTimeImmutable('2026-12-19'), $product->getAvailableAt());
+        $this->assertFalse($product->isReleased());
+    }
+
     // A new item's text is the catalog's description when it gives one
     public function testANewItemTakesTheCatalogsDescription(): void
     {
